@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>قائمة الثقة اليومية</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="3 قسائم يومياً (آمنة، شبه آمنة، خطيرة) وأعلى 10 توقعات احتمالاً بكرة القدم والسلة والتنس، مع سجل علني لكل النتائج.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&display=swap">
+<style>
+/* Layout: single white column, soft rounded cards. Colour appears only as the tier ring and small pills; everything else is ink on white. */
+:root {
+  color-scheme: light;
+  --bg: #FFFFFF;
+  --card: #FFFFFF;
+  --soft: #F5F6F8;
+  --line: #ECEEF1;
+  --ink: #111316;
+  --muted: #747A84;
+  --faint: #A9AEB6;
+  --accent: #111316;
+  --safe: #16A34A;
+  --safe-soft: #EAF7EF;
+  --mid: #D97706;
+  --mid-soft: #FDF3E4;
+  --risk: #E5484D;
+  --risk-soft: #FDECEC;
+  --hit: #16A34A;
+  --hit-soft: #EAF7EF;
+  --miss: #E5484D;
+  --miss-soft: #FDECEC;
+  --wait: #6E56CF;
+  --wait-soft: #F1EEFB;
+  --font: "Readex Pro", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+  --r-lg: 24px;
+  --r-md: 16px;
+  --shadow: 0 1px 2px rgb(17 19 22 / .04), 0 8px 28px rgb(17 19 22 / .05);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--bg); }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font); font-size: 15px; font-weight: 400; line-height: 1.6;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 560px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+bdi { unicode-bidi: isolate; }
+button { font: inherit; color: inherit; }
+button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.mark { width: 34px; height: 34px; border-radius: 11px; background: var(--ink); display: grid; place-items: center; }
+.mark svg { width: 18px; height: 18px; }
+.brand b { font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+.date { font-size: 12px; color: var(--muted); background: var(--soft); border-radius: 999px; padding: 5px 12px; white-space: nowrap; }
+.hero h1 { margin: 0; font-size: clamp(26px, 7vw, 34px); font-weight: 600; line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
+.hero p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+.demo { background: var(--wait-soft); color: var(--wait); border-radius: var(--r-md); padding: 10px 14px; font-size: 13px; font-weight: 500; }
+
+/* segmented tabs */
+.tabs { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--soft); padding: 4px; border-radius: 999px; }
+.tabs button { border: 0; background: transparent; color: var(--muted); padding: 9px 8px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background .2s, color .2s; }
+.tabs button[aria-selected="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgb(17 19 22 / .08); }
+section { display: flex; flex-direction: column; gap: 16px; }
+.note { color: var(--muted); font-size: 13px; line-height: 1.75; margin: 0; }
+.empty { background: var(--soft); border-radius: var(--r-lg); padding: 28px 18px; text-align: center; color: var(--muted); }
+
+/* coupon */
+.coupon { --c: var(--safe); --c-soft: var(--safe-soft); background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.coupon.medium { --c: var(--mid); --c-soft: var(--mid-soft); }
+.coupon.risky { --c: var(--risk); --c-soft: var(--risk-soft); }
+.c-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.c-title { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pill { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; background: var(--c-soft); color: var(--c); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.c-title h3 { margin: 0; font-size: 18px; font-weight: 600; }
+.c-title span { color: var(--muted); font-size: 13px; }
+.ring { position: relative; width: 72px; height: 72px; flex: none; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .t { stroke: var(--soft); }
+.ring .v { stroke: var(--c); stroke-linecap: round; }
+.ring b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 16px; font-weight: 600; direction: ltr; }
+.legs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.leg { background: var(--soft); border-radius: var(--r-md); padding: 12px 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; }
+.leg .p { font-weight: 600; font-size: 15px; direction: ltr; background: var(--card); border-radius: 999px; padding: 4px 10px; }
+.meta { color: var(--muted); font-size: 12px; display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: center; }
+.meta .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--faint); }
+.match { font-size: 14px; font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; }
+.match .vs { color: var(--faint); font-weight: 400; padding-inline: 4px; }
+.call { font-size: 14px; display: block; }
+.call strong { font-weight: 600; }
+.call .hint { color: var(--muted); font-size: 12px; font-weight: 400; }
+.c-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.c-foot b { color: var(--ink); font-weight: 600; direction: ltr; display: inline-block; }
+.status { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.status.hit, .status.won { background: var(--hit-soft); color: var(--hit); }
+.status.miss, .status.lost { background: var(--miss-soft); color: var(--miss); }
+.status.pending { background: var(--wait-soft); color: var(--wait); }
+.status.void, .status.none { background: var(--soft); color: var(--muted); }
+
+/* top 10 */
+.toplist { list-style: none; margin: 0; padding: 6px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow); }
+.toplist li { padding: 12px; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; }
+.toplist li + li { border-top: 1px solid var(--line); }
+.rank { width: 30px; height: 30px; border-radius: 50%; background: var(--soft); display: grid; place-items: center; font-size: 13px; font-weight: 600; color: var(--muted); align-self: start; }
+.toplist .p { font-size: 17px; font-weight: 600; direction: ltr; }
+.bar { grid-column: 2 / 4; height: 4px; border-radius: 4px; background: var(--soft); position: relative; margin-top: 4px; }
+.bar i { position: absolute; inset-block: 0; right: 0; border-radius: 4px; background: var(--ink); }
+.bar s { position: absolute; top: -3px; width: 2px; height: 10px; border-radius: 2px; background: var(--faint); }
+
+/* record */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.stat { --c: var(--safe); background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow); padding: 14px 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; min-width: 0; }
+.stat.medium { --c: var(--mid); } .stat.risky { --c: var(--risk); }
+.stat .ring { width: 60px; height: 60px; }
+.stat .ring b { font-size: 14px; }
+.stat .k { font-size: 13px; font-weight: 600; }
+.stat small { color: var(--muted); font-size: 11px; line-height: 1.5; }
+h2 { margin: 6px 0 0; font-size: 17px; font-weight: 600; }
+.tablewrap { overflow-x: auto; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 11px 14px; text-align: right; white-space: nowrap; }
+th { color: var(--muted); font-weight: 500; font-size: 12px; }
+tr + tr td, thead + tbody tr:first-child td { border-top: 1px solid var(--line); }
+td.num { direction: ltr; text-align: right; }
+.good { color: var(--hit); font-weight: 600; } .bad { color: var(--miss); font-weight: 600; }
+.days { display: flex; flex-direction: column; gap: 8px; }
+details { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+details[open] { box-shadow: var(--shadow); }
+summary { list-style: none; cursor: pointer; padding: 13px 16px; display: flex; justify-content: space-between; align-items: center; gap: 8px 10px; flex-wrap: wrap; font-weight: 500; font-size: 14px; }
+summary::-webkit-details-marker { display: none; }
+.dots { display: flex; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+.dot.won { background: var(--hit); } .dot.lost { background: var(--miss); } .dot.pending { background: var(--wait); }
+details .inner { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 12px; }
+details h4 { margin: 0 4px; font-size: 13px; font-weight: 600; display: flex; gap: 8px; align-items: center; }
+details .legs .leg { padding: 10px 12px; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); font-size: 12px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: center; padding-top: 8px; }
+@media (max-width: 440px) {
+  th, td { padding: 10px 9px; font-size: 13px; }
+}
+@media (max-width: 400px) {
+  .stats { gap: 8px; }
+  .stat { padding: 12px 6px; }
+  .ring { width: 64px; height: 64px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ring .v { transition: stroke-dashoffset .8s cubic-bezier(.2,.7,.2,1); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg></span>
+      <b>الثقة</b>
+    </div>
+    <span class="date" id="today-label">اليوم</span>
+  </div>
+
+  <div class="hero">
+    <h1>قسائم اليوم</h1>
+    <p>محسوبة من أسعار أكثر من شركة، مع احتمال حقيقي لكل توقع.</p>
+  </div>
+
+  <div class="demo" id="demo" hidden>بيانات تجريبية للعرض بس. المباريات والأرقام مش حقيقية.</div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tab-coupons" aria-selected="true" aria-controls="view-coupons">القسائم</button>
+    <button role="tab" id="tab-top" aria-selected="false" aria-controls="view-top">أعلى 10</button>
+    <button role="tab" id="tab-record" aria-selected="false" aria-controls="view-record">السجل</button>
+  </div>
+
+  <section id="view-coupons" role="tabpanel" aria-labelledby="tab-coupons">
+    <div id="coupons" style="display:flex;flex-direction:column;gap:16px"></div>
+    <p class="note">الرقم بالدائرة هو احتمال إنه كل توقعات القسيمة تصيب مع بعض. الأودز العادلة بتعكس الاحتمال الحقيقي بدون هامش الشركات.</p>
+  </section>
+
+  <section id="view-top" role="tabpanel" aria-labelledby="tab-top" hidden>
+    <ol class="toplist" id="picks"></ol>
+    <p class="note">أعلى توقع من كل مباراة، من كل الأسواق. الخط الصغير على كل شريط هو مكان الـ99%.</p>
+  </section>
+
+  <section id="view-record" role="tabpanel" aria-labelledby="tab-record" hidden>
+    <div class="stats" id="stats"></div>
+    <h2>هل الأرقام صادقة؟</h2>
+    <p class="note">لكل توقع نشرناه، بنقارن الاحتمال اللي قلناه مع اللي صار فعلاً.</p>
+    <div class="tablewrap"><table id="calib"></table></div>
+    <h2>حسب نوع التوقع</h2>
+    <div class="tablewrap"><table id="by-market"></table></div>
+    <h2>الأيام السابقة</h2>
+    <div class="legend"><span><i class="dot won"></i>إجت</span><span><i class="dot lost"></i>ما إجت</span><span><i class="dot pending"></i>بالانتظار</span></div>
+    <div class="days" id="days"></div>
+  </section>
+
+  <footer>الاحتمالات تقدير من أسعار السوق، مش ضمان.<br>كل قسيمة بتتسجل هون مع نتيجتها، سواء إجت أو ما إجت.</footer>
+</div>
+
+<script>
+const EMBEDDED = /*EMBED*/null;
+
+const SPORTS = { soccer: "كرة قدم", basketball: "كرة سلة", tennis: "تنس" };
+const KINDS = {
+  safe: { short: "آمنة", title: "القسيمة الآمنة", sub: "توقعات قوية، وربح قليل" },
+  medium: { short: "شبه آمنة", title: "القسيمة شبه الآمنة", sub: "توازن بين الأمان والربح" },
+  risky: { short: "خطيرة", title: "القسيمة الخطيرة", sub: "احتمالها قليل، وربحها كبير" },
+};
+const STATUS = { hit: "أصاب", miss: "خاب", pending: "بالانتظار", void: "ملغى", won: "إجت", lost: "ما إجت", none: "ما في" };
+const MARKETS = { h2h: "الفائز", double_chance: "فرصة مزدوجة", totals: "المجموع", team_totals: "مجموع فريق", spreads: "هانديكاب", btts: "الفريقين بيسجلوا" };
+const tz = "Asia/Amman";
+const fmtTime = new Intl.DateTimeFormat("ar-JO-u-nu-latn", { timeZone: tz, hour: "numeric", minute: "2-digit" });
+const fmtDay = new Intl.DateTimeFormat("ar-JO-u-nu-latn", { timeZone: tz, weekday: "long", day: "numeric", month: "long" });
+const fmtDate = new Intl.DateTimeFormat("ar-JO-u-nu-latn", { timeZone: tz, weekday: "long", day: "numeric", month: "short" });
+const pct = (p, d = 1) => (p * 100).toFixed(d) + "%";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const t = (name) => `<bdi>${esc(name)}</bdi>`;
+
+let state = { today: null, history: null };
+
+async function load() {
+  if (EMBEDDED) return EMBEDDED;
+  const get = async (f) => {
+    const r = await fetch(`data/${f}?t=${Date.now()}`);
+    if (!r.ok) throw new Error(f);
+    return r.json();
+  };
+  const [today, history] = await Promise.all([get("today.json"), get("history.json")]);
+  return { today, history };
+}
+
+function ring(p, label) {
+  const r = 15.5, c = 2 * Math.PI * r;
+  return `<div class="ring" role="img" aria-label="${label}">
+    <svg viewBox="0 0 36 36"><circle class="t" cx="18" cy="18" r="${r}" fill="none" stroke-width="3.2"/>
+    <circle class="v" cx="18" cy="18" r="${r}" fill="none" stroke-width="3.2" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${(c * (1 - p)).toFixed(2)}"/></svg>
+    <b>${pct(p, 0)}</b></div>`;
+}
+
+const unit = (l) => (l.group === "basketball" ? "نقطة" : l.group === "tennis" ? "شوط" : "أهداف");
+
+function legLabel(l) {
+  const pt = l.point;
+  switch (l.market) {
+    case "h2h":
+      return l.name === "Draw" ? ["تعادل", ""] : [`فوز ${t(l.name)}`, ""];
+    case "double_chance":
+      return l.name === "No Draw" ? ["ما في تعادل", "أي فريق يفوز"] : [`${t(l.name)} ما بيخسر`, "فوز أو تعادل"];
+    case "btts":
+      return l.name === "Yes" ? ["الفريقين بيسجلوا", ""] : ["مش الفريقين بيسجلوا", "فريق على الأقل ما بيسجل"];
+    case "totals": {
+      const over = l.name === "Over";
+      const n = over ? Math.floor(pt) + 1 : Math.ceil(pt) - 1;
+      const push = Number.isInteger(pt) ? `، وإذا ${pt} بالضبط بتنلغى` : "";
+      return [`${over ? "أكثر من" : "أقل من"} ${pt} ${unit(l)}`, `${n} أو ${over ? "أكثر" : "أقل"}${push}`];
+    }
+    case "team_totals": {
+      const over = l.name === "Over";
+      const n = over ? Math.floor(pt) + 1 : Math.ceil(pt) - 1;
+      return [`${t(l.description)} ${over ? "أكثر من" : "أقل من"} ${pt}`, `${l.group === "soccer" ? "يسجل" : "يجيب"} ${n} أو ${over ? "أكثر" : "أقل"}`];
+    }
+    case "spreads": {
+      const sign = pt > 0 ? "+" : "";
+      let hint;
+      if (pt < 0) hint = Number.isInteger(pt) ? `يفوز بأكثر من ${-pt}` : `يفوز بفارق ${Math.floor(-pt) + 1} أو أكثر`;
+      else if (pt < 1) hint = "يفوز أو يتعادل";
+      else hint = Number.isInteger(pt) ? `ما يخسر بأكثر من ${pt}` : `يفوز، أو يخسر بفارق ${Math.floor(pt)} أو أقل`;
+      return [`${t(l.name)} هانديكاب <bdi dir="ltr">${sign}${pt}</bdi>`, hint];
+    }
+  }
+  return [esc(l.market), ""];
+}
+
+function callHTML(l) {
+  const [main, hint] = legLabel(l);
+  return `<span class="call"><strong>${main}</strong>${hint ? ` <span class="hint">· ${hint}</span>` : ""}</span>`;
+}
+
+function statusHTML(l, now) {
+  if (l.result !== "pending") return `<span class="status ${l.result}">${STATUS[l.result]}${l.score ? ` <bdi dir="ltr">${esc(l.score)}</bdi>` : ""}</span>`;
+  if (new Date(l.commence_time).getTime() < now) return `<span class="status pending">بلشت</span>`;
+  return "";
+}
+
+const legHTML = (l, now) => `<li class="leg"><div>
+    <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${fmtTime.format(new Date(l.commence_time))}</span> ${statusHTML(l, now)}</div>
+    <div class="match">${t(l.home)}<span class="vs">ضد</span>${t(l.away)}</div>
+    ${callHTML(l)}
+  </div><span class="p">${pct(l.prob)}</span></li>`;
+
+function renderCoupons() {
+  const list = state.today?.coupons ?? [];
+  const now = Date.now();
+  if (!list.length) {
+    $("coupons").innerHTML = `<div class="empty">قسائم اليوم بتنزل الساعة 6 الصبح بتوقيت عمّان.</div>`;
+    return;
+  }
+  $("coupons").innerHTML = list.map((c) => {
+    const k = KINDS[c.kind];
+    if (!c.legs.length) {
+      return `<article class="coupon ${c.kind}"><div class="c-title"><span class="pill">${k.short}</span><h3>${k.title}</h3><span>ما في مباريات كافية اليوم تناسب هالقسيمة.</span></div></article>`;
+    }
+    const res = c.result !== "pending" ? ` <span class="status ${c.result}">${STATUS[c.result]}</span>` : "";
+    return `<article class="coupon ${c.kind}">
+      <div class="c-head">
+        <div class="c-title"><span class="pill">${k.short}</span><h3>${k.title}${res}</h3><span>${k.sub} · ${c.legs.length} مباريات</span></div>
+        ${ring(c.prob, `احتمال تيجي كاملة ${pct(c.prob)}`)}
+      </div>
+      <ul class="legs">${c.legs.map((l) => legHTML(l, now)).join("")}</ul>
+      <div class="c-foot"><span>الأودز العادلة <b>${c.fair_odds.toFixed(2)}</b></span><span>كل 1 دينار بيرجع <b>${c.fair_odds.toFixed(2)}</b> إذا إجت</span></div>
+    </article>`;
+  }).join("");
+}
+
+const SCALE_MIN = 0.8;
+const pos = (p) => Math.max(0, Math.min(1, (p - SCALE_MIN) / (1 - SCALE_MIN))) * 100;
+
+function renderTop() {
+  const top = state.today?.top ?? [];
+  const now = Date.now();
+  if (!top.length) {
+    $("picks").innerHTML = `<li style="display:block"><div class="empty">ما في مباريات كافية بالـ24 ساعة الجاية.</div></li>`;
+    return;
+  }
+  $("picks").innerHTML = top.map((l) => `<li>
+    <span class="rank">${l.rank}</span>
+    <div>
+      <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${fmtTime.format(new Date(l.commence_time))}</span> ${statusHTML(l, now)}</div>
+      <div class="match">${t(l.home)}<span class="vs">ضد</span>${t(l.away)}</div>
+      ${callHTML(l)}
+    </div>
+    <span class="p">${pct(l.prob)}</span>
+    <div class="bar" aria-hidden="true"><i style="width:${pos(l.prob)}%"></i><s style="right:${pos(0.99)}%"></s></div>
+  </li>`).join("");
+}
+
+function uniqueLegs(days) {
+  const seen = new Map();
+  for (const d of days) {
+    for (const l of d.top ?? []) seen.set(l.id, l);
+    for (const c of d.coupons ?? []) for (const l of c.legs) seen.set(l.id, l);
+  }
+  return [...seen.values()];
+}
+
+function renderRecord() {
+  const days = (state.history?.days ?? []).filter((d) => (d.coupons ?? []).length);
+  const settled = days.flatMap((d) => d.coupons).filter((c) => c.result === "won" || c.result === "lost");
+  if (!settled.length) {
+    $("stats").innerHTML = `<div class="empty" style="grid-column:1/-1">السجل رح يبلش يتعبى بعد أول يوم. كل قسيمة بتنزل هون مع نتيجتها.</div>`;
+    $("calib").innerHTML = $("by-market").innerHTML = $("days").innerHTML = "";
+    return;
+  }
+  $("stats").innerHTML = ["safe", "medium", "risky"].map((k) => {
+    const xs = settled.filter((c) => c.kind === k);
+    const won = xs.filter((c) => c.result === "won").length;
+    const rate = xs.length ? won / xs.length : 0;
+    const exp = xs.length ? xs.reduce((s, c) => s + c.prob, 0) / xs.length : 0;
+    return `<div class="stat ${k}">${ring(rate, `${KINDS[k].short}: إجت ${pct(rate, 0)}`)}<span class="k">${KINDS[k].short}</span>
+      <small>إجت ${won} من ${xs.length}<br>المتوقع ${pct(exp, 0)}</small></div>`;
+  }).join("");
+
+  const legs = uniqueLegs(days).filter((l) => l.result === "hit" || l.result === "miss");
+  const buckets = [[0.5, 0.7, "50–70%"], [0.7, 0.85, "70–85%"], [0.85, 0.92, "85–92%"], [0.92, 1.01, "92% وأكثر"]];
+  $("calib").innerHTML = `<thead><tr><th>الاحتمال المنشور</th><th>عدد</th><th>المتوقع</th><th>اللي صار</th></tr></thead><tbody>${
+    buckets.map(([lo, hi, label]) => {
+      const xs = legs.filter((l) => l.prob >= lo && l.prob < hi);
+      if (!xs.length) return "";
+      const e = xs.reduce((s, l) => s + l.prob, 0) / xs.length;
+      const a = xs.filter((l) => l.result === "hit").length / xs.length;
+      return `<tr><td>${label}</td><td class="num">${xs.length}</td><td class="num">${pct(e)}</td><td class="num ${a >= e - 0.04 ? "good" : "bad"}">${pct(a)}</td></tr>`;
+    }).join("")
+  }</tbody>`;
+
+  const rows = Object.keys(MARKETS).map((m) => {
+    const xs = legs.filter((l) => l.market === m);
+    if (!xs.length) return "";
+    const h = xs.filter((l) => l.result === "hit").length;
+    const e = xs.reduce((s, l) => s + l.prob, 0) / xs.length;
+    return `<tr><td>${MARKETS[m]}</td><td class="num">${h}/${xs.length}</td><td class="num ${h / xs.length >= e - 0.04 ? "good" : "bad"}">${pct(h / xs.length)}</td><td class="num">${pct(e)}</td></tr>`;
+  }).join("");
+  $("by-market").innerHTML = `<thead><tr><th>النوع</th><th>أصاب</th><th>الفعلي</th><th>المتوقع</th></tr></thead><tbody>${rows}</tbody>`;
+
+  const now = Date.now();
+  $("days").innerHTML = days.slice().reverse().map((d) => {
+    const label = fmtDate.format(new Date(d.date + "T12:00:00+03:00"));
+    const real = d.coupons.filter((c) => c.legs.length);
+    const dots = real.map((c) => `<i class="dot ${c.result}" title="${KINDS[c.kind].short}: ${STATUS[c.result]}"></i>`).join("");
+    const inner = real.map((c) => `<div>
+      <h4>${KINDS[c.kind].title} <span class="status ${c.result}">${STATUS[c.result]}</span></h4>
+      <ul class="legs" style="margin-top:8px">${c.legs.map((l) => legHTML(l, now)).join("")}</ul>
+    </div>`).join("");
+    return `<details><summary><span>${label}</span><span class="dots">${dots}</span></summary><div class="inner">${inner}</div></details>`;
+  }).join("");
+}
+
+const TABS = ["coupons", "top", "record"];
+const HERO = { coupons: "قسائم اليوم", top: "أعلى 10 توقعات", record: "السجل" };
+function setTab(which) {
+  for (const k of TABS) {
+    $("tab-" + k).setAttribute("aria-selected", k === which);
+    $("view-" + k).hidden = k !== which;
+  }
+  document.querySelector(".hero h1").textContent = HERO[which];
+}
+for (const k of TABS) $("tab-" + k).addEventListener("click", () => setTab(k));
+
+load().then(({ today, history }) => {
+  state.today = today; state.history = history;
+  $("demo").hidden = !today?.demo;
+  if (today?.date) $("today-label").textContent = fmtDay.format(new Date(today.date + "T12:00:00+03:00"));
+  renderCoupons(); renderTop(); renderRecord();
+  const h = location.hash.slice(1);
+  if (TABS.includes(h)) setTab(h);
+}).catch(() => {
+  $("coupons").innerHTML = `<div class="empty">ما قدرت أحمّل البيانات. جرّب تحدّث الصفحة بعد شوي.</div>`;
+});
+</script>
+</body>
+</html>

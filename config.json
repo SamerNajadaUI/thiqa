@@ -1,0 +1,45 @@
+{
+  "regions": "eu",
+  "window_hours": 24,
+  "min_bookmakers": 3,
+  "min_bookmakers_extra_markets": 2,
+  "min_leg_odds": 1.04,
+  "top_list_size": 10,
+
+  "max_credits_per_run": 16,
+  "min_credits_reserve": 20,
+
+  "soccer_leagues": [
+    "soccer_epl",
+    "soccer_spain_la_liga",
+    "soccer_italy_serie_a",
+    "soccer_germany_bundesliga",
+    "soccer_france_ligue_one",
+    "soccer_uefa_champs_league",
+    "soccer_uefa_europa_league",
+    "soccer_saudi_arabia_pro_league"
+  ],
+  "basketball_leagues": [
+    "basketball_nba",
+    "basketball_euroleague"
+  ],
+  "include_all_active_tennis": true,
+  "max_tennis_tournaments": 3,
+
+  "markets": {
+    "soccer":     { "featured": "h2h,totals", "extra": "btts,alternate_totals,team_totals,alternate_spreads" },
+    "basketball": { "featured": "h2h,spreads,totals", "extra": "alternate_spreads,alternate_totals,team_totals" },
+    "tennis":     { "featured": "h2h", "extra": "" }
+  },
+  "extra_markets_events_per_run": 4,
+
+  "coupons": {
+    "safe":   { "legs": 3, "min_legs": 2, "target_total": 0.80, "min_leg": 0.88, "max_leg": 1.00, "max_same_market": 2 },
+    "medium": { "legs": 4, "min_legs": 3, "target_total": 0.55, "min_leg": 0.72, "max_leg": 0.93, "max_same_market": 2 },
+    "risky":  { "legs": 5, "min_legs": 4, "target_total": 0.20, "min_leg": 0.50, "max_leg": 0.85, "max_same_market": 2 }
+  },
+
+  "check_results": true,
+  "results_days_from": 3,
+  "give_up_after_days": 5
+}
