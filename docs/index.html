@@ -150,6 +150,19 @@ details .legs .leg { padding: 10px 12px; }
 .legend { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); font-size: 12px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 
+/* why */
+.leg details.why, .toplist details.why { grid-column: 1 / -1; background: none; border: 0; border-radius: 0; box-shadow: none; overflow: visible; border-top: 1px solid var(--line); margin-top: 6px; }
+.why summary { padding: 8px 0 0; font-size: 13px; font-weight: 600; justify-content: flex-start; gap: 8px; flex-wrap: nowrap; }
+.why summary::after { content: "+"; margin-inline-start: auto; color: var(--muted); font-weight: 400; font-size: 16px; line-height: 1; }
+.why[open] summary::after { content: "−"; }
+.why .sig { font-size: 11px; color: var(--muted); font-weight: 500; background: var(--card); padding: 2px 8px; border-radius: 999px; }
+.toplist .why .sig { background: var(--soft); }
+.why ul { list-style: none; margin: 8px 0 2px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.why li { font-size: 13px; line-height: 1.65; padding-inline-start: 16px; position: relative; overflow-wrap: anywhere; }
+.why li::before { content: ""; position: absolute; inset-inline-start: 1px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--hit); }
+.why li.w { color: var(--muted); }
+.why li.w::before { background: var(--mid); }
+
 footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: center; padding-top: 8px; }
 @media (max-width: 440px) {
   th, td { padding: 10px 9px; font-size: 13px; }
@@ -176,7 +189,7 @@ footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: cen
 
   <div class="hero">
     <h1>قسائم اليوم</h1>
-    <p>محسوبة من أسعار أكثر من شركة، مع احتمال حقيقي لكل توقع.</p>
+    <p>كل توقع مدروس من أسعار السوق، والشركات الأدق، وحركة الأودز، وإحصائيات الموسم.</p>
   </div>
 
   <div class="demo" id="demo" hidden>بيانات تجريبية للعرض بس. المباريات والأرقام مش حقيقية.</div>
@@ -298,11 +311,19 @@ function statusHTML(l, now) {
   return "";
 }
 
+function whyHTML(l) {
+  const rs = l.reasons ?? [], ws = l.warnings ?? [];
+  if (!rs.length && !ws.length) return "";
+  const badge = l.signals ? `${l.support} من ${l.signals} إشارات معه` : "سوق بس";
+  return `<details class="why"><summary><span>ليش؟</span><span class="sig">${badge}</span></summary>
+    <ul>${rs.map((r) => `<li>${esc(r)}</li>`).join("")}${ws.map((w) => `<li class="w">${esc(w)}</li>`).join("")}</ul></details>`;
+}
+
 const legHTML = (l, now) => `<li class="leg"><div>
     <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${fmtTime.format(new Date(l.commence_time))}</span> ${statusHTML(l, now)}</div>
     <div class="match">${t(l.home)}<span class="vs">ضد</span>${t(l.away)}</div>
     ${callHTML(l)}
-  </div><span class="p">${pct(l.prob)}</span></li>`;
+  </div><span class="p">${pct(l.prob)}</span>${whyHTML(l)}</li>`;
 
 function renderCoupons() {
   const list = state.today?.coupons ?? [];
@@ -347,6 +368,7 @@ function renderTop() {
     </div>
     <span class="p">${pct(l.prob)}</span>
     <div class="bar" aria-hidden="true"><i style="width:${pos(l.prob)}%"></i><s style="right:${pos(0.99)}%"></s></div>
+    ${whyHTML(l)}
   </li>`).join("");
 }
 

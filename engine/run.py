@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 """
-قائمة الثقة اليومية — محرك التوقعات والقسائم
+قائمة الثقة اليومية — المحرك
 
-1. يسحب أسعار السوق (الأودز) من The Odds API لكل مباريات الـ24 ساعة الجاية
-   بكرة القدم والسلة والتنس، ولكل الأسواق اللي بنقدر نصحّحها من النتيجة النهائية:
-   الفائز، فرصة مزدوجة، مجموع الأهداف/النقاط (كل الخطوط)، الهانديكاب (كل الخطوط)،
-   أهداف/نقاط كل فريق، والفريقين بيسجلوا.
-2. لكل سوق بيشيل هامش الشركات وبياخذ الوسيط بين الشركات ليطلع الاحتمال الحقيقي.
-3. بيبني 3 قسائم يومياً: آمنة، شبه آمنة، وخطيرة — كل مباراة بتدخل بقسيمة وحدة بس،
-   وما بتتكرر نفس المباراة بقسيمتين (عشان النتائج ما تكون مربوطة ببعض).
-4. بيرجع على الأيام الماضية وبيصحّح كل توقع وكل قسيمة من النتيجة النهائية.
+1. السوق: يسحب الأودز من The Odds API لكل مباريات الـ48 ساعة الجاية (قدم، سلة، تنس)
+   ولكل الأسواق اللي بنقدر نصحّحها: الفائز، فرصة مزدوجة، المجموع، الهانديكاب،
+   مجموع فريق، الفريقين بيسجلوا. بيشيل هامش الشركات وبياخذ الوسيط.
+2. الشركات الأدق (Pinnacle وBetfair): احتمالها لحالها كإشارة.
+3. حركة السوق: بيقارن مع لقطة الأمس (لهيك بنسحب 48 ساعة).
+4. كرة القدم: إحصائيات الموسم الحقيقية من football-data.org، ونموذج أهداف
+   (Poisson + Dixon-Coles)، وبيدمجه مع السوق.
+5. لكل توقع: أسباب وتحذيرات بالعربي، وعدد الإشارات الداعمة.
+6. 3 قسائم: آمنة، شبه آمنة، خطيرة. التوقعات اللي الإشارات ضدها بتنشال.
+7. بيصحّح الأيام الماضية من النتيجة النهائية.
 
 الاستخدام:
-    ODDS_API_KEY=xxxx python engine/run.py     # نتائج الأيام الماضية + قسائم اليوم
-    python engine/run.py --demo                 # بيانات تجريبية بدون مفتاح
-    python engine/run.py --results-only         # تحديث النتائج بس
-
-مكتبات بايثون الأساسية فقط (بدون pip install).
+    ODDS_API_KEY=xxx FOOTBALL_DATA_KEY=yyy python engine/run.py
+    python engine/run.py --demo
 """
 from __future__ import annotations
 
@@ -36,19 +35,24 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import analysis as an  # noqa: E402
+import football_data as fdata  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "docs" / "data"
 TODAY_FILE = DATA_DIR / "today.json"
 HISTORY_FILE = DATA_DIR / "history.json"
+SNAPSHOT_FILE = DATA_DIR / "snapshot.json"
 OVERRIDES_FILE = ROOT / "results_overrides.json"
 CONFIG_FILE = ROOT / "config.json"
 
 API_BASE = "https://api.the-odds-api.com/v4"
-AMMAN = timezone(timedelta(hours=3))  # الأردن على UTC+3 طول السنة
+AMMAN = timezone(timedelta(hours=3))
 ISO = "%Y-%m-%dT%H:%M:%SZ"
 COUPON_KINDS = ("safe", "medium", "risky")
+SHARP_BOOKS = {"pinnacle", "betfair_ex_eu", "betfair_ex_uk", "matchbook", "smarkets"}
 
-# الأسواق البديلة بتندمج مع الأساسية (نفس الخط = نفس التوقع)
 MARKET_BASE = {
     "h2h": "h2h", "btts": "btts",
     "totals": "totals", "alternate_totals": "totals",
@@ -96,7 +100,7 @@ def product(xs) -> float:
     return out
 
 
-# ---------------------------------------------------------------- API client
+# ---------------------------------------------------------------- Odds API
 
 class BudgetExhausted(Exception):
     pass
@@ -104,26 +108,21 @@ class BudgetExhausted(Exception):
 
 class OddsApi:
     def __init__(self, key: str, reserve: float, per_run: float):
-        self.key = key
-        self.reserve = reserve
-        self.per_run = per_run
+        self.key, self.reserve, self.per_run = key, reserve, per_run
         self.remaining: float | None = None
         self.spent = 0.0
 
     def can_spend(self, cost: float) -> bool:
         if self.spent + cost > self.per_run:
             return False
-        if self.remaining is not None and self.remaining - cost < self.reserve:
-            return False
-        return True
+        return self.remaining is None or self.remaining - cost >= self.reserve
 
     def get(self, path: str, cost: float = 0, **params):
-        """cost = الكريدت المتوقع (0 للطلبات المجانية). بيرجع None إذا الطلب ما زبط."""
         if cost and not self.can_spend(cost):
-            raise BudgetExhausted(f"وصلت حد الصرف ({self.spent:.0f} كريدت بهالتشغيل، المتبقي بالحساب {self.remaining}).")
+            raise BudgetExhausted(f"وصلت حد الصرف ({self.spent:.0f} كريدت، المتبقي {self.remaining}).")
         params["apiKey"] = self.key
         url = f"{API_BASE}{path}?{urllib.parse.urlencode(params)}"
-        req = urllib.request.Request(url, headers={"User-Agent": "thiqa-daily/2.0"})
+        req = urllib.request.Request(url, headers={"User-Agent": "thiqa-daily/3.0"})
         try:
             with urllib.request.urlopen(req, timeout=30) as r:
                 rem, last = r.headers.get("x-requests-remaining"), r.headers.get("x-requests-last")
@@ -135,9 +134,9 @@ class OddsApi:
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", "replace")[:300]
             if e.code == 401:
-                raise SystemExit("مفتاح ODDS_API_KEY غلط أو منتهي. تأكد منه بإعدادات GitHub Secrets.")
+                raise SystemExit("مفتاح ODDS_API_KEY غلط أو منتهي.")
             if e.code == 429:
-                raise BudgetExhausted("خلص رصيد الطلبات بـ The Odds API.")
+                raise BudgetExhausted("خلص رصيد The Odds API.")
             log(f"  تخطيت {path}: HTTP {e.code} {body}")
             return None
         except urllib.error.URLError as e:
@@ -145,17 +144,16 @@ class OddsApi:
             return None
 
 
-# ---------------------------------------------------------------- probabilities
+# ---------------------------------------------------------------- market probabilities
 
 def _keys(base: str, o: dict, home: str, away: str):
-    """(مفتاح المجموعة، مفتاح النتيجة). المجموعة = النتائج اللي مجموعها 100% عند الشركة."""
     name, pt, desc = o.get("name"), o.get("point"), o.get("description")
     if base in ("h2h", "btts"):
         return (base,), (base, name, None, None)
     if pt is None:
         return None, None
     pt = float(pt)
-    if (pt * 2) != int(pt * 2):  # خطوط الربع (2.25) نتيجتها نص ربح/نص خسارة، بنتخطاها
+    if (pt * 2) != int(pt * 2):  # خطوط الربع بنتخطاها
         return None, None
     if base == "totals":
         return (base, pt), (base, name, pt, None)
@@ -175,11 +173,13 @@ def _keys(base: str, o: dict, home: str, away: str):
 
 
 def market_probabilities(bookmakers: list, home: str, away: str, min_books: int, min_books_extra: int):
-    """بيرجع قائمة (مفتاح_النتيجة، احتمال، عدد_الشركات)."""
+    """قائمة (مفتاح_النتيجة، احتمال_الإجماع، عدد_الشركات، احتمال_الشركات_الأدق أو None)."""
     samples: dict[tuple, dict[tuple, list[float]]] = {}
+    sharp: dict[tuple, dict[tuple, list[float]]] = {}
     books: dict[tuple, set] = {}
     for b in bookmakers:
         seen = set()
+        is_sharp = b.get("key") in SHARP_BOOKS
         for m in b.get("markets", []):
             base = MARKET_BASE.get(m.get("key"))
             if not base:
@@ -199,6 +199,8 @@ def market_probabilities(bookmakers: list, home: str, away: str, min_books: int,
                 total = sum(outs.values())
                 for ok, q in outs.items():
                     samples.setdefault(gk, {}).setdefault(ok, []).append(q / total)
+                    if is_sharp:
+                        sharp.setdefault(gk, {}).setdefault(ok, []).append(q / total)
                 books.setdefault(gk, set()).add(b.get("key"))
 
     result = []
@@ -211,7 +213,11 @@ def market_probabilities(bookmakers: list, home: str, away: str, min_books: int,
         if len(med) < 2:
             continue
         total = sum(med.values())
-        result.extend((ok, v / total, n_books) for ok, v in med.items())
+        sh = sharp.get(gk, {})
+        sh_tot = sum(statistics.median(sh[ok]) for ok in med if ok in sh) if all(ok in sh for ok in med) else 0
+        for ok, v in med.items():
+            sp = statistics.median(sh[ok]) / sh_tot if sh_tot else None
+            result.append((ok, v / total, n_books, sp))
     return result
 
 
@@ -219,52 +225,58 @@ def event_legs(ev: dict, sport_key: str, league: str, bookmakers: list, cfg: dic
     home, away = ev["home_team"], ev["away_team"]
     group = group_of(sport_key)
     probs = market_probabilities(bookmakers, home, away, cfg["min_bookmakers"], cfg["min_bookmakers_extra_markets"])
+    raw = [(m, n, pt, d, p, k, sp) for (m, n, pt, d), p, k, sp in probs]
 
-    raw = [(market, name, pt, desc, p, n) for (market, name, pt, desc), p, n in probs]
+    h2h = {n: (p, k, sp) for m, n, pt, d, p, k, sp in raw if m == "h2h"}
+    if group == "soccer" and {"Draw", home, away} <= set(h2h):
+        k = min(v[1] for v in h2h.values())
+        sharp_ok = all(v[2] is not None for v in h2h.values())
 
-    # فرصة مزدوجة من سوق الفائز (كرة القدم)
-    h2h = {name: (p, n) for market, name, pt, desc, p, n in raw if market == "h2h"}
-    if group == "soccer" and "Draw" in h2h and home in h2h and away in h2h:
-        n = min(v[1] for v in h2h.values())
-        raw.append(("double_chance", home, None, None, h2h[home][0] + h2h["Draw"][0], n))
-        raw.append(("double_chance", away, None, None, h2h[away][0] + h2h["Draw"][0], n))
-        raw.append(("double_chance", "No Draw", None, None, h2h[home][0] + h2h[away][0], n))
+        def dc(a, b):
+            return (h2h[a][0] + h2h[b][0], (h2h[a][2] + h2h[b][2]) if sharp_ok else None)
+        for name, (x, y) in ((home, (home, "Draw")), (away, (away, "Draw")), ("No Draw", (home, away))):
+            p, sp = dc(x, y)
+            raw.append(("double_chance", name, None, None, p, k, sp))
 
     max_p = 1.0 / cfg["min_leg_odds"]
     legs = []
-    for market, name, pt, desc, p, n in raw:
-        if p > max_p or p < 0.05:
+    for m, n, pt, d, p, k, sp in raw:
+        if p > max_p + 0.02 or p < 0.05:
             continue
         legs.append({
-            "id": f"{ev['id']}|{market}|{name}|{pt}|{desc}",
+            "id": f"{ev['id']}|{m}|{n}|{pt}|{d}",
             "event_id": ev["id"], "sport_key": sport_key, "group": group, "league": league,
             "home": home, "away": away, "commence_time": ev["commence_time"],
-            "market": market, "name": name, "point": pt, "description": desc,
-            "prob": round(p, 4), "books": n, "result": "pending", "score": None,
+            "market": m, "name": n, "point": pt, "description": d,
+            "market_prob": round(p, 4), "sharp_prob": round(sp, 4) if sp is not None else None,
+            "prob": round(p, 4), "books": k, "result": "pending", "score": None,
         })
     return legs
 
 
 # ---------------------------------------------------------------- selection
 
-def best_per_event(legs: list[dict], lo: float = 0.0, hi: float = 1.0, exclude: set | None = None) -> list[dict]:
+def eligible(legs: list[dict], cfg: dict, now: datetime) -> list[dict]:
+    max_p = 1.0 / cfg["min_leg_odds"]
+    cutoff = now + timedelta(hours=cfg["window_hours"])
+    return [l for l in legs if l.get("eligible", True) and l["prob"] <= max_p and parse_time(l["commence_time"]) <= cutoff]
+
+
+def best_per_event(legs: list[dict]) -> list[dict]:
     best: dict[str, dict] = {}
     for leg in legs:
-        if exclude and leg["event_id"] in exclude:
-            continue
-        if not (lo <= leg["prob"] <= hi):
-            continue
         cur = best.get(leg["event_id"])
-        if cur is None or (leg["prob"], leg["books"]) > (cur["prob"], cur["books"]):
+        key = (leg["prob"], leg.get("support", 0), leg["books"])
+        if cur is None or key > (cur["prob"], cur.get("support", 0), cur["books"]):
             best[leg["event_id"]] = leg
-    return sorted(best.values(), key=lambda l: (-l["prob"], -l["books"], l["commence_time"]))
+    return sorted(best.values(), key=lambda l: (-l["prob"], -l.get("support", 0), l["commence_time"]))
 
 
 def build_coupons(legs: list[dict], tiers: dict) -> list[dict]:
     """
-    لكل قسيمة: الاحتمال المستهدف لكل توقع = (الاحتمال الكلي المستهدف) ^ (1 / عدد التوقعات).
-    من كل مباراة بناخذ التوقع الأقرب للهدف، وما بنحط مباراتين من نفس المباراة بنفس القسيمة.
-    بنفضّل مباريات ما انستخدمت بقسيمة قبلها، وما بنكرر نفس نوع السوق أكثر من مرتين.
+    الاحتمال المستهدف لكل توقع = (الاحتمال الكلي المستهدف) ^ (1 / عدد التوقعات).
+    من كل مباراة بناخذ التوقع الأقرب للهدف، ومع التساوي اللي إشاراته الداعمة أكثر.
+    توقع واحد من كل مباراة بالقسيمة، وبنفضّل مباريات ما انستخدمت، وما بنكرر نفس السوق أكثر من مرتين.
     """
     used: set[str] = set()
     coupons = []
@@ -276,7 +288,8 @@ def build_coupons(legs: list[dict], tiers: dict) -> list[dict]:
         for leg in legs:
             if not (t["min_leg"] <= leg["prob"] <= t["max_leg"]):
                 continue
-            score = (abs(leg["prob"] - target), -leg["books"])
+            ratio = leg.get("support", 0) / leg["signals"] if leg.get("signals") else 0.5
+            score = (abs(leg["prob"] - target) - 0.02 * ratio, -leg["books"])
             cur = per_event.get(leg["event_id"])
             if cur is None or score < cur[0]:
                 per_event[leg["event_id"]] = (score, leg)
@@ -290,7 +303,7 @@ def build_coupons(legs: list[dict], tiers: dict) -> list[dict]:
                 continue
             chosen.append(leg)
             per_market[leg["market"]] = per_market.get(leg["market"], 0) + 1
-        for leg in ranked:  # إذا ما كفّى، بنرخي شرط تنويع الأسواق
+        for leg in ranked:
             if len(chosen) >= k:
                 break
             if leg not in chosen:
@@ -317,22 +330,73 @@ def top_list(legs: list[dict], n: int) -> list[dict]:
     return top
 
 
+# ---------------------------------------------------------------- movement snapshot
+
+def apply_movement(legs: list[dict], snapshot: dict) -> None:
+    prev = snapshot.get("probs", {})
+    for l in legs:
+        if l["id"] in prev:
+            l["movement"] = round(l["market_prob"] - prev[l["id"]], 4)
+
+
+def make_snapshot(legs: list[dict], now: datetime) -> dict:
+    return {"taken_at": now.strftime(ISO),
+            "probs": {l["id"]: l["market_prob"] for l in legs if l["market_prob"] >= 0.35}}
+
+
+# ---------------------------------------------------------------- football analysis
+
+def soccer_contexts(legs: list[dict], matches: list, teams: dict, current: dict) -> dict[str, an.MatchContext]:
+    out: dict[str, an.MatchContext] = {}
+    events = {}
+    for l in legs:
+        if l["group"] == "soccer":
+            events.setdefault(l["event_id"], l)
+    for eid, l in events.items():
+        code = fdata.COMPETITIONS.get(l["sport_key"])
+        if not code or code not in current:
+            continue
+        kickoff = parse_time(l["commence_time"])
+        comp_matches = [m for m in matches if m.comp == code and m.season == current[code]]
+        fx = fdata.match_fixture(l["home"], l["away"], kickoff, comp_matches, teams)
+        if not fx:
+            continue
+        season = current[code]
+        dom = code if code in fdata.DOMESTIC else None
+        if dom:
+            lh, la, n = an.league_averages(matches, dom, season, kickoff)
+            table = an.league_table(matches, dom, season, kickoff)
+        else:
+            lh, la, n, table = 1.50, 1.20, 0, {}
+        ctx = an.MatchContext(
+            home=an.team_form(fx.home_id, l["home"], matches, kickoff, season),
+            away=an.team_form(fx.away_id, l["away"], matches, kickoff, season),
+            lh_league=lh, la_league=la, league_n=n, table=table,
+            h2h=an.head_to_head(matches, fx.home_id, fx.away_id, kickoff),
+        )
+        if ctx.sample >= 2:
+            out[eid] = an.build_model(ctx)
+    return out
+
+
+def run_analysis(legs: list[dict], contexts: dict, cfg: dict) -> None:
+    for l in legs:
+        an.analyze(l, contexts.get(l["event_id"]), cfg)
+
+
 # ---------------------------------------------------------------- predict
 
 def predict(api: OddsApi, cfg: dict, now: datetime) -> tuple[list[dict], dict]:
-    sports = api.get("/sports") or []  # مجاني
+    sports = api.get("/sports") or []
     active = {s["key"]: s for s in sports if s.get("active") and not s.get("has_outrights")}
     keys = [k for k in cfg["soccer_leagues"] + cfg["basketball_leagues"] if k in active]
     tennis = sorted(k for k in active if k.startswith("tennis_")) if cfg.get("include_all_active_tennis") else []
-
-    window = {
-        "commenceTimeFrom": now.strftime(ISO),
-        "commenceTimeTo": (now + timedelta(hours=cfg["window_hours"])).strftime(ISO),
-    }
+    window = {"commenceTimeFrom": now.strftime(ISO),
+              "commenceTimeTo": (now + timedelta(hours=cfg.get("fetch_hours", 48))).strftime(ISO)}
     regions = cfg["regions"]
     n_regions = len(regions.split(","))
 
-    featured: list[tuple[str, dict]] = []  # (sport_key, event with bookmakers)
+    featured: list[tuple[str, dict]] = []
     paid_tennis = 0
     for key in keys + tennis:
         group = group_of(key)
@@ -343,8 +407,7 @@ def predict(api: OddsApi, cfg: dict, now: datetime) -> tuple[list[dict], dict]:
         if not api.can_spend(cost):
             log(f"  وقفت قبل {key}: حد الصرف.")
             break
-        events = api.get(f"/sports/{key}/events", **window)  # مجاني
-        if not events:
+        if not api.get(f"/sports/{key}/events", **window):
             continue
         odds = api.get(f"/sports/{key}/odds", cost=cost, regions=regions, markets=mk, oddsFormat="decimal", **window)
         if group == "tennis":
@@ -356,17 +419,18 @@ def predict(api: OddsApi, cfg: dict, now: datetime) -> tuple[list[dict], dict]:
                 n += 1
         log(f"  {key}: {n} مباراة")
 
-    # أسواق إضافية (الفريقين بيسجلوا، كل خطوط الأهداف...) لأقوى المباريات
-    def fav_strength(item):
-        key, ev = item
-        legs = event_legs(ev, key, "", ev.get("bookmakers", []), cfg)
-        return max((l["prob"] for l in legs if l["market"] == "h2h"), default=0)
+    cutoff = now + timedelta(hours=cfg["window_hours"])
 
-    deep_pool = [it for it in featured if cfg["markets"][group_of(it[0])]["extra"]]
-    deep_pool.sort(key=fav_strength, reverse=True)
-    deep_done = 0
-    for key, ev in deep_pool:
-        if deep_done >= cfg.get("extra_markets_events_per_run", 0):
+    def strength(item):
+        key, ev = item
+        ls = event_legs(ev, key, "", ev.get("bookmakers", []), cfg)
+        return max((l["market_prob"] for l in ls if l["market"] == "h2h"), default=0)
+
+    deep = [it for it in featured if cfg["markets"][group_of(it[0])]["extra"] and parse_time(it[1]["commence_time"]) <= cutoff]
+    deep.sort(key=strength, reverse=True)
+    done = 0
+    for key, ev in deep:
+        if done >= cfg.get("extra_markets_events_per_run", 0):
             break
         mk = cfg["markets"][group_of(key)]["extra"]
         cost = len(mk.split(",")) * n_regions
@@ -375,14 +439,14 @@ def predict(api: OddsApi, cfg: dict, now: datetime) -> tuple[list[dict], dict]:
         extra = api.get(f"/sports/{key}/events/{ev['id']}/odds", cost=cost, regions=regions, markets=mk, oddsFormat="decimal")
         if extra and extra.get("bookmakers"):
             ev["bookmakers"] = ev.get("bookmakers", []) + extra["bookmakers"]
-        deep_done += 1
+        done += 1
 
     legs = []
     for key, ev in featured:
         legs.extend(event_legs(ev, key, active[key].get("title", key), ev.get("bookmakers", []), cfg))
-    stats = {"events": len(featured), "legs": len(legs), "deep_events": deep_done,
+    stats = {"events": len(featured), "legs": len(legs), "deep_events": done,
              "markets": sorted({l["market"] for l in legs})}
-    log(f"  {stats['events']} مباراة، {stats['legs']} توقع ممكن، أسواق إضافية لـ{deep_done} مباراة.")
+    log(f"  {stats['events']} مباراة، {stats['legs']} توقع ممكن، أسواق إضافية لـ{done} مباراة.")
     return legs, stats
 
 
@@ -392,29 +456,9 @@ SCORE_RE = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*$")
 
 
 def grade_leg(leg: dict, hs: float, as_: float) -> str:
-    home, away = leg["home"], leg["away"]
-    m, n, pt, desc = leg["market"], leg["name"], leg["point"], leg["description"]
-    winner = home if hs > as_ else away if as_ > hs else "Draw"
+    o = an._outcome(leg, hs, as_)
     leg["score"] = f"{hs:g}-{as_:g}"
-    if m == "h2h":
-        return "hit" if winner == n else "miss"
-    if m == "double_chance":
-        ok = winner != "Draw" if n == "No Draw" else winner in (n, "Draw")
-        return "hit" if ok else "miss"
-    if m == "btts":
-        both = hs > 0 and as_ > 0
-        return "hit" if (n == "Yes") == both else "miss"
-    if m == "totals":
-        diff = (hs + as_ - pt) if n == "Over" else (pt - hs - as_)
-    elif m == "team_totals":
-        ts = hs if desc == home else as_
-        diff = (ts - pt) if n == "Over" else (pt - ts)
-    elif m == "spreads":
-        mine, other = (hs, as_) if n == home else (as_, hs)
-        diff = mine + pt - other
-    else:
-        return "void"
-    return "hit" if diff > 0 else "void" if diff == 0 else "miss"
+    return "void" if o is None else ("hit" if o else "miss")
 
 
 def coupon_result(c: dict) -> str:
@@ -475,7 +519,7 @@ def check_results(api: OddsApi | None, cfg: dict, history: dict, now: datetime) 
             elif leg["event_id"] in finals:
                 new = grade_leg(leg, *finals[leg["event_id"]])
             elif parse_time(leg["commence_time"]) + timedelta(days=cfg["give_up_after_days"]) < now:
-                new = "void"  # ما توفرت نتيجة: تأجيل، انسحاب، أو الرياضة ما إلها نتائج بالـAPI
+                new = "void"
             else:
                 continue
             if new != leg["result"]:
@@ -487,13 +531,13 @@ def check_results(api: OddsApi | None, cfg: dict, history: dict, now: datetime) 
     return changed
 
 
-# ---------------------------------------------------------------- demo data
+# ---------------------------------------------------------------- demo
 
-def _poisson_cdf(k: int, lam: float) -> float:
+def _pois_cdf(k: int, lam: float) -> float:
     return sum(math.exp(-lam) * lam ** i / math.factorial(i) for i in range(k + 1))
 
 
-def _poisson_sample(rng: random.Random, lam: float) -> int:
+def _pois_sample(rng: random.Random, lam: float) -> int:
     l, k, p = math.exp(-lam), 0, 1.0
     while True:
         p *= rng.random()
@@ -502,7 +546,7 @@ def _poisson_sample(rng: random.Random, lam: float) -> int:
         k += 1
 
 
-def _norm_cdf(x: float) -> float:
+def _ncdf(x: float) -> float:
     return 0.5 * (1 + math.erf(x / math.sqrt(2)))
 
 
@@ -526,43 +570,36 @@ DEMO_EVENTS = [
 ]
 
 
-def _demo_markets(e) -> tuple[list, tuple[float, float]]:
-    """بيرجع (أسواق بشكل الـAPI لشركة وحدة عادلة، دالة نتيجة)."""
+def _demo_markets(e) -> list:
     group, _, _, home, away, a, b = e
     mk = []
     if group == "soccer":
         lh, la = a, b
-        ph = pd = 0.0
-        for i in range(12):
-            for j in range(12):
-                p = (math.exp(-lh) * lh ** i / math.factorial(i)) * (math.exp(-la) * la ** j / math.factorial(j))
-                if i > j:
-                    ph += p
-                elif i == j:
-                    pd += p
-        pa = 1 - ph - pd
-        mk.append(("h2h", [(home, None, None, ph), ("Draw", None, None, pd), (away, None, None, pa)]))
+        grid = [[(math.exp(-lh) * lh ** i / math.factorial(i)) * (math.exp(-la) * la ** j / math.factorial(j))
+                 for j in range(12)] for i in range(12)]
+        ph = sum(grid[i][j] for i in range(12) for j in range(12) if i > j)
+        pd = sum(grid[i][i] for i in range(12))
+        mk.append(("h2h", [(home, None, None, ph), ("Draw", None, None, pd), (away, None, None, 1 - ph - pd)]))
         for line in (0.5, 1.5, 2.5, 3.5, 4.5):
-            under = _poisson_cdf(int(line), lh + la)
-            mk.append(("alternate_totals", [("Over", line, None, 1 - under), ("Under", line, None, under)]))
-        btts = (1 - math.exp(-lh)) * (1 - math.exp(-la))
-        mk.append(("btts", [("Yes", None, None, btts), ("No", None, None, 1 - btts)]))
+            u = _pois_cdf(int(line), lh + la)
+            mk.append(("alternate_totals", [("Over", line, None, 1 - u), ("Under", line, None, u)]))
+        bt = (1 - math.exp(-lh)) * (1 - math.exp(-la))
+        mk.append(("btts", [("Yes", None, None, bt), ("No", None, None, 1 - bt)]))
         for line in (0.5, 1.5):
-            u = _poisson_cdf(int(line), lh)
+            u = _pois_cdf(int(line), lh)
             mk.append(("team_totals", [("Over", line, home, 1 - u), ("Under", line, home, u)]))
-        diff_ge2 = sum((math.exp(-lh) * lh ** i / math.factorial(i)) * (math.exp(-la) * la ** j / math.factorial(j))
-                       for i in range(12) for j in range(12) if i - j >= 2)
-        mk.append(("alternate_spreads", [(home, -1.5, None, diff_ge2), (away, 1.5, None, 1 - diff_ge2)]))
+        d2 = sum(grid[i][j] for i in range(12) for j in range(12) if i - j >= 2)
+        mk.append(("alternate_spreads", [(home, -1.5, None, d2), (away, 1.5, None, 1 - d2)]))
     elif group == "basketball":
-        mu, tot, sd_m, sd_t = a, b, 12.0, 17.0
-        ph = 1 - _norm_cdf(-mu / sd_m)
+        mu, tot = a, b
+        ph = 1 - _ncdf(-mu / 12)
         mk.append(("h2h", [(home, None, None, ph), (away, None, None, 1 - ph)]))
         for line in (-0.5 - round(mu) + k * 4 for k in range(-2, 4)):
-            p = 1 - _norm_cdf((-line - mu) / sd_m)
+            p = 1 - _ncdf((-line - mu) / 12)
             mk.append(("alternate_spreads", [(home, line, None, p), (away, -line, None, 1 - p)]))
         for line in (round(tot) + 0.5 + k * 8 for k in range(-3, 3)):
-            under = _norm_cdf((line - tot) / sd_t)
-            mk.append(("alternate_totals", [("Over", line, None, 1 - under), ("Under", line, None, under)]))
+            u = _ncdf((line - tot) / 17)
+            mk.append(("alternate_totals", [("Over", line, None, 1 - u), ("Under", line, None, u)]))
     else:
         mk.append(("h2h", [(home, None, None, a), (away, None, None, 1 - a)]))
     return mk
@@ -571,7 +608,7 @@ def _demo_markets(e) -> tuple[list, tuple[float, float]]:
 def _demo_score(e, rng: random.Random) -> tuple[float, float]:
     group, _, _, _, _, a, b = e
     if group == "soccer":
-        return float(_poisson_sample(rng, a)), float(_poisson_sample(rng, b))
+        return float(_pois_sample(rng, a)), float(_pois_sample(rng, b))
     if group == "basketball":
         margin, tot = rng.gauss(a, 12), rng.gauss(b, 17)
         h = round((tot + margin) / 2)
@@ -579,29 +616,74 @@ def _demo_score(e, rng: random.Random) -> tuple[float, float]:
     return (2.0, rng.choice([0.0, 1.0])) if rng.random() < a else (rng.choice([0.0, 1.0]), 2.0)
 
 
+def _demo_history(e, kickoff: datetime, rng: random.Random):
+    """موسم مصغّر للفريقين من نفس قوتهم، عشان التحليل يشتغل على بيانات بشكل الحقيقية."""
+    _, key, _, home, away, lh, la = e
+    code = fdata.COMPETITIONS.get(key, "DEMO")
+    season = kickoff.year if kickoff.month >= 7 else kickoff.year - 1
+    ms = []
+    strength = {home: (lh * 0.75, 0.8), away: (la * 1.15, 1.8)}
+    for team, (att, dfn) in strength.items():
+        for i in range(10):
+            d = kickoff - timedelta(days=4 + 7 * i + rng.uniform(0, 2))
+            opp = f"Opp{i}"
+            if i % 2 == 0:
+                hg, ag = _pois_sample(rng, att * 1.15), _pois_sample(rng, dfn * 0.9)
+                ms.append(an.Match(d, code, season, team, opp, team, opp, hg, ag))
+            else:
+                hg, ag = _pois_sample(rng, dfn * 1.1), _pois_sample(rng, att * 0.9)
+                ms.append(an.Match(d, code, season, opp, team, opp, team, hg, ag))
+    for i in range(4):
+        d = kickoff - timedelta(days=120 + 90 * i)
+        if i % 2:
+            ms.append(an.Match(d, code, season - 1, away, home, away, home, _pois_sample(rng, la), _pois_sample(rng, lh)))
+        else:
+            ms.append(an.Match(d, code, season - 1, home, away, home, away, _pois_sample(rng, lh), _pois_sample(rng, la)))
+    return ms, code, season
+
+
 def demo_day(day: datetime, rng: random.Random, cfg: dict, resolve: bool) -> dict:
     pool = rng.sample(DEMO_EVENTS, 12)
-    legs, scores = [], {}
+    legs, scores, contexts = [], {}, {}
     for i, e in enumerate(pool):
         group, key, league, home, away = e[:5]
         kickoff = day.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(hours=11 + i)
         ev_id = f"demo-{day:%Y%m%d}-{i}"
         books = []
-        for bk in range(rng.randint(6, 14)):
+        names = ["pinnacle", "betfair_ex_eu"] + [f"book{k}" for k in range(rng.randint(6, 12))]
+        for bk in names:
+            sharp = bk in SHARP_BOOKS
             markets = []
             for mkey, outs in _demo_markets(e):
-                margin = 1.05 + rng.uniform(-0.01, 0.02)
+                margin = (1.025 if sharp else 1.05) + rng.uniform(-0.01, 0.02)
+                noise = 0.006 if sharp else 0.015
                 markets.append({"key": mkey, "outcomes": [
                     {"name": n, "point": pt, "description": d,
-                     "price": round(1 / max(0.003, min(0.997, p * margin * rng.uniform(0.985, 1.015))), 3)}
+                     "price": round(1 / max(0.003, min(0.997, p * margin * rng.uniform(1 - noise, 1 + noise))), 3)}
                     for n, pt, d, p in outs]})
-            books.append({"key": f"book{bk}", "markets": markets})
+            books.append({"key": bk, "markets": markets})
         ev = {"id": ev_id, "home_team": home, "away_team": away,
               "commence_time": kickoff.astimezone(timezone.utc).strftime(ISO)}
-        legs.extend(event_legs(ev, key, league, books, cfg))
+        ev_legs = event_legs(ev, key, league, books, cfg)
+        for l in ev_legs:
+            if rng.random() < 0.7:
+                l["movement"] = round(rng.gauss(0.004, 0.014), 4)
+        legs.extend(ev_legs)
+        if group == "soccer" and key != "soccer_saudi_arabia_pro_league":
+            ms, code, season = _demo_history(e, kickoff, rng)
+            ctx = an.MatchContext(
+                home=an.team_form(home, home, ms, kickoff, season),
+                away=an.team_form(away, away, ms, kickoff, season),
+                lh_league=1.5, la_league=1.2, league_n=100,
+                table={home: (rng.randint(1, 4), rng.randint(18, 26), 10), away: (rng.randint(14, 20), rng.randint(4, 10), 10)},
+                h2h=an.head_to_head(ms, home, away, kickoff),
+            )
+            contexts[ev_id] = an.build_model(ctx)
         scores[ev_id] = _demo_score(e, random.Random(zlib.crc32(ev_id.encode())))
-    out = {"date": day.strftime("%Y-%m-%d"), "top": top_list(legs, cfg["top_list_size"]),
-           "coupons": build_coupons(legs, cfg["coupons"])}
+    run_analysis(legs, contexts, cfg)
+    pick_from = [l for l in legs if l.get("eligible", True) and l["prob"] <= 1 / cfg["min_leg_odds"]]
+    out = {"date": day.strftime("%Y-%m-%d"), "top": top_list(pick_from, cfg["top_list_size"]),
+           "coupons": build_coupons(pick_from, cfg["coupons"])}
     if resolve:
         for leg in all_legs(out):
             leg["result"] = grade_leg(leg, *scores[leg["event_id"]])
@@ -626,9 +708,9 @@ def build_demo(now: datetime, cfg: dict) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="قائمة الثقة اليومية")
-    ap.add_argument("--demo", action="store_true", help="بيانات تجريبية بدون مفتاح API")
-    ap.add_argument("--no-results", action="store_true", help="لا تحدّث نتائج الأيام الماضية")
-    ap.add_argument("--results-only", action="store_true", help="حدّث النتائج بس")
+    ap.add_argument("--demo", action="store_true")
+    ap.add_argument("--no-results", action="store_true")
+    ap.add_argument("--results-only", action="store_true")
     args = ap.parse_args()
 
     now = datetime.now(timezone.utc).replace(microsecond=0)
@@ -641,11 +723,11 @@ def main() -> int:
 
     key = os.environ.get("ODDS_API_KEY", "").strip()
     if not key:
-        raise SystemExit("لازم تحط مفتاح ODDS_API_KEY (من the-odds-api.com).")
+        raise SystemExit("لازم تحط مفتاح ODDS_API_KEY.")
+    fd_key = os.environ.get("FOOTBALL_DATA_KEY", "").strip()
 
     api = OddsApi(key, cfg.get("min_credits_reserve", 20), cfg.get("max_credits_per_run", 16))
     history = load_json(HISTORY_FILE, {"days": []})
-    # نشيل البيانات التجريبية والصيغة القديمة أول ما يشتغل بمفتاح حقيقي
     history["days"] = [d for d in history.get("days", [])
                        if "coupons" in d and not any(str(l["id"]).startswith("demo-") for l in all_legs(d))]
 
@@ -654,11 +736,29 @@ def main() -> int:
             log("بفحص نتائج الأيام الماضية...")
             check_results(api, cfg, history, now)
         if not args.results_only:
-            log("بجهّز قسائم اليوم...")
+            log("بجيب الأودز...")
             legs, stats = predict(api, cfg, now)
+            apply_movement(legs, load_json(SNAPSHOT_FILE, {}))
+            save_json(SNAPSHOT_FILE, make_snapshot(legs, now))
+
+            contexts = {}
+            if fd_key:
+                log("بجيب إحصائيات كرة القدم...")
+                window_legs = [l for l in legs if parse_time(l["commence_time"]) <= now + timedelta(hours=cfg["window_hours"])]
+                codes = {fdata.COMPETITIONS[l["sport_key"]] for l in window_legs if l["sport_key"] in fdata.COMPETITIONS}
+                fd = fdata.FootballData(fd_key, cfg.get("football_data_max_requests", 24))
+                matches, teams, current = fdata.load_competitions(fd, codes, cfg.get("h2h_previous_season", True))
+                contexts = soccer_contexts(window_legs, matches, teams, current)
+                log(f"  حللت {len(contexts)} مباراة كرة قدم بالإحصائيات ({fd.used} طلب).")
+            else:
+                log("  ما في FOOTBALL_DATA_KEY: التحليل رح يعتمد على السوق بس.")
+            run_analysis(legs, contexts, cfg)
+            stats["analyzed"] = len(contexts)
+
+            pick_from = eligible(legs, cfg, now)
             date = now.astimezone(AMMAN).strftime("%Y-%m-%d")
-            day = {"date": date, "top": top_list(legs, cfg["top_list_size"]),
-                   "coupons": build_coupons(legs, cfg["coupons"])}
+            day = {"date": date, "top": top_list(pick_from, cfg["top_list_size"]),
+                   "coupons": build_coupons(pick_from, cfg["coupons"])}
             history["days"] = [d for d in history["days"] if d["date"] != date]
             if day["top"]:
                 history["days"].append(day)

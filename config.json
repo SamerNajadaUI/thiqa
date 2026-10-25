@@ -1,14 +1,13 @@
 {
   "regions": "eu",
   "window_hours": 24,
+  "fetch_hours": 48,
   "min_bookmakers": 3,
   "min_bookmakers_extra_markets": 2,
   "min_leg_odds": 1.04,
   "top_list_size": 10,
-
   "max_credits_per_run": 16,
   "min_credits_reserve": 20,
-
   "soccer_leagues": [
     "soccer_epl",
     "soccer_spain_la_liga",
@@ -25,21 +24,57 @@
   ],
   "include_all_active_tennis": true,
   "max_tennis_tournaments": 3,
-
   "markets": {
-    "soccer":     { "featured": "h2h,totals", "extra": "btts,alternate_totals,team_totals,alternate_spreads" },
-    "basketball": { "featured": "h2h,spreads,totals", "extra": "alternate_spreads,alternate_totals,team_totals" },
-    "tennis":     { "featured": "h2h", "extra": "" }
+    "soccer": {
+      "featured": "h2h,totals",
+      "extra": "btts,alternate_totals,team_totals,alternate_spreads"
+    },
+    "basketball": {
+      "featured": "h2h,spreads,totals",
+      "extra": "alternate_spreads,alternate_totals,team_totals"
+    },
+    "tennis": {
+      "featured": "h2h",
+      "extra": ""
+    }
   },
   "extra_markets_events_per_run": 4,
-
   "coupons": {
-    "safe":   { "legs": 3, "min_legs": 2, "target_total": 0.80, "min_leg": 0.88, "max_leg": 1.00, "max_same_market": 2 },
-    "medium": { "legs": 4, "min_legs": 3, "target_total": 0.55, "min_leg": 0.72, "max_leg": 0.93, "max_same_market": 2 },
-    "risky":  { "legs": 5, "min_legs": 4, "target_total": 0.20, "min_leg": 0.50, "max_leg": 0.85, "max_same_market": 2 }
+    "safe": {
+      "legs": 3,
+      "min_legs": 2,
+      "target_total": 0.8,
+      "min_leg": 0.88,
+      "max_leg": 1.0,
+      "max_same_market": 2
+    },
+    "medium": {
+      "legs": 4,
+      "min_legs": 3,
+      "target_total": 0.55,
+      "min_leg": 0.72,
+      "max_leg": 0.93,
+      "max_same_market": 2
+    },
+    "risky": {
+      "legs": 5,
+      "min_legs": 4,
+      "target_total": 0.2,
+      "min_leg": 0.5,
+      "max_leg": 0.85,
+      "max_same_market": 2
+    }
   },
-
   "check_results": true,
   "results_days_from": 3,
-  "give_up_after_days": 5
+  "give_up_after_days": 5,
+  "analysis": {
+    "model_weight": 0.15,
+    "max_model_gap": 0.08,
+    "max_market_drop": 0.03,
+    "min_support_ratio": 0.5,
+    "max_reasons": 7
+  },
+  "football_data_max_requests": 24,
+  "h2h_previous_season": true
 }
