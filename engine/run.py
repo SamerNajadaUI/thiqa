@@ -723,7 +723,8 @@ def main() -> int:
 
     key = os.environ.get("ODDS_API_KEY", "").strip()
     if not key:
-        raise SystemExit("لازم تحط مفتاح ODDS_API_KEY.")
+        log("ما في مفتاح ODDS_API_KEY لسا، فالموقع رح يضل على البيانات التجريبية.")
+        return 0
     fd_key = os.environ.get("FOOTBALL_DATA_KEY", "").strip()
 
     api = OddsApi(key, cfg.get("min_credits_reserve", 20), cfg.get("max_credits_per_run", 16))
