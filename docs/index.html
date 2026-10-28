@@ -336,7 +336,7 @@ function initials(name) {
 
 function teamHTML(name, logo) {
   const ini = `<span class="initials" aria-hidden="true">${esc(initials(name))}</span>`;
-  const img = logo ? `<img class="logo" src="${esc(logo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'initials',textContent:'${esc(initials(name))}'}))">` : ini;
+  const img = logo ? `<img class="logo" src="${esc(logo)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'initials',textContent:'${esc(initials(name))}'}))">` : ini;
   return `<span class="team">${img}${t(name)}</span>`;
 }
 
