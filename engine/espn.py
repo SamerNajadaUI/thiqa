@@ -63,7 +63,7 @@ def _num(x):
 
 
 class Espn:
-    def __init__(self, max_requests: int = 40):
+    def __init__(self, max_requests: int = 80):
         self.cache: dict[tuple, list] = {}
         self.used = 0
         self.max_requests = max_requests
@@ -186,7 +186,7 @@ def days_for(kickoff: datetime) -> list[str]:
     return sorted({kickoff.strftime("%Y%m%d"), eastern.strftime("%Y%m%d")})
 
 
-def update_legs(client: Espn, legs: list[dict]) -> dict[str, tuple[float, float]]:
+def update_legs(client: Espn, legs: list[dict], until: datetime | None = None) -> dict[str, tuple[float, float]]:
     """
     بيعبّي لكل توقع: الشعارات، معلومات ESPN، والحالة المباشرة.
     بيرجع النتائج النهائية: event_id -> (أهداف صاحب الأرض، أهداف الضيف) بترتيب The Odds API.
@@ -202,6 +202,8 @@ def update_legs(client: Espn, legs: list[dict]) -> dict[str, tuple[float, float]
             continue
         sport, league = lg
         kickoff = datetime.strptime(l0["commence_time"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+        if until is not None and kickoff > until:
+            continue  # لسا بعيدة: ما في نتيجة نجيبها
         game, swapped = None, False
         for day in days_for(kickoff):
             game, swapped = find_game(l0, client.games(sport, league, day))
@@ -223,3 +225,39 @@ def update_legs(client: Espn, legs: list[dict]) -> dict[str, tuple[float, float]
         if game["completed"] and game["state"] == "post" and hs is not None and as_ is not None:
             finals[eid] = (hs, as_)
     return finals
+
+
+def team_logos(client: Espn, sport: str, league: str) -> list[dict]:
+    key = ("teams", sport, league)
+    if key in client.cache:
+        return client.cache[key]
+    data = client._get(f"{BASE}/{sport}/{league}/teams") or {}
+    out = []
+    for sp in data.get("sports", []):
+        for lg in sp.get("leagues", []):
+            for item in lg.get("teams", []):
+                t = item.get("team") or {}
+                logos = t.get("logos") or []
+                logo = (logos[0] or {}).get("href") if logos else t.get("logo")
+                if logo:
+                    out.append({"names": [t.get("displayName"), t.get("shortDisplayName"), t.get("name"), t.get("location")],
+                                "logo": logo})
+    client.cache[key] = out
+    return out
+
+
+def attach_logos(client: Espn, legs: list[dict]) -> None:
+    """شعارات للمباريات اللي لسا بعيدة: طلب واحد لكل دوري بدل طلب لكل يوم."""
+    for l in legs:
+        if l.get("home_logo") and l.get("away_logo"):
+            continue
+        lg = league_for(l["sport_key"])
+        if not lg or lg[0] == "tennis":
+            continue
+        teams = team_logos(client, *lg)
+        for side in ("home", "away"):
+            if l.get(f"{side}_logo"):
+                continue
+            best = max(teams, key=lambda t: _sim(l[side], t["names"]), default=None)
+            if best and _sim(l[side], best["names"]) >= 0.75:
+                l[f"{side}_logo"] = best["logo"]

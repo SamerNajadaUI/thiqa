@@ -76,5 +76,25 @@
     "max_reasons": 7
   },
   "football_data_max_requests": 24,
-  "h2h_previous_season": true
+  "h2h_previous_season": true,
+  "long_coupons": {
+    "weekly": {
+      "days": 7,
+      "target_odds": 200,
+      "leg_target": 0.8,
+      "min_leg": 0.62,
+      "max_leg": 0.93,
+      "max_legs": 30,
+      "min_support_ratio": 0.5
+    },
+    "monthly": {
+      "days": 30,
+      "target_odds": 1000,
+      "leg_target": 0.8,
+      "min_leg": 0.62,
+      "max_leg": 0.93,
+      "max_legs": 40,
+      "min_support_ratio": 0.5
+    }
+  }
 }

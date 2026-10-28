@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>قائمة الثقة اليومية</title>
+<title>أبو عودة</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="3 قسائم يومياً (آمنة، شبه آمنة، خطيرة) وأعلى 10 توقعات احتمالاً بكرة القدم والسلة والتنس، مع سجل علني لكل النتائج.">
+<meta name="description" content="أبو عودة: 3 قسائم يومياً، وقسيمة للأسبوع وقسيمة للشهر (آمنة، شبه آمنة، خطيرة) وأعلى 10 توقعات احتمالاً بكرة القدم والسلة والتنس، مع سجل علني لكل النتائج.">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,7 +70,7 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
 .demo { background: var(--wait-soft); color: var(--wait); border-radius: var(--r-md); padding: 10px 14px; font-size: 13px; font-weight: 500; }
 
 /* segmented tabs */
-.tabs { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--soft); padding: 4px; border-radius: 999px; }
+.tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--soft); padding: 4px; border-radius: 999px; }
 .tabs button { border: 0; background: transparent; color: var(--muted); padding: 9px 8px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background .2s, color .2s; }
 .tabs button[aria-selected="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgb(17 19 22 / .08); }
 section { display: flex; flex-direction: column; gap: 16px; }
@@ -175,9 +175,29 @@ details .legs .leg { padding: 10px 12px; }
 @media (prefers-reduced-motion: reduce) { .status.live::before { animation: none; } }
 .updated { color: var(--faint); font-size: 11px; text-align: center; margin: -6px 0 0; }
 
+/* weekly / monthly */
+.long-card { --c: var(--wait); --c-soft: var(--wait-soft); }
+.long-card.monthly { --c: var(--ink); --c-soft: var(--soft); }
+.odds-big { text-align: left; display: flex; flex-direction: column; align-items: flex-end; flex: none; }
+.odds-big b { font-size: 30px; font-weight: 600; line-height: 1.1; direction: ltr; color: var(--c); }
+.odds-big small { font-size: 11px; color: var(--muted); }
+.progress { display: flex; flex-direction: column; gap: 6px; }
+.progress .row { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.progress .row b { color: var(--ink); font-weight: 600; }
+.track { height: 8px; border-radius: 8px; background: var(--soft); overflow: hidden; display: flex; }
+.track i { display: block; height: 100%; }
+.track .h { background: var(--hit); } .track .m { background: var(--miss); }
+.more { border: 1px solid var(--line); border-radius: var(--r-md); }
+.more > summary { font-size: 13px; color: var(--ink); }
+.more .legs { padding: 0 8px 8px; }
+.past-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 2px; border-top: 1px solid var(--line); font-size: 13px; flex-wrap: wrap; }
+
 footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: center; padding-top: 8px; }
 @media (max-width: 440px) {
   th, td { padding: 10px 9px; font-size: 13px; }
+}
+@media (max-width: 440px) {
+  .tabs button { font-size: 13px; padding: 8px 4px; }
 }
 @media (max-width: 400px) {
   .stats { gap: 8px; }
@@ -194,7 +214,7 @@ footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: cen
   <div class="top">
     <div class="brand">
       <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg></span>
-      <b>الثقة</b>
+      <b>أبو عودة</b>
     </div>
     <span class="date" id="today-label">اليوم</span>
   </div>
@@ -208,6 +228,7 @@ footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: cen
 
   <div class="tabs" role="tablist">
     <button role="tab" id="tab-coupons" aria-selected="true" aria-controls="view-coupons">القسائم</button>
+    <button role="tab" id="tab-long" aria-selected="false" aria-controls="view-long">أسبوع وشهر</button>
     <button role="tab" id="tab-top" aria-selected="false" aria-controls="view-top">أعلى 10</button>
     <button role="tab" id="tab-record" aria-selected="false" aria-controls="view-record">السجل</button>
   </div>
@@ -215,6 +236,12 @@ footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: cen
   <section id="view-coupons" role="tabpanel" aria-labelledby="tab-coupons">
     <div id="coupons" style="display:flex;flex-direction:column;gap:16px"></div>
     <p class="note">الرقم بالدائرة هو احتمال إنه كل توقعات القسيمة تصيب مع بعض. الأودز العادلة بتعكس الاحتمال الحقيقي بدون هامش الشركات.</p>
+  </section>
+
+  <section id="view-long" role="tabpanel" aria-labelledby="tab-long" hidden>
+    <div id="long" style="display:flex;flex-direction:column;gap:16px"></div>
+    <p class="note">احتمال أي قسيمة ≈ 1 ÷ أودزها. أودز 200 معناها مرة من كل 200 تقريباً، وأودز 1000 معناها مرة من كل 1000. اخترنا أقوى التوقعات المتوفرة بالفترة، بس جمع هالعدد من المباريات بيخلي الاحتمال الكلي صغير مهما كانت كل مباراة قوية.</p>
+    <div id="long-past"></div>
   </section>
 
   <section id="view-top" role="tabpanel" aria-labelledby="tab-top" hidden>
@@ -258,7 +285,7 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const t = (name) => `<bdi>${esc(name)}</bdi>`;
 
-let state = { today: null, history: null };
+let state = { today: null, history: null, long: null };
 
 async function load() {
   if (EMBEDDED) return EMBEDDED;
@@ -267,8 +294,8 @@ async function load() {
     if (!r.ok) throw new Error(f);
     return r.json();
   };
-  const [today, history] = await Promise.all([get("today.json"), get("history.json")]);
-  return { today, history };
+  const [today, history, long] = await Promise.all([get("today.json"), get("history.json"), get("long.json").catch(() => null)]);
+  return { today, history, long };
 }
 
 function ring(p, label) {
@@ -463,8 +490,65 @@ function renderRecord() {
   }).join("");
 }
 
-const TABS = ["coupons", "top", "record"];
-const HERO = { coupons: "قسائم اليوم", top: "أعلى 10 توقعات", record: "السجل" };
+// ---------- weekly / monthly ----------
+const LONG = {
+  weekly: { title: "قسيمة الأسبوع", pill: "أسبوعية", per: "أسبوع" },
+  monthly: { title: "قسيمة الشهر", pill: "شهرية", per: "شهر" },
+};
+const fmtShort = new Intl.DateTimeFormat("ar-JO-u-nu-latn", { timeZone: tz, day: "numeric", month: "short" });
+const oneIn = (p) => (p ? Math.round(1 / p).toLocaleString("en-US") : "–");
+const pctSmall = (p) => (p * 100 < 1 ? (p * 100).toFixed(2) : (p * 100).toFixed(1)) + "%";
+
+function longCard(kind, c) {
+  const k = LONG[kind];
+  if (!c || !c.legs?.length) {
+    return `<article class="coupon long-card ${kind}"><div class="c-title"><span class="pill">${k.pill}</span><h3>${k.title}</h3><span>بتنزل مع تحديث الصبح الجاي.</span></div></article>`;
+  }
+  const now = Date.now();
+  const n = c.legs.length;
+  const hits = c.legs.filter((l) => l.result === "hit").length;
+  const miss = c.legs.filter((l) => l.result === "miss").length;
+  const voids = c.legs.filter((l) => l.result === "void").length;
+  const left = n - hits - miss - voids;
+  const res = c.result !== "pending" ? ` <span class="status ${c.result}">${STATUS[c.result]}</span>` : "";
+  let line;
+  if (c.result === "won") line = `<b>إجت!</b> كل التوقعات أصابت`;
+  else if (c.result === "lost") line = `خابت عند ${miss === 1 ? "توقع واحد" : miss + " توقعات"}، وأصاب ${hits}`;
+  else line = `أصاب <b>${hits}</b> وضايل <b>${left}</b>`;
+  const upcoming = c.legs.filter((l) => l.result === "pending").slice(0, 3);
+  const shown = upcoming.length ? upcoming : c.legs.slice(-3);
+  return `<article class="coupon long-card ${kind}">
+    <div class="c-head">
+      <div class="c-title"><span class="pill">${k.pill}</span><h3>${k.title}${res}</h3>
+        <span>من ${fmtShort.format(new Date(c.start))} لـ ${fmtShort.format(new Date(c.end))} · ${n} مباراة</span></div>
+      <div class="odds-big"><b>${Math.round(c.fair_odds).toLocaleString("en-US")}</b><small>أودز · احتمالها <bdi dir="ltr">${pctSmall(c.prob)}</bdi></small><small>يعني مرة من كل ${oneIn(c.prob)}</small></div>
+    </div>
+    <div class="progress">
+      <div class="row"><span>${line}</span><span>${n} مباراة</span></div>
+      <div class="track" aria-hidden="true"><i class="h" style="width:${(hits / n) * 100}%"></i><i class="m" style="width:${(miss / n) * 100}%"></i></div>
+    </div>
+    <ul class="legs">${shown.map((l) => legHTML(l, now)).join("")}</ul>
+    <details class="more"><summary><span>كل المباريات (${n})</span></summary>
+      <ul class="legs">${c.legs.map((l) => legHTML(l, now)).join("")}</ul></details>
+    <div class="c-foot"><span>كل 1 دينار بيرجع <b>${Math.round(c.fair_odds).toLocaleString("en-US")}</b> إذا إجت</span><span>بتتجدد كل ${k.per}</span></div>
+  </article>`;
+}
+
+function renderLong() {
+  const L = state.long;
+  if (!L) {
+    $("long").innerHTML = `<div class="empty">قسيمة الأسبوع وقسيمة الشهر بتنزلوا مع تحديث الصبح الجاي.</div>`;
+    $("long-past").innerHTML = "";
+    return;
+  }
+  $("long").innerHTML = longCard("weekly", L.weekly) + longCard("monthly", L.monthly);
+  const past = (L.past || []).slice().reverse();
+  $("long-past").innerHTML = past.length ? `<h2>القسائم السابقة</h2><div>${past.map((c) =>
+    `<div class="past-row"><span>${LONG[c.kind].title} · ${fmtShort.format(new Date(c.start))}</span><span>أودز <bdi dir="ltr">${Math.round(c.fair_odds).toLocaleString("en-US")}</bdi> <span class="status ${c.result}">${STATUS[c.result]}</span></span></div>`).join("")}</div>` : "";
+}
+
+const TABS = ["coupons", "long", "top", "record"];
+const HERO = { coupons: "قسائم اليوم", long: "الأسبوع والشهر", top: "أعلى 10 توقعات", record: "السجل" };
 function setTab(which) {
   for (const k of TABS) {
     $("tab-" + k).setAttribute("aria-selected", k === which);
@@ -482,7 +566,8 @@ function ymd(d) { return d.toISOString().slice(0, 10).replace(/-/g, ""); }
 
 function liveCandidates() {
   const now = Date.now();
-  const legs = [...(state.today?.top ?? []), ...(state.today?.coupons ?? []).flatMap((c) => c.legs)];
+  const longLegs = ["weekly", "monthly"].flatMap((k) => state.long?.[k]?.legs ?? []);
+  const legs = [...(state.today?.top ?? []), ...(state.today?.coupons ?? []).flatMap((c) => c.legs), ...longLegs];
   return legs.filter((l) => {
     if (!l.espn || l.result !== "pending") return false;
     const k = new Date(l.commence_time).getTime();
@@ -541,7 +626,7 @@ async function pollLive() {
       }
     } catch { /* live scores are a bonus; the hourly update still covers them */ }
   }));
-  if (changed) { renderCoupons(); renderTop(); }
+  if (changed) { renderCoupons(); renderLong(); renderTop(); }
 }
 
 function showUpdated() {
@@ -551,19 +636,19 @@ function showUpdated() {
 
 async function refreshData() {
   try {
-    const { today, history } = await load();
+    const { today, history, long } = await load();
     if (!today) return;
     const changed = today.updated_at !== state.today?.updated_at || today.date !== state.today?.date;
-    state.today = today; state.history = history;
-    if (changed) { renderCoupons(); renderTop(); renderRecord(); showUpdated(); }
+    state.today = today; state.history = history; state.long = long;
+    if (changed) { renderCoupons(); renderLong(); renderTop(); renderRecord(); showUpdated(); }
   } catch { /* keep what is on screen */ }
 }
 
-load().then(({ today, history }) => {
-  state.today = today; state.history = history;
+load().then(({ today, history, long }) => {
+  state.today = today; state.history = history; state.long = long;
   $("demo").hidden = !today?.demo;
   if (today?.date) $("today-label").textContent = fmtDay.format(new Date(today.date + "T12:00:00+03:00"));
-  renderCoupons(); renderTop(); renderRecord(); showUpdated();
+  renderCoupons(); renderLong(); renderTop(); renderRecord(); showUpdated();
   const h = location.hash.slice(1);
   if (TABS.includes(h)) setTab(h);
   if (!EMBEDDED && !today?.demo) {

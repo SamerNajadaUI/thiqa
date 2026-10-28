@@ -39,12 +39,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import analysis as an  # noqa: E402
 import football_data as fdata  # noqa: E402
 import espn  # noqa: E402
+import long_coupons as lc  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "docs" / "data"
 TODAY_FILE = DATA_DIR / "today.json"
 HISTORY_FILE = DATA_DIR / "history.json"
 SNAPSHOT_FILE = DATA_DIR / "snapshot.json"
+LONG_FILE = DATA_DIR / "long.json"
 OVERRIDES_FILE = ROOT / "results_overrides.json"
 CONFIG_FILE = ROOT / "config.json"
 
@@ -485,7 +487,9 @@ def all_legs(day: dict):
         yield from c["legs"]
 
 
-def check_results(api: OddsApi | None, cfg: dict, history: dict, now: datetime, client: "espn.Espn | None" = None) -> int:
+def check_results(api: OddsApi | None, cfg: dict, history: dict, now: datetime, client: "espn.Espn | None" = None,
+                  extra_days: list | None = None) -> int:
+    all_days = history.get("days", []) + (extra_days or [])
     overrides = load_json(OVERRIDES_FILE, {})
     finals: dict[str, tuple[float, float]] = {}
     for k, v in overrides.items():
@@ -495,17 +499,18 @@ def check_results(api: OddsApi | None, cfg: dict, history: dict, now: datetime, 
 
     # ESPN أول (مجاني): نتائج مباشرة ونهائية وشعارات لكل التوقعات اللي لسا ما انحسمت
     if client is not None:
-        recent = [d for d in history.get("days", []) if d["date"] >= (now.astimezone(AMMAN) - timedelta(days=3)).strftime("%Y-%m-%d")]
+        cutoff = (now.astimezone(AMMAN) - timedelta(days=3)).strftime("%Y-%m-%d")
+        recent = [d for d in all_days if d.get("long") or d["date"] >= cutoff]
         open_legs = [l for d in recent for l in all_legs(d) if l["result"] == "pending"]
         if open_legs:
             try:
-                for eid, sc in espn.update_legs(client, open_legs).items():
+                for eid, sc in espn.update_legs(client, open_legs, until=now + timedelta(minutes=30)).items():
                     finals.setdefault(eid, sc)
             except Exception as e:  # ESPN مش رسمي: أي مشكلة ما بتوقف التحديث
                 log(f"  ESPN: {e}")
 
     due: dict[str, set[str]] = {}
-    for day in history.get("days", []):
+    for day in all_days:
         for leg in all_legs(day):
             if leg["result"] == "pending" and leg["event_id"] not in finals:
                 if parse_time(leg["commence_time"]) + timedelta(hours=3) < now:
@@ -526,7 +531,7 @@ def check_results(api: OddsApi | None, cfg: dict, history: dict, now: datetime, 
                     pass
 
     changed = 0
-    for day in history.get("days", []):
+    for day in all_days:
         for leg in all_legs(day):
             if leg["id"] in overrides and overrides[leg["id"]] in ("hit", "miss", "void"):
                 new = overrides[leg["id"]]
@@ -705,6 +710,7 @@ def demo_day(day: datetime, rng: random.Random, cfg: dict, resolve: bool) -> dic
             leg["result"] = grade_leg(leg, *scores[leg["event_id"]])
         for c in out["coupons"]:
             c["result"] = coupon_result(c)
+    out["_legs"], out["_scores"] = legs, scores
     return out
 
 
@@ -714,6 +720,25 @@ def build_demo(now: datetime, cfg: dict) -> None:
     days = [demo_day(local - timedelta(days=d), rng, cfg, resolve=True) for d in range(21, 0, -1)]
     today = demo_day(local, rng, cfg, resolve=False)
     days.append(today)
+    future = [demo_day(local + timedelta(days=d), rng, cfg, resolve=False) for d in range(1, 28)]
+
+    # قسائم الأسبوع والشهر التجريبية: بلشت قبل يومين، فأول توقعاتها انحسمت
+    start = now - timedelta(days=2)
+    pool, scores = [], {}
+    for d in days[-3:] + future:
+        pool += d["_legs"]
+        scores.update(d["_scores"])
+    long = {"demo": True}
+    lc.refresh(long, pool, cfg, start, log)
+    for k in lc.KINDS:
+        for leg in long[k]["legs"]:
+            if parse_time(leg["commence_time"]) + timedelta(hours=2) < now:
+                leg["result"] = grade_leg(leg, *scores[leg["event_id"]])
+        long[k]["result"] = lc.coupon_result(long[k])
+    save_json(LONG_FILE, long)
+    for d in days + future:
+        d.pop("_legs", None)
+        d.pop("_scores", None)
     save_json(HISTORY_FILE, {"days": days})
     save_json(TODAY_FILE, {"date": today["date"], "generated_at": now.strftime(ISO), "demo": True,
                            "coupons": today["coupons"], "top": today["top"], "stats": None})
@@ -729,8 +754,11 @@ def hourly(cfg: dict, now: datetime) -> int:
         log("الموقع لسا على البيانات التجريبية: ما في إشي نحدّثه.")
         return 0
     history = load_json(HISTORY_FILE, {"days": []})
+    long = load_json(LONG_FILE, {})
     client = espn.Espn()
-    check_results(None, cfg, history, now, client)
+    check_results(None, cfg, history, now, client, lc.open_days(long))
+    if long:
+        save_json(LONG_FILE, long)
     day = next((d for d in history["days"] if d["date"] == today.get("date")), None)
     if day:
         today["coupons"], today["top"] = day["coupons"], day["top"]
@@ -770,21 +798,30 @@ def main() -> int:
     history = load_json(HISTORY_FILE, {"days": []})
     history["days"] = [d for d in history.get("days", [])
                        if "coupons" in d and not any(str(l["id"]).startswith("demo-") for l in all_legs(d))]
+    long = load_json(LONG_FILE, {})
+    if long.get("demo"):
+        long = {}
 
     try:
         if cfg.get("check_results", True) and not args.no_results:
             log("بفحص نتائج الأيام الماضية...")
-            check_results(api, cfg, history, now, espn.Espn())
+            check_results(api, cfg, history, now, espn.Espn(), lc.open_days(long))
         if not args.results_only:
             log("بجيب الأودز...")
-            legs, stats = predict(api, cfg, now)
+            long_hours = lc.fetch_hours_needed(long, cfg, now)
+            run_cfg = dict(cfg, fetch_hours=max(cfg.get("fetch_hours", 48), long_hours))
+            if long_hours:
+                log(f"  بنبني قسائم الأسبوع/الشهر: بجيب أودز {long_hours // 24} يوم.")
+            legs, stats = predict(api, run_cfg, now)
             apply_movement(legs, load_json(SNAPSHOT_FILE, {}))
-            save_json(SNAPSHOT_FILE, make_snapshot(legs, now))
+            near = [l for l in legs if parse_time(l["commence_time"]) <= now + timedelta(hours=48)]
+            save_json(SNAPSHOT_FILE, make_snapshot(near, now))
 
             contexts = {}
             if fd_key:
                 log("بجيب إحصائيات كرة القدم...")
-                window_legs = [l for l in legs if parse_time(l["commence_time"]) <= now + timedelta(hours=cfg["window_hours"])]
+                horizon = max(cfg["window_hours"], long_hours)
+                window_legs = [l for l in legs if parse_time(l["commence_time"]) <= now + timedelta(hours=horizon)]
                 codes = {fdata.COMPETITIONS[l["sport_key"]] for l in window_legs if l["sport_key"] in fdata.COMPETITIONS}
                 fd = fdata.FootballData(fd_key, cfg.get("football_data_max_requests", 24))
                 matches, teams, current = fdata.load_competitions(fd, codes, cfg.get("h2h_previous_season", True))
@@ -799,8 +836,13 @@ def main() -> int:
             date = now.astimezone(AMMAN).strftime("%Y-%m-%d")
             day = {"date": date, "top": top_list(pick_from, cfg["top_list_size"]),
                    "coupons": build_coupons(pick_from, cfg["coupons"])}
+            if long_hours:
+                lc.refresh(long, legs, cfg, now, log)
             try:
-                espn.update_legs(espn.Espn(), list(all_legs(day)))  # شعارات الفرق
+                client = espn.Espn()
+                espn.update_legs(client, list(all_legs(day)))  # شعارات وحالة مباريات اليوم
+                long_legs = [l for k in lc.KINDS if long.get(k) for l in long[k]["legs"]]
+                espn.attach_logos(client, list(all_legs(day)) + long_legs)
             except Exception as e:
                 log(f"  ESPN: {e}")
             history["days"] = [d for d in history["days"] if d["date"] != date]
@@ -813,6 +855,8 @@ def main() -> int:
     finally:
         history["days"].sort(key=lambda d: d["date"])
         save_json(HISTORY_FILE, history)
+        if long:
+            save_json(LONG_FILE, long)
         log(f"صرفت {api.spent:.0f} كريدت. المتبقي: {api.remaining}")
     return 0
 
