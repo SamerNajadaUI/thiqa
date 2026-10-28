@@ -309,6 +309,10 @@ def build_coupons(legs: list[dict], tiers: dict) -> list[dict]:
             if leg not in chosen:
                 chosen.append(leg)
 
+        if kind == "safe":  # الآمنة: إذا الاحتمال الكلي نزل كثير، بنقصّر القسيمة بدل ما نحط توقع ضعيف
+            chosen.sort(key=lambda l: -l["prob"])
+            while len(chosen) > t["min_legs"] and product(l["prob"] for l in chosen) < t["target_total"]:
+                chosen.pop()
         if len(chosen) < t["min_legs"]:
             coupons.append({"kind": kind, "legs": [], "prob": None, "fair_odds": None, "result": "none"})
             continue

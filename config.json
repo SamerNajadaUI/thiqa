@@ -6,7 +6,7 @@
   "min_bookmakers_extra_markets": 2,
   "min_leg_odds": 1.04,
   "top_list_size": 10,
-  "max_credits_per_run": 16,
+  "max_credits_per_run": 15,
   "min_credits_reserve": 20,
   "soccer_leagues": [
     "soccer_epl",
@@ -43,8 +43,8 @@
     "safe": {
       "legs": 3,
       "min_legs": 2,
-      "target_total": 0.8,
-      "min_leg": 0.88,
+      "target_total": 0.7,
+      "min_leg": 0.78,
       "max_leg": 1.0,
       "max_same_market": 2
     },
