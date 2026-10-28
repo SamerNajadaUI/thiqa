@@ -396,8 +396,12 @@ def run_analysis(legs: list[dict], contexts: dict, cfg: dict) -> None:
 def predict(api: OddsApi, cfg: dict, now: datetime) -> tuple[list[dict], dict]:
     sports = api.get("/sports") or []
     active = {s["key"]: s for s in sports if s.get("active") and not s.get("has_outrights")}
-    keys = [k for k in cfg["soccer_leagues"] + cfg["basketball_leagues"] if k in active]
+    soccer = [k for k in cfg["soccer_leagues"] if k in active]
+    basket = [k for k in cfg["basketball_leagues"] if k in active]
     tennis = sorted(k for k in active if k.startswith("tennis_")) if cfg.get("include_all_active_tennis") else []
+    # ترتيب عادل عشان الرصيد ما يخلص على كرة القدم بس: 3 دوريات قدم، السلة، تنس، والباقي
+    keys = soccer[:3] + basket + tennis[:2] + soccer[3:] + tennis[2:]
+    tennis = []
     window = {"commenceTimeFrom": now.strftime(ISO),
               "commenceTimeTo": (now + timedelta(hours=cfg.get("fetch_hours", 48))).strftime(ISO)}
     regions = cfg["regions"]
