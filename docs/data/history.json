@@ -20,8 +20,8 @@
      "sharp_prob": 0.8898,
      "prob": 0.8758,
      "books": 24,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "0-2",
      "movement": 0.0054,
      "model_prob": 0.8313,
      "support": 5,
@@ -48,9 +48,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/17530.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
      "live": {
-      "state": "in",
-      "detail": "77'",
-      "score": "0-0"
+      "state": "post",
+      "detail": "FT",
+      "score": "0-2"
      }
     },
     {
@@ -70,8 +70,8 @@
      "sharp_prob": 0.8219,
      "prob": 0.814,
      "books": 24,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "2-4",
      "movement": 0.0022,
      "model_prob": 0.7868,
      "support": 4,
@@ -98,9 +98,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png",
      "live": {
-      "state": "in",
-      "detail": "75'",
-      "score": "2-3"
+      "state": "post",
+      "detail": "FT",
+      "score": "2-4"
      }
     },
     {
@@ -120,8 +120,8 @@
      "sharp_prob": 0.8222,
      "prob": 0.81,
      "books": 24,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "2-0",
      "movement": -0.0008,
      "model_prob": 0.7512,
      "support": 4,
@@ -148,9 +148,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3263.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "post",
+      "detail": "FT",
+      "score": "2-0"
      }
     },
     {
@@ -170,8 +170,8 @@
      "sharp_prob": 0.7577,
      "prob": 0.7617,
      "books": 24,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "1-4",
      "movement": 0.0011,
      "model_prob": 0.7824,
      "support": 3,
@@ -194,9 +194,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4007.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "post",
+      "detail": "FT",
+      "score": "1-4"
      }
     },
     {
@@ -216,8 +216,8 @@
      "sharp_prob": 0.6937,
      "prob": 0.7048,
      "books": 24,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "0-0",
      "movement": -0.0035,
      "model_prob": 0.7595,
      "support": 3,
@@ -240,8 +240,8 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/118.png",
      "live": {
-      "state": "in",
-      "detail": "77'",
+      "state": "post",
+      "detail": "FT",
       "score": "0-0"
      }
     }
@@ -267,8 +267,8 @@
        "sharp_prob": 0.8898,
        "prob": 0.8758,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "0-2",
        "movement": 0.0054,
        "model_prob": 0.8313,
        "support": 5,
@@ -294,9 +294,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/17530.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
        "live": {
-        "state": "in",
-        "detail": "77'",
-        "score": "0-0"
+        "state": "post",
+        "detail": "FT",
+        "score": "0-2"
        }
       },
       {
@@ -316,8 +316,8 @@
        "sharp_prob": 0.8219,
        "prob": 0.814,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "2-4",
        "movement": 0.0022,
        "model_prob": 0.7868,
        "support": 4,
@@ -343,15 +343,15 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png",
        "live": {
-        "state": "in",
-        "detail": "75'",
-        "score": "2-3"
+        "state": "post",
+        "detail": "FT",
+        "score": "2-4"
        }
       }
      ],
      "prob": 0.7129,
      "fair_odds": 1.4,
-     "result": "pending"
+     "result": "lost"
     },
     {
      "kind": "medium",
@@ -373,8 +373,8 @@
        "sharp_prob": 0.8898,
        "prob": 0.8758,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "0-2",
        "movement": 0.0054,
        "model_prob": 0.8313,
        "support": 5,
@@ -400,9 +400,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/17530.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
        "live": {
-        "state": "in",
-        "detail": "77'",
-        "score": "0-0"
+        "state": "post",
+        "detail": "FT",
+        "score": "0-2"
        }
       },
       {
@@ -422,8 +422,8 @@
        "sharp_prob": 0.8219,
        "prob": 0.814,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "2-4",
        "movement": 0.0022,
        "model_prob": 0.7868,
        "support": 4,
@@ -449,9 +449,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png",
        "live": {
-        "state": "in",
-        "detail": "75'",
-        "score": "2-3"
+        "state": "post",
+        "detail": "FT",
+        "score": "2-4"
        }
       },
       {
@@ -471,8 +471,8 @@
        "sharp_prob": 0.8222,
        "prob": 0.81,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "2-0",
        "movement": -0.0008,
        "model_prob": 0.7512,
        "support": 4,
@@ -498,9 +498,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3263.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "2-0"
        }
       },
       {
@@ -520,8 +520,8 @@
        "sharp_prob": 0.7577,
        "prob": 0.7617,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "1-4",
        "movement": 0.0011,
        "model_prob": 0.7824,
        "support": 3,
@@ -543,15 +543,15 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4007.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "1-4"
        }
       }
      ],
      "prob": 0.4398,
      "fair_odds": 2.27,
-     "result": "pending"
+     "result": "lost"
     },
     {
      "kind": "risky",
@@ -573,8 +573,8 @@
        "sharp_prob": 0.6937,
        "prob": 0.7048,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "0-0",
        "movement": -0.0035,
        "model_prob": 0.7595,
        "support": 3,
@@ -596,8 +596,8 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/118.png",
        "live": {
-        "state": "in",
-        "detail": "77'",
+        "state": "post",
+        "detail": "FT",
         "score": "0-0"
        }
       },
@@ -618,8 +618,8 @@
        "sharp_prob": 0.7416,
        "prob": 0.7394,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "2-4",
        "movement": -0.0003,
        "model_prob": 0.7264,
        "support": 2,
@@ -642,9 +642,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png",
        "live": {
-        "state": "in",
-        "detail": "75'",
-        "score": "2-3"
+        "state": "post",
+        "detail": "FT",
+        "score": "2-4"
        }
       },
       {
@@ -664,8 +664,8 @@
        "sharp_prob": 0.829,
        "prob": 0.8201,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "0-2",
        "movement": 0.0,
        "model_prob": 0.7776,
        "support": 2,
@@ -688,9 +688,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/17530.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
        "live": {
-        "state": "in",
-        "detail": "77'",
-        "score": "0-0"
+        "state": "post",
+        "detail": "FT",
+        "score": "0-2"
        }
       },
       {
@@ -710,8 +710,8 @@
        "sharp_prob": 0.7163,
        "prob": 0.7197,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "2-0",
        "movement": -0.003,
        "model_prob": 0.7202,
        "support": 3,
@@ -733,9 +733,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3263.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "2-0"
        }
       },
       {
@@ -755,8 +755,8 @@
        "sharp_prob": 0.7577,
        "prob": 0.7617,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "1-4",
        "movement": 0.0011,
        "model_prob": 0.7824,
        "support": 3,
@@ -778,15 +778,15 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4007.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "1-4"
        }
       }
      ],
      "prob": 0.2343,
      "fair_odds": 4.27,
-     "result": "pending"
+     "result": "lost"
     }
    ]
   }
