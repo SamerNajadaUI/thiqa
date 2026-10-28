@@ -39,7 +39,20 @@
       "⁨Inter Milan⁩ بالمركز 2 (22 نقطة)، و⁨Venezia⁩ بالمركز 20 (3 نقطة)"
      ],
      "warnings": [],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "soccer",
+      "l": "ita.1",
+      "id": "401874773",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/17530.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
     },
     {
      "id": "1fa60410ca17efcd43616ab025a3b0e4|h2h|Elena Rybakina|None|None",
@@ -69,7 +82,20 @@
       "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 87%"
      ],
      "warnings": [],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "tennis",
+      "l": "wta",
+      "id": "185676",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/kaz.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/kaz.png",
+     "live": {
+      "state": "pre",
+      "detail": "10/29 - 4:00 AM EDT",
+      "score": null
+     }
     }
    ],
    "prob": 0.7481,
@@ -107,7 +133,20 @@
       "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 86%"
      ],
      "warnings": [],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "tennis",
+      "l": "atp",
+      "id": "185138",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/aus.png",
+     "live": {
+      "state": "pre",
+      "detail": "10/28 - 1:00 PM EDT",
+      "score": null
+     }
     },
     {
      "id": "3d0b0fbec194258530882514714c74be|double_chance|AC Milan|None|None",
@@ -143,7 +182,20 @@
       "نموذجنا الإحصائي أقل تفاؤلاً: 79% (متوقع 1.6 أهداف لـ⁨AC Milan⁩ و0.9 لـ⁨Bologna⁩)",
       "⁨Bologna⁩ قوي برّا أرضه: فاز 2 من 4"
      ],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "soccer",
+      "l": "ita.1",
+      "id": "401874993",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
     },
     {
      "id": "34848497b90b1392f6a767fc183d3ac1|double_chance|Juventus|None|None",
@@ -179,7 +231,20 @@
       "نموذجنا الإحصائي أقل تفاؤلاً: 75% (متوقع 1.0 أهداف لـ⁨Genoa⁩ و1.5 لـ⁨Juventus⁩)",
       "⁨Genoa⁩ قوي على أرضه: فاز 2 من 5"
      ],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "soccer",
+      "l": "ita.1",
+      "id": "401874988",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3263.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
     },
     {
      "id": "e74d54621abaed183e569394f935c362|h2h|San Antonio Spurs|None|None",
@@ -209,7 +274,20 @@
       "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 83%"
      ],
      "warnings": [],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401909890",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
+     "live": {
+      "state": "pre",
+      "detail": "10/28 - 9:00 PM EDT",
+      "score": null
+     }
     }
    ],
    "prob": 0.4678,
@@ -247,7 +325,20 @@
       "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 73%"
      ],
      "warnings": [],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "tennis",
+      "l": "atp",
+      "id": "185142",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/sui.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/can.png",
+     "live": {
+      "state": "pre",
+      "detail": "10/28 - 9:10 AM EDT",
+      "score": null
+     }
     },
     {
      "id": "482c18a8081afdfa310324fa8f37e95a|double_chance|No Draw|None|None",
@@ -279,7 +370,20 @@
       "التعادل قليل عند الفريقين: 2 تعادلات من 16 مباراة"
      ],
      "warnings": [],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "soccer",
+      "l": "ita.1",
+      "id": "401874965",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/118.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
     },
     {
      "id": "fa2db2fe86cd1a8736aab010df03ba1a|spreads|KK Partizan NIS|1.5|None",
@@ -340,7 +444,20 @@
       "التعادل قليل عند الفريقين: 3 تعادلات من 16 مباراة"
      ],
      "warnings": [],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "soccer",
+      "l": "ita.1",
+      "id": "401874799",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4007.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
     },
     {
      "id": "f7fa6060659fec573d7a7df3881aff82|h2h|Rafael Jodar|None|None",
@@ -370,7 +487,20 @@
       "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 72%"
      ],
      "warnings": [],
-     "eligible": true
+     "eligible": true,
+     "espn": {
+      "s": "tennis",
+      "l": "atp",
+      "id": "185147",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/mon.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
+     "live": {
+      "state": "pre",
+      "detail": "TBD",
+      "score": null
+     }
     }
    ],
    "prob": 0.1469,
@@ -413,7 +543,20 @@
    ],
    "warnings": [],
    "eligible": true,
-   "rank": 1
+   "rank": 1,
+   "espn": {
+    "s": "soccer",
+    "l": "ita.1",
+    "id": "401874773",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/17530.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
+   "live": {
+    "state": "pre",
+    "detail": "Scheduled",
+    "score": null
+   }
   },
   {
    "id": "1fa60410ca17efcd43616ab025a3b0e4|h2h|Elena Rybakina|None|None",
@@ -444,7 +587,20 @@
    ],
    "warnings": [],
    "eligible": true,
-   "rank": 2
+   "rank": 2,
+   "espn": {
+    "s": "tennis",
+    "l": "wta",
+    "id": "185676",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/kaz.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/kaz.png",
+   "live": {
+    "state": "pre",
+    "detail": "10/29 - 4:00 AM EDT",
+    "score": null
+   }
   },
   {
    "id": "4131305472a4538a7dd867552b8a5154|h2h|Taylor Fritz|None|None",
@@ -475,7 +631,20 @@
    ],
    "warnings": [],
    "eligible": true,
-   "rank": 3
+   "rank": 3,
+   "espn": {
+    "s": "tennis",
+    "l": "atp",
+    "id": "185138",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/aus.png",
+   "live": {
+    "state": "pre",
+    "detail": "10/28 - 1:00 PM EDT",
+    "score": null
+   }
   },
   {
    "id": "e74d54621abaed183e569394f935c362|h2h|San Antonio Spurs|None|None",
@@ -506,7 +675,20 @@
    ],
    "warnings": [],
    "eligible": true,
-   "rank": 4
+   "rank": 4,
+   "espn": {
+    "s": "basketball",
+    "l": "nba",
+    "id": "401909890",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
+   "live": {
+    "state": "pre",
+    "detail": "10/28 - 9:00 PM EDT",
+    "score": null
+   }
   },
   {
    "id": "381536c46bd1e16a9236502df3f748e5|h2h|Jiri Lehecka|None|None",
@@ -537,7 +719,20 @@
    ],
    "warnings": [],
    "eligible": true,
-   "rank": 5
+   "rank": 5,
+   "espn": {
+    "s": "tennis",
+    "l": "atp",
+    "id": "185150",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ger.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/cze.png",
+   "live": {
+    "state": "pre",
+    "detail": "TBD",
+    "score": null
+   }
   },
   {
    "id": "3d0b0fbec194258530882514714c74be|double_chance|AC Milan|None|None",
@@ -574,7 +769,20 @@
     "⁨Bologna⁩ قوي برّا أرضه: فاز 2 من 4"
    ],
    "eligible": true,
-   "rank": 6
+   "rank": 6,
+   "espn": {
+    "s": "soccer",
+    "l": "ita.1",
+    "id": "401874993",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/103.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png",
+   "live": {
+    "state": "pre",
+    "detail": "Scheduled",
+    "score": null
+   }
   },
   {
    "id": "34848497b90b1392f6a767fc183d3ac1|double_chance|Juventus|None|None",
@@ -611,7 +819,20 @@
     "⁨Genoa⁩ قوي على أرضه: فاز 2 من 5"
    ],
    "eligible": true,
-   "rank": 7
+   "rank": 7,
+   "espn": {
+    "s": "soccer",
+    "l": "ita.1",
+    "id": "401874988",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3263.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
+   "live": {
+    "state": "pre",
+    "detail": "Scheduled",
+    "score": null
+   }
   },
   {
    "id": "fa400409de3b36b41d7f8316d636197e|h2h|Jakub Mensik|None|None",
@@ -642,7 +863,20 @@
    ],
    "warnings": [],
    "eligible": true,
-   "rank": 8
+   "rank": 8,
+   "espn": {
+    "s": "tennis",
+    "l": "atp",
+    "id": "185185",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/cze.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
+   "live": {
+    "state": "pre",
+    "detail": "10/28 - 11:30 AM EDT",
+    "score": null
+   }
   },
   {
    "id": "9f79477cee7d1e998aa4b8a7beec9b28|h2h|Tommy Paul|None|None",
@@ -673,7 +907,20 @@
    ],
    "warnings": [],
    "eligible": true,
-   "rank": 9
+   "rank": 9,
+   "espn": {
+    "s": "tennis",
+    "l": "atp",
+    "id": "185190",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
+   "live": {
+    "state": "pre",
+    "detail": "TBD",
+    "score": null
+   }
   },
   {
    "id": "d04e7e6ce329fccbd0b365240f807cca|h2h|Naomi Osaka|None|None",
@@ -704,7 +951,20 @@
    ],
    "warnings": [],
    "eligible": true,
-   "rank": 10
+   "rank": 10,
+   "espn": {
+    "s": "tennis",
+    "l": "wta",
+    "id": "185672",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/jpn.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/svk.png",
+   "live": {
+    "state": "pre",
+    "detail": "10/29 - 1:30 AM EDT",
+    "score": null
+   }
   }
  ],
  "stats": {
@@ -718,5 +978,6 @@
    "totals"
   ],
   "analyzed": 5
- }
+ },
+ "updated_at": "2026-10-28T12:58:36Z"
 }
