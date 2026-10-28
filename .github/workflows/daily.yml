@@ -6,6 +6,10 @@ on:
     - cron: "7 3 * * *"
     # كل ساعة: نتائج مباشرة ونهائية وشعارات (مجاني)
     - cron: "37 * * * *"
+  # تعديل ملف .github/run-full بيشغّل تحديث كامل فوراً (بيصرف رصيد)
+  push:
+    branches: [main]
+    paths: [".github/run-full"]
   workflow_dispatch:
     inputs:
       mode:
@@ -38,8 +42,9 @@ jobs:
           FOOTBALL_DATA_KEY: ${{ secrets.FOOTBALL_DATA_KEY }}
           SCHEDULE: ${{ github.event.schedule }}
           MODE: ${{ inputs.mode }}
+          EVENT: ${{ github.event_name }}
         run: |
-          if [ "$SCHEDULE" = "7 3 * * *" ] || [ "$MODE" = "full" ]; then
+          if [ "$SCHEDULE" = "7 3 * * *" ] || [ "$MODE" = "full" ] || [ "$EVENT" = "push" ]; then
             python engine/run.py
           else
             python engine/run.py --hourly
