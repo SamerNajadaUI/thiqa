@@ -2,9 +2,17 @@ name: Daily picks
 
 on:
   schedule:
-    # 03:07 UTC = 06:07 بتوقيت عمّان كل يوم
+    # 03:07 UTC = 06:07 بتوقيت عمّان: قسائم اليوم (بتصرف رصيد الأودز)
     - cron: "7 3 * * *"
-  workflow_dispatch: {}   # زر "Run workflow" للتشغيل اليدوي
+    # كل ساعة: نتائج مباشرة ونهائية وشعارات (مجاني)
+    - cron: "37 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "hourly = تحديث النتائج بس (مجاني)، full = قسائم جديدة (بيصرف رصيد)"
+        type: choice
+        options: [hourly, full]
+        default: hourly
 
 permissions:
   contents: write
@@ -24,11 +32,18 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Build today's list and update results
+      - name: Update picks and results
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           FOOTBALL_DATA_KEY: ${{ secrets.FOOTBALL_DATA_KEY }}
-        run: python engine/run.py
+          SCHEDULE: ${{ github.event.schedule }}
+          MODE: ${{ inputs.mode }}
+        run: |
+          if [ "$SCHEDULE" = "7 3 * * *" ] || [ "$MODE" = "full" ]; then
+            python engine/run.py
+          else
+            python engine/run.py --hourly
+          fi
 
       - name: Save data
         run: |
@@ -38,6 +53,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Daily picks $(TZ=Asia/Amman date +%F)"
+            git commit -m "Update $(TZ=Asia/Amman date '+%F %H:%M')"
+            git pull --rebase -X theirs origin main || git rebase --abort
             git push
           fi

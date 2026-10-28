@@ -38,6 +38,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import analysis as an  # noqa: E402
 import football_data as fdata  # noqa: E402
+import espn  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "docs" / "data"
@@ -484,13 +485,24 @@ def all_legs(day: dict):
         yield from c["legs"]
 
 
-def check_results(api: OddsApi | None, cfg: dict, history: dict, now: datetime) -> int:
+def check_results(api: OddsApi | None, cfg: dict, history: dict, now: datetime, client: "espn.Espn | None" = None) -> int:
     overrides = load_json(OVERRIDES_FILE, {})
     finals: dict[str, tuple[float, float]] = {}
     for k, v in overrides.items():
         m = SCORE_RE.match(str(v))
         if m:
             finals[k] = (float(m.group(1)), float(m.group(2)))
+
+    # ESPN أول (مجاني): نتائج مباشرة ونهائية وشعارات لكل التوقعات اللي لسا ما انحسمت
+    if client is not None:
+        recent = [d for d in history.get("days", []) if d["date"] >= (now.astimezone(AMMAN) - timedelta(days=3)).strftime("%Y-%m-%d")]
+        open_legs = [l for d in recent for l in all_legs(d) if l["result"] == "pending"]
+        if open_legs:
+            try:
+                for eid, sc in espn.update_legs(client, open_legs).items():
+                    finals.setdefault(eid, sc)
+            except Exception as e:  # ESPN مش رسمي: أي مشكلة ما بتوقف التحديث
+                log(f"  ESPN: {e}")
 
     due: dict[str, set[str]] = {}
     for day in history.get("days", []):
@@ -710,11 +722,31 @@ def build_demo(now: datetime, cfg: dict) -> None:
 
 # ---------------------------------------------------------------- main
 
+def hourly(cfg: dict, now: datetime) -> int:
+    """كل ساعة: نتائج مباشرة ونهائية من ESPN، بدون ما نلمس القسائم أو نصرف رصيد."""
+    today = load_json(TODAY_FILE, {})
+    if not today or today.get("demo"):
+        log("الموقع لسا على البيانات التجريبية: ما في إشي نحدّثه.")
+        return 0
+    history = load_json(HISTORY_FILE, {"days": []})
+    client = espn.Espn()
+    check_results(None, cfg, history, now, client)
+    day = next((d for d in history["days"] if d["date"] == today.get("date")), None)
+    if day:
+        today["coupons"], today["top"] = day["coupons"], day["top"]
+    today["updated_at"] = now.strftime(ISO)
+    save_json(HISTORY_FILE, history)
+    save_json(TODAY_FILE, today)
+    log(f"تحديث الساعة: {client.used} طلب ESPN.")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="قائمة الثقة اليومية")
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--no-results", action="store_true")
     ap.add_argument("--results-only", action="store_true")
+    ap.add_argument("--hourly", action="store_true", help="تحديث النتائج المباشرة والنهائية بس (بدون رصيد أودز)")
     args = ap.parse_args()
 
     now = datetime.now(timezone.utc).replace(microsecond=0)
@@ -724,6 +756,9 @@ def main() -> int:
     if args.demo:
         build_demo(now, cfg)
         return 0
+
+    if args.hourly:
+        return hourly(cfg, now)
 
     key = os.environ.get("ODDS_API_KEY", "").strip()
     if not key:
@@ -739,7 +774,7 @@ def main() -> int:
     try:
         if cfg.get("check_results", True) and not args.no_results:
             log("بفحص نتائج الأيام الماضية...")
-            check_results(api, cfg, history, now)
+            check_results(api, cfg, history, now, espn.Espn())
         if not args.results_only:
             log("بجيب الأودز...")
             legs, stats = predict(api, cfg, now)
@@ -764,11 +799,15 @@ def main() -> int:
             date = now.astimezone(AMMAN).strftime("%Y-%m-%d")
             day = {"date": date, "top": top_list(pick_from, cfg["top_list_size"]),
                    "coupons": build_coupons(pick_from, cfg["coupons"])}
+            try:
+                espn.update_legs(espn.Espn(), list(all_legs(day)))  # شعارات الفرق
+            except Exception as e:
+                log(f"  ESPN: {e}")
             history["days"] = [d for d in history["days"] if d["date"] != date]
             if day["top"]:
                 history["days"].append(day)
-            save_json(TODAY_FILE, {"date": date, "generated_at": now.strftime(ISO), "demo": False,
-                                   "coupons": day["coupons"], "top": day["top"], "stats": stats})
+            save_json(TODAY_FILE, {"date": date, "generated_at": now.strftime(ISO), "updated_at": now.strftime(ISO),
+                                   "demo": False, "coupons": day["coupons"], "top": day["top"], "stats": stats})
     except BudgetExhausted as e:
         log(f"توقفت: {e}")
     finally:

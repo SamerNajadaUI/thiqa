@@ -163,6 +163,18 @@ details .legs .leg { padding: 10px 12px; }
 .why li.w { color: var(--muted); }
 .why li.w::before { background: var(--mid); }
 
+/* team logos + live */
+.match { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.team { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.logo { width: 22px; height: 22px; flex: none; border-radius: 50%; object-fit: contain; background: var(--card); }
+.toplist .logo { background: var(--soft); }
+.initials { width: 22px; height: 22px; flex: none; border-radius: 50%; display: inline-grid; place-items: center; font-size: 9px; font-weight: 600; color: var(--muted); background: var(--line); direction: ltr; letter-spacing: .02em; }
+.status.live { background: var(--miss-soft); color: var(--miss); display: inline-flex; align-items: center; gap: 5px; }
+.status.live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .status.live::before { animation: none; } }
+.updated { color: var(--faint); font-size: 11px; text-align: center; margin: -6px 0 0; }
+
 footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: center; padding-top: 8px; }
 @media (max-width: 440px) {
   th, td { padding: 10px 9px; font-size: 13px; }
@@ -222,6 +234,7 @@ footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: cen
     <div class="days" id="days"></div>
   </section>
 
+  <p class="updated" id="updated"></p>
   <footer>الاحتمالات تقدير من أسعار السوق، مش ضمان.<br>كل قسيمة بتتسجل هون مع نتيجتها، سواء إجت أو ما إجت.</footer>
 </div>
 
@@ -305,11 +318,29 @@ function callHTML(l) {
   return `<span class="call"><strong>${main}</strong>${hint ? ` <span class="hint">· ${hint}</span>` : ""}</span>`;
 }
 
+function liveOf(l) { return LIVE.get(l.event_id) || l.live || null; }
+
 function statusHTML(l, now) {
   if (l.result !== "pending") return `<span class="status ${l.result}">${STATUS[l.result]}${l.score ? ` <bdi dir="ltr">${esc(l.score)}</bdi>` : ""}</span>`;
+  const lv = liveOf(l);
+  if (lv?.state === "in") return `<span class="status live">مباشر${lv.detail ? ` <bdi dir="ltr">${esc(lv.detail)}</bdi>` : ""}${lv.score ? ` · <bdi dir="ltr">${esc(lv.score)}</bdi>` : ""}</span>`;
+  if (lv?.state === "post") return `<span class="status pending">انتهت${lv.score ? ` <bdi dir="ltr">${esc(lv.score)}</bdi>` : ""}</span>`;
   if (new Date(l.commence_time).getTime() < now) return `<span class="status pending">بلشت</span>`;
   return "";
 }
+
+function initials(name) {
+  const w = String(name || "").replace(/[^A-Za-z\u00C0-\u024F\u0600-\u06FF ]/g, " ").trim().split(/\s+/).filter(Boolean);
+  return ((w[0]?.[0] || "") + (w.length > 1 ? w[w.length - 1][0] : (w[0]?.[1] || ""))).toUpperCase();
+}
+
+function teamHTML(name, logo) {
+  const ini = `<span class="initials" aria-hidden="true">${esc(initials(name))}</span>`;
+  const img = logo ? `<img class="logo" src="${esc(logo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'initials',textContent:'${esc(initials(name))}'}))">` : ini;
+  return `<span class="team">${img}${t(name)}</span>`;
+}
+
+const matchHTML = (l) => `<div class="match">${teamHTML(l.home, l.home_logo)}<span class="vs">ضد</span>${teamHTML(l.away, l.away_logo)}</div>`;
 
 function whyHTML(l) {
   const rs = l.reasons ?? [], ws = l.warnings ?? [];
@@ -321,7 +352,7 @@ function whyHTML(l) {
 
 const legHTML = (l, now) => `<li class="leg"><div>
     <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${fmtTime.format(new Date(l.commence_time))}</span> ${statusHTML(l, now)}</div>
-    <div class="match">${t(l.home)}<span class="vs">ضد</span>${t(l.away)}</div>
+    ${matchHTML(l)}
     ${callHTML(l)}
   </div><span class="p">${pct(l.prob)}</span>${whyHTML(l)}</li>`;
 
@@ -363,7 +394,7 @@ function renderTop() {
     <span class="rank">${l.rank}</span>
     <div>
       <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${fmtTime.format(new Date(l.commence_time))}</span> ${statusHTML(l, now)}</div>
-      <div class="match">${t(l.home)}<span class="vs">ضد</span>${t(l.away)}</div>
+      ${matchHTML(l)}
       ${callHTML(l)}
     </div>
     <span class="p">${pct(l.prob)}</span>
@@ -443,13 +474,104 @@ function setTab(which) {
 }
 for (const k of TABS) $("tab-" + k).addEventListener("click", () => setTab(k));
 
+// ---------- live scores (ESPN, every minute while a match is on) ----------
+const LIVE = new Map();
+const fmtClock = new Intl.DateTimeFormat("ar-JO-u-nu-latn", { timeZone: tz, hour: "numeric", minute: "2-digit" });
+
+function ymd(d) { return d.toISOString().slice(0, 10).replace(/-/g, ""); }
+
+function liveCandidates() {
+  const now = Date.now();
+  const legs = [...(state.today?.top ?? []), ...(state.today?.coupons ?? []).flatMap((c) => c.legs)];
+  return legs.filter((l) => {
+    if (!l.espn || l.result !== "pending") return false;
+    const k = new Date(l.commence_time).getTime();
+    return now > k - 15 * 60e3 && now < k + 5 * 3600e3;
+  });
+}
+
+function parseGame(sport, c) {
+  const st = c.status?.type || {};
+  const side = {};
+  for (const p of c.competitors || []) {
+    if (sport === "tennis") side[p.homeAway] = { sets: (p.linescores || []).map((x) => x.value) };
+    else side[p.homeAway] = { score: p.score };
+  }
+  let hs, as;
+  if (sport === "tennis") {
+    const h = side.home?.sets || [], a = side.away?.sets || [];
+    hs = h.filter((v, i) => a[i] != null && v > a[i]).length;
+    as = a.filter((v, i) => h[i] != null && v > h[i]).length;
+  } else { hs = side.home?.score; as = side.away?.score; }
+  return { state: st.state, detail: st.shortDetail || "", hs, as };
+}
+
+async function pollLive() {
+  const legs = liveCandidates();
+  if (!legs.length || document.hidden) return;
+  const groups = new Map();
+  for (const l of legs) {
+    const k = new Date(l.commence_time);
+    for (const d of new Set([ymd(k), ymd(new Date(k.getTime() - 5 * 3600e3))])) {
+      const key = `${l.espn.s}/${l.espn.l}/${d}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(l);
+    }
+  }
+  let changed = false;
+  await Promise.all([...groups.keys()].map(async (key) => {
+    const [s, lg, d] = key.split("/");
+    try {
+      const r = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${s}/${lg}/scoreboard?dates=${d}`);
+      if (!r.ok) return;
+      const j = await r.json();
+      const comps = new Map();
+      for (const ev of j.events || []) {
+        const cs = s === "tennis" ? (ev.groupings || []).flatMap((g) => g.competitions || []) : (ev.competitions || []).slice(0, 1);
+        for (const c of cs) comps.set(String(c.id || ev.id), c);
+      }
+      for (const l of groups.get(key)) {
+        const c = comps.get(l.espn.id);
+        if (!c) continue;
+        const g = parseGame(s, c);
+        const [h, a] = l.espn.sw ? [g.as, g.hs] : [g.hs, g.as];
+        const lv = { state: g.state, detail: g.detail, score: g.state !== "pre" && h != null && a != null ? `${h}-${a}` : null };
+        const prev = LIVE.get(l.event_id);
+        if (!prev || prev.state !== lv.state || prev.score !== lv.score || prev.detail !== lv.detail) { LIVE.set(l.event_id, lv); changed = true; }
+      }
+    } catch { /* live scores are a bonus; the hourly update still covers them */ }
+  }));
+  if (changed) { renderCoupons(); renderTop(); }
+}
+
+function showUpdated() {
+  const u = state.today?.updated_at || state.today?.generated_at;
+  $("updated").textContent = u ? `آخر تحديث: ${fmtClock.format(new Date(u))} · النتائج المباشرة بتتحدث كل دقيقة` : "";
+}
+
+async function refreshData() {
+  try {
+    const { today, history } = await load();
+    if (!today) return;
+    const changed = today.updated_at !== state.today?.updated_at || today.date !== state.today?.date;
+    state.today = today; state.history = history;
+    if (changed) { renderCoupons(); renderTop(); renderRecord(); showUpdated(); }
+  } catch { /* keep what is on screen */ }
+}
+
 load().then(({ today, history }) => {
   state.today = today; state.history = history;
   $("demo").hidden = !today?.demo;
   if (today?.date) $("today-label").textContent = fmtDay.format(new Date(today.date + "T12:00:00+03:00"));
-  renderCoupons(); renderTop(); renderRecord();
+  renderCoupons(); renderTop(); renderRecord(); showUpdated();
   const h = location.hash.slice(1);
   if (TABS.includes(h)) setTab(h);
+  if (!EMBEDDED && !today?.demo) {
+    pollLive();
+    setInterval(pollLive, 60e3);
+    setInterval(refreshData, 5 * 60e3);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) { pollLive(); refreshData(); } });
+  }
 }).catch(() => {
   $("coupons").innerHTML = `<div class="empty">ما قدرت أحمّل البيانات. جرّب تحدّث الصفحة بعد شوي.</div>`;
 });
