@@ -345,6 +345,14 @@ function callHTML(l) {
   return `<span class="call"><strong>${main}</strong>${hint ? ` <span class="hint">· ${hint}</span>` : ""}</span>`;
 }
 
+const fmtDayKey = new Intl.DateTimeFormat("en-CA", { timeZone: tz });
+const fmtWhenDay = new Intl.DateTimeFormat("ar-JO-u-nu-latn", { timeZone: tz, weekday: "short", day: "numeric", month: "short" });
+function whenText(l) {
+  const d = new Date(l.commence_time);
+  const today = fmtDayKey.format(new Date());
+  return fmtDayKey.format(d) === today ? fmtTime.format(d) : `${fmtWhenDay.format(d)} · ${fmtTime.format(d)}`;
+}
+
 function liveOf(l) { return LIVE.get(l.event_id) || l.live || null; }
 
 function statusHTML(l, now) {
@@ -378,7 +386,7 @@ function whyHTML(l) {
 }
 
 const legHTML = (l, now) => `<li class="leg"><div>
-    <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${fmtTime.format(new Date(l.commence_time))}</span> ${statusHTML(l, now)}</div>
+    <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${whenText(l)}</span> ${statusHTML(l, now)}</div>
     ${matchHTML(l)}
     ${callHTML(l)}
   </div><span class="p">${pct(l.prob)}</span>${whyHTML(l)}</li>`;
@@ -420,7 +428,7 @@ function renderTop() {
   $("picks").innerHTML = top.map((l) => `<li>
     <span class="rank">${l.rank}</span>
     <div>
-      <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${fmtTime.format(new Date(l.commence_time))}</span> ${statusHTML(l, now)}</div>
+      <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${whenText(l)}</span> ${statusHTML(l, now)}</div>
       ${matchHTML(l)}
       ${callHTML(l)}
     </div>
