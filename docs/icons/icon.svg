@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6B4DFF"/><stop offset="1" stop-color="#4A2DE0"/></linearGradient>
+<clipPath id="c"><circle cx="250" cy="272" r="150"/></clipPath></defs>
+<rect width="512" height="512" fill="url(#g)"/>
+<circle cx="250" cy="282" r="150" fill="#3A20C0"/>
+<circle cx="250" cy="272" r="150" fill="#FFFFFF"/>
+<g clip-path="url(#c)" fill="#1D2939">
+<path d="M250.0 220.0 L299.5 255.9 L280.6 314.1 L219.4 314.1 L200.5 255.9Z"/>
+<path d="M309.4 190.3 L292.7 138.9 L336.4 107.1 L380.2 138.9 L363.4 190.3Z"/><path d="M346.1 303.2 L389.8 271.4 L433.6 303.2 L416.8 354.6 L362.8 354.6Z"/><path d="M250.0 373.0 L293.7 404.8 L277.0 456.2 L223.0 456.2 L206.3 404.8Z"/><path d="M153.9 303.2 L137.2 354.6 L83.2 354.6 L66.4 303.2 L110.2 271.4Z"/><path d="M190.6 190.3 L136.6 190.3 L119.8 138.9 L163.6 107.1 L207.3 138.9Z"/>
+<path d="M250.0 220.0 L250.0 164.0 M299.5 255.9 L352.7 238.6 M280.6 314.1 L313.5 359.4 M219.4 314.1 L186.5 359.4 M200.5 255.9 L147.3 238.6" stroke="#1D2939" stroke-width="10" stroke-linecap="round" fill="none"/>
+</g>
+<circle cx="374" cy="140" r="74" fill="#FDB022" stroke="#FFFFFF" stroke-width="16"/>
+<path d="M340 142l24 24 44-46" stroke="#FFFFFF" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
