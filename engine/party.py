@@ -118,17 +118,35 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
         lg_q[v(b, "t")] = qid(v(b, "l"))
     log(f"  دوريات Wikidata: {len(lg_q)}/{len(LEAGUES)}")
 
-    # أندية كل دوري مع أسمائها البديلة
-    vals = " ".join("wd:" + q for q in lg_q.values())
+    # أندية كل دوري، دوري دوري، وبعدين أسماءها البديلة
     clubs = defaultdict(dict)  # league qid -> club qid -> {en, ar, toks}
-    for b in sparql(f"""SELECT ?club ?lg ?en ?ar (GROUP_CONCAT(DISTINCT ?al; separator="|") AS ?als) WHERE {{
-        VALUES ?lg {{ {vals} }} ?club wdt:P118 ?lg.
-        OPTIONAL {{ ?club rdfs:label ?en FILTER(LANG(?en)="en") }}
-        OPTIONAL {{ ?club rdfs:label ?ar FILTER(LANG(?ar)="ar") }}
-        OPTIONAL {{ ?club skos:altLabel ?al FILTER(LANG(?al)="en") }} }} GROUP BY ?club ?lg ?en ?ar"""):
-        names = [v(b, "en") or ""] + (v(b, "als") or "").split("|")
-        clubs[qid(v(b, "lg"))][qid(v(b, "club"))] = {
-            "en": v(b, "en"), "ar": v(b, "ar"), "toks": [club_tokens(n) for n in names if n]}
+    for lq in lg_q.values():
+        try:
+            rows = sparql(f"""SELECT DISTINCT ?club ?en ?ar WHERE {{ ?club wdt:P118 wd:{lq}.
+                OPTIONAL {{ ?club rdfs:label ?en FILTER(LANG(?en)="en") }}
+                OPTIONAL {{ ?club rdfs:label ?ar FILTER(LANG(?ar)="ar") }} }}""", tries=3)
+        except SystemExit:
+            log(f"  ما زبط جلب أندية {lq}")
+            continue
+        for b in rows:
+            c = clubs[lq].setdefault(qid(v(b, "club")), {"en": v(b, "en"), "ar": v(b, "ar"), "names": set()})
+            if v(b, "en"):
+                c["names"].add(v(b, "en"))
+        time.sleep(1)
+    every = {cq: c for cs in clubs.values() for cq, c in cs.items()}
+    ids_ = sorted(every)
+    for i in range(0, len(ids_), 150):
+        vals = " ".join("wd:" + c for c in ids_[i:i + 150])
+        try:
+            for b in sparql(f"""SELECT ?club ?al WHERE {{ VALUES ?club {{ {vals} }}
+                ?club skos:altLabel ?al FILTER(LANG(?al)="en") }}""", tries=2):
+                every[qid(v(b, "club"))]["names"].add(v(b, "al"))
+        except SystemExit:
+            log("  ما زبط جلب الأسماء البديلة")
+        time.sleep(1)
+    for c in every.values():
+        c["toks"] = [club_tokens(n) for n in c["names"] if n]
+    log(f"  أندية Wikidata: {len(every)}")
     time.sleep(1)
 
     countries = dict(COUNTRY_FIX)
@@ -173,8 +191,8 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
     # لاعبين Wikidata المسجلين بهالأندية حالياً (أو لحد السنة الماضية)
     club_ids = sorted({t["club"] for t in teams if t["club"]})
     wd_by_club = defaultdict(list)
-    for i in range(0, len(club_ids), 25):
-        vals = " ".join("wd:" + c for c in club_ids[i:i + 25])
+    for i in range(0, len(club_ids), 8):
+        vals = " ".join("wd:" + c for c in club_ids[i:i + 8])
         try:
             rows = sparql(f"""SELECT ?p ?club ?en WHERE {{ VALUES ?club {{ {vals} }}
             ?p p:P54 ?s. ?s ps:P54 ?club. OPTIONAL {{ ?s pq:P582 ?end }}
