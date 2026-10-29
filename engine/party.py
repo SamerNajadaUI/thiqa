@@ -123,6 +123,7 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
     for lq in lg_q.values():
         try:
             rows = sparql(f"""SELECT DISTINCT ?club ?en ?ar WHERE {{ ?club wdt:P118 wd:{lq}.
+                FILTER NOT EXISTS {{ ?club wdt:P31 wd:Q5 }}
                 OPTIONAL {{ ?club rdfs:label ?en FILTER(LANG(?en)="en") }}
                 OPTIONAL {{ ?club rdfs:label ?ar FILTER(LANG(?ar)="ar") }} }}""", tries=3)
         except SystemExit:
@@ -150,9 +151,12 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
     time.sleep(1)
 
     countries = dict(COUNTRY_FIX)
-    for b in sparql("""SELECT ?en ?ar WHERE { ?c wdt:P31 wd:Q6256; rdfs:label ?en, ?ar.
-        FILTER(LANG(?en)="en" && LANG(?ar)="ar") }"""):
-        countries.setdefault(v(b, "en"), v(b, "ar"))
+    try:
+        for b in sparql("""SELECT ?en ?ar WHERE { ?c wdt:P31 wd:Q6256.
+            ?c rdfs:label ?en FILTER(LANG(?en)="en") ?c rdfs:label ?ar FILTER(LANG(?ar)="ar") }""", tries=3):
+            countries.setdefault(v(b, "en"), v(b, "ar"))
+    except SystemExit:
+        log("  ما زبط جلب أسماء الدول")
     time.sleep(1)
 
     # تشكيلات ESPN ومطابقة كل فريق بنادي من Wikidata
