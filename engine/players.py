@@ -24,6 +24,9 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import party  # noqa: E402
+
 OUT = Path(__file__).resolve().parent.parent / "docs" / "games" / "players.json"
 SPARQL = "https://query.wikidata.org/sparql"
 UA = "AbuOdehGame/1.0 (https://github.com/SamerNajadaUI/thiqa)"
@@ -100,7 +103,8 @@ def fetch_details(ids: list[str]) -> dict:
     P: dict[str, dict] = {i: {"id": i, "pos": [], "nat": [], "teams": []} for i in ids}
     for chunk in batches(ids):
         vals = " ".join("wd:" + i for i in chunk)
-        for b in sparql(f"""SELECT ?p ?en ?ar ?b ?d ?img ?h ?hu WHERE {{ VALUES ?p {{ {vals} }}
+        for b in sparql(f"""SELECT ?p ?en ?ar ?b ?d ?img ?h ?hu ?links WHERE {{ VALUES ?p {{ {vals} }}
+            OPTIONAL {{ ?p wikibase:sitelinks ?links }}
             OPTIONAL {{ ?p rdfs:label ?en FILTER(LANG(?en)="en") }}
             OPTIONAL {{ ?p rdfs:label ?ar FILTER(LANG(?ar)="ar") }}
             OPTIONAL {{ ?p wdt:P569 ?b }} OPTIONAL {{ ?p wdt:P570 ?d }} OPTIONAL {{ ?p wdt:P18 ?img }}
@@ -110,6 +114,7 @@ def fetch_details(ids: list[str]) -> dict:
             x.setdefault("ar", v(b, "ar"))
             x.setdefault("by", year(v(b, "b")))
             x.setdefault("dy", year(v(b, "d")))
+            x.setdefault("links", int(v(b, "links") or 0))
             if v(b, "img") and not x.get("img"):
                 x["img"] = v(b, "img").replace("http://", "https://") + "?width=360"
             if v(b, "h") and not x.get("h"):
@@ -127,6 +132,8 @@ def fetch_details(ids: list[str]) -> dict:
             if not label:
                 continue
             key = {"P413": "pos", "P1532": "sport_nat", "P27": "nat"}[qid(v(b, "prop"))]
+            if key == "pos" and v(b, "en"):
+                x.setdefault("pos_en", []).append(v(b, "en").lower())
             x.setdefault(key, [])
             if label not in x[key]:
                 x[key].append(label)
@@ -502,7 +509,11 @@ def main() -> int:
     pool = fetch_pool()
     ids = [i for i, _ in pool]
     log(f"  {len(ids)} لاعب")
-    raw = fetch_details(ids)
+    log("بجيب تشكيلات الأندية الحالية (ESPN) والعرب...")
+    col = party.collect(sparql, qid, v, year, get_json, log, ESPN)
+    all_ids = list(dict.fromkeys(ids + list(col["squads"]) + [i for i, _ in col["arabs"]]))
+    log(f"  المجموع للتفاصيل: {len(all_ids)} لاعب")
+    raw = fetch_details(all_ids)
     log("بجيب أبطال كأس العالم ودوري الأبطال...")
     wins = fetch_winners()
     kept = {}
@@ -529,11 +540,7 @@ def main() -> int:
         lg = leagues.get(p.pop("_hc"))
         p["lg"] = lg[0] if lg else None
         p["b5"] = bool(lg and (lg[0] in BIG5 or lg[1] in BIG5))
-    try:
-        nums = fetch_espn_numbers()
-    except Exception as e:
-        log(f"  ESPN ما رد: {e}")
-        nums = {}
+    nums = {norm(x["en"]): x["num"] for x in list(col["squads"].values()) + col["espn_only"] if x.get("num")}
     for p in kept.values():
         if p["act"] and norm(p["n"]) in nums:
             p["sn"] = [nums[norm(p["n"])], p["hc"]]
@@ -549,6 +556,8 @@ def main() -> int:
         "challenges": challenges,
         "clubs": clubs,
     }
+    log("بجهّز بيانات تحدي الأصحاب...")
+    party.build(raw, all_ids, col, wins, coaches, team_names, shape, is_youth, NOW_YEAR, log)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     log(f"كتبت {len(kept)} لاعب و{len(challenges)} تحدي ({OUT.stat().st_size // 1024} KB).")

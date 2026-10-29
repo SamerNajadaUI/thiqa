@@ -4,7 +4,7 @@ name: Games data
 on:
   push:
     branches: [main]
-    paths: ["engine/players.py", ".github/workflows/games.yml"]
+    paths: ["engine/players.py", "engine/party.py", ".github/workflows/games.yml"]
   schedule:
     - cron: "23 2 * * 1"
   workflow_dispatch: {}
@@ -19,7 +19,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

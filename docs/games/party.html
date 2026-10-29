@@ -209,8 +209,8 @@ const initials = (n) => { const w = String(n || "").split(/\s+/).filter(Boolean)
 const face = (p, cls) => p.img ? `<img src="${esc(p.img)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'${cls}',textContent:'${esc(initials(p.n))}'}))">` : `<span class="${cls}">${esc(initials(p.n))}</span>`;
 const store = { get(k, d) { try { const v = localStorage.getItem("party-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("party-" + k, JSON.stringify(v)); } catch {} } };
 
-const ROUNDS = 3, MAX_HINTS = 10, LIVES = 2, WRONG = -2;
-const pointsFor = (h) => 11 - h;   // من أول تلميح 10 نقاط، ومن العاشر نقطة وحدة
+const ROUNDS = 5, MAX_HINTS = 5, LIVES = 2, WRONG = -2, OPTIONS = 10, CUT = 3;
+const pointsFor = (h) => (MAX_HINTS + 1 - h) * 2;   // من أول تلميح 10 نقاط، ومن الخامس 2
 
 let DATA, byId, G;
 const clubName = (c) => c[0];
@@ -226,11 +226,11 @@ function intro() {
     <p class="sub">كل واحد بيختار لاعب لصاحبه، وكل واحد بيحاول يعرف لاعبه من التلميحات.</p>
     <div class="card" style="background:#FFF;border:2px solid var(--brand-soft);border-radius:26px;padding:16px;box-shadow:0 6px 0 var(--brand-soft)"><ul class="rules">
       <li>من 2 لـ3 لاعبين، و${ROUNDS} جولات.</li>
-      <li>بكل جولة: كل واحد بيختار لاعب بالسر (دوري، نادي، لاعب حالي، أو المعتزلين حسب المنتخب)، وبعدين اللاعبين بيتوزعوا.</li>
-      <li>بالدور، كل واحد بياخذ تلميح جديد. أول تلميح صعب، والعاشر سهل كثير.</li>
-      <li>الجواب الصح بيعطي نقاط حسب التلميح: من الأول <b>10</b>، ومن العاشر <b>1</b>.</li>
+      <li>بكل جولة: كل واحد بيختار لاعب بالسر (دوري، نادي، لاعب من التشكيلة، أو المعتزلين حسب المنتخب)، وبعدين اللاعبين بيتوزعوا.</li>
+      <li>بالدور، كل واحد بياخذ تلميح جديد، لحد ${MAX_HINTS} تلميحات. وبتختار من ${OPTIONS} خيارات.</li>
+      <li>الجواب الصح بيعطي نقاط حسب التلميح: من الأول <b>${pointsFor(1)}</b>، ومن الأخير <b>${pointsFor(MAX_HINTS)}</b>.</li>
       <li>الجواب الغلط <b>${WRONG}</b> وبيروح قلب. معك <b>قلبين</b> بكل جولة، وإذا خلصوا بتطلع من الجولة.</li>
-      <li>وسيلتين مساعدة بكل اللعبة: <b>احذف 5</b> من الخيارات (أسهل 5 غلط)، و<b>محاولة مجانية</b> ما بتخصم إشي.</li>
+      <li>وسيلتين مساعدة بكل اللعبة: <b>احذف ${CUT}</b> من الخيارات الغلط، و<b>محاولة مجانية</b> ما بتخصم إشي.</li>
     </ul></div>
     ${saved && saved.round <= ROUNDS ? `<button class="big" id="resume" type="button">كمّلوا (الجولة ${saved.round})</button>` : ""}
     <button class="big ${saved ? "ghost" : ""}" id="new" type="button">${saved ? "لعبة جديدة" : "يلا نبلش"}</button>`);
@@ -270,21 +270,13 @@ function pickPass() {
   bind({ go: () => pickLeague() });
 }
 
-const ntOf = (p) => {
-  const t = (p.nt || [])[0]?.[0];
-  if (t) return t.replace(/\s*(الوطني\s*)?لكرة القدم.*$/, "").replace(/\s+للرجال$/, "").trim();
-  const n = (p.nat || [])[0];
-  return n ? "منتخب " + n : "بدون منتخب";
-};
-const posCat = (p) => {
-  const x = (p.pos || []).join(" ");
-  return /حارس/.test(x) ? "gk" : /وسط/.test(x) ? "mf" : /مدافع|ظهير|دفاع|ليبرو/.test(x) ? "df" : /مهاجم|جناح|حربة/.test(x) ? "fw" : "?";
-};
-const LEAGUE_ORDER = ["الإنجليزي الممتاز", "الإسباني", "الإيطالي", "الألماني", "الفرنسي", "السعودي", "البرتغالي", "الهولندي", "التركي", "الأمريكي", "البرازيلي", "الأرجنتيني", "القطري", "الإماراتي", "المصري"];
-const lgRank = (lg) => { if (/الثانية|الثالثة|الرابعة|الخامسة|البطولة|الدرجة الأولى التركي/.test(lg)) return 99; const k = LEAGUE_ORDER.findIndex((t) => lg.includes(t)); return k < 0 ? 50 : k; };
+const ntOf = (p) => p.nt || (p.nat ? "منتخب " + p.nat : "بدون منتخب");
+const posCat = (p) => p.pc || "mf";
+const POS_AR = { gk: "حارس مرمى", df: "مدافع", mf: "لاعب وسط", fw: "مهاجم" };
+const POS_ORDER = { gk: 0, df: 1, mf: 2, fw: 3 };
 const countBy = (xs, f) => { const m = new Map(); for (const x of xs) { const k = f(x); if (k) m.set(k, (m.get(k) || 0) + 1); } return m; };
-const current = () => DATA.players.filter((p) => p.act && p.lg && p.hc && !/سيدات|نسائي/.test(p.lg));
-const retired = () => DATA.players.filter((p) => !p.act);
+const current = () => DATA.players.filter((p) => p.cur);
+const retired = () => DATA.players.filter((p) => !p.cur);
 
 function crumbs(parts) {
   return `<div class="crumbs">${parts.map(([t], i) => `<button type="button" id="cr-${i}">${esc(t)}</button>`).join("<span>‹</span>")}</div>`;
@@ -292,12 +284,12 @@ function crumbs(parts) {
 
 function pickLeague() {
   const m = countBy(current(), (p) => p.lg);
-  const ls = [...m.keys()].sort((a, b) => lgRank(a) - lgRank(b) || m.get(b) - m.get(a));
+  const ls = (DATA.leagues || []).filter((l) => m.get(l));
   render(`<h1>اختار الدوري</h1>
     <input class="search" id="q" type="search" placeholder="أو ابحث عن لاعب بالاسم" autocomplete="off">
     <div id="res"></div>
-    <button class="pickbtn" type="button" id="ret" style="width:100%;margin-bottom:10px;background:var(--brand-soft)"><b>المعتزلين</b><small>${retired().length} لاعب، مقسّمين حسب المنتخب</small></button>
-    <div class="grid2">${ls.map((l, i) => `<button class="pickbtn" type="button" data-l="${i}"><b>${esc(l)}</b><small>${m.get(l)} لاعب</small></button>`).join("")}</div>`);
+    <div class="grid2">${ls.map((l, i) => `<button class="pickbtn" type="button" data-l="${i}"><b>${esc(l)}</b><small>${m.get(l)} لاعب</small></button>`).join("")}</div>
+    <button class="pickbtn" type="button" id="ret" style="width:100%;margin-top:12px;background:var(--brand-soft)"><b>المعتزلين</b><small>${retired().length} لاعب، مقسّمين حسب المنتخب</small></button>`);
   bind({ ret: pickNT });
   document.querySelectorAll("[data-l]").forEach((b) => b.onclick = () => pickClub(ls[+b.dataset.l]));
   $("q").oninput = () => {
@@ -311,7 +303,7 @@ function pickLeague() {
 
 function pickClub(league) {
   const m = countBy(current().filter((p) => p.lg === league), (p) => p.hc);
-  const clubs = [...m.keys()].sort((a, b) => m.get(b) - m.get(a));
+  const clubs = [...m.keys()].sort((a, b) => a.localeCompare(b, "ar"));
   render(`${crumbs([["الدوريات"], [league]])}<h1>اختار النادي</h1>
     <div class="grid2">${clubs.map((c, i) => `<button class="pickbtn" type="button" data-c="${i}"><b>${esc(c)}</b><small>${m.get(c)} لاعب</small></button>`).join("")}</div>`);
   bind({ "cr-0": pickLeague });
@@ -319,8 +311,9 @@ function pickClub(league) {
 }
 
 function pickPlayer(league, club) {
-  const ps = current().filter((p) => p.lg === league && p.hc === club);
-  render(`${crumbs([["الدوريات"], [league], [club]])}<h1>لاعبين ${esc(club)} هلأ</h1>
+  const ps = current().filter((p) => p.lg === league && p.hc === club)
+    .sort((a, b) => POS_ORDER[posCat(a)] - POS_ORDER[posCat(b)] || (a.num || 99) - (b.num || 99));
+  render(`${crumbs([["الدوريات"], [league], [club]])}<h1>تشكيلة ${esc(club)}</h1>
     <div class="stack" style="gap:8px">${ps.map(playerBtn).join("")}</div>`);
   bind({ "cr-0": pickLeague, "cr-1": () => pickClub(league) });
   bindPlayers();
@@ -344,7 +337,8 @@ function pickRetired(nt) {
 }
 
 function playerBtn(p) {
-  return `<button class="pickbtn prow" type="button" data-p="${p.id}">${face(p, "mini2")}<span><b>${esc(p.a)}</b><small>${esc((p.pos || [])[0] || "")} · ${esc(p.act ? p.hc || "" : "معتزل")}</small></span></button>`;
+  const sub = p.cur ? `${POS_AR[posCat(p)]}${p.num ? " · رقم " + p.num : ""} · ${p.hc}` : `${POS_AR[posCat(p)]} · ${ntOf(p)}`;
+  return `<button class="pickbtn prow" type="button" data-p="${p.id}">${face(p, "mini2")}<span><b>${esc(p.a)}</b><small>${esc(sub)}</small></span></button>`;
 }
 function bindPlayers() { document.querySelectorAll("[data-p]").forEach((b) => b.onclick = () => confirmPick(byId.get(b.dataset.p))); }
 
@@ -354,108 +348,70 @@ function confirmPick(p) {
     <p class="sub">${esc(me.name)}، هاد اختيارك؟</p>
     <button class="big green" id="yes" type="button">آه، هاد هو</button>
     <button class="big ghost" id="no" type="button">بدي غيره</button>`);
-  bind({ yes: () => extraInfo(p), no: pickLeague });
-}
-
-// معلومات بيعرفها اللي اختار وما عنا إياها بالبيانات: لون البشرة، وأحياناً القدم ورقم القميص
-function extraInfo(p, ex = {}) {
-  const seg = (key, vals) => `<div class="seg" style="grid-template-columns:repeat(${vals.length},1fr)">${vals.map((v) => `<button type="button" data-k="${key}" data-v="${v}" aria-pressed="${ex[key] === v}">${v}</button>`).join("")}</div>`;
-  render(`<h1>ساعدنا بالتلميحات</h1>
-    <p class="sub">${esc(p.a)}: جاوب عن هدول عشان تطلع التلميحات صح. صاحبك ما رح يشوفهم.</p>
-    <h2>لون بشرته</h2>${seg("skin", ["فاتحة", "حنطية", "سمراء"])}
-    ${p.ft ? "" : `<h2>بأي قدم بيلعب؟</h2>${seg("foot", ["اليمين", "اليسار", "الثنتين"])}`}
-    ${p.sn ? "" : `<h2>رقم قميصه</h2><input class="search" id="num" type="number" inputmode="numeric" min="1" max="99" placeholder="إذا ما بتعرف خليه فاضي" value="${esc(ex.num || "")}">`}
-    <p class="note" id="err" hidden>اختار لون البشرة.</p>
-    <button class="big green" id="ok" type="button">تمام</button>`);
-  document.querySelectorAll("[data-k]").forEach((b) => b.onclick = () => { if ($("num")) ex.num = $("num").value; ex[b.dataset.k] = b.dataset.v; extraInfo(p, ex); });
-  bind({ ok: () => {
-    if (!ex.skin) { $("err").hidden = false; return; }
-    const n = parseInt($("num")?.value || "", 10);
-    ex.num = n >= 1 && n <= 99 ? n : null;
+  bind({ yes: () => {
     G.picks[G.picker] = p.id;
-    G.extra = G.extra || [];
-    G.extra[G.picker] = ex;
     G.picker++;
     if (G.picker < G.players.length) { save(); pickPass(); return; }
     startPlay();
-  } });
+  }, no: pickLeague });
 }
 
-// ---------- hints ----------
-// الترتيب: الدوري (أو نادي الاعتزال)، المركز، العمر، النادي، لون البشرة، رقم القميص، المسيرة،
-// القدم، أول حرف، أول 3 حروف
+// ---------- 5 hints ----------
+// 1) الدوري (أو نادي الاعتزال)  2) المركز  3) كأس العالم ودوري الأبطال  4) المنتخب  5) زميل أو مدرب مشهور
 const bi = (x) => (/^[؀-ۿ]/.test(String(x)) ? "ب" : "بـ") + x;
-function hintsFor(p, ex = {}) {
-  const clubs = p.c || [];
-  const lastClub = clubs.slice().sort((a, b) => ((a[2] || a[1] || 0) - (b[2] || b[1] || 0)))[clubs.length - 1];
-  const pos = (p.pos || [])[0];
-  const nt = (p.nt || []).length ? ntOf(p) : null;
-  const year = new Date().getFullYear();
-  const letters = String(p.a).replace(/\s+/g, "");
-  const career = [...clubs.map(clubName).filter((c, i, a) => c !== a[i - 1])];
-  const ft = ex.foot || p.ft;
-  const number = ex.num || (p.sn && p.sn[0]);
-  const extra = [
-    nt ? `لعب مع ${nt}` : null,
-    p.wc && p.wc.length ? `فاز بكأس العالم ${p.wc.join(" و")}` : null,
-    p.ucl && p.ucl.length ? "فاز بدوري أبطال أوروبا" : null,
-    (p.fx || [])[0] ? String(p.fx[0]).replace(/ (مرتين|مرة وحدة|\d+ مرات?|\d+ مرة)$/, "") : null,
-  ].filter(Boolean);
-  const or = (x) => x || extra.shift() || "لاعب معروف، فكّر منيح!";
-  const H = [
-    p.act ? `لاعب حالي، بيلعب ${p.lg ? bi(p.lg) : "برا الدوريات المعروفة"}` : `معتزل، واعتزل ${lastClub ? bi(clubName(lastClub)) : ""}`.trim(),
-    or(pos ? `مركزه: ${pos}` : null),
-    or(p.by ? (p.dy ? `توفى سنة ${p.dy} وكان عمره ${p.dy - p.by} سنة` : `عمره ${year - p.by} سنة`) : null),
-    or(p.hc ? (p.act ? `بيلعب هلأ ${bi(p.hc)}` : `أطول فترة بمسيرته لعبها مع ${p.hc}`) : null),
-    or(ex.skin ? `بشرته ${ex.skin}` : null),
-    or(number ? `بيلبس القميص رقم ${number}` : null),
-    or(career.length ? `مسيرته: ${career.slice(0, 8).join(" ← ")}${nt ? ` · ومع ${nt}` : ""}` : null),
-    or(ft ? (ft === "الثنتين" ? "بيلعب بالقدمين الثنتين" : `بيلعب بالقدم ${ft}`) : null),
-    `أول حرف من اسمه: «${letters[0] || "?"}»`,
-    `أول 3 حروف من اسمه: «${letters.slice(0, 3)}»`,
+const pick1 = (xs) => xs[Math.floor(Math.random() * xs.length)];
+function hintsFor(p) {
+  const cnt = (n) => n === 1 ? "مرة" : n === 2 ? "مرتين" : `${n} مرات`;
+  const wc = p.wc || [], ucl = p.ucl || [];
+  const wcT = wc.length ? `كأس العالم (${wc.join(" و")})` : null;
+  const uclT = ucl.length ? `دوري أبطال أوروبا (${cnt(ucl.length)})` : null;
+  const trophies = wcT && uclT ? `فاز ${bi(wcT)} وفاز ${bi(uclT)}`
+    : wcT ? `فاز ${bi(wcT)}، بس ما فاز بدوري أبطال أوروبا`
+    : uclT ? `ما فاز بكأس العالم، بس فاز ${bi(uclT)}`
+    : "ما فاز لا بكأس العالم ولا بدوري أبطال أوروبا";
+  const nt = p.nt ? (p.cur ? `بيلعب مع ${p.nt}` : `لعب مع ${p.nt}`) : p.nat ? `منتخب بلده: منتخب ${p.nat}` : "ما إله منتخب معروف";
+  const links = [
+    ...(p.tm || []).slice(0, 3).map(([n, w, isNt]) => `لعب مع ${n} ${isNt ? "بـ" + w : bi(w)}`),
+    ...(p.co || []).slice(0, 2).map(([c, w]) => `دربه ${c} ${bi(w)}`),
   ];
-  return H.slice(0, MAX_HINTS);
+  const last = links.length ? pick1(links) : p.num ? `بيلبس القميص رقم ${p.num}` : `اسمه بيبلش بحرف «${String(p.a)[0]}»`;
+  return [
+    p.cur ? `لاعب حالي، بيلعب ${bi(p.lg)}` : `معتزل${p.rc ? `، واعتزل ${bi(p.rc)}` : ""}`,
+    `مركزه: ${POS_AR[posCat(p)]}`,
+    trophies,
+    nt,
+    last,
+  ];
 }
 
-// 20 خيار محيّرين: للاعب الحالي من ناديه الحالي، وللمعتزل من منتخبه
+// 10 خيارات محيّرة: للاعب الحالي من ناديه ونفس مركزه، وللمعتزل من منتخبه ونفس مركزه
 function optionsFor(p) {
-  const nt = ntOf(p), pc = posCat(p);
+  const pc = posCat(p), nt = ntOf(p);
   const others = DATA.players.filter((x) => x.id !== p.id);
-  const fameSort = (xs) => xs.map((x) => [x.r * (0.5 + Math.random()), x]).sort((a, b) => a[0] - b[0]).map(([, x]) => x);
-  let groups;
-  if (p.act && p.hc) {
-    // لاعب حالي: لاعبين ناديه الحالي (نفس المركز أول)، بعدين نفس المركز بنفس الدوري
-    const mate = (x) => x.act && x.hc === p.hc;
-    groups = [
-      others.filter((x) => mate(x) && posCat(x) === pc),
-      others.filter((x) => mate(x) && posCat(x) !== pc),
-      others.filter((x) => !mate(x) && x.act && x.lg === p.lg && posCat(x) === pc),
-      others.filter((x) => !mate(x) && x.act && ntOf(x) === nt),
-    ];
-  } else {
-    // معتزل: نفس المنتخب ونفس المركز أول، بعدين باقي المنتخب، بعدين نفس المركز من برا
-    groups = [
-      others.filter((x) => ntOf(x) === nt && posCat(x) === pc),
-      others.filter((x) => ntOf(x) === nt && posCat(x) !== pc),
-      others.filter((x) => ntOf(x) !== nt && posCat(x) === pc && x.act === p.act),
-    ];
-  }
+  const fameSort = (xs) => xs.map((x) => [-(x.r || 0) * (0.6 + Math.random() * 0.8), x]).sort((a, b) => a[0] - b[0]).map(([, x]) => x);
+  const groups = p.cur ? [
+    others.filter((x) => x.cur && x.hc === p.hc && posCat(x) === pc),
+    others.filter((x) => x.cur && x.hc === p.hc),
+    others.filter((x) => x.cur && x.lg === p.lg && posCat(x) === pc),
+  ] : [
+    others.filter((x) => !x.cur && ntOf(x) === nt && posCat(x) === pc),
+    others.filter((x) => !x.cur && ntOf(x) === nt),
+    others.filter((x) => !x.cur && posCat(x) === pc),
+  ];
   const seen = new Set();
-  const picked = groups.flatMap(fameSort).filter((x) => !seen.has(x.id) && seen.add(x.id)).slice(0, 19);
+  const picked = groups.flatMap(fameSort).filter((x) => !seen.has(x.id) && seen.add(x.id)).slice(0, OPTIONS - 1);
   return shuffle([p.id, ...picked.map((x) => x.id)]);
 }
 
-// "احذف 5": بيشيل الخيارات اللي أي حدا بيستبعدها من التلميحات (حالي/معتزل، مركز، منتخب، عمر)
+// "احذف 3": بيشيل أبعد 3 عن التلميحات (مركز مختلف، عمر بعيد، منتخب مختلف)
 function easyWrong(target, ids, k) {
-  const age = (x) => x.by || 0;
   return ids.filter((id) => id !== target.id).map((id) => {
     const x = byId.get(id);
     let d = 0;
-    if (x.act !== target.act) d += 4;
-    if (posCat(x) !== posCat(target)) d += 3;
-    if (ntOf(x) !== ntOf(target)) d += 2;
-    d += Math.min(3, Math.abs(age(x) - age(target)) / 4);
-    if (x.lg && target.lg && x.act && target.act && x.lg !== target.lg) d += 1;
+    if (!!x.cur !== !!target.cur) d += 5;
+    if (posCat(x) !== posCat(target)) d += 3 + Math.abs(POS_ORDER[posCat(x)] - POS_ORDER[posCat(target)]);
+    if (ntOf(x) !== ntOf(target)) d += 1.5;
+    if (x.by && target.by) d += Math.min(3, Math.abs(x.by - target.by) / 4);
     return [d + Math.random() * 0.3, id];
   }).sort((a, b) => b[0] - a[0]).slice(0, k).map(([, id]) => id);
 }
@@ -465,8 +421,7 @@ function startPlay() {
   // كل واحد بياخذ اللاعب اللي اختاره اللي قبله
   G.targets = G.players.map((_, i) => G.picks[(i - 1 + n) % n]);
   G.st = G.players.map((_, i) => ({ h: 0, lives: LIVES, pts: 0, done: null, opts: optionsFor(byId.get(G.targets[i])), cutUsed: false }));
-  G.extra = G.extra || [];
-  G.hints = G.targets.map((id, i) => hintsFor(byId.get(id), G.extra[(i - 1 + n) % n] || {}));
+  G.hints = G.targets.map((id) => hintsFor(byId.get(id)));
   G.turn = 0; G.phase = "play"; save();
   turnPass();
 }
@@ -511,7 +466,7 @@ function guessView() {
   const opts = s.opts.map((id) => byId.get(id)).filter(Boolean);
   render(`${statusBar()}<h2>اختار لاعبك</h2>
     <div class="helpers">
-      <button type="button" id="cut" ${help.cut && !s.cutUsed ? "" : "disabled"}>احذف 5 خيارات</button>
+      <button type="button" id="cut" ${help.cut && !s.cutUsed ? "" : "disabled"}>احذف ${CUT} خيارات</button>
       <button type="button" id="free" class="${s.freeArmed ? "armed" : ""}" ${help.free || s.freeArmed ? "" : "disabled"}>${s.freeArmed ? "المحاولة المجانية شغّالة" : "محاولة مجانية"}</button>
     </div>
     <p class="note">${opts.length} خيار. الوسائل المساعدة مرة وحدة بكل اللعبة.</p>
@@ -520,7 +475,7 @@ function guessView() {
   bind({
     cut: () => {
       const target = G.targets[i];
-      const wrong = easyWrong(byId.get(target), s.opts, 5);
+      const wrong = easyWrong(byId.get(target), s.opts, CUT);
       s.opts = s.opts.filter((id) => !wrong.includes(id));
       s.cutUsed = true; help.cut = false; save(); guessView();
     },
@@ -562,7 +517,7 @@ function roundEnd() {
   G.hist.push(G.players.map((p, i) => ({ name: p.name, target: G.targets[i], pts: G.st[i].pts, done: G.st[i].done, h: G.st[i].h })));
   const rows = G.hist[G.hist.length - 1];
   const last = G.round >= ROUNDS;
-  G.round++; G.phase = "pick"; G.picker = 0; G.picks = []; G.extra = [];
+  G.round++; G.phase = "pick"; G.picker = 0; G.picks = [];
   save();
   const board = G.players.map((p, i) => i).sort((a, b) => G.players[b].total - G.players[a].total);
   const top = Math.max(...G.players.map((p) => p.total));
@@ -572,7 +527,7 @@ function roundEnd() {
       return `<div class="pickbtn prow">${face(p, "mini2")}<span><b>${esc(r.name)}: ${esc(p.a)}</b><small>${r.done === "solved" ? `عرفه من التلميح ${r.h}` : "ما عرفه"} · <bdi dir="ltr">${r.pts > 0 ? "+" : ""}${r.pts}</bdi></small></span></div>`; }).join("")}</div>
     <h2>المجموع</h2>
     <div class="board">${board.map((i, k) => `<div class="r"><span class="pos">${k + 1}</span><b>${esc(G.players[i].name)}</b><span class="t">${G.players[i].total}</span>
-      <small>المساعدة: ${G.players[i].help.cut ? "احذف 5 ✓" : "احذف 5 ✗"} · ${G.players[i].help.free ? "مجانية ✓" : "مجانية ✗"}</small></div>`).join("")}</div>
+      <small>المساعدة: ${G.players[i].help.cut ? `احذف ${CUT} ✓` : `احذف ${CUT} ✗`} · ${G.players[i].help.free ? "مجانية ✓" : "مجانية ✗"}</small></div>`).join("")}</div>
     ${last ? `<button class="big" id="again" type="button">لعبة جديدة</button>` : `<button class="big" id="next" type="button">الجولة ${G.round}</button>`}`);
   if (last) store.set("game", null);
   bind({ next: pickPass, again: () => setupPlayers() });
@@ -580,9 +535,9 @@ function roundEnd() {
 
 $("quit").onclick = () => { location.href = "./"; };
 
-fetch("players.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
+fetch("party.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
   DATA = d; byId = new Map(d.players.map((p) => [p.id, p]));
-  if (!d.clubs) { $("app").innerHTML = `<div class="loading">قاعدة الأندية لسا بتتحدث. جرّب كمان شوي.</div>`; return; }
+  if (!d.players || !d.players.length) { $("app").innerHTML = `<div class="loading">قاعدة اللاعبين لسا بتتحدث. جرّب كمان شوي.</div>`; return; }
   intro();
 }).catch(() => { $("app").innerHTML = `<div class="loading">ما قدرت أحمّل اللاعبين.</div>`; });
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
