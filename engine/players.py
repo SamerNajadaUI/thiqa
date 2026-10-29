@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import itertools
 import json
+import re
 import random
 import sys
 import time
@@ -153,13 +154,35 @@ def fetch_coaches(teams_known: set[str]) -> dict:
 
 # ---------------------------------------------------------------- shape
 
-YOUTH = ("under-", "u-1", "u-2", "u1", "u2", "youth", "olympic", "b team", " ii", " b", "reserves", "academy",
-         "تحت", "الأولمبي", "الرديف", "الشباب")
+YOUTH_RE = re.compile(
+    r"(under[- ]?\d{2}|\bu-?\d{2}\b|youth|olympic|reserves?|academy|primavera|juniors?|"
+    r"\bb team\b|\s(b|ii|iii)$|atl[eè]tic$|castilla|^jong\s|amateur|\bu\d{2}s?\b)",
+    re.IGNORECASE,
+)
 
 
 def is_youth(t: dict) -> bool:
-    name = f" {(t.get('en') or '').lower()} {(t.get('ar') or '')}"
-    return any(k in name for k in YOUTH)
+    return bool(YOUTH_RE.search((t.get("en") or "").strip()))
+
+
+def clean(label):
+    return re.sub(r"\s*\([^)]*\)\s*$", "", label).strip() if label else label
+
+
+def merge_nt(teams) -> list:
+    """المنتخب بسطر واحد: من أول سنة لآخر سنة."""
+    out: dict[str, list] = {}
+    for t in teams:
+        name = clean(t["ar"] or t["en"])
+        if not name:
+            continue
+        cur = out.get(name)
+        if cur is None:
+            out[name] = [name, t["s"], t["e"]]
+        else:
+            cur[1] = min(x for x in (cur[1], t["s"]) if x) if (cur[1] or t["s"]) else None
+            cur[2] = None if (cur[2] is None or t["e"] is None) else max(cur[2], t["e"])
+    return sorted(out.values(), key=lambda x: x[1] or 9999)
 
 
 def shape(p: dict, rank: int) -> dict | None:
@@ -170,25 +193,20 @@ def shape(p: dict, rank: int) -> dict | None:
         if is_youth(t):
             continue
         bucket = nts if t["nat"] else clubs
-        cur = bucket.get(t["t"])
-        if cur is None:
-            bucket[t["t"]] = {**t}
-        else:  # نفس الفريق أكثر من فترة: بناخذ أول بداية وآخر نهاية للعرض
-            cur["s"] = min(x for x in (cur["s"], t["s"]) if x) if (cur["s"] or t["s"]) else None
-            cur["e"] = None if (cur["e"] is None or t["e"] is None) else max(cur["e"], t["e"])
+        bucket.setdefault((t["t"], t["s"], t["e"]), t)  # كل فترة لحالها (مثلاً رونالدو بمانشستر مرتين)
     if not clubs:
         return None
-    club_list = sorted(clubs.values(), key=lambda t: (t["s"] or 9999))
+    club_list = sorted(clubs.values(), key=lambda t: (t["s"] or 9999, t["e"] or 9999))
     latest = max((t["s"] or 0) for t in club_list)
     active = not p.get("dy") and (p.get("by") or 0) >= 1984 and any(t["e"] is None and (t["s"] or 0) >= 2019 for t in club_list) and latest >= 2019
     lv = next(l for cut, l in LEVELS if rank < cut)
     nat = p.get("sport_nat") or p.get("nat") or []
     return {
-        "id": p["id"], "n": p["en"], "a": p.get("ar") or p["en"], "img": p.get("img"),
+        "id": p["id"], "n": clean(p["en"]), "a": clean(p.get("ar")) or clean(p["en"]), "img": p.get("img"),
         "by": p.get("by"), "dy": p.get("dy"), "h": p.get("h"),
         "pos": p["pos"][:2], "nat": nat[:2],
-        "c": [[t["ar"] or t["en"], t["s"], t["e"]] for t in club_list if (t["ar"] or t["en"])],
-        "nt": [[t["ar"] or t["en"], t["s"], t["e"]] for t in sorted(nts.values(), key=lambda t: t["s"] or 9999) if (t["ar"] or t["en"])][:2],
+        "c": [[clean(t["ar"] or t["en"]), t["s"], t["e"]] for t in club_list if (t["ar"] or t["en"])],
+        "nt": merge_nt(nts.values())[:2],
         "lv": lv, "act": active, "r": rank,
     }
 
@@ -247,7 +265,7 @@ def build_challenges(raw: dict, kept: dict, coaches: dict, team_names: dict) -> 
                         by_player[pid].add(t)
         two = ok(pid for pid, ts in by_player.items() if len(ts) >= 2)
         if len(two) >= 3:
-            name = c["ar"] or c["en"]
+            name = clean(c["ar"] or c["en"])
             ch.append({"k": "coach", "t": f"تحت قيادة {name} بفريقين", "q": f"سمّي لاعبين دربهم {name} بفريقين مختلفين أو أكثر", "ans": two})
 
     club_players = defaultdict(set)
@@ -283,7 +301,7 @@ def main() -> int:
     team_names = {}
     for p in raw.values():
         for t in p["teams"]:
-            team_names.setdefault(t["t"], t["ar"] or t["en"] or t["t"])
+            team_names.setdefault(t["t"], clean(t["ar"] or t["en"]) or t["t"])
     log("بجيب المدربين...")
     coaches = fetch_coaches(set(team_names))
     challenges = build_challenges(raw, kept, coaches, team_names)

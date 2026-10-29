@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ألعاب أبو عودة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="أبو عودة">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: same chunky game-app skin as the main app. One screen at a time: games list -> mode -> level -> era -> player card, or challenges -> challenge. Light-only by design. */
+:root {
+  color-scheme: light;
+  --bg: #FFFFFF; --soft: #F4F5F7; --line: #ECEEF1; --ink: #111316; --muted: #6B7280; --faint: #A9AEB6;
+  --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
+  --l1: #12B76A; --l1d: #0A8A4F; --l1s: #E6F8EF;
+  --l2: #F79009; --l2d: #C26A00; --l2s: #FEF3E2;
+  --l3: #F04438; --l3d: #B42318; --l3s: #FEECEA;
+  --l4: #1D2939; --l4d: #000000; --l4s: #EAECF0;
+  --gold: #FDB022; --gold-dark: #DC6803;
+  --font: "Readex Pro", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+  --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); }
+body { margin: 0; color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+.wrap { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: calc(12px + env(safe-area-inset-top, 0px)) calc(32px + env(safe-area-inset-bottom, 0px)); }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+bdi { unicode-bidi: isolate; }
+
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.back { display: inline-flex; align-items: center; gap: 6px; border: 0; background: var(--soft); border-radius: 16px; padding: 10px 14px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); }
+.back svg { width: 18px; height: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand img { width: 44px; height: 44px; border-radius: 14px; box-shadow: 0 4px 0 var(--brand-dark); }
+.brand b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px 0 0; }
+
+/* big chunky buttons/cards */
+.tile { --c: var(--brand); --cd: var(--brand-dark); --cs: var(--brand-soft);
+  display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; text-align: right; width: 100%;
+  background: #FFFFFF; border: 2px solid var(--cs); border-radius: 28px; padding: 16px; box-shadow: 0 6px 0 var(--cs); transition: transform .1s; }
+.tile:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--cs); }
+.tile .ic { width: 64px; height: 64px; border-radius: 20px; background: var(--c); box-shadow: 0 4px 0 var(--cd); display: grid; place-items: center; color: #FFFFFF; }
+.tile .ic svg { width: 34px; height: 34px; }
+.tile b { display: block; font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.2; }
+.tile small { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.tile .go { width: 36px; height: 36px; border-radius: 50%; background: var(--cs); color: var(--c); display: grid; place-items: center; }
+.tile .go svg { width: 18px; height: 18px; }
+.tile.l1 { --c: var(--l1); --cd: var(--l1d); --cs: var(--l1s); }
+.tile.l2 { --c: var(--l2); --cd: var(--l2d); --cs: var(--l2s); }
+.tile.l3 { --c: var(--l3); --cd: var(--l3d); --cs: var(--l3s); }
+.tile.l4 { --c: var(--l4); --cd: var(--l4d); --cs: var(--l4s); }
+.tile.gold { --c: var(--gold); --cd: var(--gold-dark); --cs: #FEF0C7; }
+.tile .ic .lvnum { font-family: var(--display); font-size: 30px; line-height: 1; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.soon { color: var(--faint); font-size: 13px; text-align: center; }
+
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.seg button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 14px 8px; font-weight: 600; box-shadow: 0 4px 0 var(--line); }
+.seg button[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); box-shadow: 0 4px 0 #D9D1FF; }
+.big { border: 0; width: 100%; background: var(--brand); color: #FFFFFF; border-radius: 22px; padding: 16px; font-family: var(--display); font-size: 24px; box-shadow: 0 6px 0 var(--brand-dark); }
+.big:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--brand-dark); }
+.big.green { background: var(--l1); box-shadow: 0 6px 0 var(--l1d); }
+.big.red { background: var(--l3); box-shadow: 0 6px 0 var(--l3d); }
+.big.ghost { background: var(--soft); color: var(--ink); box-shadow: 0 6px 0 var(--line); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* player card */
+.pcard { position: relative; border-radius: 32px; overflow: hidden; background: #FFFFFF; border: 2px solid var(--cs, var(--brand-soft)); box-shadow: 0 8px 0 var(--cs, var(--brand-soft)); }
+.pcard.l1 { --c: var(--l1); --cs: var(--l1s); } .pcard.l2 { --c: var(--l2); --cs: var(--l2s); }
+.pcard.l3 { --c: var(--l3); --cs: var(--l3s); } .pcard.l4 { --c: var(--l4); --cs: var(--l4s); }
+.photo { position: relative; aspect-ratio: 4 / 3.4; max-width: 100%; background: linear-gradient(180deg, var(--cs), #FFFFFF); display: grid; place-items: center; overflow: hidden; }
+.photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+.photo .ini { font-family: var(--display); font-size: 72px; color: var(--c); }
+.badge { position: absolute; top: 14px; right: 14px; background: var(--c); color: #FFFFFF; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 999px; }
+.badge.era { right: auto; left: 14px; background: rgb(17 19 22 / .72); }
+.pname { padding: 16px 18px 4px; }
+.pname b { display: block; font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.15; }
+.pname span { color: var(--muted); font-size: 14px; direction: ltr; display: block; text-align: right; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px 16px; }
+.fact { background: var(--soft); border-radius: 18px; padding: 10px 8px; text-align: center; min-width: 0; }
+.fact small { display: block; color: var(--muted); font-size: 11px; }
+.fact b { display: block; font-weight: 600; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.clubs { padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.clubs h3 { margin: 4px 0 0; font-size: 13px; color: var(--muted); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--soft); border-radius: 14px; padding: 6px 10px; font-size: 13px; font-weight: 500; }
+.chip .yr { color: var(--muted); font-size: 11px; direction: ltr; display: inline-block; margin-inline-start: 4px; }
+.chip.nt { background: var(--brand-soft); color: var(--brand-dark); }
+.cover { position: absolute; inset: 0; background: var(--brand); color: #FFFFFF; display: grid; place-items: center; text-align: center; padding: 24px; z-index: 2; border: 0; width: 100%; }
+.cover b { font-family: var(--display); font-weight: 400; font-size: 34px; display: block; }
+.cover small { opacity: .85; font-size: 14px; }
+.credit { color: var(--faint); font-size: 11px; text-align: center; }
+
+.hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.hud div { background: var(--soft); border-radius: 20px; padding: 10px; text-align: center; }
+.hud b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.1; direction: ltr; }
+.hud small { color: var(--muted); font-size: 11px; }
+.qbtn { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+.qbtn .big { font-size: 20px; }
+.minus { border: 0; background: var(--soft); border-radius: 22px; width: 64px; font-size: 24px; box-shadow: 0 6px 0 var(--line); }
+
+.result { text-align: center; background: var(--l1s); border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
+.result.lose { background: var(--l3s); }
+.result b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
+
+/* challenges */
+.prompt { background: var(--brand); color: #FFFFFF; border-radius: 28px; padding: 22px; box-shadow: 0 8px 0 var(--brand-dark); }
+.prompt small { opacity: .85; }
+.prompt b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.3; margin-top: 4px; }
+.timer { font-family: var(--display); font-size: 56px; text-align: center; line-height: 1; direction: ltr; }
+.timer.low { color: var(--l3); }
+.answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ans { display: flex; align-items: center; gap: 8px; border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 8px 10px; text-align: right; min-width: 0; font-size: 13px; font-weight: 600; }
+.ans img, .ans .mini { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
+.ans span { min-width: 0; overflow-wrap: anywhere; line-height: 1.35; }
+.ans.hidden span { filter: blur(6px); }
+.ans.hidden img { filter: blur(6px); }
+.ans.got { border-color: var(--l1); background: var(--l1s); }
+.note { color: var(--muted); font-size: 13px; line-height: 1.7; margin: 0; }
+.loading { text-align: center; color: var(--muted); padding: 40px 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .screen { animation: in .35s cubic-bezier(.2,.9,.3,1.15) both; }
+  @keyframes in { from { transform: translateY(12px) scale(.985); } to { transform: none; } }
+}
+@media (max-width: 380px) {
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .answers { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <a class="brand" href="../"><img src="../icons/icon.svg" alt=""><b>أبو عودة</b></a>
+    <button class="back" id="back" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>رجوع</button>
+  </div>
+  <main id="app" aria-live="polite"><div class="loading">بحمّل اللاعبين...</div></main>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const LEVELS = { 1: ["سهل", "l1", "لاعبين الكل بيعرفهم"], 2: ["متوسط", "l2", "نجوم معروفين"], 3: ["صعب", "l3", "لاعبين لازم تكون متابع"], 4: ["مستحيل", "l4", "للخبراء بس"] };
+const ERAS = { now: "لاعب حالي", old: "معتزل", all: "الكل" };
+const ICON = {
+  ball: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5l3.2 2.3-1.2 3.7h-4l-1.2-3.7z" fill="currentColor"/><path d="M12 3v4.5M20.5 9.3l-5.3.5M17.5 19.5l-3.5-6M6.5 19.5l3.5-6M3.5 9.3l5.3.5"/></svg>',
+  who: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/><path d="M18 3.5c1.2.4 2 1.4 2 2.6 0 1.8-2 2-2 3.4M18 12h.01"/></svg>',
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
+  go: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>',
+  bets: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/></svg>',
+};
+
+let DATA = null;
+const stack = [];
+const S = { level: 1, era: "all", seen: new Set(), round: null, stats: { played: 0, won: 0, q: 0 } };
+
+function initials(n) { const w = String(n || "").split(/\s+/).filter(Boolean); return ((w[0]?.[0] || "") + (w.length > 1 ? w[w.length - 1][0] : "")).toUpperCase(); }
+const yr = (s, e) => s ? (e ? `${s}–${e}` : `${s}–`) : "";
+const age = (p) => p.by ? ((p.dy || new Date().getFullYear()) - p.by) : null;
+
+function show(render, push = true) {
+  if (push) stack.push(render);
+  $("back").hidden = stack.length <= 1;
+  $("app").innerHTML = `<div class="screen">${render()}</div>`;
+  window.scrollTo(0, 0);
+  bind();
+}
+$("back").addEventListener("click", () => { if (stack.length > 1) { stack.pop(); clearInterval(S.timer); show(stack[stack.length - 1], false); } });
+
+let handlers = {};
+function on(id, fn) { handlers[id] = fn; }
+function bind() { for (const [id, fn] of Object.entries(handlers)) { const el = document.getElementById(id); if (el) el.onclick = fn; } handlers = {}; document.querySelectorAll("[data-act]").forEach((el) => { el.onclick = () => ACTS[el.dataset.act](el.dataset.arg); }); }
+const ACTS = {};
+
+// ---------- screens ----------
+function screenGames() {
+  on("g-who", () => show(screenWhoMenu));
+  return `<h1>الألعاب</h1><p class="sub">ألعاب كورة تلعبها مع صحابك على نفس التلفون.</p>
+    <div class="stack" style="margin-top:14px">
+      <button class="tile" id="g-who" type="button"><span class="ic">${ICON.who}</span><span><b>احزر اللاعب</b><small>إنت شايف اللاعب، وصاحبك بيسأل لحد ما يعرفه</small></span><span class="go">${ICON.go}</span></button>
+      <p class="soon">ألعاب ثانية جاية قريباً.</p>
+    </div>`;
+}
+
+function screenWhoMenu() {
+  on("m-classic", () => show(screenLevel));
+  on("m-chal", () => show(screenChallenges));
+  return `<h1>احزر اللاعب</h1>
+    <p class="sub">إنت بتمسك التلفون وبتشوف اللاعب. صاحبك بيسألك أسئلة جوابها آه أو لا، لحد ما يعرف مين هو.</p>
+    <div class="stack" style="margin-top:14px">
+      <button class="tile" id="m-classic" type="button"><span class="ic">${ICON.who}</span><span><b>العب</b><small>اختار المستوى، واللاعب حالي أو معتزل</small></span><span class="go">${ICON.go}</span></button>
+      <button class="tile gold" id="m-chal" type="button"><span class="ic">${ICON.link}</span><span><b>تحديات</b><small>لعبوا مع ميسي ورونالدو، نفس المدرب بفريقين، وأكثر</small></span><span class="go">${ICON.go}</span></button>
+    </div>`;
+}
+
+function screenLevel() {
+  Object.keys(LEVELS).forEach((l) => on("lv" + l, () => { S.level = +l; show(screenEra); }));
+  return `<h1>اختار المستوى</h1><div class="stack" style="margin-top:12px">${Object.entries(LEVELS).map(([l, [name, cls, desc]]) => {
+    const n = DATA.players.filter((p) => p.lv === +l).length;
+    return `<button class="tile ${cls}" id="lv${l}" type="button"><span class="ic"><span class="lvnum">${l}</span></span><span><b>${name}</b><small>${desc} · ${n} لاعب</small></span><span class="go">${ICON.go}</span></button>`;
+  }).join("")}</div>`;
+}
+
+function screenEra() {
+  on("start", () => nextPlayer());
+  ["now", "old", "all"].forEach((e) => on("era-" + e, () => { S.era = e; show(screenEra, false); }));
+  const [name] = LEVELS[S.level];
+  const n = pool().length;
+  return `<h1>${name}</h1><p class="sub">حالي ولا معتزل؟</p>
+    <div class="seg" style="margin-top:12px">${Object.entries(ERAS).map(([k, v]) => `<button id="era-${k}" type="button" aria-pressed="${S.era === k}">${v}</button>`).join("")}</div>
+    <p class="note" style="margin-top:10px">${n} لاعب بهالاختيار.</p>
+    <button class="big" id="start" type="button" style="margin-top:8px" ${n ? "" : "disabled"}>يلا نبلش</button>`;
+}
+
+function pool() {
+  return DATA.players.filter((p) => p.lv === S.level && (S.era === "all" || (S.era === "now" ? p.act : !p.act)));
+}
+
+function nextPlayer() {
+  const ps = pool();
+  let left = ps.filter((p) => !S.seen.has(p.id));
+  if (!left.length) { ps.forEach((p) => S.seen.delete(p.id)); left = ps; }
+  const p = left[Math.floor(Math.random() * left.length)];
+  S.seen.add(p.id);
+  S.round = { p, q: 0, start: Date.now(), hidden: true, done: null };
+  if (stack.length && stack[stack.length - 1] === screenPlayer) show(screenPlayer, false); else show(screenPlayer);
+}
+
+function playerCard(p, hidden) {
+  const [lvName, cls] = LEVELS[p.lv];
+  const facts = [
+    ["المركز", (p.pos || []).join("، ") || "–"],
+    ["الجنسية", (p.nat || []).join("، ") || "–"],
+    ["الطول", p.h ? `${p.h} سم` : "–"],
+    ["مواليد", p.by || "–"],
+    [p.dy ? "توفي" : "العمر", p.dy ? p.dy : (age(p) ?? "–")],
+    ["الأندية", (p.c || []).length],
+  ];
+  const photo = p.img ? `<img src="${esc(p.img)}" alt="${esc(p.a)}" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ini',textContent:'${esc(initials(p.n))}'}))">` : `<span class="ini">${esc(initials(p.n))}</span>`;
+  return `<article class="pcard ${cls}">
+    ${hidden ? `<button class="cover" id="reveal" type="button"><span><b>جاهز؟</b><small>تأكد إنه صاحبك مش شايف الشاشة، وبعدين اكبس عشان تشوف اللاعب</small></span></button>` : ""}
+    <div class="photo">${photo}<span class="badge">${lvName}</span><span class="badge era">${p.act ? "لاعب حالي" : "معتزل"}</span></div>
+    <div class="pname"><b>${esc(p.a)}</b><span>${esc(p.n)}</span></div>
+    <div class="facts">${facts.map(([k, v]) => `<div class="fact"><small>${k}</small><b>${esc(v)}</b></div>`).join("")}</div>
+    <div class="clubs">
+      <h3>الأندية</h3><div class="chips">${(p.c || []).map(([n, s, e]) => `<span class="chip">${esc(n)}<span class="yr">${yr(s, e)}</span></span>`).join("")}</div>
+      ${(p.nt || []).length ? `<h3>المنتخب</h3><div class="chips">${p.nt.map(([n, s, e]) => `<span class="chip nt">${esc(n)}<span class="yr">${yr(s, e)}</span></span>`).join("")}</div>` : ""}
+    </div>
+  </article>`;
+}
+
+function screenPlayer() {
+  const R = S.round, p = R.p;
+  on("reveal", () => { R.hidden = false; show(screenPlayer, false); });
+  on("q-plus", () => { R.q++; $("qn").textContent = R.q; });
+  on("q-minus", () => { R.q = Math.max(0, R.q - 1); $("qn").textContent = R.q; });
+  on("got", () => finish(true));
+  on("gave", () => finish(false));
+  on("next", () => nextPlayer());
+  on("hide", () => { R.hidden = true; show(screenPlayer, false); });
+  const st = S.stats;
+  const done = R.done !== null;
+  return `${playerCard(p, R.hidden)}
+    <p class="credit">المعلومات من Wikidata والصورة من Wikimedia Commons</p>
+    ${done ? `<div class="result ${R.done ? "" : "lose"}"><b>${R.done ? `عرفه بـ${R.q} ${R.q === 1 ? "سؤال" : "أسئلة"}!` : "ما عرفه!"}</b><span>${R.done ? "برافو عليه" : `كان ${esc(p.a)}`}</span></div>
+      <button class="big" id="next" type="button">لاعب ثاني</button>`
+    : `<div class="hud"><div><b id="qn">${R.q}</b><small>أسئلة</small></div><div><b>${st.won}/${st.played}</b><small>عرفهم</small></div><div><b>${st.played ? (st.q / Math.max(1, st.won)).toFixed(1) : "–"}</b><small>معدل الأسئلة</small></div></div>
+      <div class="qbtn"><button class="big ghost" id="q-plus" type="button">سأل سؤال +1</button><button class="minus" id="q-minus" type="button" aria-label="شيل سؤال">−</button></div>
+      <div class="row2"><button class="big green" id="got" type="button">عرفه!</button><button class="big red" id="gave" type="button">استسلم</button></div>
+      ${R.hidden ? "" : `<button class="big ghost" id="hide" type="button" style="font-size:18px">خبّي الشاشة</button>`}`}`;
+}
+
+function finish(won) {
+  const R = S.round;
+  R.done = won; R.hidden = false;
+  S.stats.played++;
+  if (won) { S.stats.won++; S.stats.q += R.q; }
+  show(screenPlayer, false);
+}
+
+// ---------- challenges ----------
+const CH_KIND = { mr: ["ميسي ورونالدو", "gold"], mates: ["زملاء نجم", "l1"], coach: ["نفس المدرب", "l2"], clubs: ["لعبوا بالناديين", "l3"] };
+function screenChallenges() {
+  const list = DATA.challenges;
+  const groups = ["mr", "coach", "mates", "clubs"].map((k) => [k, list.filter((c) => c.k === k)]).filter(([, xs]) => xs.length);
+  groups.forEach(([k, xs]) => on("ck-" + k, () => { const c = xs[Math.floor(Math.random() * xs.length)]; openChallenge(c); }));
+  return `<h1>تحديات</h1><p class="sub">صاحبك بيحاول يسمّي أكبر عدد لاعبين بدقيقة، وإنت بتعلّم على اللي بيجيبهم.</p>
+    <div class="stack" style="margin-top:12px">${groups.map(([k, xs]) => {
+      const [name, cls] = CH_KIND[k];
+      const sub = k === "mr" ? `${xs[0].ans.length} لاعب لعبوا مع الاثنين` : `${xs.length} تحدي مختلف`;
+      return `<button class="tile ${cls}" id="ck-${k}" type="button"><span class="ic">${ICON.link}</span><span><b>${name}</b><small>${sub}</small></span><span class="go">${ICON.go}</span></button>`;
+    }).join("")}</div>
+    <p class="note">التحديات محسوبة من سنين اللاعبين بالأندية والمنتخبات على Wikidata، فممكن تفوت حالات قليلة.</p>`;
+}
+
+function openChallenge(c) {
+  S.ch = { c, got: new Set(), left: 60, running: false, reveal: false };
+  show(screenChallenge);
+}
+
+function screenChallenge() {
+  const C = S.ch, c = C.c;
+  const byId = new Map(DATA.players.map((p) => [p.id, p]));
+  on("ch-start", () => { C.running = true; tick(); show(screenChallenge, false); });
+  on("ch-reveal", () => { C.reveal = true; C.running = false; clearInterval(S.timer); show(screenChallenge, false); });
+  on("ch-new", () => { const xs = DATA.challenges.filter((x) => x.k === c.k && x !== c); openChallenge(xs.length ? xs[Math.floor(Math.random() * xs.length)] : c); });
+  ACTS.tog = (id) => { if (C.got.has(id)) C.got.delete(id); else C.got.add(id); show(screenChallenge, false); };
+  const shown = c.ans.slice(0, 60);
+  return `<div class="prompt"><small>${CH_KIND[c.k][0]}</small><b>${esc(c.q)}</b></div>
+    <div class="timer ${C.left <= 10 ? "low" : ""}" id="timer">${C.left}</div>
+    <div class="hud"><div><b>${C.got.size}</b><small>جاب</small></div><div><b>${c.ans.length}</b><small>الجواب الكامل</small></div><div><b>${c.ans.length ? Math.round((C.got.size / c.ans.length) * 100) : 0}%</b><small>النسبة</small></div></div>
+    ${!C.running && !C.reveal && C.left === 60 ? `<button class="big" id="ch-start" type="button">ابدأ الدقيقة</button>` : ""}
+    <p class="note">${C.reveal ? "هاي كل الأجوبة." : "الأسماء مغبّشة عشان صاحبك ما يشوفها. لما يقول اسم صح، اكبس عليه."}</p>
+    <div class="answers">${shown.map((id) => { const p = byId.get(id); if (!p) return ""; const got = C.got.has(id);
+      const img = p.img ? `<img src="${esc(p.img)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<span class="mini">${esc(initials(p.n))}</span>`;
+      return `<button class="ans ${got ? "got" : ""} ${!got && !C.reveal ? "hidden" : ""}" type="button" data-act="tog" data-arg="${id}">${img}<span>${esc(p.a)}</span></button>`; }).join("")}</div>
+    ${c.ans.length > shown.length ? `<p class="note">و${c.ans.length - shown.length} لاعب كمان.</p>` : ""}
+    <div class="row2"><button class="big ghost" id="ch-reveal" type="button" style="font-size:18px">اكشف الكل</button><button class="big" id="ch-new" type="button" style="font-size:18px">تحدي ثاني</button></div>`;
+}
+
+function tick() {
+  clearInterval(S.timer);
+  S.timer = setInterval(() => {
+    const C = S.ch;
+    if (!C || !C.running) return clearInterval(S.timer);
+    C.left = Math.max(0, C.left - 1);
+    const t = $("timer");
+    if (t) { t.textContent = C.left; t.classList.toggle("low", C.left <= 10); }
+    if (C.left === 0) { C.running = false; C.reveal = true; clearInterval(S.timer); show(screenChallenge, false); }
+  }, 1000);
+}
+
+// ---------- boot ----------
+fetch("players.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => { if (!r.ok) throw 0; return r.json(); }).then((d) => {
+  DATA = d;
+  show(screenGames);
+}).catch(() => {
+  $("app").innerHTML = `<div class="loading">قاعدة اللاعبين لسا بتنبني. جرّب كمان شوي.</div>`;
+});
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 // أبو عودة: تشغيل كتطبيق، ويضل يفتح حتى لو النت ضعيف
-const VERSION = "abu-odeh-v1";
+const VERSION = "abu-odeh-v2";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
@@ -38,7 +38,7 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (url.origin === location.origin) {
     e.respondWith(networkFirst(req));  // الصفحة والبيانات: الأحدث أول، والمحفوظ إذا ما في نت
-  } else if (url.hostname.endsWith("fonts.gstatic.com") || url.hostname.endsWith("fonts.googleapis.com") || url.hostname === "a.espncdn.com") {
+  } else if (url.hostname.endsWith("fonts.gstatic.com") || url.hostname.endsWith("fonts.googleapis.com") || url.hostname === "a.espncdn.com" || url.hostname.endsWith("wikimedia.org")) {
     e.respondWith(cacheFirst(req));    // الخطوط والشعارات ما بتتغير
   }
   // النتائج المباشرة (ESPN) وغيرها: من النت مباشرة
