@@ -285,6 +285,22 @@ def build_challenges(raw: dict, kept: dict, coaches: dict, team_names: dict) -> 
     return ch
 
 
+def fetch_leagues(team_ids: list[str]) -> dict:
+    """الدوري تبع كل نادي (P118). بنفضّل الدوري الأعلى بالبلد إذا في أكثر من واحد."""
+    out: dict[str, list] = {}
+    for chunk in batches(team_ids, 200):
+        vals = " ".join("wd:" + i for i in chunk)
+        for b in sparql(f"""SELECT ?t ?l ?en ?ar ?links WHERE {{ VALUES ?t {{ {vals} }}
+            ?t wdt:P118 ?l. ?l wikibase:sitelinks ?links.
+            OPTIONAL {{ ?l rdfs:label ?en FILTER(LANG(?en)="en") }}
+            OPTIONAL {{ ?l rdfs:label ?ar FILTER(LANG(?ar)="ar") }} }}"""):
+            name = clean(v(b, "ar") or v(b, "en"))
+            if name:
+                out.setdefault(qid(v(b, "t")), []).append((int(v(b, "links")), name))
+        time.sleep(1)
+    return {t: max(xs)[1] for t, xs in out.items()}
+
+
 # ---------------------------------------------------------------- main
 
 def main() -> int:
@@ -305,11 +321,20 @@ def main() -> int:
     log("بجيب المدربين...")
     coaches = fetch_coaches(set(team_names))
     challenges = build_challenges(raw, kept, coaches, team_names)
+    club_count = defaultdict(int)
+    for pid in kept:
+        for t in {t["t"] for t in raw[pid]["teams"] if not t["nat"] and not is_youth(t)}:
+            club_count[t] += 1
+    common = [t for t, n in club_count.items() if n >= 2]
+    log(f"بجيب دوري {len(common)} نادي...")
+    leagues = fetch_leagues(common)
+    clubs = {team_names[t]: [leagues.get(t, "دوريات ثانية"), club_count[t]] for t in common}
     data = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
         "source": "Wikidata (CC0) · الصور من Wikimedia Commons",
         "players": sorted(kept.values(), key=lambda p: p["r"]),
         "challenges": challenges,
+        "clubs": clubs,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
