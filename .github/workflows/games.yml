@@ -1,0 +1,39 @@
+name: Games data
+
+# بيبني قاعدة لاعبين "احزر اللاعب" من Wikidata (مجاني)، وبيحدّثها كل أسبوع
+on:
+  push:
+    branches: [main]
+    paths: ["engine/players.py", ".github/workflows/games.yml"]
+  schedule:
+    - cron: "23 2 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: games-data
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build players database
+        run: python engine/players.py
+      - name: Save
+        run: |
+          git config user.name "thiqa-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/games
+          if git diff --cached --quiet; then echo "No changes"; else
+            git commit -m "Games data $(date +%F)"
+            git pull --rebase -X theirs origin main || git rebase --abort
+            git push
+          fi
