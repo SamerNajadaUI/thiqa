@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>الرقم الأقرب</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="أبو عودة للمرح">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one screen per step of a pass-the-phone party game. Same chunky game skin as the rest of the app; sky blue is this game's colour. Light-only by design. */
+:root {
+  color-scheme: light;
+  --bg: #FFFFFF; --soft: #F4F5F7; --line: #ECEEF1; --ink: #111316; --muted: #6B7280; --faint: #A9AEB6;
+  --c: #0BA5EC; --cd: #0086C9; --cs: #E0F2FE;
+  --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
+  --ok: #12B76A; --okd: #0A8A4F; --oks: #E6F8EF;
+  --bad: #F04438; --bads: #FEECEA;
+  --font: "Readex Pro", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+  --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); }
+body { margin: 0; color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: calc(12px + env(safe-area-inset-top, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--c); outline-offset: 2px; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.back { display: inline-flex; align-items: center; gap: 6px; border: 0; background: var(--soft); border-radius: 16px; padding: 10px 14px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); }
+.back svg { width: 18px; height: 18px; }
+.title { display: flex; align-items: center; gap: 10px; }
+.title .ic { width: 44px; height: 44px; border-radius: 14px; background: var(--c); box-shadow: 0 4px 0 var(--cd); display: grid; place-items: center; color: #FFFFFF; }
+.title .ic svg { width: 26px; height: 26px; }
+.title b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; }
+.sub { color: var(--muted); margin: 0; font-size: 14px; }
+.card { background: #FFFFFF; border: 2px solid var(--cs); border-radius: 28px; box-shadow: 0 6px 0 var(--cs); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start; counter-increment: s; }
+.steps li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; background: var(--c); color: #FFFFFF; display: grid; place-items: center; font-family: var(--display); font-size: 18px; }
+.big { border: 0; width: 100%; background: var(--c); color: #FFFFFF; border-radius: 22px; padding: 16px; font-family: var(--display); font-size: 24px; box-shadow: 0 6px 0 var(--cd); }
+.big:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--cd); }
+.big:disabled { opacity: .45; }
+.big.ghost { background: var(--soft); color: var(--ink); box-shadow: 0 6px 0 var(--line); }
+.big.purple { background: var(--brand); box-shadow: 0 6px 0 var(--brand-dark); }
+.big.green { background: var(--ok); box-shadow: 0 6px 0 var(--okd); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row2 .big { font-size: 19px; }
+.stepper { display: grid; grid-template-columns: 64px 1fr 64px; gap: 10px; align-items: center; }
+.stepper button { border: 0; height: 64px; border-radius: 20px; background: var(--cs); color: var(--cd); font-size: 32px; box-shadow: 0 4px 0 #B9E6FE; }
+.stepper b { text-align: center; font-family: var(--display); font-size: 56px; line-height: 1; }
+.names { display: flex; flex-direction: column; gap: 8px; }
+.names label { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.names span { width: 34px; height: 34px; border-radius: 50%; background: var(--soft); display: grid; place-items: center; font-weight: 600; color: var(--muted); }
+.names input { width: 100%; border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; background: #FFFFFF; font-size: 16px; }
+.cats { display: flex; flex-wrap: wrap; gap: 8px; }
+.cats button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 600; }
+.cats button[aria-pressed="true"] { border-color: var(--c); background: var(--cs); color: var(--cd); }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; }
+.toggle input { width: 22px; height: 22px; accent-color: var(--c); }
+.pass { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 26px 18px; }
+.pass .who { font-family: var(--display); font-size: 48px; line-height: 1.1; color: var(--c); overflow-wrap: anywhere; }
+.secret { text-align: center; padding: 28px 18px; border-radius: 32px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.secret.in { background: var(--oks); }
+.secret.out { background: var(--ink); color: #FFFFFF; }
+.secret small { font-size: 14px; opacity: .8; }
+.secret b { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 13vw, 64px); line-height: 1.15; overflow-wrap: anywhere; }
+.turn { text-align: center; padding: 30px 18px; border-radius: 32px; background: var(--brand-soft); display: flex; flex-direction: column; gap: 6px; }
+.turn .names2 { font-family: var(--display); font-size: clamp(30px, 9vw, 42px); line-height: 1.25; }
+.turn .names2 .a { color: var(--brand); } .turn .names2 .t { color: var(--c); }
+.turn small { color: var(--muted); }
+.progress { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.progress i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+.progress i.on { background: var(--brand); }
+.votes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.votes button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 22px; padding: 16px 10px; font-weight: 700; font-size: 17px; box-shadow: 0 4px 0 var(--line); overflow-wrap: anywhere; }
+.votes button:active { transform: translateY(2px); }
+.tally { display: flex; flex-direction: column; gap: 8px; }
+.tally .r { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 10px 14px; }
+.tally .r.hot { background: var(--cs); }
+.tally .bar2 { grid-column: 1 / -1; height: 8px; border-radius: 8px; background: #FFFFFF; overflow: hidden; }
+.tally .bar2 i { display: block; height: 100%; background: var(--c); }
+.score { display: flex; flex-direction: column; gap: 8px; }
+.score .r { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 10px 14px; }
+.score .r:first-child { background: #FEF0C7; }
+.score .pos { font-family: var(--display); font-size: 20px; text-align: center; }
+.score .nm { font-weight: 600; overflow-wrap: anywhere; }
+.score .d { font-weight: 700; direction: ltr; font-size: 14px; padding: 2px 8px; border-radius: 999px; }
+.score .d.p { background: var(--oks); color: var(--okd); } .score .d.m { background: var(--bads); color: var(--bad); } .score .d.z { color: var(--faint); }
+.score .t { font-family: var(--display); font-size: 24px; direction: ltr; min-width: 2ch; text-align: left; }
+.verdict { text-align: center; padding: 22px; border-radius: 28px; display: flex; flex-direction: column; gap: 6px; }
+.verdict.good { background: var(--oks); } .verdict.badv { background: var(--bads); }
+.verdict b { font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.2; }
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.opts button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 14px 10px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 0 var(--line); }
+.note { color: var(--muted); font-size: 13px; line-height: 1.7; margin: 0; }
+.confirm { background: var(--bads); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.q { background: var(--c); color: #FFFFFF; border-radius: 30px; padding: 22px; box-shadow: 0 8px 0 var(--cd); display: flex; flex-direction: column; gap: 6px; }
+.q small { opacity: .85; font-weight: 600; }
+.q b { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 7.5vw, 34px); line-height: 1.3; }
+.q .unit { align-self: flex-start; background: rgb(255 255 255 / .2); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.numin { width: 100%; border: 3px solid var(--c); border-radius: 22px; padding: 16px; font-family: var(--display); font-size: 40px; text-align: center; direction: ltr; background: #FFFFFF; }
+.answer { text-align: center; background: var(--oks); border-radius: 28px; padding: 20px; }
+.answer small { color: var(--muted); }
+.answer b { display: block; font-family: var(--display); font-weight: 400; font-size: 44px; line-height: 1.15; direction: ltr; }
+.guesses { display: flex; flex-direction: column; gap: 8px; }
+.guesses .r { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 12px 14px; }
+.guesses .r.win { background: var(--oks); box-shadow: inset 0 0 0 2px var(--ok); }
+.guesses .r b { font-size: 16px; }
+.guesses .r .g { font-family: var(--display); font-size: 24px; direction: ltr; }
+.guesses .r small { grid-column: 1 / -1; color: var(--muted); }
+.teams { display: flex; flex-direction: column; gap: 8px; }
+.teams input { width: 100%; border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; font-size: 16px; }
+.tchip { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: -2px; margin-inline-end: 6px; }
+@media (prefers-reduced-motion: no-preference) {
+  .screen { animation: in .32s cubic-bezier(.2,.9,.3,1.15) both; }
+  @keyframes in { from { transform: translateY(12px) scale(.985); } to { transform: none; } }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <div class="title"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span><b>الرقم الأقرب</b></div>
+    <a class="back" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>الألعاب</a>
+  </div>
+  <main id="app" aria-live="polite"></main>
+</div>
+<script>
+const QUESTIONS = {"رياضة": [["كم لاعب بكون لكل فريق كرة قدم جوّا الملعب؟", 11, "لاعب", ""], ["كم دقيقة مدة مباراة كرة القدم بدون وقت بدل ضائع؟", 90, "دقيقة", ""], ["كم مرة فازت البرازيل بكأس العالم؟", 5, "مرات", ""], ["كم مرة فازت ألمانيا بكأس العالم؟", 4, "مرات", ""], ["كم مرة فازت الأرجنتين بكأس العالم؟", 3, "مرات", "آخرها 2022"], ["بأي سنة انلعبت أول بطولة كأس عالم؟", 1930, "", "بالأوروغواي"], ["كم هدف سجّل الألماني ميروسلاف كلوزه بكأس العالم؟", 16, "هدف", "الهداف التاريخي للبطولة"], ["كم منتخب مشارك بكأس العالم 2026؟", 48, "منتخب", ""], ["كم منتخب شارك بكأس العالم 2022 بقطر؟", 32, "منتخب", ""], ["كم مرة فاز ميسي بالكرة الذهبية؟", 8, "مرات", ""], ["كم مرة فاز كريستيانو رونالدو بالكرة الذهبية؟", 5, "مرات", ""], ["كم مرة فاز ريال مدريد بدوري أبطال أوروبا لحد سنة 2025؟", 15, "مرة", ""], ["كم متر بين نقطة الجزاء والمرمى؟", 11, "متر", ""], ["كم سنتيمتر عرض مرمى كرة القدم؟", 732, "سم", "7.32 متر"], ["كم سنتيمتر ارتفاع مرمى كرة القدم؟", 244, "سم", "2.44 متر"], ["كم نادي بالدوري الإنجليزي الممتاز؟", 20, "نادي", ""], ["كم نادي بالدوري الألماني (البوندسليغا)؟", 18, "نادي", ""], ["كم لاعب لكل فريق كرة سلة جوّا الملعب؟", 5, "لاعب", ""], ["كم سنتيمتر ارتفاع سلة كرة السلة عن الأرض؟", 305, "سم", "10 أقدام"], ["كم دقيقة مدة الربع الواحد بدوري الـNBA؟", 12, "دقيقة", ""], ["كم ثانية عند الفريق عشان يرمي على السلة (ساعة الهجمة)؟", 24, "ثانية", ""], ["كم بطولة NBA فاز فيها مايكل جوردن؟", 6, "بطولات", ""], ["كم متر طول المسبح الأولمبي؟", 50, "متر", ""], ["كم حلقة بشعار الألعاب الأولمبية؟", 5, "حلقات", ""], ["كم كيلومتر طول سباق الماراثون؟", 42.195, "كم", ""], ["كم ثانية الرقم القياسي العالمي لسباق 100 متر (يوسين بولت)؟", 9.58, "ثانية", "برلين 2009"], ["كم بطولة غراند سلام بالتنس بكل سنة؟", 4, "بطولات", ""], ["كم جولة بنزال بطولة العالم بالملاكمة للمحترفين؟", 12, "جولة", ""], ["كم حفرة بملعب الغولف الكامل؟", 18, "حفرة", ""], ["كم مرة فاز محمد صلاح بلقب هداف الدوري الإنجليزي لحد سنة 2025؟", 4, "مرات", ""]], "إسلامية": [["كم عدد سور القرآن الكريم؟", 114, "سورة", ""], ["كم عدد أجزاء القرآن الكريم؟", 30, "جزء", ""], ["كم عدد أحزاب القرآن الكريم؟", 60, "حزب", ""], ["كم عدد آيات القرآن الكريم؟", 6236, "آية", "حسب عدّ المصحف المتداول"], ["كم آية بسورة البقرة؟", 286, "آية", "أطول سورة"], ["كم آية بسورة آل عمران؟", 200, "آية", ""], ["كم آية بسورة النساء؟", 176, "آية", ""], ["كم آية بسورة الكهف؟", 110, "آية", ""], ["كم آية بسورة يس؟", 83, "آية", ""], ["كم آية بسورة الرحمن؟", 78, "آية", ""], ["كم آية بسورة الملك؟", 30, "آية", ""], ["كم آية بسورة الفاتحة؟", 7, "آيات", ""], ["كم آية بسورة الكوثر؟", 3, "آيات", "أقصر سورة"], ["كم ركعة مفروضة بصلوات اليوم الخمسة مع بعض؟", 17, "ركعة", ""], ["كم عدد أركان الإسلام؟", 5, "أركان", ""], ["كم عدد أركان الإيمان؟", 6, "أركان", ""], ["كم كان عمر النبي ﷺ لما نزل عليه الوحي؟", 40, "سنة", ""], ["كم كان عمر النبي ﷺ لما توفي؟", 63, "سنة", ""], ["كم سنة دعا النبي ﷺ بمكة قبل الهجرة؟", 13, "سنة", ""], ["بأي سنة ميلادية صارت الهجرة النبوية؟", 622, "م", ""], ["بأي سنة هجرية صارت غزوة بدر؟", 2, "هـ", ""], ["بأي سنة هجرية صار فتح مكة؟", 8, "هـ", ""], ["كم عدد الأنبياء المذكورين بأسمائهم بالقرآن؟", 25, "نبي", ""], ["كم عدد العشرة المبشرين بالجنة؟", 10, "صحابة", ""], ["كم عدد الخلفاء الراشدين؟", 4, "خلفاء", ""], ["كم شوط بالطواف حول الكعبة؟", 7, "أشواط", ""], ["كم شهر بالسنة الهجرية؟", 12, "شهر", ""], ["كم عدد الأشهر الحُرُم؟", 4, "أشهر", ""], ["كم غرام ذهب نصاب الزكاة؟", 85, "غرام", ""], ["كم نسبة زكاة المال؟", 2.5, "%", "ربع العشر"]], "حيوانات": [["كم رجل للعنكبوت؟", 8, "أرجل", ""], ["كم رجل للحشرة؟", 6, "أرجل", ""], ["كم قلب للأخطبوط؟", 3, "قلوب", ""], ["كم ذراع للأخطبوط؟", 8, "أذرع", ""], ["كم شهر تقريباً مدة حمل الفيل؟", 22, "شهر", "أطول حمل عند الثدييات"], ["كم شهر تقريباً مدة حمل الجمل؟", 13, "شهر", ""], ["كم شهر تقريباً مدة حمل البقرة؟", 9, "أشهر", ""], ["كم كيلو بالساعة تقريباً أعلى سرعة للفهد؟", 110, "كم/س", "أسرع حيوان بري"], ["كم كيلو بالساعة تقريباً أعلى سرعة للنعامة؟", 70, "كم/س", "أسرع طير بيمشي"], ["كم متر تقريباً طول ذكر الزرافة؟", 5.5, "متر", ""], ["كم فقرة برقبة الزرافة؟", 7, "فقرات", "نفس عدد فقرات رقبة الإنسان"], ["كم معدة (حجرة) عند البقرة؟", 4, "حجرات", ""], ["كم عين عند النحلة؟", 5, "عيون", "2 كبار و3 صغار"], ["كم ساعة تقريباً بينام الكوالا باليوم؟", 20, "ساعة", ""], ["كم ذراع لنجمة البحر الشائعة؟", 5, "أذرع", ""], ["كم رجل للسلطعون (مع الكماشتين)؟", 10, "أرجل", ""], ["كم طن تقريباً وزن الحوت الأزرق الكبير؟", 150, "طن", "أثقل حيوان عاش على الأرض"], ["كم كيلو تقريباً وزن بيضة النعامة؟", 1.4, "كيلو", ""], ["كم سن عند الإنسان البالغ؟", 32, "سن", "مع ضروس العقل"], ["كم عظمة بجسم الإنسان البالغ؟", 206, "عظمة", ""], ["كم درجة حرارة جسم الإنسان الطبيعية؟", 37, "°م", ""], ["كم أصبع عند القطة برجليها الأماميتين مع بعض؟", 10, "أصابع", "5 بكل رجل"], ["كم رجل عند الفراشة؟", 6, "أرجل", "لأنها حشرة"], ["كم جناح عند النحلة؟", 4, "أجنحة", ""], ["كم سنة تقريباً بيعيش الحصان؟", 28, "سنة", "بالمعدل 25–30"]], "جغرافيا": [["كم دولة عضو بالأمم المتحدة؟", 193, "دولة", ""], ["كم دولة بجامعة الدول العربية؟", 22, "دولة", ""], ["كم دولة بقارة إفريقيا؟", 54, "دولة", ""], ["كم دولة بالاتحاد الأوروبي؟", 27, "دولة", "بعد خروج بريطانيا"], ["كم ولاية بالولايات المتحدة الأمريكية؟", 50, "ولاية", ""], ["كم إمارة بدولة الإمارات؟", 7, "إمارات", ""], ["كم محافظة بالأردن؟", 12, "محافظة", ""], ["كم قارة بالعالم؟", 7, "قارات", ""], ["كم محيط بالعالم؟", 5, "محيطات", ""], ["كم متر ارتفاع قمة إيفرست؟", 8849, "متر", "أعلى قمة بالعالم"], ["كم متر ارتفاع برج خليفة؟", 828, "متر", ""], ["كم متر ارتفاع جبل أم الدامي، أعلى قمة بالأردن؟", 1854, "متر", ""], ["كم متر تقريباً البحر الميت تحت مستوى سطح البحر؟", 430, "متر", "أخفض نقطة على اليابسة، وبينزل كل سنة"], ["كم كيلومتر تقريباً طول نهر النيل؟", 6650, "كم", "أطول نهر بالعالم"], ["كم كيلومتر طول قناة السويس؟", 193, "كم", ""], ["كم كيلومتر مربع تقريباً مساحة الأردن؟", 89300, "كم²", ""], ["كم كيلومتر مربع تقريباً مساحة الكويت؟", 17800, "كم²", ""], ["كم كيلومتر مربع تقريباً مساحة مصر؟", 1001000, "كم²", ""], ["كم كيلومتر مربع تقريباً مساحة السعودية؟", 2150000, "كم²", ""], ["كم كيلومتر مربع تقريباً مساحة الجزائر، أكبر دولة عربية؟", 2382000, "كم²", ""], ["كم كيلومتر مربع تقريباً مساحة روسيا، أكبر دولة بالعالم؟", 17100000, "كم²", ""], ["كم مليون تقريباً عدد سكان الأردن (2024)؟", 11.5, "مليون", ""], ["كم مليون تقريباً عدد سكان مصر (2024)؟", 107, "مليون", ""], ["كم مليون تقريباً عدد سكان قطر (2024)؟", 3, "مليون", ""], ["كم مليار تقريباً عدد سكان العالم (2024)؟", 8.1, "مليار", ""], ["كم مليار تقريباً عدد سكان الصين (2024)؟", 1.41, "مليار", ""], ["كم جزيرة تقريباً بإندونيسيا؟", 17000, "جزيرة", "أكبر دولة جزر بالعالم"]]};
+const COLORS = ["#F04438", "#0BA5EC", "#12B76A", "#F79009"];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const store = { get(k, d) { try { const v = localStorage.getItem("near-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("near-" + k, JSON.stringify(v)); } catch {} } };
+const fmt = (n) => Number(n).toLocaleString("en-US", { maximumFractionDigits: 3 });
+function parseNum(s) {
+  s = String(s || "").replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/٫/g, ".").replace(/[,،٬\s]/g, "");
+  const n = parseFloat(s); return Number.isFinite(n) ? n : null;
+}
+
+const G = {
+  teams: store.get("teams", ["الفريق الأحمر", "الفريق الأزرق"]),
+  cats: store.get("cats", []),
+  scores: store.get("scores", null),
+  round: store.get("round", 0),
+  used: store.get("used", []),
+};
+let R = null;
+
+function render(html) { $("app").innerHTML = `<div class="screen">${html}</div>`; window.scrollTo(0, 0); }
+function bind(map) { for (const [id, fn] of Object.entries(map)) { const el = $(id); if (el) el.onclick = fn; } }
+const dot = (i) => `<span class="tchip" style="background:${COLORS[i]}"></span>`;
+const save = () => { store.set("teams", G.teams); store.set("cats", G.cats); store.set("scores", G.scores); store.set("round", G.round); store.set("used", G.used); };
+
+function intro() {
+  const resume = G.scores;
+  render(`<h1>مين بيجيب الرقم الأقرب؟</h1>
+    <div class="card"><ol class="steps">
+      <li><span>بيطلع سؤال جوابه رقم: رياضة، دين، حيوانات، أو جغرافيا.</span></li>
+      <li><span>كل فريق بيكتب رقمه بالسر وبيمرّر التلفون.</span></li>
+      <li><span>الفريق اللي رقمه أقرب للجواب بياخذ نقطة. وإذا جابه بالضبط بياخذ نقطتين.</span></li>
+      <li><span>بتضلوا تلعبوا جولات لحد ما تكبسوا «إنهاء اللعبة».</span></li>
+    </ol></div>
+    ${resume ? `<button class="big" id="resume" type="button">كمّلوا (الجولة ${G.round + 1})</button>` : ""}
+    <button class="big ${resume ? "ghost" : ""}" id="new" type="button">${resume ? "لعبة جديدة" : "يلا نلعب"}</button>`);
+  bind({ resume: nextQuestion, new: () => { G.scores = null; G.round = 0; save(); setup(); } });
+}
+
+function setup() {
+  const cats = Object.keys(QUESTIONS);
+  render(`<h1>الفرق</h1>
+    <div class="stepper"><button id="minus" type="button" aria-label="أقل">−</button><b>${G.teams.length}</b><button id="plus" type="button" aria-label="أكثر">+</button></div>
+    <p class="note" style="text-align:center">من فريقين لـ4 فرق.</p>
+    <div class="card"><div class="teams">${G.teams.map((t, i) => `<label>${dot(i)}<input id="team-${i}" type="text" maxlength="20" value="${esc(t)}" autocomplete="off"></label>`).join("")}</div></div>
+    <div class="card"><h2>الأقسام</h2><p class="note">إذا ما اخترتوا إشي، الأسئلة بتطلع من كل الأقسام.</p>
+      <div class="cats">${cats.map((c) => `<button type="button" data-cat="${esc(c)}" aria-pressed="${G.cats.includes(c)}">${esc(c)} (${QUESTIONS[c].length})</button>`).join("")}</div></div>
+    <button class="big" id="go" type="button">يلا</button>`);
+  const read = () => { G.teams = G.teams.map((t, i) => ($("team-" + i)?.value.trim()) || `الفريق ${i + 1}`); };
+  const defaults = ["الفريق الأحمر", "الفريق الأزرق", "الفريق الأخضر", "الفريق البرتقالي"];
+  bind({
+    minus: () => { read(); if (G.teams.length > 2) G.teams.pop(); setup(); },
+    plus: () => { read(); if (G.teams.length < 4) G.teams.push(defaults[G.teams.length]); setup(); },
+    go: () => { read(); G.scores = G.teams.map(() => 0); G.round = 0; save(); nextQuestion(); },
+  });
+  document.querySelectorAll("[data-cat]").forEach((b) => b.onclick = () => {
+    const c = b.dataset.cat; G.cats = G.cats.includes(c) ? G.cats.filter((x) => x !== c) : [...G.cats, c];
+    b.setAttribute("aria-pressed", G.cats.includes(c));
+  });
+}
+
+function nextQuestion() {
+  const cats = G.cats.length ? G.cats : Object.keys(QUESTIONS);
+  let pool = cats.flatMap((c) => QUESTIONS[c].map((q) => ({ c, q })));
+  let fresh = pool.filter((x) => !G.used.includes(x.q[0]));
+  if (!fresh.length) { G.used = G.used.filter((u) => !pool.some((x) => x.q[0] === u)); fresh = pool; }
+  const pick = fresh[Math.floor(Math.random() * fresh.length)];
+  G.used.push(pick.q[0]); G.round++; save();
+  R = { c: pick.c, text: pick.q[0], ans: pick.q[1], unit: pick.q[2], note: pick.q[3], i: 0, guesses: [] };
+  turn();
+}
+
+const qCard = () => `<div class="q"><small>الجولة ${G.round} · ${esc(R.c)}</small><b>${esc(R.text)}</b>${R.unit ? `<span class="unit">الجواب بـ: ${esc(R.unit)}</span>` : ""}</div>`;
+
+function turn() {
+  const t = G.teams[R.i];
+  render(`${qCard()}
+    <div class="card pass"><span class="sub">دور</span><span class="who" style="color:${COLORS[R.i]}">${esc(t)}</span><span class="note">الفرق الثانية ما تطلّع على الشاشة.</span></div>
+    <input class="numin" id="num" type="text" inputmode="decimal" placeholder="رقمكم" autocomplete="off" aria-label="رقمكم">
+    <p class="note" id="err" hidden>اكتبوا رقم.</p>
+    <button class="big" id="ok" type="button">${R.i + 1 < G.teams.length ? "خبّوه ومرّروا" : "اكشف الجواب"}</button>`);
+  $("num").focus();
+  bind({ ok: () => {
+    const n = parseNum($("num").value);
+    if (n === null) { $("err").hidden = false; return; }
+    R.guesses[R.i] = n; R.i++;
+    if (R.i < G.teams.length) turn(); else reveal();
+  } });
+}
+
+function reveal() {
+  const diffs = R.guesses.map((g) => Math.abs(g - R.ans));
+  const best = Math.min(...diffs);
+  const pts = diffs.map((d) => (d === best ? (d === 0 ? 2 : 1) : 0));
+  pts.forEach((p, i) => (G.scores[i] += p));
+  save();
+  const order = G.teams.map((_, i) => i).sort((a, b) => diffs[a] - diffs[b]);
+  const board = G.teams.map((_, i) => i).sort((a, b) => G.scores[b] - G.scores[a]);
+  render(`${qCard()}
+    <div class="answer"><small>الجواب</small><b>${fmt(R.ans)}${R.unit ? ` <span style="font-size:22px">${esc(R.unit)}</span>` : ""}</b>${R.note ? `<small>${esc(R.note)}</small>` : ""}</div>
+    <div class="guesses">${order.map((i) => `<div class="r ${pts[i] ? "win" : ""}"><b>${dot(i)}${esc(G.teams[i])}${pts[i] ? ` · <bdi dir="ltr">+${pts[i]}</bdi>` : ""}</b><span class="g">${fmt(R.guesses[i])}</span>
+      <small>${diffs[i] === 0 ? "جابوه بالضبط!" : `بعيد ${fmt(+diffs[i].toFixed(3))}`}</small></div>`).join("")}</div>
+    <h2>النقاط</h2>
+    <div class="score">${board.map((i, k) => `<div class="r"><span class="pos">${k + 1}</span><span class="nm">${dot(i)}${esc(G.teams[i])}</span><span class="d ${pts[i] ? "p" : "z"}">${pts[i] ? "+" + pts[i] : "0"}</span><span class="t">${G.scores[i]}</span></div>`).join("")}</div>
+    <button class="big" id="next" type="button">السؤال الجاي</button>
+    <button class="big ghost" id="end" type="button">إنهاء اللعبة</button>
+    <div class="confirm" id="confirm" hidden><b>أكيد بدكم تنهوا اللعبة؟</b>
+      <div class="row2"><button class="big" id="yes" type="button">آه، انهي</button><button class="big ghost" id="no" type="button">لا، كمّلوا</button></div></div>`);
+  bind({ next: nextQuestion, end: () => { $("confirm").hidden = false; $("confirm").scrollIntoView({ behavior: "smooth", block: "center" }); }, no: () => { $("confirm").hidden = true; }, yes: finish });
+}
+
+function finish() {
+  const max = Math.max(...G.scores);
+  const winners = G.teams.filter((_, i) => G.scores[i] === max);
+  const board = G.teams.map((_, i) => i).sort((a, b) => G.scores[b] - G.scores[a]);
+  render(`<div class="verdict good"><span>انتهت اللعبة بعد ${G.round} ${G.round === 1 ? "جولة" : "جولات"}</span>
+      <b>${winners.length > 1 ? "تعادل بين " + winners.map(esc).join(" و") : "فاز " + esc(winners[0]) + "!"}</b></div>
+    <div class="score">${board.map((i, k) => `<div class="r"><span class="pos">${k + 1}</span><span class="nm">${dot(i)}${esc(G.teams[i])}</span><span class="d z"></span><span class="t">${G.scores[i]}</span></div>`).join("")}</div>
+    <button class="big" id="again" type="button">لعبة جديدة</button>
+    <a class="big ghost" href="./" style="text-align:center;text-decoration:none">رجوع للألعاب</a>`);
+  G.scores = null; G.round = 0; save();
+  bind({ again: setup });
+}
+
+intro();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+</body>
+</html>
