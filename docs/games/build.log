@@ -1,10 +1,12 @@
 بجيب قائمة أشهر اللاعبين من Wikidata...
-  محاولة 1: HTTP Error 504: Gateway Timeout
   3000 لاعب
 بجيب تشكيلات الأندية الحالية (ESPN) والعرب...
   دوريات Wikidata: 8/8
-  محاولة 1: HTTP Error 502: Bad Gateway
-  محاولة 2: HTTP Error 504: Gateway Timeout
+  محاولة 1: HTTP Error 429: Too Many Requests
+  محاولة 1: HTTP Error 429: Too Many Requests
+  أندية Wikidata: 12888
+  محاولة 1: HTTP Error 504: Gateway Timeout
+  محاولة 2: HTTP Error 502: Bad Gateway
   محاولة 3: HTTP Error 504: Gateway Timeout
   محاولة 4: HTTP Error 504: Gateway Timeout
 Wikidata ما رد.
