@@ -28,6 +28,7 @@ jobs:
       - name: Build players database
         run: |
           set -o pipefail
+          pip install -q unidecode
           python -u engine/players.py 2>&1 | tee docs/games/build.log
       - name: Save
         if: always()

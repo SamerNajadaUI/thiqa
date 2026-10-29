@@ -48,8 +48,15 @@ COUNTRY_FIX = {  # أسماء ESPN اللي مش دول بالمعنى الرس�
 POS_AR = {"gk": "حارس مرمى", "df": "مدافع", "mf": "لاعب وسط", "fw": "مهاجم"}
 
 
+try:
+    from unidecode import unidecode
+except ImportError:  # محلياً بدونها
+    def unidecode(x):
+        return x
+
+
 def norm_tokens(name: str) -> list[str]:
-    x = unicodedata.normalize("NFKD", name or "")
+    x = unidecode(unicodedata.normalize("NFKD", name or ""))
     x = "".join(c for c in x if not unicodedata.combining(c)).lower()
     x = x.replace("ø", "o").replace("ß", "ss").replace("ı", "i").replace("ł", "l").replace("đ", "d")
     return [t for t in re.split(r"[^a-z]+", x) if t]
@@ -209,6 +216,14 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
             wd_by_club[qid(v(b, "club"))].append((qid(v(b, "p")), v(b, "en")))
         time.sleep(1)
 
+    for k in wd_by_club:
+        wd_by_club[k] = list(dict.fromkeys(wd_by_club[k]))  # كل لاعب مرة وحدة (حتى لو إله أكثر من فترة)
+    by_last = defaultdict(set)
+    for lst in wd_by_club.values():
+        for pid, en in lst:
+            toks = norm_tokens(en)
+            if toks:
+                by_last[toks[-1]].add((pid, en))
     squads, espn_only = {}, []
     for t in teams:
         cands = wd_by_club.get(t["club"], [])
@@ -227,6 +242,12 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
                     "age": a.get("age")}
             if scored and scored[0][0] >= 1 and (len(scored) == 1 or scored[0][0] > scored[1][0]):
                 squads[scored[0][1]] = info
+                continue
+            # يمكن Wikidata مسجّله بنادي ثاني بنفس الدوريات (انتقال جديد أو إعارة)
+            last = norm_tokens(names[0])[-1:] or [""]
+            wide = sorted(((name_match(names, en), pid) for pid, en in by_last.get(last[0], ())), reverse=True)
+            if wide and wide[0][0] >= 2 and (len(wide) == 1 or wide[0][0] > wide[1][0]) and wide[0][1] not in squads:
+                squads[wide[0][1]] = info
             else:
                 espn_only.append(info)
     log(f"  التشكيلات: {len(squads)} لاعب مطابق مع Wikidata، {len(espn_only)} من ESPN بس")
