@@ -779,7 +779,7 @@ function renderLong() {
 (function setupInstall() {
   if (EMBEDDED) return;
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
-  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true || /AbuOdehApp/.test(navigator.userAgent);
   if (standalone) return;
   let dismissed = false;
   try { dismissed = localStorage.getItem("install-dismissed") === "1"; } catch {}
