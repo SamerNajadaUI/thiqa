@@ -9,9 +9,9 @@
 <meta name="theme-color" content="#FFFFFF">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@300;400;500;600;700&display=swap">
 <style>
-/* Layout: single white column, soft rounded cards. Colour appears only as the tier ring and small pills; everything else is ink on white. */
+/* Layout: a phone game app. White ground, chunky rounded "3D" cards with a solid bottom edge, one level colour per coupon, a playful display face for names and numbers, and a bottom tab bar. Deliberately light-only. */
 :root {
   color-scheme: light;
   --bg: #FFFFFF;
@@ -229,31 +229,158 @@ footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: cen
 @media (prefers-reduced-motion: no-preference) {
   .ring .v { transition: stroke-dashoffset .8s cubic-bezier(.2,.7,.2,1); }
 }
+
+/* ================= game skin ================= */
+:root {
+  --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
+  --safe: #12B76A; --safe-dark: #0A8A4F; --safe-soft: #E6F8EF;
+  --mid: #F79009; --mid-dark: #C26A00; --mid-soft: #FEF3E2;
+  --risk: #F04438; --risk-dark: #B42318; --risk-soft: #FEECEA;
+  --hit: #12B76A; --hit-soft: #E6F8EF; --miss: #F04438; --miss-soft: #FEECEA;
+  --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+  --r-lg: 30px; --r-md: 20px;
+  --edge: 0 6px 0;
+}
+body { background: #FFFFFF; }
+.wrap { max-width: 600px; gap: 18px; padding-block: 12px calc(110px + env(safe-area-inset-bottom, 0px)); }
+
+/* app bar */
+.appbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 6px; }
+.appbar .brand { display: flex; align-items: center; gap: 12px; }
+.appbar .mark { width: 58px; height: 58px; border-radius: 20px; background: var(--brand); box-shadow: 0 5px 0 var(--brand-dark); display: grid; place-items: center; transform: rotate(-6deg); flex: none; }
+.appbar .mark svg { width: 38px; height: 38px; }
+.appbar .brand b { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1; letter-spacing: 0; display: block; }
+.appbar .brand small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+.date { background: var(--brand-soft); color: var(--brand); font-weight: 600; padding: 8px 14px; font-size: 12px; }
+
+.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 8vw, 40px); line-height: 1.2; }
+.hero p { font-size: 13px; }
+
+/* HUD */
+.hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.hud .chip { background: var(--soft); border-radius: 20px; padding: 12px 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; min-width: 0; }
+.hud .chip b { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.1; direction: ltr; }
+.hud .chip small { font-size: 11px; color: var(--muted); }
+.hud .chip.live b { color: var(--miss); }
+.hud .chip.best b { color: var(--safe); }
+
+/* bottom tab bar */
+.tabs.tabbar { position: fixed; inset: auto 0 0 0; z-index: 20; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+  background: #FFFFFF; border-radius: 26px 26px 0 0; box-shadow: 0 -6px 28px rgb(17 19 22 / .08);
+  padding: 8px max(12px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)); }
+.tabbar button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; border-radius: 18px; font-size: 11px; font-weight: 600; color: var(--muted); background: transparent; box-shadow: none; }
+.tabbar button svg { width: 24px; height: 24px; }
+.tabbar button[aria-selected="true"] { background: var(--brand-soft); color: var(--brand); box-shadow: none; }
+@media (min-width: 640px) { .tabs.tabbar { max-width: 600px; margin-inline: auto; left: 0; right: 0; } }
+
+/* coupons as level cards */
+.coupon { --c: var(--safe); --c-dark: var(--safe-dark); --c-soft: var(--safe-soft);
+  border: 2px solid var(--c-soft); border-radius: var(--r-lg); box-shadow: var(--edge) var(--c-soft); padding: 20px; gap: 16px; }
+.coupon.medium { --c: var(--mid); --c-dark: var(--mid-dark); --c-soft: var(--mid-soft); }
+.coupon.risky { --c: var(--risk); --c-dark: var(--risk-dark); --c-soft: var(--risk-soft); }
+.coupon.long-card { --c: var(--brand); --c-dark: var(--brand-dark); --c-soft: var(--brand-soft); }
+.coupon.long-card.monthly { --c: #0B63F6; --c-dark: #0847B3; --c-soft: #E7F0FF; }
+.coupon.won { border-color: #FDB022; box-shadow: var(--edge) #FEDF89; }
+.level { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; background: var(--c); color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px; box-shadow: 0 3px 0 var(--c-dark); }
+.level svg { width: 14px; height: 14px; }
+.c-title .level { color: #FFFFFF; font-size: 12px; }
+.pill { display: none; }
+.c-title h3 { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.15; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ring { width: 92px; height: 92px; }
+.ring b { font-family: var(--display); font-weight: 400; font-size: 24px; }
+.ring .t { stroke: var(--c-soft); }
+.legs { gap: 10px; }
+.leg { background: var(--c-soft, var(--soft)); border-radius: 22px; padding: 14px 16px; gap: 6px 12px; transition: transform .12s ease; }
+.leg .p { font-family: var(--display); font-weight: 400; font-size: 20px; background: #FFFFFF; color: var(--c, var(--ink)); padding: 6px 12px; border-radius: 16px; box-shadow: 0 3px 0 rgb(17 19 22 / .06); }
+.match { font-size: 15px; font-weight: 600; gap: 6px 8px; }
+.logo, .initials { width: 30px; height: 30px; }
+.logo { background: #FFFFFF; padding: 2px; box-shadow: 0 1px 3px rgb(17 19 22 / .08); }
+.initials { font-size: 11px; background: #FFFFFF; }
+.call { font-size: 14px; }
+.c-foot { background: var(--c-soft); border-radius: 18px; padding: 12px 14px; color: var(--c-dark); font-weight: 500; }
+.c-foot b { color: var(--c-dark); font-family: var(--display); font-weight: 400; font-size: 18px; }
+.coupon .note-empty { color: var(--muted); }
+
+/* why / panel buttons */
+.leg details.why, .toplist details.why { border-top: 0; margin-top: 4px; }
+.why summary { padding: 9px 14px; margin-top: 4px; background: #FFFFFF; border-radius: 16px; box-shadow: 0 3px 0 rgb(17 19 22 / .06); font-size: 13px; }
+.toplist .why summary { background: var(--soft); box-shadow: none; }
+.why .sig { background: var(--soft); }
+.why[open] summary { box-shadow: none; }
+.why ul { background: #FFFFFF; border-radius: 16px; padding: 12px 12px 12px 12px; margin-top: 8px; }
+.pn { background: #FFFFFF; border-radius: 18px; padding: 14px; }
+.toplist .pn, .toplist .why ul { background: var(--soft); }
+
+/* persona faces */
+.face { width: 40px; height: 40px; border-radius: 50%; flex: none; display: block; }
+.pr { grid-template-columns: 40px minmax(0, 1fr); }
+.pr p { background: var(--soft); border-radius: 4px 16px 16px 16px; padding: 8px 12px; margin-top: 4px; }
+.verdict { border-width: 2px; border-radius: 20px; }
+.verdict .pr-top b { font-family: var(--display); font-weight: 400; font-size: 20px; }
+
+/* top 10 */
+.toplist { border: 2px solid var(--brand-soft); box-shadow: var(--edge) var(--brand-soft); padding: 10px; border-radius: var(--r-lg); }
+.toplist li { border-radius: 20px; padding: 14px 12px; }
+.toplist li + li { border-top: 0; }
+.toplist li:nth-child(odd) { background: #FAFAFB; }
+.rank { width: 36px; height: 36px; font-family: var(--display); font-weight: 400; font-size: 18px; background: var(--brand-soft); color: var(--brand); }
+.toplist li:nth-child(1) .rank { background: #FDB022; color: #FFFFFF; box-shadow: 0 3px 0 #DC6803; }
+.toplist li:nth-child(2) .rank { background: #98A2B3; color: #FFFFFF; box-shadow: 0 3px 0 #667085; }
+.toplist li:nth-child(3) .rank { background: #E3874A; color: #FFFFFF; box-shadow: 0 3px 0 #B54708; }
+.toplist li { grid-template-columns: 36px minmax(0, 1fr) auto; }
+.toplist .p { font-family: var(--display); font-weight: 400; font-size: 22px; color: var(--brand); }
+.bar { height: 8px; border-radius: 8px; }
+.bar i { background: var(--brand); border-radius: 8px; }
+
+/* record as achievements */
+.stat { border: 2px solid var(--c-soft); box-shadow: var(--edge) var(--c-soft); border-radius: 26px; --c-soft: var(--safe-soft); }
+.stat.medium { --c-soft: var(--mid-soft); } .stat.risky { --c-soft: var(--risk-soft); }
+.stat .k { font-family: var(--display); font-weight: 400; font-size: 18px; }
+.stat .ring { width: 68px; height: 68px; }
+.stat .ring b { font-size: 18px; }
+h2 { font-family: var(--display); font-weight: 400; font-size: 24px; }
+.tablewrap, details { border-radius: 22px; border-width: 2px; }
+.empty { border-radius: 26px; }
+
+.odds-big b { font-family: var(--display); font-weight: 400; font-size: 38px; }
+
+/* motion */
+@media (prefers-reduced-motion: no-preference) {
+  .coupon, .toplist, .stat { animation: pop .45s cubic-bezier(.2,.9,.3,1.2) both; }
+  .coupon:nth-child(2) { animation-delay: .06s; } .coupon:nth-child(3) { animation-delay: .12s; }
+  @keyframes pop { from { transform: translateY(10px) scale(.98); } to { transform: none; } }
+  .leg:active, .tabbar button:active, .why summary:active { transform: scale(.98); }
+  .appbar .mark { animation: wobble 3.5s ease-in-out infinite; }
+  @keyframes wobble { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(4deg); } }
+}
+@media (max-width: 420px) {
+  .coupon { padding: 16px; }
+  .c-title h3 { font-size: 23px; }
+  .ring { width: 80px; height: 80px; }
+  .hud .chip b { font-size: 22px; }
+  .appbar .brand b { font-size: 26px; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="top">
+  <header class="appbar">
     <div class="brand">
-      <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg></span>
-      <b>أبو عودة</b>
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="15" fill="#FFFFFF"/><path d="M20 9.5l5.6 4.1-2.1 6.6h-7l-2.1-6.6z" fill="#5B3DF5"/><path d="M11.4 22.6l4.1-2.4M28.6 22.6l-4.1-2.4M16 28.7l1.8-6.2M24 28.7l-1.8-6.2" stroke="#5B3DF5" stroke-width="1.8" stroke-linecap="round"/><circle cx="31" cy="9" r="7" fill="#FDB022" stroke="#5B3DF5" stroke-width="2"/><path d="M27.8 9.2l2.1 2.1 3.9-4" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div><b>أبو عودة</b><small>قسائم كل يوم، بالأرقام</small></div>
     </div>
     <span class="date" id="today-label">اليوم</span>
-  </div>
+  </header>
 
   <div class="hero">
     <h1>قسائم اليوم</h1>
     <p>كل توقع مدروس من أسعار السوق، والشركات الأدق، وحركة الأودز، وإحصائيات الموسم.</p>
   </div>
 
+  <div class="hud" id="hud"></div>
+
   <div class="demo" id="demo" hidden>بيانات تجريبية للعرض بس. المباريات والأرقام مش حقيقية.</div>
 
-  <div class="tabs" role="tablist">
-    <button role="tab" id="tab-coupons" aria-selected="true" aria-controls="view-coupons">القسائم</button>
-    <button role="tab" id="tab-long" aria-selected="false" aria-controls="view-long">أسبوع وشهر</button>
-    <button role="tab" id="tab-top" aria-selected="false" aria-controls="view-top">أعلى 10</button>
-    <button role="tab" id="tab-record" aria-selected="false" aria-controls="view-record">السجل</button>
-  </div>
 
   <section id="view-coupons" role="tabpanel" aria-labelledby="tab-coupons">
     <div id="coupons" style="display:flex;flex-direction:column;gap:16px"></div>
@@ -284,6 +411,12 @@ footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: cen
   </section>
 
   <p class="updated" id="updated"></p>
+  <nav class="tabs tabbar" role="tablist" aria-label="أقسام التطبيق">
+    <button role="tab" id="tab-coupons" aria-selected="true" aria-controls="view-coupons"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 5v12" stroke-dasharray="2 2.5"/></svg><span>القسائم</span></button>
+    <button role="tab" id="tab-long" aria-selected="false" aria-controls="view-long"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 6h3v2a3 3 0 0 1-3 3M7 6H4v2a3 3 0 0 0 3 3"/></svg><span>التحديات</span></button>
+    <button role="tab" id="tab-top" aria-selected="false" aria-controls="view-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 0 1-8 0c0-1.6.7-2.7 1.5-3.5.3 1.3 1 2 1.8 2.2C11 8 11 5.5 12 3z"/><path d="M8.5 15.5A4 4 0 0 0 12 21a4 4 0 0 0 3.5-5.5"/></svg><span>أعلى 10</span></button>
+    <button role="tab" id="tab-record" aria-selected="false" aria-controls="view-record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>السجل</span></button>
+  </nav>
   <footer>الاحتمالات تقدير من أسعار السوق، مش ضمان.<br>كل قسيمة بتتسجل هون مع نتيجتها، سواء إجت أو ما إجت.</footer>
 </div>
 
@@ -291,10 +424,11 @@ footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: cen
 const EMBEDDED = /*EMBED*/null;
 
 const SPORTS = { soccer: "كرة قدم", basketball: "كرة سلة", tennis: "تنس" };
+const STAR = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg>';
 const KINDS = {
-  safe: { short: "آمنة", title: "القسيمة الآمنة", sub: "توقعات قوية، وربح قليل" },
-  medium: { short: "شبه آمنة", title: "القسيمة شبه الآمنة", sub: "توازن بين الأمان والربح" },
-  risky: { short: "خطيرة", title: "القسيمة الخطيرة", sub: "احتمالها قليل، وربحها كبير" },
+  safe: { short: "آمنة", title: "القسيمة الآمنة", sub: "توقعات قوية، وربح قليل", level: "مستوى 1 · سهل" },
+  medium: { short: "شبه آمنة", title: "القسيمة شبه الآمنة", sub: "توازن بين الأمان والربح", level: "مستوى 2 · متوسط" },
+  risky: { short: "خطيرة", title: "القسيمة الخطيرة", sub: "احتمالها قليل، وربحها كبير", level: "مستوى 3 · صعب" },
 };
 const STATUS = { hit: "أصاب", miss: "خاب", pending: "بالانتظار", void: "ملغى", won: "إجت", lost: "ما إجت", none: "ما في" };
 const MARKETS = { h2h: "الفائز", double_chance: "فرصة مزدوجة", totals: "المجموع", team_totals: "مجموع فريق", spreads: "هانديكاب", btts: "الفريقين بيسجلوا" };
@@ -404,20 +538,37 @@ const JUDGE = { evidence: ["1", "حكم الأدلة"], risk: ["2", "حكم ال
 const VERD = { "1": ["v1", "مع"], "0": ["v0", "بحذر"], "-1": ["vm", "ضد"] };
 const vchip = (v, prefix = "") => { const [c, t] = VERD[String(v)] || VERD["0"]; return `<span class="vchip ${c}">${prefix}${t}</span>`; };
 
+const FACE_COLORS = { fan: "#F04438", pessimist: "#667085", dreamer: "#9E77ED", careful: "#F79009", logic: "#0BA5EC" };
+function faceSVG(k) {
+  const c = FACE_COLORS[k] || "#5B3DF5";
+  const eye = (x) => `<circle cx="${x}" cy="17" r="2.6" fill="#1D2939"/>`;
+  const star = (x) => `<path d="M${x} 13.4l1.1 2.3 2.5.3-1.8 1.7.5 2.5-2.3-1.2-2.3 1.2.5-2.5-1.8-1.7 2.5-.3z" fill="#FDB022" stroke="#1D2939" stroke-width=".6"/>`;
+  let face = "";
+  if (k === "fan") face = `${eye(14)}${eye(26)}<path d="M12 23q8 8 16 0z" fill="#1D2939"/><path d="M11 11.5l5-1.8M29 11.5l-5-1.8" stroke="#1D2939" stroke-width="1.8" stroke-linecap="round"/><path d="M4 31h32" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="4 3"/>`;
+  else if (k === "pessimist") face = `${eye(14)}${eye(26)}<path d="M13 28q7-6 14 0" stroke="#1D2939" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M10.5 12.5l5.5 1.5M29.5 12.5l-5.5 1.5" stroke="#1D2939" stroke-width="1.8" stroke-linecap="round"/><path d="M30 21q1.5 3 0 4.5q-1.5-1.5 0-4.5z" fill="#84CAFF"/>`;
+  else if (k === "dreamer") face = `${star(14)}${star(26)}<path d="M14 25q6 5 12 0" stroke="#1D2939" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="32" cy="7" r="1.6" fill="#FFFFFF"/><circle cx="7" cy="10" r="1.1" fill="#FFFFFF"/>`;
+  else if (k === "careful") face = `<circle cx="14" cy="17.5" r="2" fill="#1D2939"/><circle cx="26" cy="17.5" r="2" fill="#1D2939"/><path d="M14.5 26.5h11" stroke="#1D2939" stroke-width="2" stroke-linecap="round"/><path d="M11 13h6M23 13h6" stroke="#1D2939" stroke-width="1.6" stroke-linecap="round"/>`;
+  else face = `<circle cx="14" cy="17" r="4.6" fill="#FFFFFF" stroke="#1D2939" stroke-width="1.8"/><circle cx="26" cy="17" r="4.6" fill="#FFFFFF" stroke="#1D2939" stroke-width="1.8"/><path d="M18.6 17h2.8" stroke="#1D2939" stroke-width="1.8"/>${eye(14).replace('r="2.6"', 'r="1.6"')}${eye(26).replace('r="2.6"', 'r="1.6"')}<path d="M15 26.5q5 3 10 0" stroke="#1D2939" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  return `<svg class="face" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="${c}"/><circle cx="20" cy="20" r="14" fill="#FFE8CC"/>${face}</svg>`;
+}
+function judgeSVG(n) {
+  return `<svg class="face" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#1D2939"/><path d="M11 13l9-4 9 4" stroke="#FDB022" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="20" y="28" text-anchor="middle" font-family="Lalezar, sans-serif" font-size="14" fill="#FFFFFF">${n}</text></svg>`;
+}
+
 function panelHTML(l) {
   const pn = l.panel;
   if (!pn) return "";
   const q = pn.q || {};
   const persons = (pn.p || []).map((p) => { const [n, name] = PERSONA[p.k] || ["?", p.k];
-    return `<div class="pr"><span class="av" aria-hidden="true">${n}</span><div><div class="pr-top"><b>${name}</b>${vchip(p.v)}</div><p>${esc(p.t)}</p></div></div>`; }).join("");
+    return `<div class="pr">${faceSVG(p.k)}<div><div class="pr-top"><b>${n}. ${name}</b>${vchip(p.v)}</div><p>${esc(p.t)}</p></div></div>`; }).join("");
   const judges = (pn.j || []).map((j) => { const [n, name] = JUDGE[j.k] || ["", j.k];
-    return `<div class="pr"><span class="av j" aria-hidden="true">${n}</span><div><div class="pr-top"><b>${name}</b>${vchip(j.v)}<span class="best">أقنعه: ${PERSONA[j.best]?.[1] ?? ""}</span></div><p>${esc(j.t)}</p></div></div>`; }).join("");
+    return `<div class="pr">${judgeSVG(n)}<div><div class="pr-top"><b>${name}</b>${vchip(j.v)}<span class="best">أقنعه: ${PERSONA[j.best]?.[1] ?? ""}</span></div><p>${esc(j.t)}</p></div></div>`; }).join("");
   const [vc] = VERD[String(q.v)] || VERD["0"];
   return `<details class="why panel"><summary><span>قعدة محللين</span>${vchip(q.v, "القاضي: ")}</summary>
     <div class="pn">
       <div class="pn-h">الشخصيات الخمسة</div>${persons}
       <div class="pn-h">الحكام الثلاثة</div>${judges}
-      <div class="verdict ${vc}"><div class="pr-top"><b>القاضي</b>${vchip(q.v)}</div><p>${esc(q.t || "")}</p></div>
+      <div class="verdict ${vc}"><div class="pr-top"><b>القاضي حكم</b>${vchip(q.v)}</div><p>${esc(q.t || "")}</p></div>
     </div></details>`;
 }
 
@@ -445,12 +596,12 @@ function renderCoupons() {
   $("coupons").innerHTML = list.map((c) => {
     const k = KINDS[c.kind];
     if (!c.legs.length) {
-      return `<article class="coupon ${c.kind}"><div class="c-title"><span class="pill">${k.short}</span><h3>${k.title}</h3><span>ما في مباريات كافية اليوم تناسب هالقسيمة.</span></div></article>`;
+      return `<article class="coupon ${c.kind}"><div class="c-title"><span class="level">${STAR}${k.level}</span><h3>${k.title}</h3><span>ما في مباريات كافية اليوم تناسب هالقسيمة.</span></div></article>`;
     }
     const res = c.result !== "pending" ? ` <span class="status ${c.result}">${STATUS[c.result]}</span>` : "";
-    return `<article class="coupon ${c.kind}">
+    return `<article class="coupon ${c.kind}${c.result === "won" ? " won" : ""}">
       <div class="c-head">
-        <div class="c-title"><span class="pill">${k.short}</span><h3>${k.title}${res}</h3><span>${k.sub} · ${c.legs.length} مباريات</span></div>
+        <div class="c-title"><span class="level">${STAR}${k.level}</span><h3>${k.title}${res}</h3><span>${k.sub} · ${c.legs.length} مباريات</span></div>
         ${ring(c.prob, `احتمال تيجي كاملة ${pct(c.prob)}`)}
       </div>
       <ul class="legs">${c.legs.map((l) => legHTML(l, now)).join("")}</ul>
@@ -544,8 +695,8 @@ function renderRecord() {
 
 // ---------- weekly / monthly ----------
 const LONG = {
-  weekly: { title: "قسيمة الأسبوع", pill: "أسبوعية", per: "أسبوع" },
-  monthly: { title: "قسيمة الشهر", pill: "شهرية", per: "شهر" },
+  weekly: { title: "قسيمة الأسبوع", pill: "تحدّي الأسبوع · أودز 200", per: "أسبوع" },
+  monthly: { title: "قسيمة الشهر", pill: "تحدّي الشهر · أودز 1000", per: "شهر" },
 };
 const fmtShort = new Intl.DateTimeFormat("ar-JO-u-nu-latn", { timeZone: tz, day: "numeric", month: "short" });
 const oneIn = (p) => (p ? Math.round(1 / p).toLocaleString("en-US") : "–");
@@ -554,7 +705,7 @@ const pctSmall = (p) => (p * 100 < 1 ? (p * 100).toFixed(2) : (p * 100).toFixed(
 function longCard(kind, c) {
   const k = LONG[kind];
   if (!c || !c.legs?.length) {
-    return `<article class="coupon long-card ${kind}"><div class="c-title"><span class="pill">${k.pill}</span><h3>${k.title}</h3><span>بتنزل مع تحديث الصبح الجاي.</span></div></article>`;
+    return `<article class="coupon long-card ${kind}"><div class="c-title"><span class="level">${STAR}${k.pill}</span><h3>${k.title}</h3><span>بتنزل مع تحديث الصبح الجاي.</span></div></article>`;
   }
   const now = Date.now();
   const n = c.legs.length;
@@ -569,9 +720,9 @@ function longCard(kind, c) {
   else line = `أصاب <b>${hits}</b> وضايل <b>${left}</b>`;
   const upcoming = c.legs.filter((l) => l.result === "pending").slice(0, 3);
   const shown = upcoming.length ? upcoming : c.legs.slice(-3);
-  return `<article class="coupon long-card ${kind}">
+  return `<article class="coupon long-card ${kind}${c.result === "won" ? " won" : ""}">
     <div class="c-head">
-      <div class="c-title"><span class="pill">${k.pill}</span><h3>${k.title}${res}</h3>
+      <div class="c-title"><span class="level">${STAR}${k.pill}</span><h3>${k.title}${res}</h3>
         <span>من ${fmtShort.format(new Date(c.start))} لـ ${fmtShort.format(new Date(c.end))} · ${n} مباراة</span></div>
       <div class="odds-big"><b>${Math.round(c.fair_odds).toLocaleString("en-US")}</b><small>أودز · احتمالها <bdi dir="ltr">${pctSmall(c.prob)}</bdi></small><small>يعني مرة من كل ${oneIn(c.prob)}</small></div>
     </div>
@@ -600,7 +751,7 @@ function renderLong() {
 }
 
 const TABS = ["coupons", "long", "top", "record"];
-const HERO = { coupons: "قسائم اليوم", long: "الأسبوع والشهر", top: "أعلى 10 توقعات", record: "السجل" };
+const HERO = { coupons: "قسائم اليوم", long: "التحديات الكبيرة", top: "أعلى 10 توقعات", record: "السجل" };
 function setTab(which) {
   for (const k of TABS) {
     $("tab-" + k).setAttribute("aria-selected", k === which);
@@ -678,7 +829,20 @@ async function pollLive() {
       }
     } catch { /* live scores are a bonus; the hourly update still covers them */ }
   }));
-  if (changed) { renderCoupons(); renderLong(); renderTop(); }
+  if (changed) { renderCoupons(); renderLong(); renderTop(); renderHud(); }
+}
+
+function renderHud() {
+  const cs = (state.today?.coupons ?? []).filter((c) => c.legs.length);
+  const legs = cs.flatMap((c) => c.legs);
+  const events = new Set(legs.map((l) => l.event_id));
+  const all = [...legs, ...(state.today?.top ?? [])];
+  const live = new Set(all.filter((l) => (liveOf(l)?.state === "in") && l.result === "pending").map((l) => l.event_id)).size;
+  const best = Math.max(0, ...(state.today?.top ?? []).map((l) => l.prob));
+  $("hud").innerHTML = state.today ? `
+    <div class="chip"><b>${cs.length}</b><small>قسائم اليوم</small></div>
+    <div class="chip ${live ? "live" : "best"}"><b>${live ? live : pct(best, 0)}</b><small>${live ? "مباريات مباشرة هلأ" : "أقوى توقع اليوم"}</small></div>
+    <div class="chip"><b>${events.size}</b><small>مباراة بالقسائم</small></div>` : "";
 }
 
 function showUpdated() {
@@ -692,7 +856,7 @@ async function refreshData() {
     if (!today) return;
     const changed = today.updated_at !== state.today?.updated_at || today.date !== state.today?.date;
     state.today = today; state.history = history; state.long = long;
-    if (changed) { renderCoupons(); renderLong(); renderTop(); renderRecord(); showUpdated(); }
+    if (changed) { renderCoupons(); renderLong(); renderTop(); renderHud(); renderRecord(); showUpdated(); }
   } catch { /* keep what is on screen */ }
 }
 
@@ -700,7 +864,7 @@ load().then(({ today, history, long }) => {
   state.today = today; state.history = history; state.long = long;
   $("demo").hidden = !today?.demo;
   if (today?.date) $("today-label").textContent = fmtDay.format(new Date(today.date + "T12:00:00+03:00"));
-  renderCoupons(); renderLong(); renderTop(); renderRecord(); showUpdated();
+  renderCoupons(); renderLong(); renderTop(); renderHud(); renderRecord(); showUpdated();
   const h = location.hash.slice(1);
   if (TABS.includes(h)) setTab(h);
   if (!EMBEDDED && !today?.demo) {
