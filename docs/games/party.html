@@ -336,7 +336,8 @@ function confirmPick(p) {
 // ---------- hints, from hard to easy ----------
 // التلميحات من الأوسع للأدق: مركز وجنسية، حالي أو معتزل، دوريات كبرى، الدوري، النادي،
 // كأس العالم، دوري الأبطال، رقم القميص، معلومة تاريخية، وبالآخر الحروف
-const bi = (x) => (String(x).startsWith("ال") ? "ب" : "بـ") + x;
+const bi = (x) => (/^[\u0600-\u06FF]/.test(String(x)) ? "ب" : "بـ") + x;
+const BIG5 = new Set(["الدوري الإنجليزي الممتاز", "الدوري الإسباني", "الدوري الإيطالي", "الدوري الألماني", "الدوري الفرنسي الدرجة الأولى"]);
 function hintsFor(p) {
   const clubs = p.c || [];
   const distinct = [...new Set(clubs.map(clubName))];
@@ -344,6 +345,8 @@ function hintsFor(p) {
   const nat = (p.nat || [])[0], pos = (p.pos || [])[0];
   const words = String(p.a).split(/\s+/).filter(Boolean);
   const hc = p.hc || (last && clubName(last));
+  const b5 = p.b5 || BIG5.has(p.lg);
+  const fx = String((p.fx || [])[0] || "").replace(/^(فاز )بـ/, "$1ب").replace(/ (مرتين|مرة وحدة|\d+ مرات?|\d+ مرة)$/, (m, k) => k === "مرة وحدة" ? "" : " أكثر من مرة");
   const cnt = (n) => n === 1 ? "مرة وحدة" : n === 2 ? "مرتين" : n <= 10 ? `${n} مرات` : `${n} مرة`;
   const extra = [
     first && clubName(first) !== hc ? `بدأ مسيرته ${bi(clubName(first))}` : null,
@@ -355,14 +358,14 @@ function hintsFor(p) {
     or(pos && nat ? `مركزه: ${pos} · جنسيته: ${nat}` : pos ? `مركزه: ${pos}` : nat ? `جنسيته: ${nat}` : null),
     p.act ? "لسا بيلعب لهلأ" : `معتزل${last && last[2] ? `، آخر سنة لعب فيها ${last[2]}` : ""}`,
     or(p.lg === undefined ? null : p.act
-      ? (p.b5 ? "بيلعب حالياً بأحد الدوريات الخمس الكبرى" : "ما بيلعب حالياً بالدوريات الخمس الكبرى")
-      : (p.b5 ? "أهم محطة بمسيرته كانت بأحد الدوريات الخمس الكبرى" : "أهم محطة بمسيرته كانت برا الدوريات الخمس الكبرى")),
+      ? (b5 ? "بيلعب حالياً بأحد الدوريات الخمس الكبرى" : "ما بيلعب حالياً بالدوريات الخمس الكبرى")
+      : (b5 ? "أهم محطة بمسيرته كانت بأحد الدوريات الخمس الكبرى" : "أهم محطة بمسيرته كانت برا الدوريات الخمس الكبرى")),
     or(p.lg ? (p.act ? `دوريه الحالي: ${p.lg}` : `دوري أهم محطة بمسيرته: ${p.lg}`) : null),
     or(hc ? (p.act ? `بيلعب هلأ ${bi(hc)}` : `النادي اللي قضى فيه أطول فترة: ${hc}`) : null),
     or(p.wc === undefined ? null : p.wc.length ? `فاز بكأس العالم ${p.wc.join(" و")}` : "ما فاز بكأس العالم"),
     or(p.ucl === undefined ? null : p.ucl.length ? `فاز بدوري أبطال أوروبا ${cnt(p.ucl.length)}${p.ucl.length > 1 ? `، آخرها ${p.ucl[p.ucl.length - 1]}` : ` سنة ${p.ucl[0]}`}` : "ما فاز بدوري أبطال أوروبا"),
     or(p.sn ? `لبس القميص رقم ${p.sn[0]} مع ${p.sn[1]}` : null),
-    or((p.fx || [])[0]),
+    or(fx),
     `اسمه ${words.length} ${words.length === 1 ? "كلمة" : "كلمات"}: ${words.map((w) => w[0] + " " + "_ ".repeat(Math.max(0, w.length - 1)).trim()).join("   ")}`,
   ];
   return H.slice(0, MAX_HINTS);

@@ -266,7 +266,7 @@ AWARDS = [  # (جزء من الاسم الإنجليزي، الاسم بالعر
 
 def bi(x: str) -> str:
     """بـ + الاسم: "بالكرة" مش "بـالكرة"."""
-    return "ب" + x if x.startswith("ال") else "بـ" + x
+    return ("ب" if re.match(r"[\u0600-\u06FF]", x or "") else "بـ") + x
 
 
 def times(n: int) -> str:
@@ -280,7 +280,7 @@ def facts(p: dict, clubs: list, nts: list, name) -> list[str]:
     for key, ar in AWARDS:
         hits = set().union(*[v for k, v in aw.items() if key in k]) if any(key in k for k in aw) else set()
         if hits:
-            out.append(f"فاز {bi(ar)} {times(len(hits))}")
+            out.append(f"فاز {bi(ar)}" + (" أكثر من مرة" if len(hits) > 1 else ""))
             break
     scorers = [t for t in clubs if t.get("goals") and t.get("apps")]
     if scorers:
@@ -441,7 +441,8 @@ def fetch_leagues(team_ids: list[str]) -> dict:
     return {t: max(xs)[1:] for t, xs in out.items()}
 
 
-BIG5 = {"Premier League", "La Liga", "Serie A", "Bundesliga", "Ligue 1"}
+BIG5 = {"Premier League", "La Liga", "Serie A", "Bundesliga", "Ligue 1",
+        "الدوري الإنجليزي الممتاز", "الدوري الإسباني", "الدوري الإيطالي", "الدوري الألماني", "الدوري الفرنسي الدرجة الأولى"}
 
 
 # ---------------------------------------------------------------- main
@@ -477,7 +478,7 @@ def main() -> int:
     for p in kept.values():
         lg = leagues.get(p.pop("_hc"))
         p["lg"] = lg[0] if lg else None
-        p["b5"] = bool(lg and lg[1] in BIG5)
+        p["b5"] = bool(lg and (lg[0] in BIG5 or lg[1] in BIG5))
     for who in ("Q615", "Q11571", "Q483915", "Q166154", "Q1835"):
         if who in kept:
             k = kept[who]
