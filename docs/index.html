@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>أبو عودة</title>
+<title>موقع أبو عودة للمرح</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="أبو عودة: 3 قسائم يومياً، وقسيمة للأسبوع وقسيمة للشهر (آمنة، شبه آمنة، خطيرة) وأعلى 10 توقعات احتمالاً بكرة القدم والسلة والتنس، مع سجل علني لكل النتائج.">
+<meta name="description" content="موقع أبو عودة للمرح: ألعاب كورة مع صحابك، و3 قسائم يومياً، وقسيمة للأسبوع وقسيمة للشهر (آمنة، شبه آمنة، خطيرة) وأعلى 10 توقعات احتمالاً بكرة القدم والسلة والتنس، مع سجل علني لكل النتائج.">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="أبو عودة">
+<meta name="apple-mobile-web-app-title" content="أبو عودة للمرح">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@300;400;500;600;700&display=swap">
@@ -405,7 +405,7 @@ body:not(.on-home) #view-home { display: none; }
   <header class="appbar">
     <div class="brand">
       <span class="mark" aria-hidden="true"><img src="icons/icon.svg" alt=""></span>
-      <div><b>أبو عودة</b><small>قسائم كل يوم، بالأرقام</small></div>
+      <div><b>أبو عودة للمرح</b><small>ألعاب كورة مع صحابك</small></div>
     </div>
     <span class="date" id="today-label">اليوم</span>
   </header>
@@ -417,8 +417,8 @@ body:not(.on-home) #view-home { display: none; }
 
   <section id="view-home" aria-label="الرئيسية">
     <h1>شو بدك تلعب اليوم؟</h1>
-    <p class="sub">اختار قسم.</p>
-    <button class="door" id="go-bets" type="button">
+    <p class="sub">موقع أبو عودة للمرح.</p>
+    <button class="door" id="go-bets" type="button" hidden>
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 5v12" stroke-dasharray="2 2.5"/></svg></span>
       <span><b>مراهنات</b><small>قسائم اليوم، تحديات الأسبوع والشهر، وأعلى 10، مع قعدة المحللين.</small></span>
       <span class="meta2" id="home-bets-meta"></span>
@@ -854,7 +854,20 @@ function setTab(which) {
 }
 for (const k of TABS) $("tab-" + k).addEventListener("click", () => setTab(k));
 $("go-bets").addEventListener("click", () => goBets());
-document.querySelector(".appbar .brand").addEventListener("click", goHome);
+// قسم المراهنات مخفي: بيظهر لما تكبس على الشعار 3 مرات ورا بعض
+let taps = [];
+document.querySelector(".appbar .brand").addEventListener("click", () => {
+  const now = Date.now();
+  taps = [...taps.filter((t) => now - t < 900), now];
+  if (taps.length >= 3) {
+    taps = [];
+    const door = $("go-bets");
+    door.hidden = !door.hidden;
+    if (!door.hidden) { goHome(); door.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    return;
+  }
+  goHome();
+});
 if (!TABS.includes(location.hash.slice(1))) document.body.classList.add("on-home");
 
 // ---------- live scores (ESPN, every minute while a match is on) ----------

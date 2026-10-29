@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>برا السالفة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="أبو عودة للمرح">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one screen per step of a pass-the-phone party game. Same chunky game skin as the rest of the app; coral is this game's colour. Light-only by design. */
+:root {
+  color-scheme: light;
+  --bg: #FFFFFF; --soft: #F4F5F7; --line: #ECEEF1; --ink: #111316; --muted: #6B7280; --faint: #A9AEB6;
+  --c: #FF5A5F; --cd: #D63B40; --cs: #FFECEC;
+  --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
+  --ok: #12B76A; --okd: #0A8A4F; --oks: #E6F8EF;
+  --bad: #F04438; --bads: #FEECEA;
+  --font: "Readex Pro", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+  --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); }
+body { margin: 0; color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: calc(12px + env(safe-area-inset-top, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--c); outline-offset: 2px; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.back { display: inline-flex; align-items: center; gap: 6px; border: 0; background: var(--soft); border-radius: 16px; padding: 10px 14px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); }
+.back svg { width: 18px; height: 18px; }
+.title { display: flex; align-items: center; gap: 10px; }
+.title .ic { width: 44px; height: 44px; border-radius: 14px; background: var(--c); box-shadow: 0 4px 0 var(--cd); display: grid; place-items: center; color: #FFFFFF; }
+.title .ic svg { width: 26px; height: 26px; }
+.title b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; }
+.sub { color: var(--muted); margin: 0; font-size: 14px; }
+.card { background: #FFFFFF; border: 2px solid var(--cs); border-radius: 28px; box-shadow: 0 6px 0 var(--cs); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start; counter-increment: s; }
+.steps li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; background: var(--c); color: #FFFFFF; display: grid; place-items: center; font-family: var(--display); font-size: 18px; }
+.big { border: 0; width: 100%; background: var(--c); color: #FFFFFF; border-radius: 22px; padding: 16px; font-family: var(--display); font-size: 24px; box-shadow: 0 6px 0 var(--cd); }
+.big:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--cd); }
+.big:disabled { opacity: .45; }
+.big.ghost { background: var(--soft); color: var(--ink); box-shadow: 0 6px 0 var(--line); }
+.big.purple { background: var(--brand); box-shadow: 0 6px 0 var(--brand-dark); }
+.big.green { background: var(--ok); box-shadow: 0 6px 0 var(--okd); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row2 .big { font-size: 19px; }
+.stepper { display: grid; grid-template-columns: 64px 1fr 64px; gap: 10px; align-items: center; }
+.stepper button { border: 0; height: 64px; border-radius: 20px; background: var(--cs); color: var(--cd); font-size: 32px; box-shadow: 0 4px 0 #FFD3D4; }
+.stepper b { text-align: center; font-family: var(--display); font-size: 56px; line-height: 1; }
+.names { display: flex; flex-direction: column; gap: 8px; }
+.names label { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.names span { width: 34px; height: 34px; border-radius: 50%; background: var(--soft); display: grid; place-items: center; font-weight: 600; color: var(--muted); }
+.names input { width: 100%; border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; background: #FFFFFF; font-size: 16px; }
+.cats { display: flex; flex-wrap: wrap; gap: 8px; }
+.cats button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 600; }
+.cats button[aria-pressed="true"] { border-color: var(--c); background: var(--cs); color: var(--cd); }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; }
+.toggle input { width: 22px; height: 22px; accent-color: var(--c); }
+.pass { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 26px 18px; }
+.pass .who { font-family: var(--display); font-size: 48px; line-height: 1.1; color: var(--c); overflow-wrap: anywhere; }
+.secret { text-align: center; padding: 28px 18px; border-radius: 32px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.secret.in { background: var(--oks); }
+.secret.out { background: var(--ink); color: #FFFFFF; }
+.secret small { font-size: 14px; opacity: .8; }
+.secret b { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 13vw, 64px); line-height: 1.15; overflow-wrap: anywhere; }
+.turn { text-align: center; padding: 30px 18px; border-radius: 32px; background: var(--brand-soft); display: flex; flex-direction: column; gap: 6px; }
+.turn .names2 { font-family: var(--display); font-size: clamp(30px, 9vw, 42px); line-height: 1.25; }
+.turn .names2 .a { color: var(--brand); } .turn .names2 .t { color: var(--c); }
+.turn small { color: var(--muted); }
+.progress { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.progress i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+.progress i.on { background: var(--brand); }
+.votes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.votes button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 22px; padding: 16px 10px; font-weight: 700; font-size: 17px; box-shadow: 0 4px 0 var(--line); overflow-wrap: anywhere; }
+.votes button:active { transform: translateY(2px); }
+.tally { display: flex; flex-direction: column; gap: 8px; }
+.tally .r { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 10px 14px; }
+.tally .r.hot { background: var(--cs); }
+.tally .bar2 { grid-column: 1 / -1; height: 8px; border-radius: 8px; background: #FFFFFF; overflow: hidden; }
+.tally .bar2 i { display: block; height: 100%; background: var(--c); }
+.score { display: flex; flex-direction: column; gap: 8px; }
+.score .r { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 10px 14px; }
+.score .r:first-child { background: #FEF0C7; }
+.score .pos { font-family: var(--display); font-size: 20px; text-align: center; }
+.score .nm { font-weight: 600; overflow-wrap: anywhere; }
+.score .d { font-weight: 700; direction: ltr; font-size: 14px; padding: 2px 8px; border-radius: 999px; }
+.score .d.p { background: var(--oks); color: var(--okd); } .score .d.m { background: var(--bads); color: var(--bad); } .score .d.z { color: var(--faint); }
+.score .t { font-family: var(--display); font-size: 24px; direction: ltr; min-width: 2ch; text-align: left; }
+.verdict { text-align: center; padding: 22px; border-radius: 28px; display: flex; flex-direction: column; gap: 6px; }
+.verdict.good { background: var(--oks); } .verdict.badv { background: var(--bads); }
+.verdict b { font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.2; }
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.opts button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 14px 10px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 0 var(--line); }
+.note { color: var(--muted); font-size: 13px; line-height: 1.7; margin: 0; }
+.confirm { background: var(--bads); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+@media (prefers-reduced-motion: no-preference) {
+  .screen { animation: in .32s cubic-bezier(.2,.9,.3,1.15) both; }
+  @keyframes in { from { transform: translateY(12px) scale(.985); } to { transform: none; } }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <div class="title"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5M15 14.6c2.6-.4 5 1.3 6 5.4"/><path d="M20 3.5l-2 2M21.5 6.5h-2"/></svg></span><b>برا السالفة</b></div>
+    <a class="back" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>الألعاب</a>
+  </div>
+  <main id="app" aria-live="polite"></main>
+</div>
+
+<script>
+const WORDS = {"أكل": ["منسف", "مقلوبة", "كبسة", "فلافل", "حمص", "شاورما", "مسخن", "ملوخية", "كبة", "ورق عنب", "محشي", "فتة", "شوربة عدس", "بيتزا", "برغر", "مندي", "فول", "مجدرة", "سمك", "معكرونة", "سلطة", "كفتة", "فريكة", "زرب", "مسقعة"], "حلويات": ["كنافة", "قطايف", "بقلاوة", "هريسة", "مهلبية", "عوامة", "معمول", "كيك", "بوظة", "شوكولاتة", "دونات", "كريب", "وافل", "تيراميسو", "أم علي", "غريبة", "بسبوسة", "مشبك", "حلاوة", "سحلب", "بان كيك", "تشيز كيك", "كرواسون", "كعك", "قرص عيد"], "مشروبات": ["قهوة", "شاي", "عصير برتقال", "ليمون ونعنع", "سحلب", "يانسون", "مشروب غازي", "مي", "حليب", "قهوة سادة", "كابتشينو", "موهيتو", "عصير جزر", "تمر هندي", "عرق سوس", "كركديه", "ميلك شيك", "سموذي", "قمر الدين", "زهورات", "نسكافيه", "شاي أخضر", "لبن عيران", "عصير رمان", "كوكتيل"], "فواكه وخضار": ["بندورة", "خيار", "بطيخ", "شمام", "تفاح", "موز", "برتقال", "مانجا", "فراولة", "عنب", "تين", "رمان", "ليمون", "بطاطا", "بصل", "ثوم", "جزر", "باذنجان", "كوسا", "فلفل", "خس", "ملفوف", "زهرة", "أفوكادو", "كيوي"], "حيوانات": ["قطة", "كلب", "أسد", "نمر", "فيل", "زرافة", "جمل", "حصان", "حمار", "بقرة", "خروف", "معزة", "دجاجة", "بطة", "حمامة", "نسر", "تمساح", "أفعى", "سلحفاة", "دب", "قرد", "غزال", "ثعلب", "أرنب", "دلفين"], "مهن": ["دكتور", "مهندس", "أستاذ", "محامي", "شرطي", "طيار", "مضيف طيران", "نجار", "حداد", "سباك", "كهربائي", "طباخ", "حلاق", "خياط", "سواق تكسي", "صيدلاني", "ممرض", "مزارع", "صحفي", "مصور", "مبرمج", "محاسب", "بائع خضرة", "رجل إطفاء", "دهّان"], "أماكن": ["مطار", "مستشفى", "مدرسة", "جامعة", "مول", "مطعم", "كافيه", "سينما", "ملعب", "بحر", "صحرا", "جبل", "سوق", "بنك", "محطة بنزين", "مسجد", "حديقة", "فندق", "مكتبة", "صالون حلاقة", "جيم", "مسبح", "مخبز", "سجن", "حديقة حيوانات"], "ملابس": ["كلسون", "معطف", "جاكيت", "بنطلون", "جينز", "قميص", "تيشيرت", "كندرة", "شبشب", "جرابات", "شماغ", "كوفية", "طاقية", "كاب", "فستان", "تنورة", "بيجاما", "كرافات", "حزام", "قفازات", "سكارف", "بدلة", "هودي", "شورت", "جلابية"], "أغراض البيت": ["كنباية", "تلفزيون", "ثلاجة", "غسالة", "مكيف", "صوبة", "مخدة", "حرام", "سجادة", "ستارة", "مراية", "ساعة حيط", "مكنسة", "لمبة", "خزانة", "تخت", "طاولة", "كرسي", "مروحة", "فرن", "مايكرويف", "دوش", "فرشاة أسنان", "منشفة", "شماعة"], "أدوات المطبخ": ["طنجرة", "مقلاية", "سكينة", "شوكة", "معلقة", "صحن", "كاسة", "إبريق", "دلة", "فنجان", "مصفاية", "خلاط", "فرامة", "ميزان", "لوح تقطيع", "ملقط", "مغرفة", "كبّاية", "ترمس", "قدرة", "صينية", "مضرب بيض", "مبشرة", "فتاحة", "طنجرة ضغط"], "مواصلات": ["سيارة", "باص", "تكسي", "طيارة", "قطار", "مترو", "سفينة", "قارب", "موتور", "بسكليت", "سكوتر", "تريلا", "إسعاف", "سيارة إطفاء", "هليكوبتر", "صاروخ", "تلفريك", "غواصة", "جيب", "تكتك", "عربانة", "يخت", "منطاد", "سيارة شرطة", "باص مدرسة"], "تكنولوجيا": ["موبايل", "لابتوب", "شاحن", "سماعات", "تابلت", "ساعة ذكية", "بلايستيشن", "ريموت", "كاميرا", "طابعة", "راوتر", "فلاشة", "ماوس", "كيبورد", "شاشة", "سيلفي ستك", "باور بانك", "بروجكتور", "درون", "واي فاي", "بلوتوث", "سماعة بلوتوث", "نظارة VR", "إيربودز", "كمبيوتر"], "رياضة": ["كرة قدم", "كرة سلة", "تنس", "سباحة", "ملاكمة", "كاراتيه", "جري", "ركوب خيل", "تزلج", "جمباز", "كرة طائرة", "بلياردو", "بولينغ", "شطرنج", "غولف", "فورمولا 1", "دراجات", "رفع أثقال", "مصارعة", "بيسبول", "هوكي", "سهام", "ركبي", "تايكوندو", "تنس طاولة"], "أندية كرة قدم": ["ريال مدريد", "برشلونة", "مانشستر يونايتد", "مانشستر سيتي", "ليفربول", "تشيلسي", "أرسنال", "بايرن ميونخ", "يوفنتوس", "ميلان", "إنتر", "باريس سان جيرمان", "الهلال", "النصر", "الأهلي المصري", "الزمالك", "الفيصلي", "الوحدات", "الرجاء", "الوداد", "الترجي", "أتلتيكو مدريد", "دورتموند", "نابولي", "روما"], "لاعبين": ["ميسي", "رونالدو", "محمد صلاح", "نيمار", "مبابي", "هالاند", "بنزيما", "مودريتش", "رياض محرز", "حكيم زياش", "زيدان", "رونالدينيو", "مارادونا", "بيليه", "بيكهام", "إبراهيموفيتش", "سواريز", "ليفاندوفسكي", "فينيسيوس", "بيلينغهام", "ياسين بونو", "أشرف حكيمي", "سالم الدوسري", "موسى التعمري", "كاكا"], "مدن العالم": ["عمّان", "العقبة", "إربد", "دبي", "الرياض", "القاهرة", "بيروت", "إسطنبول", "باريس", "لندن", "روما", "مدريد", "برشلونة", "نيويورك", "طوكيو", "موسكو", "الدوحة", "مكة", "مراكش", "تونس", "بغداد", "دمشق", "القدس", "الكويت", "مسقط"], "أماكن بالأردن": ["البتراء", "وادي رم", "البحر الميت", "جرش", "عجلون", "الرينبو", "البلد", "العبدلي", "الصويفية", "جبل عمّان", "قلعة عمّان", "المدرج الروماني", "ضانا", "ماعين", "مادبا", "الكرك", "السلط", "أم قيس", "الأزرق", "عين غزال", "تاج مول", "سيتي مول", "الشميساني", "دابوق", "طلوع نيفين"], "أشياء بالمدرسة": ["دفتر", "قلم رصاص", "محاية", "براية", "مسطرة", "شنطة", "سبورة", "طبشورة", "مقلمة", "كتاب", "امتحان", "علامة", "فرصة", "مقصف", "طابور", "مدير", "آذن", "واجب", "حصة رياضة", "مختبر", "مكتبة المدرسة", "زي مدرسي", "شهادة", "رحلة مدرسية", "جرس"], "أشياء بالعرس": ["عريس", "عروس", "زفة", "دبكة", "طبل", "كوشة", "كيك العرس", "فستان أبيض", "بدلة", "خاتم", "شبكة", "مهر", "حنة", "سهرة", "صالة أفراح", "مصور", "دي جي", "زغرودة", "منسف العرس", "كنافة العرس", "سيارة العرس", "بطاقة دعوة", "ليلة الحنة", "عزومة", "شهر العسل"], "ألعاب وتسلية": ["شدة", "طاولة زهر", "دومينو", "بلايستيشن", "فيفا", "ببجي", "فورتنايت", "ماينكرافت", "كرة", "طيارة ورق", "أرجوحة", "زحليقة", "استغماية", "ليجو", "روبيك", "بالون", "مونوبولي", "جنجا", "تاكي", "أونو", "لعبة سيارات", "دمية", "يويو", "بلياردو", "حبل نط"], "مشاعر وحالات": ["فرحان", "زعلان", "معصب", "خايف", "مستحي", "طفشان", "نعسان", "جوعان", "عطشان", "مبسوط", "متوتر", "مستغرب", "غيران", "مشتاق", "مصدوم", "فخور", "مرتاح", "تعبان", "محتار", "متحمس", "ندمان", "ملول", "مكسوف", "مكسور خاطره", "متفائل"]};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const store = { get(k, d) { try { const v = localStorage.getItem("barra-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("barra-" + k, JSON.stringify(v)); } catch {} } };
+
+const G = {
+  count: store.get("count", 4),
+  names: store.get("names", []),
+  cats: store.get("cats", []),           // فاضي = كل الأقسام
+  showCat: store.get("showCat", true),
+  scores: store.get("scores", null),     // { name: points }
+  rounds: 2,
+};
+
+function render(html) { $("app").innerHTML = `<div class="screen">${html}</div>`; window.scrollTo(0, 0); }
+function bind(map) { for (const [id, fn] of Object.entries(map)) { const el = $(id); if (el) el.onclick = fn; } }
+const players = () => G.names.slice(0, G.count);
+
+// ---------- 1. intro ----------
+function intro() {
+  const resume = G.scores && Object.keys(G.scores).length;
+  render(`<h1>كلمة وحدة الكل بيعرفها... إلا واحد!</h1>
+    <div class="card"><ol class="steps">
+      <li><span>حددوا كم واحد بيلعب، وكل واحد بيكتب اسمه.</span></li>
+      <li><span>مرّروا التلفون: كل واحد بيشوف الكلمة، إلا واحد بيطلعله «إنت برا السالفة».</span></li>
+      <li><span>التطبيق بيحكيلكم مين بيسأل مين. اسألوا عن الكلمة بدون ما تحكوها.</span></li>
+      <li><span>بعد جولتين (أو أكثر إذا بدكم) بتصوّتوا: مين برا السالفة؟</span></li>
+    </ol></div>
+    <div class="card"><h2>النقاط</h2>
+      <p class="note">اللي صوّت صح على اللي برا السالفة: <b>+1</b>. اللي صوّت غلط: <b>−1</b>.<br>
+      إذا اللي برا السالفة ما انكشف: هو <b>+1</b>.<br>
+      إذا انكشف، لازم يحزر الكلمة: إذا حزرها هو <b>+1</b> والباقي صفر، وإذا ما حزرها <b>−1</b>.<br>
+      النقاط بتضل تتجمع لحد ما تكبسوا «خروج من اللعبة».</p></div>
+    ${resume ? `<button class="big" id="resume" type="button">كمّلوا اللعبة (${Object.keys(G.scores).length} لاعبين)</button>` : ""}
+    <button class="big ${resume ? "ghost" : ""}" id="new" type="button">${resume ? "لعبة جديدة" : "يلا نلعب"}</button>`);
+  bind({ resume: () => setupRound(), new: () => { G.scores = null; store.set("scores", null); setupPlayers(); } });
+}
+
+// ---------- 2. players ----------
+function setupPlayers() {
+  const n = G.count;
+  render(`<h1>كم واحد بيلعب؟</h1>
+    <div class="stepper"><button id="minus" type="button" aria-label="أقل">−</button><b>${n}</b><button id="plus" type="button" aria-label="أكثر">+</button></div>
+    <p class="note" style="text-align:center">من 3 لـ20 لاعب.</p>
+    <div class="card"><h2>الأسماء</h2><div class="names">${Array.from({ length: n }, (_, i) =>
+      `<label><span>${i + 1}</span><input id="name-${i}" type="text" maxlength="16" placeholder="لاعب ${i + 1}" value="${esc(G.names[i] || "")}" autocomplete="off"></label>`).join("")}</div></div>
+    <div class="card"><h2>الأقسام</h2><p class="note">اختاروا قسم أو أكثر. إذا ما اخترتوا إشي، بتطلع الكلمة من كل الأقسام.</p>
+      <div class="cats">${Object.keys(WORDS).map((c) => `<button type="button" data-cat="${esc(c)}" aria-pressed="${G.cats.includes(c)}">${esc(c)}</button>`).join("")}</div>
+      <label class="toggle"><span>اللي برا السالفة بيعرف القسم</span><input type="checkbox" id="showcat" ${G.showCat ? "checked" : ""}></label></div>
+    <p class="note" id="err" hidden></p>
+    <button class="big" id="go" type="button">التالي</button>`);
+  const saveNames = () => { for (let i = 0; i < G.count; i++) { const el = $("name-" + i); if (el) G.names[i] = el.value.trim(); } };
+  bind({
+    minus: () => { saveNames(); G.count = Math.max(3, G.count - 1); setupPlayers(); },
+    plus: () => { saveNames(); G.count = Math.min(20, G.count + 1); setupPlayers(); },
+    go: () => {
+      saveNames();
+      const ps = Array.from({ length: G.count }, (_, i) => G.names[i] || `لاعب ${i + 1}`);
+      if (new Set(ps).size !== ps.length) { const e = $("err"); e.hidden = false; e.textContent = "في اسمين متشابهين. غيّروا واحد منهم."; return; }
+      G.names = ps; G.showCat = $("showcat").checked;
+      store.set("count", G.count); store.set("names", G.names); store.set("cats", G.cats); store.set("showCat", G.showCat);
+      if (!G.scores) G.scores = {};
+      for (const p of ps) if (!(p in G.scores)) G.scores[p] = 0;
+      for (const k of Object.keys(G.scores)) if (!ps.includes(k)) delete G.scores[k];
+      store.set("scores", G.scores);
+      setupRound();
+    },
+  });
+  document.querySelectorAll("[data-cat]").forEach((b) => b.onclick = () => {
+    const c = b.dataset.cat; G.cats = G.cats.includes(c) ? G.cats.filter((x) => x !== c) : [...G.cats, c];
+    b.setAttribute("aria-pressed", G.cats.includes(c));
+  });
+}
+
+// ---------- 3. round ----------
+let R = null;
+function setupRound() {
+  const ps = players();
+  const cats = G.cats.length ? G.cats : Object.keys(WORDS);
+  const cat = pick(cats);
+  const used = store.get("used", []);
+  let options = WORDS[cat].filter((w) => !used.includes(cat + "|" + w));
+  if (!options.length) options = WORDS[cat];
+  const word = pick(options);
+  store.set("used", [...used, cat + "|" + word].slice(-200));
+  R = { cat, word, outsider: pick(ps), order: shuffle(ps), i: 0, round: 1, pairs: [], q: 0, votes: {}, vi: 0 };
+  passTo();
+}
+
+function passTo() {
+  const name = R.order[R.i];
+  render(`<div class="card pass"><span class="sub">مرّروا التلفون لـ</span><span class="who">${esc(name)}</span>
+      <span class="note">الباقي ما يطلّعوا عالشاشة.</span></div>
+    <div class="progress">${R.order.map((_, k) => `<i class="${k < R.i ? "on" : ""}"></i>`).join("")}</div>
+    <button class="big" id="see" type="button">أنا ${esc(name)}، فرجيني</button>`);
+  bind({ see: secret });
+}
+
+function secret() {
+  const name = R.order[R.i];
+  const out = name === R.outsider;
+  render(`${out
+      ? `<div class="secret out"><small>${esc(name)}</small><b>إنت برا السالفة!</b><small>${G.showCat ? `القسم: ${esc(R.cat)}` : "ما بتعرف حتى القسم"}. حاول تفهم الكلمة من أسئلتهم.</small></div>`
+      : `<div class="secret in"><small>${esc(name)}، الكلمة هي</small><b>${esc(R.word)}</b><small>القسم: ${esc(R.cat)}</small></div>`}
+    <button class="big ghost" id="hide" type="button">خبّيها ومرّر التلفون</button>`);
+  bind({ hide: () => { R.i++; if (R.i < R.order.length) passTo(); else startQuestions(); } });
+}
+
+// ---------- 4. questions ----------
+function makePairs() {
+  const ps = shuffle(players());
+  // كل واحد بيسأل اللي بعده بالدور، فكل لاعب بيسأل مرة وبينسأل مرة
+  return ps.map((a, k) => [a, ps[(k + 1) % ps.length]]);
+}
+function startQuestions() { R.pairs = makePairs(); R.q = 0; question(); }
+
+function question() {
+  const [a, t] = R.pairs[R.q];
+  render(`<div class="sub" style="text-align:center">الجولة ${R.round} · سؤال ${R.q + 1} من ${R.pairs.length}</div>
+    <div class="turn"><div class="names2"><span class="a">${esc(a)}</span> بيسأل <span class="t">${esc(t)}</span></div>
+      <small>اسأل عن الكلمة بدون ما تحكيها. واللي بيجاوب ما يفضح حاله!</small></div>
+    <div class="progress">${R.pairs.map((_, k) => `<i class="${k <= R.q ? "on" : ""}"></i>`).join("")}</div>
+    <button class="big purple" id="next" type="button">${R.q + 1 < R.pairs.length ? "السؤال الجاي" : "خلصت الجولة"}</button>
+    <button class="big ghost" id="vote" type="button">روحوا للتصويت هلأ</button>`);
+  bind({ next: () => { if (R.q + 1 < R.pairs.length) { R.q++; question(); } else roundEnd(); }, vote: startVote });
+}
+
+function roundEnd() {
+  const due = R.round >= G.rounds;
+  render(`<h1>خلصت الجولة ${R.round}</h1>
+    <p class="sub">${due ? "صار وقت التصويت. أو إذا لسا محتارين، زيدوا جولة." : "بدكم جولة كمان، ولا عرفتوا مين برا السالفة؟"}</p>
+    <button class="big ${due ? "" : "ghost"}" id="vote" type="button">صوّتوا</button>
+    <button class="big ${due ? "ghost" : "purple"}" id="more" type="button">جولة كمان</button>`);
+  bind({ vote: startVote, more: () => { R.round++; startQuestions(); } });
+}
+
+// ---------- 5. voting ----------
+function startVote() { R.vorder = shuffle(players()); R.vi = 0; R.votes = {}; votePass(); }
+
+function votePass() {
+  const name = R.vorder[R.vi];
+  render(`<h1>التصويت</h1>
+    <div class="card pass"><span class="sub">مرّروا التلفون لـ</span><span class="who">${esc(name)}</span><span class="note">صوّت بالسر.</span></div>
+    <div class="progress">${R.vorder.map((_, k) => `<i class="${k < R.vi ? "on" : ""}"></i>`).join("")}</div>
+    <button class="big" id="ready" type="button">أنا ${esc(name)}، بدي أصوّت</button>`);
+  bind({ ready: voteChoose });
+}
+
+function voteChoose() {
+  const me = R.vorder[R.vi];
+  const others = players().filter((p) => p !== me);
+  render(`<h1>${esc(me)}، مين برا السالفة؟</h1>
+    <div class="votes">${others.map((p, k) => `<button type="button" data-v="${k}">${esc(p)}</button>`).join("")}</div>`);
+  document.querySelectorAll("[data-v]").forEach((b) => b.onclick = () => {
+    R.votes[me] = others[+b.dataset.v];
+    R.vi++;
+    if (R.vi < R.vorder.length) votePass(); else tally();
+  });
+}
+
+function tally() {
+  const ps = players();
+  const count = Object.fromEntries(ps.map((p) => [p, 0]));
+  for (const v of Object.values(R.votes)) count[v]++;
+  const max = Math.max(...Object.values(count));
+  const top = ps.filter((p) => count[p] === max);
+  R.caught = top.length === 1 && top[0] === R.outsider;
+  R.accused = top;
+  render(`<h1>نتيجة التصويت</h1>
+    <div class="tally">${ps.slice().sort((a, b) => count[b] - count[a]).map((p) => `<div class="r ${count[p] === max ? "hot" : ""}"><b>${esc(p)}</b><span>${count[p]} ${count[p] === 1 ? "صوت" : "أصوات"}</span>
+      <div class="bar2"><i style="width:${(count[p] / ps.length) * 100}%"></i></div></div>`).join("")}</div>
+    <p class="note">${top.length > 1 ? "في تعادل بالأصوات، فما حدا انكشف." : `أكثر واحد عليه أصوات: ${esc(top[0])}.`}</p>
+    <button class="big" id="reveal" type="button">اكشفوا مين برا السالفة</button>`);
+  bind({ reveal: revealOutsider });
+}
+
+function revealOutsider() {
+  if (R.caught) {
+    const decoys = shuffle(WORDS[R.cat].filter((w) => w !== R.word)).slice(0, 7);
+    const opts = shuffle([R.word, ...decoys]);
+    render(`<div class="verdict good"><span>انكشف!</span><b>${esc(R.outsider)} كان برا السالفة</b><span>بس لسا عنده فرصة: إذا حزر الكلمة بياخذ نقطة.</span></div>
+      <h2>${esc(R.outsider)}، شو كانت الكلمة؟</h2>
+      <div class="opts">${opts.map((w, k) => `<button type="button" data-o="${k}">${esc(w)}</button>`).join("")}</div>`);
+    document.querySelectorAll("[data-o]").forEach((b) => b.onclick = () => score(opts[+b.dataset.o] === R.word, opts[+b.dataset.o]));
+  } else {
+    score(null);
+  }
+}
+
+// ---------- 6. scoring ----------
+function score(guessed, guess) {
+  const ps = players();
+  const delta = Object.fromEntries(ps.map((p) => [p, 0]));
+  if (guessed === true) {
+    delta[R.outsider] = 1;   // حزر الكلمة: هو +1 والباقي صفر
+  } else {
+    for (const p of ps) {
+      if (p === R.outsider) continue;
+      delta[p] = R.votes[p] === R.outsider ? 1 : -1;
+    }
+    delta[R.outsider] = R.caught ? -1 : 1;
+  }
+  for (const p of ps) G.scores[p] = (G.scores[p] || 0) + delta[p];
+  store.set("scores", G.scores);
+
+  let head;
+  if (!R.caught) head = `<div class="verdict badv"><span>ما انكشف!</span><b>${esc(R.outsider)} كان برا السالفة</b><span>والكلمة كانت «${esc(R.word)}»</span></div>`;
+  else if (guessed) head = `<div class="verdict good"><span>انكشف، بس حزرها!</span><b>${esc(R.outsider)} عرف الكلمة «${esc(R.word)}»</b><span>بياخذ نقطة، والباقي صفر.</span></div>`;
+  else head = `<div class="verdict good"><span>انكشف وما حزرها!</span><b>الكلمة كانت «${esc(R.word)}»</b><span>${esc(R.outsider)} اختار «${esc(guess)}».</span></div>`;
+
+  const board = ps.slice().sort((a, b) => G.scores[b] - G.scores[a]);
+  render(`${head}
+    <h2>النقاط</h2>
+    <div class="score">${board.map((p, k) => { const d = delta[p];
+      return `<div class="r"><span class="pos">${k + 1}</span><span class="nm">${esc(p)}${p === R.outsider ? " · برا السالفة" : ""}</span>
+        <span class="d ${d > 0 ? "p" : d < 0 ? "m" : "z"}">${d > 0 ? "+" + d : d}</span><span class="t">${G.scores[p]}</span></div>`; }).join("")}</div>
+    <button class="big" id="again" type="button">جولة جديدة</button>
+    <div class="row2"><button class="big ghost" id="edit" type="button">عدّل اللاعبين</button><button class="big ghost" id="quit" type="button">خروج من اللعبة</button></div>
+    <div class="confirm" id="confirm" hidden><b>أكيد بدكم تطلعوا؟ النقاط رح تنمسح.</b>
+      <div class="row2"><button class="big" id="yes" type="button">آه، اطلعوا</button><button class="big ghost" id="no" type="button">لا، كمّلوا</button></div></div>`);
+  bind({
+    again: setupRound, edit: setupPlayers,
+    quit: () => { $("confirm").hidden = false; $("confirm").scrollIntoView({ behavior: "smooth", block: "center" }); },
+    no: () => { $("confirm").hidden = true; },
+    yes: () => { G.scores = null; store.set("scores", null); location.href = "./"; },
+  });
+}
+
+intro();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+</body>
+</html>

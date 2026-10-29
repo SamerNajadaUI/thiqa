@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ألعاب أبو عودة</title>
+<title>ألعاب أبو عودة للمرح</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="manifest" href="../manifest.webmanifest">
@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="أبو عودة">
+<meta name="apple-mobile-web-app-title" content="أبو عودة للمرح">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
@@ -65,6 +65,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .tile.l2 { --c: var(--l2); --cd: var(--l2d); --cs: var(--l2s); }
 .tile.l3 { --c: var(--l3); --cd: var(--l3d); --cs: var(--l3s); }
 .tile.l4 { --c: var(--l4); --cd: var(--l4d); --cs: var(--l4s); }
+.tile.coral { --c: #FF5A5F; --cd: #D63B40; --cs: #FFECEC; text-decoration: none; color: var(--ink); }
 .tile.gold { --c: var(--gold); --cd: var(--gold-dark); --cs: #FEF0C7; }
 .tile .ic .lvnum { font-family: var(--display); font-size: 30px; line-height: 1; }
 .stack { display: flex; flex-direction: column; gap: 14px; }
@@ -148,7 +149,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 <body>
 <div class="wrap">
   <div class="bar">
-    <a class="brand" href="../"><img src="../icons/icon.svg" alt=""><b>أبو عودة</b></a>
+    <a class="brand" href="../"><img src="../icons/icon.svg" alt=""><b>أبو عودة للمرح</b></a>
     <button class="back" id="back" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>رجوع</button>
   </div>
   <main id="app" aria-live="polite"><div class="loading">بحمّل اللاعبين...</div></main>
@@ -195,6 +196,7 @@ function screenGames() {
   return `<h1>الألعاب</h1><p class="sub">ألعاب كورة تلعبها مع صحابك على نفس التلفون.</p>
     <div class="stack" style="margin-top:14px">
       <button class="tile" id="g-who" type="button"><span class="ic">${ICON.who}</span><span><b>احزر اللاعب</b><small>إنت شايف اللاعب، وصاحبك بيسأل لحد ما يعرفه</small></span><span class="go">${ICON.go}</span></button>
+      <a class="tile coral" href="barra.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5M15 14.6c2.6-.4 5 1.3 6 5.4"/></svg></span><span><b>برا السالفة</b><small>كلمة وحدة الكل بيعرفها... إلا واحد! من 3 لـ20 لاعب</small></span><span class="go">${ICON.go}</span></a>
       <p class="soon">ألعاب ثانية جاية قريباً.</p>
     </div>`;
 }

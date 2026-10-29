@@ -1,7 +1,7 @@
 {
-  "name": "أبو عودة",
+  "name": "موقع أبو عودة للمرح",
   "short_name": "أبو عودة",
-  "description": "قسائم كل يوم بالأرقام: كرة قدم وسلة وتنس، مع قعدة محللين وسجل علني.",
+  "description": "ألعاب كورة تلعبها مع صحابك: احزر اللاعب وبرا السالفة.",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./?source=app",
@@ -11,8 +11,22 @@
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
   ]
 }
