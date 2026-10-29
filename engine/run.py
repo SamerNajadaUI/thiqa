@@ -40,6 +40,7 @@ import analysis as an  # noqa: E402
 import football_data as fdata  # noqa: E402
 import espn  # noqa: E402
 import long_coupons as lc  # noqa: E402
+import crowd  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "docs" / "data"
@@ -291,26 +292,32 @@ def build_coupons(legs: list[dict], tiers: dict) -> list[dict]:
         for leg in legs:
             if not (t["min_leg"] <= leg["prob"] <= t["max_leg"]):
                 continue
+            if leg["event_id"] in used:  # كل مباراة بقسيمة وحدة بس، عشان خسارة وحدة ما توقع كل القسائم
+                continue
             ratio = leg.get("support", 0) / leg["signals"] if leg.get("signals") else 0.5
+            if ratio < t.get("min_support_ratio", 0) or leg.get("signals", 0) < t.get("min_signals", 0):
+                continue
             score = (abs(leg["prob"] - target) - 0.02 * ratio, -leg["books"])
             cur = per_event.get(leg["event_id"])
             if cur is None or score < cur[0]:
                 per_event[leg["event_id"]] = (score, leg)
-        ranked = [l for _, l in sorted(per_event.values(), key=lambda x: (x[1]["event_id"] in used, x[0]))]
+        ranked = [l for _, l in sorted(per_event.values(), key=lambda x: x[0])]
 
-        chosen, per_market = [], {}
-        for leg in ranked:
-            if len(chosen) >= k:
-                break
-            if per_market.get(leg["market"], 0) >= t.get("max_same_market", 2):
-                continue
-            chosen.append(leg)
-            per_market[leg["market"]] = per_market.get(leg["market"], 0) + 1
-        for leg in ranked:
-            if len(chosen) >= k:
-                break
-            if leg not in chosen:
+        # تنويع: ما بنكرر نفس السوق أكثر من مرتين، ولا نفس الدوري أكثر من مرتين بالقسيمة
+        chosen, per_market, per_league = [], {}, {}
+        for relax in (False, True):
+            for leg in ranked:
+                if len(chosen) >= k:
+                    break
+                if leg in chosen:
+                    continue
+                if per_league.get(leg["sport_key"], 0) >= t.get("max_same_league", 2):
+                    continue
+                if not relax and per_market.get(leg["market"], 0) >= t.get("max_same_market", 2):
+                    continue
                 chosen.append(leg)
+                per_market[leg["market"]] = per_market.get(leg["market"], 0) + 1
+                per_league[leg["sport_key"]] = per_league.get(leg["sport_key"], 0) + 1
 
         if kind == "safe":  # الآمنة: إذا الاحتمال الكلي نزل كثير، بنقصّر القسيمة بدل ما نحط توقع ضعيف
             chosen.sort(key=lambda l: -l["prob"])
@@ -387,8 +394,45 @@ def soccer_contexts(legs: list[dict], matches: list, teams: dict, current: dict)
 
 
 def run_analysis(legs: list[dict], contexts: dict, cfg: dict) -> None:
+    cal = cfg.get("_calibration") or {}
     for l in legs:
         an.analyze(l, contexts.get(l["event_id"]), cfg)
+        r = cal.get(l["market"], cal.get("all", 1.0))
+        l["prob_raw"] = round(l["prob"] / r, 4) if r < 0.995 else l["prob"]
+
+
+# ---------------------------------------------------------------- self-calibration
+
+def compute_calibration(history: dict, extra_days: list, cfg: dict) -> dict:
+    """
+    بيقارن الاحتمال اللي نشرناه مع اللي صار. إذا كنا متفائلين، بيرجع معامل أقل من 1.
+    ما بيرفع النسب أبداً، وما بيشتغل إلا بعد عدد كافي من النتائج.
+    """
+    c = cfg.get("calibration", {})
+    n0 = c.get("prior_n", 40)
+    seen = {}
+    for d in history.get("days", []) + extra_days:
+        for l in all_legs(d):
+            if l["result"] in ("hit", "miss"):
+                seen[l["id"]] = l
+    legs = list(seen.values())
+    out = {}
+
+    def factor(xs):
+        n = len(xs)
+        pred = sum(l.get("prob_raw", l["prob"]) for l in xs)
+        hits = sum(l["result"] == "hit" for l in xs)
+        mean = pred / n
+        r = (hits + n0 * mean) / (pred + n0 * mean)
+        return max(c.get("min_factor", 0.85), min(1.0, r))
+
+    if len(legs) >= c.get("min_legs", 40):
+        out["all"] = round(factor(legs), 4)
+        for m in {l["market"] for l in legs}:
+            xs = [l for l in legs if l["market"] == m]
+            if len(xs) >= c.get("min_market_legs", 25):
+                out[m] = round(factor(xs), 4)
+    return out
 
 
 # ---------------------------------------------------------------- predict
@@ -790,7 +834,12 @@ def main() -> int:
         return 0
 
     if args.hourly:
-        return hourly(cfg, now)
+        today_local = now.astimezone(AMMAN)
+        published = load_json(TODAY_FILE, {}).get("date")
+        if today_local.hour >= 6 and published != today_local.strftime("%Y-%m-%d") and os.environ.get("ODDS_API_KEY"):
+            log("قسائم اليوم لسا ما نزلت (تشغيل الصبح ما صار): بعمل التحديث الكامل هلأ.")
+        else:
+            return hourly(cfg, now)
 
     key = os.environ.get("ODDS_API_KEY", "").strip()
     if not key:
@@ -812,7 +861,13 @@ def main() -> int:
             check_results(api, cfg, history, now, espn.Espn(), lc.open_days(long))
         if not args.results_only:
             log("بجيب الأودز...")
+            date = now.astimezone(AMMAN).strftime("%Y-%m-%d")
+            existing = next((d for d in history["days"] if d["date"] == date), None)
+            keep_day = existing is not None and not os.environ.get("FORCE")
             long_hours = lc.fetch_hours_needed(long, cfg, now)
+            if keep_day and not long_hours:
+                log("قسائم اليوم نازلة من قبل، وما رح أغيّرها عشان السجل يضل صادق.")
+                raise BudgetExhausted("ما في إشي جديد نبنيه اليوم")
             run_cfg = dict(cfg, fetch_hours=max(cfg.get("fetch_hours", 48), long_hours))
             if long_hours:
                 log(f"  بنبني قسائم الأسبوع/الشهر: بجيب أودز {long_hours // 24} يوم.")
@@ -833,13 +888,26 @@ def main() -> int:
                 log(f"  حللت {len(contexts)} مباراة كرة قدم بالإحصائيات ({fd.used} طلب).")
             else:
                 log("  ما في FOOTBALL_DATA_KEY: التحليل رح يعتمد على السوق بس.")
+            try:
+                n_crowd = crowd.attach(legs, crowd.Crowd(), log)
+                log(f"  رأي الجمهور (Polymarket): لقيت {n_crowd} مباراة.")
+            except Exception as e:
+                n_crowd = 0
+                log(f"  Polymarket: {e}")
+            cfg = dict(cfg, _calibration=compute_calibration(history, lc.open_days(long), cfg))
+            if cfg["_calibration"]:
+                log(f"  معاملات التعديل من السجل: {cfg['_calibration']}")
             run_analysis(legs, contexts, cfg)
             stats["analyzed"] = len(contexts)
+            stats["crowd"] = n_crowd
 
             pick_from = eligible(legs, cfg, now)
-            date = now.astimezone(AMMAN).strftime("%Y-%m-%d")
-            day = {"date": date, "top": top_list(pick_from, cfg["top_list_size"]),
-                   "coupons": build_coupons(pick_from, cfg["coupons"])}
+            if keep_day:
+                day = existing
+                log("  قسائم اليوم نازلة من قبل: بنيت قسائم الأسبوع/الشهر بس.")
+            else:
+                day = {"date": date, "top": top_list(pick_from, cfg["top_list_size"]),
+                       "coupons": build_coupons(pick_from, cfg["coupons"])}
             if long_hours:
                 lc.refresh(long, legs, cfg, now, log)
             try:

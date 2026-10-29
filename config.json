@@ -46,7 +46,10 @@
       "target_total": 0.7,
       "min_leg": 0.78,
       "max_leg": 1.0,
-      "max_same_market": 2
+      "max_same_market": 2,
+      "min_support_ratio": 0.6,
+      "min_signals": 2,
+      "max_same_league": 2
     },
     "medium": {
       "legs": 4,
@@ -54,7 +57,9 @@
       "target_total": 0.55,
       "min_leg": 0.72,
       "max_leg": 0.93,
-      "max_same_market": 2
+      "max_same_market": 2,
+      "min_support_ratio": 0.5,
+      "max_same_league": 2
     },
     "risky": {
       "legs": 5,
@@ -62,7 +67,9 @@
       "target_total": 0.2,
       "min_leg": 0.5,
       "max_leg": 0.85,
-      "max_same_market": 2
+      "max_same_market": 2,
+      "min_support_ratio": 0.4,
+      "max_same_league": 2
     }
   },
   "check_results": true,
@@ -73,7 +80,9 @@
     "max_model_gap": 0.08,
     "max_market_drop": 0.03,
     "min_support_ratio": 0.5,
-    "max_reasons": 7
+    "max_reasons": 8,
+    "crowd_weight": 0.2,
+    "crowd_min_volume": 3000
   },
   "football_data_max_requests": 24,
   "h2h_previous_season": true,
@@ -96,5 +105,11 @@
       "max_legs": 40,
       "min_support_ratio": 0.5
     }
+  },
+  "calibration": {
+    "min_legs": 40,
+    "min_market_legs": 25,
+    "prior_n": 40,
+    "min_factor": 0.85
   }
 }

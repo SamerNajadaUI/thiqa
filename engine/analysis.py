@@ -203,8 +203,8 @@ def build_model(ctx: MatchContext, rho: float = -0.08) -> MatchContext:
 
     base = (Lh + La) / 2
     if h.n5 >= 3 and a.n5 >= 3:
-        lam_h *= (_shrunk_ratio(h.last5_gf, h.n5, base) * _shrunk_ratio(a.last5_ga, a.n5, base)) ** 0.25
-        lam_a *= (_shrunk_ratio(a.last5_gf, a.n5, base) * _shrunk_ratio(h.last5_ga, h.n5, base)) ** 0.25
+        lam_h *= (_shrunk_ratio(h.last5_gf, h.n5, base) * _shrunk_ratio(a.last5_ga, a.n5, base)) ** 0.15
+        lam_a *= (_shrunk_ratio(a.last5_gf, a.n5, base) * _shrunk_ratio(h.last5_ga, h.n5, base)) ** 0.15
 
     hr, ar = h.rest_days, a.rest_days
     if hr is not None and ar is not None:
@@ -319,6 +319,19 @@ def analyze(leg: dict, ctx: MatchContext | None, cfg: dict) -> dict:
         else:
             warns.append(f"الشركات الأدق بالعالم أقل تفاؤلاً: بتعطيه {p100(sp)}")
 
+    # رأي الجمهور العالمي (Polymarket): ناس من كل العالم حاطين فلوس حقيقية
+    cp, vol = leg.get("crowd_prob"), leg.get("crowd_volume") or 0
+    if cp is not None and vol >= a.get("crowd_min_volume", 3000):
+        tot += 1
+        money = f"${vol / 1000:,.0f}K" if vol < 1_000_000 else f"${vol / 1_000_000:,.1f}M"
+        if cp >= pm - 0.02:
+            sup += 1
+            reasons.append(f"المراهنين حول العالم على {nm('Polymarket')} (تداول {nm(money)}) بيعطوه {p100(cp)}")
+        else:
+            warns.append(f"المراهنين حول العالم على {nm('Polymarket')} أقل تفاؤلاً: بيعطوه {p100(cp)} (تداول {nm(money)})")
+        wc = a.get("crowd_weight", 0.2) * (1.5 if vol >= 100_000 else 1.0)
+        base = (1 - wc) * base + wc * cp
+
     mv = leg.get("movement")
     if mv is not None and abs(mv) >= 0.01:
         tot += 1
@@ -354,12 +367,19 @@ def analyze(leg: dict, ctx: MatchContext | None, cfg: dict) -> dict:
         weight *= min(1.0, ctx.sample / 8)
     final = blend(base, model_p, weight)
 
+    # تعلّم من السجل: إذا نسبنا طلعت متفائلة بالواقع، بننزّلها
+    cal = cfg.get("_calibration") or {}
+    r = cal.get(leg["market"], cal.get("all", 1.0))
+    if r < 0.995:
+        final = final * r
+        warns.insert(0, f"سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها {(1 - r) * 100:.1f}%")
+
     eligible = True
     if model_p is not None and model_p < base - a.get("max_model_gap", 0.08):
         eligible = False
     if mv is not None and mv <= -a.get("max_market_drop", 0.03):
         eligible = False
-    if tot >= 3 and sup / tot < a.get("min_support_ratio", 0.5):
+    if tot >= 2 and sup / tot < a.get("min_support_ratio", 0.5):
         eligible = False
 
     leg.update({
@@ -394,8 +414,24 @@ def _stat_reasons(leg: dict, ctx: MatchContext):
             return R, W, 0, 0
         w5, d5, l5 = me.last5_counts()
         ow5, od5, ol5 = opp.last5_counts()
-        if me.n5 >= 3 and opp.n5 >= 3:
-            signal(me.last5_points >= opp.last5_points,
+        # الرجوع للمعدل: سلسلة نتائج حلوة ما بتضمن الجاي
+        mp = me.played_home + me.played_away
+        op_ = opp.played_home + opp.played_away
+        if me.n5 >= 5 and mp >= 6:
+            season_ppg = (3 * (me.w_home + me.w_away) + me.d_home + me.d_away) / mp
+            l5 = me.last5_points / me.n5
+            if l5 - season_ppg >= 0.7:
+                signal(False, "", f"{nm(me.name)} جايب {l5:.1f} نقطة بالمباراة بآخر 5، أعلى من معدله بالموسم ({season_ppg:.1f}). "
+                                  "الفورمة العالية عادة ما بتدوم، والفرق بترجع لمستواها")
+            elif season_ppg - l5 >= 0.7:
+                R.append(f"{nm(me.name)} نتائجه الأخيرة أقل من مستواه بالموسم ({l5:.1f} مقابل {season_ppg:.1f} نقطة)، وعادة الفرق بترجع لمستواها")
+        if opp.n5 >= 5 and op_ >= 6:
+            season_ppg = (3 * (opp.w_home + opp.w_away) + opp.d_home + opp.d_away) / op_
+            l5 = opp.last5_points / opp.n5
+            if season_ppg - l5 >= 0.7:
+                signal(False, "", f"{nm(opp.name)} نتائجه الأخيرة ({l5:.1f} نقطة بالمباراة) أقل من مستواه الحقيقي ({season_ppg:.1f})، وممكن يرجع لمستواه بهالمباراة")
+        if me.n5 >= 3 and opp.n5 >= 3 and abs(me.last5_points - opp.last5_points) >= 3:
+            signal(me.last5_points > opp.last5_points,
                    f"فورمة {nm(me.name)} بآخر 5: {w5} فوز و{d5} تعادل و{l5} خسارة، مقابل {ow5} فوز لـ{nm(opp.name)}",
                    f"فورمة {nm(opp.name)} بآخر 5 أحسن ({ow5} فوز مقابل {w5})")
         if at_home and me.played_home >= 3:
@@ -453,6 +489,11 @@ def _stat_reasons(leg: dict, ctx: MatchContext):
             R.append(f"{nm(h.name)} على أرضه: بيسجل {f1(h.gf_home)} وبيستقبل {f1(h.ga_home)} بالمباراة")
         if a.played_away >= 3:
             R.append(f"{nm(a.name)} برّا أرضه: بيسجل {f1(a.gf_away)} وبيستقبل {f1(a.ga_away)} بالمباراة")
+        if over and h.n5 >= 5 and a.n5 >= 5 and h.played_home + h.played_away >= 6 and a.played_home + a.played_away >= 6:
+            recent = (h.last5_gf + h.last5_ga + a.last5_gf + a.last5_ga) / 2
+            season = ((h.gf_home + h.ga_home + h.gf_away + h.ga_away) / 2 + (a.gf_home + a.ga_home + a.gf_away + a.ga_away) / 2) / 2
+            if season > 0 and recent >= season * 1.35:
+                W.append(f"مبارياتهم الأخيرة فيها أهداف أكثر من معدلهم بالموسم ({f1(recent)} مقابل {f1(season)})، والأرقام هاي عادة بترجع لطبيعتها")
         both = hv + av
         if len(both) >= 6:
             k = sum(1 for x in both if (x > pt if over else x < pt))
