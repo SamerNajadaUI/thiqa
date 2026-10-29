@@ -1795,9 +1795,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/geo.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
      "live": {
-      "state": "pre",
-      "detail": "10/29 - 10:00 AM EDT",
-      "score": null
+      "state": "in",
+      "detail": "2nd",
+      "score": "0-1"
      },
      "panel": {
       "p": [
@@ -1902,9 +1902,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ger.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/cze.png",
      "live": {
-      "state": "pre",
-      "detail": "10/29 - 11:00 AM EDT",
-      "score": null
+      "state": "in",
+      "detail": "1st",
+      "score": "0-0"
      },
      "panel": {
       "p": [
@@ -1984,8 +1984,8 @@
      "sharp_prob": 0.8137,
      "prob": 0.8093,
      "books": 21,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "1-2",
      "crowd_prob": 0.815,
      "crowd_volume": 29180,
      "model_prob": null,
@@ -2009,9 +2009,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/gbr.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
      "live": {
-      "state": "pre",
-      "detail": "10/29 - 8:30 AM EDT",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "1-2"
      },
      "panel": {
       "p": [
@@ -2091,8 +2091,8 @@
      "sharp_prob": 0.7733,
      "prob": 0.7723,
      "books": 21,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "2-0",
      "crowd_prob": 0.775,
      "crowd_volume": 3523,
      "model_prob": null,
@@ -2116,9 +2116,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
      "live": {
-      "state": "pre",
-      "detail": "10/29 - 8:30 AM EDT",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "2-0"
      },
      "panel": {
       "p": [
@@ -2224,7 +2224,7 @@
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ned.png",
      "live": {
       "state": "pre",
-      "detail": "10/29 - 12:30 PM EDT",
+      "detail": "10/29 - 1:10 PM EDT",
       "score": null
      },
      "panel": {
@@ -2441,7 +2441,7 @@
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ger.png",
      "live": {
       "state": "pre",
-      "detail": "10/29 - 1:00 PM EDT",
+      "detail": "10/29 - 1:30 PM EDT",
       "score": null
      },
      "panel": {
@@ -2858,9 +2858,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/geo.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
        "live": {
-        "state": "pre",
-        "detail": "10/29 - 10:00 AM EDT",
-        "score": null
+        "state": "in",
+        "detail": "2nd",
+        "score": "0-1"
        },
        "panel": {
         "p": [
@@ -2964,9 +2964,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ger.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/cze.png",
        "live": {
-        "state": "pre",
-        "detail": "10/29 - 11:00 AM EDT",
-        "score": null
+        "state": "in",
+        "detail": "1st",
+        "score": "0-0"
        },
        "panel": {
         "p": [
@@ -3054,8 +3054,8 @@
        "sharp_prob": 0.8137,
        "prob": 0.8093,
        "books": 21,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "1-2",
        "crowd_prob": 0.815,
        "crowd_volume": 29180,
        "model_prob": null,
@@ -3078,9 +3078,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/gbr.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
        "live": {
-        "state": "pre",
-        "detail": "10/29 - 8:30 AM EDT",
-        "score": null
+        "state": "post",
+        "detail": "Final",
+        "score": "1-2"
        },
        "panel": {
         "p": [
@@ -3160,8 +3160,8 @@
        "sharp_prob": 0.7733,
        "prob": 0.7723,
        "books": 21,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "2-0",
        "crowd_prob": 0.775,
        "crowd_volume": 3523,
        "model_prob": null,
@@ -3184,9 +3184,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
        "live": {
-        "state": "pre",
-        "detail": "10/29 - 8:30 AM EDT",
-        "score": null
+        "state": "post",
+        "detail": "Final",
+        "score": "2-0"
        },
        "panel": {
         "p": [
@@ -3493,8 +3493,8 @@
        "sharp_prob": 0.7229,
        "prob": 0.7192,
        "books": 21,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "2-1",
        "crowd_prob": 0.725,
        "crowd_volume": 44285,
        "model_prob": null,
@@ -3517,9 +3517,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/mon.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
        "live": {
-        "state": "pre",
-        "detail": "10/29 - 7:00 AM EDT",
-        "score": null
+        "state": "post",
+        "detail": "Final",
+        "score": "2-1"
        },
        "panel": {
         "p": [
@@ -3623,9 +3623,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/gbr.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
        "live": {
-        "state": "pre",
-        "detail": "10/29 - 12:00 PM EDT",
-        "score": null
+        "state": "in",
+        "detail": "2nd",
+        "score": "1-0"
        },
        "panel": {
         "p": [
@@ -3989,7 +3989,7 @@
      ],
      "prob": 0.1454,
      "fair_odds": 6.88,
-     "result": "pending"
+     "result": "lost"
     }
    ]
   }
