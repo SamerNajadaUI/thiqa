@@ -320,8 +320,8 @@ def shape(p: dict, rank: int, wins: dict | None = None) -> dict | None:
     if not clubs:
         return None
     club_list = sorted(clubs.values(), key=lambda t: (t["s"] or 9999, t["e"] or 9999))
-    latest = max((t["s"] or 0) for t in club_list)
-    active = not p.get("dy") and (p.get("by") or 0) >= 1984 and any(t["e"] is None and (t["s"] or 0) >= 2019 for t in club_list) and latest >= 2019
+    # لاعب حالي: عنده نادي مفتوح (بدون سنة نهاية) من 2010 أو بعد، ومش كبير بالعمر
+    active = not p.get("dy") and (p.get("by") or 0) >= 1984 and any(t["e"] is None and (t["s"] or 0) >= 2010 for t in club_list)
     lv = next(l for cut, l in LEVELS if rank < cut)
     nat = p.get("sport_nat") or p.get("nat") or []
     name = lambda t: clean(t["ar"] or t["en"])
