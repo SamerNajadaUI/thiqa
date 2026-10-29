@@ -243,6 +243,16 @@ function nextPlayer() {
   if (stack.length && stack[stack.length - 1] === screenPlayer) show(screenPlayer, false); else show(screenPlayer);
 }
 
+function mergeSpells(list) {
+  const out = [];
+  for (const [n, s, e] of list || []) {
+    const prev = out.find((x) => x[0] === n && (x[2] === null || !s || s <= x[2] + 1) && (!x[1] || !e || x[1] <= e + 1));
+    if (prev) { prev[1] = Math.min(prev[1] || s, s || prev[1]); prev[2] = prev[2] === null || e === null ? null : Math.max(prev[2], e); }
+    else out.push([n, s, e]);
+  }
+  return out;
+}
+
 function playerCard(p, hidden) {
   const [lvName, cls] = LEVELS[p.lv];
   const facts = [
@@ -260,7 +270,7 @@ function playerCard(p, hidden) {
     <div class="pname"><b>${esc(p.a)}</b><span>${esc(p.n)}</span></div>
     <div class="facts">${facts.map(([k, v]) => `<div class="fact"><small>${k}</small><b>${esc(v)}</b></div>`).join("")}</div>
     <div class="clubs">
-      <h3>الأندية</h3><div class="chips">${(p.c || []).map(([n, s, e]) => `<span class="chip">${esc(n)}<span class="yr">${yr(s, e)}</span></span>`).join("")}</div>
+      <h3>الأندية</h3><div class="chips">${mergeSpells(p.c).map(([n, s, e]) => `<span class="chip">${esc(n)}<span class="yr">${yr(s, e)}</span></span>`).join("")}</div>
       ${(p.nt || []).length ? `<h3>المنتخب</h3><div class="chips">${p.nt.map(([n, s, e]) => `<span class="chip nt">${esc(n)}<span class="yr">${yr(s, e)}</span></span>`).join("")}</div>` : ""}
     </div>
   </article>`;
