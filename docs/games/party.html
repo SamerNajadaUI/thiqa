@@ -417,15 +417,31 @@ function hintsFor(p, ex = {}) {
   return H.slice(0, MAX_HINTS);
 }
 
-// 20 خيار: نفس المنتخب ونفس المركز أول، بعدين باقي لاعبين المنتخب، بعدين نفس المركز من برا
+// 20 خيار محيّرين: للاعب الحالي من ناديه الحالي، وللمعتزل من منتخبه
 function optionsFor(p) {
   const nt = ntOf(p), pc = posCat(p);
   const others = DATA.players.filter((x) => x.id !== p.id);
   const fameSort = (xs) => xs.map((x) => [x.r * (0.5 + Math.random()), x]).sort((a, b) => a[0] - b[0]).map(([, x]) => x);
-  const g1 = fameSort(others.filter((x) => ntOf(x) === nt && posCat(x) === pc));
-  const g2 = fameSort(others.filter((x) => ntOf(x) === nt && posCat(x) !== pc));
-  const g3 = fameSort(others.filter((x) => ntOf(x) !== nt && posCat(x) === pc && x.act === p.act));
-  const picked = [...g1, ...g2, ...g3].slice(0, 19);
+  let groups;
+  if (p.act && p.hc) {
+    // لاعب حالي: لاعبين ناديه الحالي (نفس المركز أول)، بعدين نفس المركز بنفس الدوري
+    const mate = (x) => x.act && x.hc === p.hc;
+    groups = [
+      others.filter((x) => mate(x) && posCat(x) === pc),
+      others.filter((x) => mate(x) && posCat(x) !== pc),
+      others.filter((x) => !mate(x) && x.act && x.lg === p.lg && posCat(x) === pc),
+      others.filter((x) => !mate(x) && x.act && ntOf(x) === nt),
+    ];
+  } else {
+    // معتزل: نفس المنتخب ونفس المركز أول، بعدين باقي المنتخب، بعدين نفس المركز من برا
+    groups = [
+      others.filter((x) => ntOf(x) === nt && posCat(x) === pc),
+      others.filter((x) => ntOf(x) === nt && posCat(x) !== pc),
+      others.filter((x) => ntOf(x) !== nt && posCat(x) === pc && x.act === p.act),
+    ];
+  }
+  const seen = new Set();
+  const picked = groups.flatMap(fameSort).filter((x) => !seen.has(x.id) && seen.add(x.id)).slice(0, 19);
   return shuffle([p.id, ...picked.map((x) => x.id)]);
 }
 
