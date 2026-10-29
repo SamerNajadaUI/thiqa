@@ -22,8 +22,8 @@
     "sharp_prob": 0.7688,
     "prob": 0.7652,
     "books": 24,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "5-1",
     "movement": -0.0004,
     "model_prob": 0.7444,
     "support": 3,
@@ -105,9 +105,9 @@
      "sw": false
     },
     "live": {
-     "state": "pre",
-     "detail": "Scheduled",
-     "score": null
+     "state": "post",
+     "detail": "FT",
+     "score": "5-1"
     }
    },
    {
