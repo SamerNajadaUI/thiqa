@@ -238,7 +238,7 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
                 cit = cit.get("name") or cit.get("displayName") or cit.get("alt") or ""
             info = {"lg": t["lg"], "club_ar": t["club_ar"], "club": t["club"], "pc": espn_pos(a),
                     "num": int(jersey) if str(jersey or "").isdigit() else None,
-                    "nat_ar": countries.get(cit), "en": names[0], "espn": str(a.get("id") or ""),
+                    "nat_ar": countries.get(cit), "en": names[0], "full": names[-1], "espn": str(a.get("id") or ""),
                     "age": a.get("age")}
             if scored and scored[0][0] >= 1 and (len(scored) == 1 or scored[0][0] > scored[1][0]):
                 squads[scored[0][1]] = info
@@ -250,6 +250,33 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
                 squads[wide[0][1]] = info
             else:
                 espn_only.append(info)
+    # اللي ما انطابقوا: بندوّر عليهم بالاسم مباشرة بـ Wikidata (الاسم أو الاسم البديل)، ونتأكد من العمر
+    rest = []
+    for i in range(0, len(espn_only), 80):
+        chunk = espn_only[i:i + 80]
+        names = {n for e in chunk for n in (e["en"], e.get("full")) if n}
+        vals = " ".join(json.dumps(n) + "@en" for n in names)
+        found = defaultdict(set)
+        try:
+            for b in sparql(f"""SELECT ?p ?name ?b WHERE {{ VALUES ?name {{ {vals} }}
+                {{ ?p rdfs:label ?name }} UNION {{ ?p skos:altLabel ?name }}
+                ?p wdt:P106 wd:Q937857. OPTIONAL {{ ?p wdt:P569 ?b }} }}""", tries=2):
+                found[v(b, "name")].add((qid(v(b, "p")), year(v(b, "b"))))
+        except SystemExit:
+            rest.extend(chunk)
+            continue
+        for e in chunk:
+            cands = found.get(e["en"], set()) | found.get(e.get("full") or "", set())
+            if isinstance(e.get("age"), int) and len(cands) > 1:
+                by = time.gmtime().tm_year - e["age"]
+                cands = {c for c in cands if c[1] and abs(c[1] - by) <= 1}
+            pids = {c[0] for c in cands}
+            if len(pids) == 1 and next(iter(pids)) not in squads:
+                squads[next(iter(pids))] = e
+            else:
+                rest.append(e)
+        time.sleep(1)
+    espn_only = rest
     log(f"  التشكيلات: {len(squads)} لاعب مطابق مع Wikidata، {len(espn_only)} من ESPN بس")
 
     # اللاعبين العرب المعروفين (عشان المعتزلين العرب): دولة دولة عشان الاستعلام ما يثقل
