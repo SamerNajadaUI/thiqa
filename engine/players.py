@@ -27,7 +27,7 @@ from pathlib import Path
 OUT = Path(__file__).resolve().parent.parent / "docs" / "games" / "players.json"
 SPARQL = "https://query.wikidata.org/sparql"
 UA = "AbuOdehGame/1.0 (https://github.com/SamerNajadaUI/thiqa)"
-TOP = 1600
+TOP = 3000
 LEVELS = [(200, 1), (500, 2), (1000, 3), (TOP, 4)]  # المرتبة حسب الشهرة -> المستوى
 NOW_YEAR = datetime.now(timezone.utc).year
 
@@ -86,7 +86,7 @@ def year(s):
 def fetch_pool() -> list[tuple[str, int]]:
     rows = sparql("""SELECT ?p ?links WHERE {
       ?p wdt:P106 wd:Q937857; wdt:P413 ?pos; wikibase:sitelinks ?links; wdt:P569 ?b.
-      FILTER(?links >= 30 && YEAR(?b) >= 1935) } GROUP BY ?p ?links""")
+      FILTER(?links >= 20 && YEAR(?b) >= 1935) } GROUP BY ?p ?links""")
     pool = sorted({(qid(v(b, "p")), int(v(b, "links"))) for b in rows}, key=lambda x: -x[1])
     return pool[:TOP]
 
@@ -154,6 +154,13 @@ def fetch_details(ids: list[str]) -> dict:
             OPTIONAL {{ ?aw rdfs:label ?en FILTER(LANG(?en)="en") }} }}"""):
             x = P[qid(v(b, "p"))]
             x.setdefault("awards", {}).setdefault(v(b, "en") or "", set()).add(year(v(b, "t")) or v(b, "st"))
+        time.sleep(1)
+        for b in sparql(f"""SELECT ?p ?en WHERE {{ VALUES ?p {{ {vals} }} ?p wdt:P552 ?f.
+            ?f rdfs:label ?en FILTER(LANG(?en)="en") }}"""):
+            en = (v(b, "en") or "").lower()
+            ft = "الثنتين" if "ambi" in en or "both" in en else "اليسار" if "left" in en else "اليمين" if "right" in en else None
+            if ft:
+                P[qid(v(b, "p"))]["foot"] = ft
         time.sleep(1)
         for b in sparql(f"""SELECT ?p ?ev WHERE {{ VALUES ?p {{ {vals} }} ?p wdt:P1344 ?ev }}"""):
             P[qid(v(b, "p"))].setdefault("events", set()).add(qid(v(b, "ev")))
@@ -346,7 +353,7 @@ def shape(p: dict, rank: int, wins: dict | None = None) -> dict | None:
         "lv": lv, "act": active, "r": rank,
         "hc": name(hc), "_hc": hc["t"],
         "sn": [sn["num"], name(sn)] if sn else None,
-        "wc": wc, "ucl": ucl,
+        "wc": wc, "ucl": ucl, "ft": p.get("foot"),
         "fx": facts(p, club_list, list(nts.values()), name),
     }
 
@@ -435,7 +442,7 @@ def fetch_leagues(team_ids: list[str]) -> dict:
             OPTIONAL {{ ?l rdfs:label ?en FILTER(LANG(?en)="en") }}
             OPTIONAL {{ ?l rdfs:label ?ar FILTER(LANG(?ar)="ar") }} }}"""):
             name = clean(v(b, "ar") or v(b, "en"))
-            if name:
+            if name and not re.search(r"women|femenin|féminin|frauen|femminile|سيدات|نسائي", (v(b, "en") or "") + name, re.I):
                 out.setdefault(qid(v(b, "t")), []).append((int(v(b, "links")), name, v(b, "en") or ""))
         time.sleep(1)
     return {t: max(xs)[1:] for t, xs in out.items()}
@@ -443,6 +450,49 @@ def fetch_leagues(team_ids: list[str]) -> dict:
 
 BIG5 = {"Premier League", "La Liga", "Serie A", "Bundesliga", "Ligue 1",
         "الدوري الإنجليزي الممتاز", "الدوري الإسباني", "الدوري الإيطالي", "الدوري الألماني", "الدوري الفرنسي الدرجة الأولى"}
+
+
+ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer"
+ESPN_LEAGUES = ["eng.1", "esp.1", "ita.1", "ger.1", "fra.1", "ksa.1", "por.1", "ned.1", "tur.1", "usa.1",
+                "bra.1", "arg.1", "mex.1", "sco.1", "bel.1", "jpn.1", "eng.2", "uefa.champions"]
+
+
+def norm(name: str) -> str:
+    import unicodedata
+    x = unicodedata.normalize("NFKD", name or "")
+    return re.sub(r"[^a-z]", "", "".join(c for c in x if not unicodedata.combining(c)).lower())
+
+
+def get_json(url: str):
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def fetch_espn_numbers() -> dict:
+    """أرقام القمصان الحالية من تشكيلات ESPN: {اسم مطبّع: رقم}."""
+    out: dict[str, int] = {}
+    for lg in ESPN_LEAGUES:
+        try:
+            teams = get_json(f"{ESPN}/{lg}/teams")["sports"][0]["leagues"][0]["teams"]
+        except Exception as e:
+            log(f"  ESPN {lg}: {e}")
+            continue
+        for t in teams:
+            try:
+                roster = get_json(f"{ESPN}/{lg}/teams/{t['team']['id']}/roster")
+            except Exception:
+                continue
+            for a in roster.get("athletes", []):
+                n = num(a.get("jersey"))
+                if n is None:
+                    continue
+                for k in ("displayName", "fullName"):
+                    if a.get(k):
+                        out.setdefault(norm(a[k]), n)
+            time.sleep(0.2)
+    log(f"  ESPN: {len(out)} رقم قميص")
+    return out
 
 
 # ---------------------------------------------------------------- main
@@ -479,6 +529,15 @@ def main() -> int:
         lg = leagues.get(p.pop("_hc"))
         p["lg"] = lg[0] if lg else None
         p["b5"] = bool(lg and (lg[0] in BIG5 or lg[1] in BIG5))
+    try:
+        nums = fetch_espn_numbers()
+    except Exception as e:
+        log(f"  ESPN ما رد: {e}")
+        nums = {}
+    for p in kept.values():
+        if p["act"] and norm(p["n"]) in nums:
+            p["sn"] = [nums[norm(p["n"])], p["hc"]]
+    log(f"  أرقام قمصان: {sum(1 for p in kept.values() if p['sn'])} · القدم: {sum(1 for p in kept.values() if p['ft'])}")
     for who in ("Q615", "Q11571", "Q483915", "Q166154", "Q1835"):
         if who in kept:
             k = kept[who]
