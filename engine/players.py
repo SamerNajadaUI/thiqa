@@ -156,7 +156,7 @@ def fetch_coaches(teams_known: set[str]) -> dict:
 
 YOUTH_RE = re.compile(
     r"(under[- ]?\d{2}|\bu-?\d{2}\b|youth|olympic|reserves?|academy|primavera|juniors?|"
-    r"\bb team\b|\s(b|ii|iii)$|atl[eè]tic$|castilla|^jong\s|amateur|\bu\d{2}s?\b)",
+    r"\bb team\b|\s(b|c|ii|iii)$|atl[eè]tic$|castilla|^jong\s|amateur|\bu\d{2}s?\b)",
     re.IGNORECASE,
 )
 

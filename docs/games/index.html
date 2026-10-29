@@ -100,7 +100,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .clubs h3 { margin: 4px 0 0; font-size: 13px; color: var(--muted); font-weight: 600; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { background: var(--soft); border-radius: 14px; padding: 6px 10px; font-size: 13px; font-weight: 500; }
-.chip .yr { color: var(--muted); font-size: 11px; direction: ltr; display: inline-block; margin-inline-start: 4px; }
+.chip .yr { color: var(--muted); font-size: 11px; direction: ltr; display: inline-block; margin-inline-start: 6px; padding-inline-start: 6px; border-inline-start: 1px solid var(--line); }
 .chip.nt { background: var(--brand-soft); color: var(--brand-dark); }
 .cover { position: absolute; inset: 0; background: var(--brand); color: #FFFFFF; display: grid; place-items: center; text-align: center; padding: 24px; z-index: 2; border: 0; width: 100%; }
 .cover b { font-family: var(--display); font-weight: 400; font-size: 34px; display: block; }
@@ -123,7 +123,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .prompt { background: var(--brand); color: #FFFFFF; border-radius: 28px; padding: 22px; box-shadow: 0 8px 0 var(--brand-dark); }
 .prompt small { opacity: .85; }
 .prompt b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.3; margin-top: 4px; }
-.timer { font-family: var(--display); font-size: 56px; text-align: center; line-height: 1; direction: ltr; }
+.timer { font-family: var(--display); font-size: 56px; text-align: center; line-height: 1; direction: ltr; margin-top: 10px; }
 .timer.low { color: var(--l3); }
 .answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .ans { display: flex; align-items: center; gap: 8px; border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 8px 10px; text-align: right; min-width: 0; font-size: 13px; font-weight: 600; }
@@ -339,7 +339,7 @@ function screenChallenge() {
     ${!C.running && !C.reveal && C.left === 60 ? `<button class="big" id="ch-start" type="button">ابدأ الدقيقة</button>` : ""}
     <p class="note">${C.reveal ? "هاي كل الأجوبة." : "الأسماء مغبّشة عشان صاحبك ما يشوفها. لما يقول اسم صح، اكبس عليه."}</p>
     <div class="answers">${shown.map((id) => { const p = byId.get(id); if (!p) return ""; const got = C.got.has(id);
-      const img = p.img ? `<img src="${esc(p.img)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<span class="mini">${esc(initials(p.n))}</span>`;
+      const img = p.img ? `<img src="${esc(p.img)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mini',textContent:'${esc(initials(p.n))}'}))">` : `<span class="mini">${esc(initials(p.n))}</span>`;
       return `<button class="ans ${got ? "got" : ""} ${!got && !C.reveal ? "hidden" : ""}" type="button" data-act="tog" data-arg="${id}">${img}<span>${esc(p.a)}</span></button>`; }).join("")}</div>
     ${c.ans.length > shown.length ? `<p class="note">و${c.ans.length - shown.length} لاعب كمان.</p>` : ""}
     <div class="row2"><button class="big ghost" id="ch-reveal" type="button" style="font-size:18px">اكشف الكل</button><button class="big" id="ch-new" type="button" style="font-size:18px">تحدي ثاني</button></div>`;
