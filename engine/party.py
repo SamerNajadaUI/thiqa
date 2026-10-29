@@ -332,12 +332,14 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, coaches: dict, team_
         p = raw[pid]
         return re.sub(r"\s*\([^)]*\)\s*$", "", p.get("ar") or p.get("en") or "").strip()
 
-    out = []
+    out, leftovers = [], []
     for pid in ids:
         base = shape(raw[pid], 0, wins)
-        if not base:
-            continue
         sq = squads.get(pid)
+        if not base:
+            if sq:  # بالتشكيلة بس ما إله بيانات كافية بـ Wikidata: بندخله من ESPN باسمه العربي إذا موجود
+                leftovers.append(dict(sq, ar=name_of(pid) or None))
+            continue
         cur = bool(sq)
         if not cur and base["act"]:
             continue  # لاعب حالي برا الدوريات الثمانية: ما بندخله
@@ -383,10 +385,10 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, coaches: dict, team_
     for p in out:
         if p["cur"]:
             famous_at[p["hc"]].append(p)
-    for i, e in enumerate(col["espn_only"]):
+    for i, e in enumerate(col["espn_only"] + leftovers):
         mates = sorted(famous_at.get(e["club_ar"], []), key=lambda p: -p["r"])[:1]
         out.append({
-            "id": "e" + (e["espn"] or str(i)), "a": e["en"], "n": e["en"],
+            "id": "e" + (e["espn"] or str(i)), "a": e.get("ar") or e["en"], "n": e["en"],
             "img": f"https://a.espncdn.com/i/headshots/soccer/players/full/{e['espn']}.png" if e["espn"] else None,
             "pc": e["pc"] or "mf", "cur": True, "lg": e["lg"], "hc": e["club_ar"], "rc": None, "num": e["num"],
             "nt": clean_nt(e["nat_ar"]) if e["nat_ar"] else None, "nat": e["nat_ar"],
