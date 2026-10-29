@@ -1,6 +1,6 @@
 name: Games data
 
-# بيبني قاعدة لاعبين "احزر اللاعب" من Wikidata (مجاني)، وبيحدّثها كل أسبوع
+# بيبني قاعدة لاعبين "احزر اللاعب" و"تحدي الأصحاب" من Wikidata وESPN (مجاني)، وبيحدّثها كل أسبوع
 on:
   push:
     branches: [main]
@@ -26,8 +26,11 @@ jobs:
         with:
           python-version: "3.12"
       - name: Build players database
-        run: python engine/players.py
+        run: |
+          set -o pipefail
+          python -u engine/players.py 2>&1 | tee docs/games/build.log
       - name: Save
+        if: always()
         run: |
           git config user.name "thiqa-bot"
           git config user.email "actions@users.noreply.github.com"

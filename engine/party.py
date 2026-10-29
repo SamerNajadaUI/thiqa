@@ -175,10 +175,15 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
     wd_by_club = defaultdict(list)
     for i in range(0, len(club_ids), 25):
         vals = " ".join("wd:" + c for c in club_ids[i:i + 25])
-        for b in sparql(f"""SELECT ?p ?club ?en WHERE {{ VALUES ?club {{ {vals} }}
+        try:
+            rows = sparql(f"""SELECT ?p ?club ?en WHERE {{ VALUES ?club {{ {vals} }}
             ?p p:P54 ?s. ?s ps:P54 ?club. OPTIONAL {{ ?s pq:P582 ?end }}
             FILTER(!BOUND(?end) || YEAR(?end) >= YEAR(NOW()) - 1)
-            ?p wdt:P106 wd:Q937857. ?p rdfs:label ?en FILTER(LANG(?en)="en") }}"""):
+            ?p wdt:P106 wd:Q937857. ?p rdfs:label ?en FILTER(LANG(?en)="en") }}""")
+        except SystemExit:
+            log("  ما زبط استعلام لاعبين أندية")
+            rows = []
+        for b in rows:
             wd_by_club[qid(v(b, "club"))].append((qid(v(b, "p")), v(b, "en")))
         time.sleep(1)
 
@@ -191,8 +196,9 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
                 continue
             scored = sorted(((name_match(names, en), pid) for pid, en in cands), reverse=True)
             jersey = a.get("jersey")
-            cit = a.get("citizenship") or (a.get("citizenshipCountry") or {}).get("name") \
-                or (a.get("flag") or {}).get("alt") or ""
+            cit = a.get("citizenship") or a.get("citizenshipCountry") or a.get("flag") or ""
+            if isinstance(cit, dict):
+                cit = cit.get("name") or cit.get("displayName") or cit.get("alt") or ""
             info = {"lg": t["lg"], "club_ar": t["club_ar"], "club": t["club"], "pc": espn_pos(a),
                     "num": int(jersey) if str(jersey or "").isdigit() else None,
                     "nat_ar": countries.get(cit), "en": names[0], "espn": str(a.get("id") or ""),
@@ -203,13 +209,24 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
                 espn_only.append(info)
     log(f"  التشكيلات: {len(squads)} لاعب مطابق مع Wikidata، {len(espn_only)} من ESPN بس")
 
-    # اللاعبين العرب المعروفين (عشان المعتزلين العرب)
-    arabs = []
-    for b in sparql(f"""SELECT ?p (MAX(?l) AS ?links) WHERE {{ ?c wdt:P463 wd:{ARAB_LEAGUE}.
-        ?p wdt:P106 wd:Q937857; wdt:P1532|wdt:P27 ?c; wikibase:sitelinks ?l; wdt:P569 ?b.
-        FILTER(?l >= 8 && YEAR(?b) >= 1950) }} GROUP BY ?p"""):
-        arabs.append((qid(v(b, "p")), int(v(b, "links"))))
-    arabs = sorted(arabs, key=lambda x: -x[1])[:1500]
+    # اللاعبين العرب المعروفين (عشان المعتزلين العرب): دولة دولة عشان الاستعلام ما يثقل
+    arabs = {}
+    try:
+        arab_c = [qid(v(b, "c")) for b in sparql(f"SELECT ?c WHERE {{ ?c wdt:P463 wd:{ARAB_LEAGUE} }}")]
+    except SystemExit:
+        arab_c = []
+    for c in arab_c:
+        for prop in ("P1532", "P27"):
+            try:
+                rows = sparql(f"""SELECT ?p ?l WHERE {{ ?p wdt:{prop} wd:{c}; wdt:P106 wd:Q937857;
+                    wikibase:sitelinks ?l. FILTER(?l >= 8) }}""", tries=2)
+            except SystemExit:
+                log(f"  العرب: ما زبط {c} {prop}")
+                continue
+            for b in rows:
+                arabs[qid(v(b, "p"))] = int(v(b, "l"))
+            time.sleep(1)
+    arabs = sorted(arabs.items(), key=lambda x: -x[1])[:1500]
     log(f"  لاعبين عرب: {len(arabs)}")
     return {"squads": squads, "espn_only": espn_only, "arabs": arabs, "countries": countries}
 
