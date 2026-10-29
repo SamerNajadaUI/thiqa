@@ -209,7 +209,7 @@ const initials = (n) => { const w = String(n || "").split(/\s+/).filter(Boolean)
 const face = (p, cls) => p.img ? `<img src="${esc(p.img)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'${cls}',textContent:'${esc(initials(p.n))}'}))">` : `<span class="${cls}">${esc(initials(p.n))}</span>`;
 const store = { get(k, d) { try { const v = localStorage.getItem("party-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("party-" + k, JSON.stringify(v)); } catch {} } };
 
-const ROUNDS = 5, MAX_HINTS = 10, LIVES = 3, WRONG = -2;
+const ROUNDS = 5, MAX_HINTS = 10, LIVES = 2, WRONG = -2;
 const pointsFor = (h) => 11 - h;   // من أول تلميح 10 نقاط، ومن العاشر نقطة وحدة
 
 let DATA, byId, clubLeague, G;
@@ -229,7 +229,7 @@ function intro() {
       <li>بكل جولة: كل واحد بيختار لاعب بالسر (دوري، بعدين نادي، بعدين لاعب)، وبعدين اللاعبين بيتوزعوا.</li>
       <li>بالدور، كل واحد بياخذ تلميح جديد. أول تلميح صعب، والعاشر سهل كثير.</li>
       <li>الجواب الصح بيعطي نقاط حسب التلميح: من الأول <b>10</b>، ومن العاشر <b>1</b>.</li>
-      <li>الجواب الغلط <b>${WRONG}</b> وبيروح قلب. معك <b>3 قلوب</b> بكل جولة، وإذا خلصوا بتطلع من الجولة.</li>
+      <li>الجواب الغلط <b>${WRONG}</b> وبيروح قلب. معك <b>قلبين</b> بكل جولة، وإذا خلصوا بتطلع من الجولة.</li>
       <li>وسيلتين مساعدة بكل اللعبة: <b>احذف 10</b> من الخيارات، و<b>محاولة مجانية</b> ما بتخصم إشي.</li>
     </ul></div>
     ${saved && saved.round <= ROUNDS ? `<button class="big" id="resume" type="button">كمّلوا (الجولة ${saved.round})</button>` : ""}
@@ -354,9 +354,13 @@ function hintsFor(p) {
     (p.nt || []).length ? `لعب مع ${p.nt[0][0]}` : null,
   ].filter(Boolean);
   const or = (x) => x || extra.shift() || "لاعب معروف، فكّر منيح!";
+  const status = p.act ? "لاعب حالي" : "معتزل";
+  const decade = (y) => !y ? null : y < 2000 ? ({1950: "الخمسينات", 1960: "الستينات", 1970: "السبعينات", 1980: "الثمانينات", 1990: "التسعينات"})[Math.floor(y / 10) * 10] || null : `سنين الـ${Math.floor(y / 10) * 10} (${Math.floor(y / 10) * 10}–${Math.floor(y / 10) * 10 + 9})`;
+  const hcSpell = clubs.find((c) => clubName(c) === hc);
+  const era = p.act ? decade(first && first[1]) : decade(hcSpell && hcSpell[1]);
   const H = [
-    or(pos && nat ? `مركزه: ${pos} · جنسيته: ${nat}` : pos ? `مركزه: ${pos}` : nat ? `جنسيته: ${nat}` : null),
-    p.act ? "لسا بيلعب لهلأ" : `معتزل${last && last[2] ? `، آخر سنة لعب فيها ${last[2]}` : ""}`,
+    [pos && `مركزه: ${pos}`, nat && `جنسيته: ${nat}`, status].filter(Boolean).join(" · "),
+    or(era ? (p.act ? `بلّش مسيرته الاحترافية ${bi(era)}` : `أهم فترة بمسيرته كانت ${bi(era)}${last && last[2] ? `، واعتزل ${last[2]}` : ""}`) : null),
     or(p.lg === undefined ? null : p.act
       ? (b5 ? "بيلعب حالياً بأحد الدوريات الخمس الكبرى" : "ما بيلعب حالياً بالدوريات الخمس الكبرى")
       : (b5 ? "أهم محطة بمسيرته كانت بأحد الدوريات الخمس الكبرى" : "أهم محطة بمسيرته كانت برا الدوريات الخمس الكبرى")),
