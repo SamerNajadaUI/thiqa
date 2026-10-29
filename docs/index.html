@@ -192,6 +192,28 @@ details .legs .leg { padding: 10px 12px; }
 .more .legs { padding: 0 8px 8px; }
 .past-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 2px; border-top: 1px solid var(--line); font-size: 13px; flex-wrap: wrap; }
 
+/* analysts panel */
+.leg details.panel, .toplist details.panel { margin-top: 0; }
+.vchip { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.vchip.v1 { background: var(--hit-soft); color: var(--hit); }
+.vchip.v0 { background: var(--mid-soft); color: var(--mid); }
+.vchip.vm { background: var(--miss-soft); color: var(--miss); }
+.pn { display: flex; flex-direction: column; gap: 10px; margin: 10px 0 4px; }
+.pn-h { font-size: 12px; font-weight: 600; color: var(--muted); }
+.pr { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; }
+.av { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 600; background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+.toplist .av { background: var(--soft); }
+.av.j { background: var(--ink); color: var(--card); border-color: var(--ink); }
+.pr-top { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.pr-top b { font-size: 13px; font-weight: 600; }
+.pr-top .best { font-size: 11px; color: var(--muted); }
+.pr p { margin: 2px 0 0; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.verdict { border-radius: var(--r-md); padding: 12px 14px; background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+.toplist .verdict { background: var(--soft); }
+.verdict.v1 { border-color: var(--hit); } .verdict.v0 { border-color: var(--mid); } .verdict.vm { border-color: var(--miss); }
+.verdict .pr-top b { font-size: 14px; }
+.verdict p { margin: 0; font-size: 13px; line-height: 1.7; }
+
 footer { color: var(--faint); font-size: 12px; line-height: 1.8; text-align: center; padding-top: 8px; }
 @media (max-width: 440px) {
   th, td { padding: 10px 9px; font-size: 13px; }
@@ -377,6 +399,28 @@ function teamHTML(name, logo) {
 
 const matchHTML = (l) => `<div class="match">${teamHTML(l.home, l.home_logo)}<span class="vs">ضد</span>${teamHTML(l.away, l.away_logo)}</div>`;
 
+const PERSONA = { fan: ["1", "المتعصب"], pessimist: ["2", "المتشائم"], dreamer: ["3", "الحالم"], careful: ["4", "المتحفظ"], logic: ["5", "المنطقي"] };
+const JUDGE = { evidence: ["1", "حكم الأدلة"], risk: ["2", "حكم المخاطرة"], market: ["3", "حكم السوق"] };
+const VERD = { "1": ["v1", "مع"], "0": ["v0", "بحذر"], "-1": ["vm", "ضد"] };
+const vchip = (v, prefix = "") => { const [c, t] = VERD[String(v)] || VERD["0"]; return `<span class="vchip ${c}">${prefix}${t}</span>`; };
+
+function panelHTML(l) {
+  const pn = l.panel;
+  if (!pn) return "";
+  const q = pn.q || {};
+  const persons = (pn.p || []).map((p) => { const [n, name] = PERSONA[p.k] || ["?", p.k];
+    return `<div class="pr"><span class="av" aria-hidden="true">${n}</span><div><div class="pr-top"><b>${name}</b>${vchip(p.v)}</div><p>${esc(p.t)}</p></div></div>`; }).join("");
+  const judges = (pn.j || []).map((j) => { const [n, name] = JUDGE[j.k] || ["", j.k];
+    return `<div class="pr"><span class="av j" aria-hidden="true">${n}</span><div><div class="pr-top"><b>${name}</b>${vchip(j.v)}<span class="best">أقنعه: ${PERSONA[j.best]?.[1] ?? ""}</span></div><p>${esc(j.t)}</p></div></div>`; }).join("");
+  const [vc] = VERD[String(q.v)] || VERD["0"];
+  return `<details class="why panel"><summary><span>قعدة محللين</span>${vchip(q.v, "القاضي: ")}</summary>
+    <div class="pn">
+      <div class="pn-h">الشخصيات الخمسة</div>${persons}
+      <div class="pn-h">الحكام الثلاثة</div>${judges}
+      <div class="verdict ${vc}"><div class="pr-top"><b>القاضي</b>${vchip(q.v)}</div><p>${esc(q.t || "")}</p></div>
+    </div></details>`;
+}
+
 function whyHTML(l) {
   const rs = l.reasons ?? [], ws = l.warnings ?? [];
   if (!rs.length && !ws.length) return "";
@@ -389,7 +433,7 @@ const legHTML = (l, now) => `<li class="leg"><div>
     <div class="meta"><span>${SPORTS[l.group] ?? ""}</span><i class="sep"></i><bdi>${esc(l.league)}</bdi><i class="sep"></i><span>${whenText(l)}</span> ${statusHTML(l, now)}</div>
     ${matchHTML(l)}
     ${callHTML(l)}
-  </div><span class="p">${pct(l.prob)}</span>${whyHTML(l)}</li>`;
+  </div><span class="p">${pct(l.prob)}</span>${whyHTML(l)}${panelHTML(l)}</li>`;
 
 function renderCoupons() {
   const list = state.today?.coupons ?? [];
@@ -434,7 +478,7 @@ function renderTop() {
     </div>
     <span class="p">${pct(l.prob)}</span>
     <div class="bar" aria-hidden="true"><i style="width:${pos(l.prob)}%"></i><s style="right:${pos(0.99)}%"></s></div>
-    ${whyHTML(l)}
+    ${whyHTML(l)}${panelHTML(l)}
   </li>`).join("");
 }
 

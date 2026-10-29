@@ -13,6 +13,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 
 import espn
+import panel
 
 ISO = "%Y-%m-%dT%H:%M:%SZ"
 KINDS = ("weekly", "monthly")
@@ -50,6 +51,8 @@ def build(legs: list[dict], kind: str, t: dict, now: datetime, exclude: set[str]
         if not espn.league_for(l["sport_key"]):  # لازم نقدر نصحّحها تلقائياً
             continue
         if not l.get("eligible", True) or not (t["min_leg"] <= l["prob"] <= t["max_leg"]):
+            continue
+        if panel.verdict(l) < t.get("min_verdict", 0):
             continue
         if l.get("signals") and l["support"] / l["signals"] < t.get("min_support_ratio", 0.5):
             continue

@@ -41,6 +41,7 @@ import football_data as fdata  # noqa: E402
 import espn  # noqa: E402
 import long_coupons as lc  # noqa: E402
 import crowd  # noqa: E402
+import panel  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "docs" / "data"
@@ -294,6 +295,8 @@ def build_coupons(legs: list[dict], tiers: dict) -> list[dict]:
                 continue
             if leg["event_id"] in used:  # كل مباراة بقسيمة وحدة بس، عشان خسارة وحدة ما توقع كل القسائم
                 continue
+            if panel.verdict(leg) < t.get("min_verdict", 0):  # حكم القاضي
+                continue
             ratio = leg.get("support", 0) / leg["signals"] if leg.get("signals") else 0.5
             if ratio < t.get("min_support_ratio", 0) or leg.get("signals", 0) < t.get("min_signals", 0):
                 continue
@@ -338,6 +341,7 @@ def build_coupons(legs: list[dict], tiers: dict) -> list[dict]:
 
 
 def top_list(legs: list[dict], n: int) -> list[dict]:
+    legs = [l for l in legs if panel.verdict(l) > panel.AGAINST]
     top = [deepcopy(l) for l in best_per_event(legs)[:n]]
     for i, l in enumerate(top, 1):
         l["rank"] = i
@@ -399,6 +403,7 @@ def run_analysis(legs: list[dict], contexts: dict, cfg: dict) -> None:
         an.analyze(l, contexts.get(l["event_id"]), cfg)
         r = cal.get(l["market"], cal.get("all", 1.0))
         l["prob_raw"] = round(l["prob"] / r, 4) if r < 0.995 else l["prob"]
+    panel.attach(legs)  # قعدة المحللين: 5 شخصيات و3 حكام وقاضي
 
 
 # ---------------------------------------------------------------- self-calibration
@@ -527,6 +532,15 @@ def coupon_result(c: dict) -> str:
     if all(r == "void" for r in rs):
         return "void"
     return "won"
+
+
+def compact_history(history: dict, now: datetime) -> None:
+    """قعدة المحللين بتضل محفوظة لآخر يومين بس، عشان ملف السجل ما يكبر كثير."""
+    keep = (now.astimezone(AMMAN) - timedelta(days=2)).strftime("%Y-%m-%d")
+    for d in history.get("days", []):
+        if d["date"] < keep:
+            for l in all_legs(d):
+                l.pop("panel", None)
 
 
 def all_legs(day: dict):
@@ -787,7 +801,9 @@ def build_demo(now: datetime, cfg: dict) -> None:
     for d in days + future:
         d.pop("_legs", None)
         d.pop("_scores", None)
-    save_json(HISTORY_FILE, {"days": days})
+    demo_hist = {"days": days}
+    compact_history(demo_hist, now)
+    save_json(HISTORY_FILE, demo_hist)
     save_json(TODAY_FILE, {"date": today["date"], "generated_at": now.strftime(ISO), "demo": True,
                            "coupons": today["coupons"], "top": today["top"], "stats": None})
     log(f"كتبت بيانات تجريبية: {len(days)} يوم.")
@@ -805,12 +821,17 @@ def hourly(cfg: dict, now: datetime) -> int:
     long = load_json(LONG_FILE, {})
     client = espn.Espn()
     check_results(None, cfg, history, now, client, lc.open_days(long))
+    recent = [d for d in history["days"] if d["date"] >= (now.astimezone(AMMAN) - timedelta(days=1)).strftime("%Y-%m-%d")]
+    added = panel.attach([l for d in recent + lc.open_days(long) for l in all_legs(d)], only_missing=True)
+    if added:
+        log(f"  قعدة المحللين: ضفتها لـ{added} توقع.")
     if long:
         save_json(LONG_FILE, long)
     day = next((d for d in history["days"] if d["date"] == today.get("date")), None)
     if day:
         today["coupons"], today["top"] = day["coupons"], day["top"]
     today["updated_at"] = now.strftime(ISO)
+    compact_history(history, now)
     save_json(HISTORY_FILE, history)
     save_json(TODAY_FILE, today)
     log(f"تحديث الساعة: {client.used} طلب ESPN.")
@@ -926,6 +947,7 @@ def main() -> int:
         log(f"توقفت: {e}")
     finally:
         history["days"].sort(key=lambda d: d["date"])
+        compact_history(history, now)
         save_json(HISTORY_FILE, history)
         if long:
             save_json(LONG_FILE, long)

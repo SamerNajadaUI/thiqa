@@ -49,7 +49,8 @@
       "max_same_market": 2,
       "min_support_ratio": 0.6,
       "min_signals": 2,
-      "max_same_league": 2
+      "max_same_league": 2,
+      "min_verdict": 1
     },
     "medium": {
       "legs": 4,
@@ -59,7 +60,8 @@
       "max_leg": 0.93,
       "max_same_market": 2,
       "min_support_ratio": 0.5,
-      "max_same_league": 2
+      "max_same_league": 2,
+      "min_verdict": 0
     },
     "risky": {
       "legs": 5,
@@ -69,7 +71,8 @@
       "max_leg": 0.85,
       "max_same_market": 2,
       "min_support_ratio": 0.4,
-      "max_same_league": 2
+      "max_same_league": 2,
+      "min_verdict": 0
     }
   },
   "check_results": true,
@@ -94,7 +97,8 @@
       "min_leg": 0.62,
       "max_leg": 0.93,
       "max_legs": 30,
-      "min_support_ratio": 0.5
+      "min_support_ratio": 0.5,
+      "min_verdict": 0
     },
     "monthly": {
       "days": 30,
@@ -103,7 +107,8 @@
       "min_leg": 0.62,
       "max_leg": 0.93,
       "max_legs": 40,
-      "min_support_ratio": 0.5
+      "min_support_ratio": 0.5,
+      "min_verdict": 0
     }
   },
   "calibration": {
