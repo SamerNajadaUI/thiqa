@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>تحدي الأصحاب</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="أبو عودة للمرح">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: same chunky game-app skin as the main app. One screen at a time: games list -> mode -> level -> era -> player card, or challenges -> challenge. Light-only by design. */
+:root {
+  color-scheme: light;
+  --bg: #FFFFFF; --soft: #F4F5F7; --line: #ECEEF1; --ink: #111316; --muted: #6B7280; --faint: #A9AEB6;
+  --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
+  --l1: #12B76A; --l1d: #0A8A4F; --l1s: #E6F8EF;
+  --l2: #F79009; --l2d: #C26A00; --l2s: #FEF3E2;
+  --l3: #F04438; --l3d: #B42318; --l3s: #FEECEA;
+  --l4: #1D2939; --l4d: #000000; --l4s: #EAECF0;
+  --gold: #FDB022; --gold-dark: #DC6803;
+  --font: "Readex Pro", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+  --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); }
+body { margin: 0; color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+.wrap { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: calc(12px + env(safe-area-inset-top, 0px)) calc(32px + env(safe-area-inset-bottom, 0px)); }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+bdi { unicode-bidi: isolate; }
+
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.back { display: inline-flex; align-items: center; gap: 6px; border: 0; background: var(--soft); border-radius: 16px; padding: 10px 14px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); }
+.back svg { width: 18px; height: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand img { width: 44px; height: 44px; border-radius: 14px; box-shadow: 0 4px 0 var(--brand-dark); }
+.brand b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px 0 0; }
+
+/* big chunky buttons/cards */
+.tile { --c: var(--brand); --cd: var(--brand-dark); --cs: var(--brand-soft);
+  display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; text-align: right; width: 100%;
+  background: #FFFFFF; border: 2px solid var(--cs); border-radius: 28px; padding: 16px; box-shadow: 0 6px 0 var(--cs); transition: transform .1s; }
+.tile:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--cs); }
+.tile .ic { width: 64px; height: 64px; border-radius: 20px; background: var(--c); box-shadow: 0 4px 0 var(--cd); display: grid; place-items: center; color: #FFFFFF; }
+.tile .ic svg { width: 34px; height: 34px; }
+.tile b { display: block; font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.2; }
+.tile small { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.tile .go { width: 36px; height: 36px; border-radius: 50%; background: var(--cs); color: var(--c); display: grid; place-items: center; }
+.tile .go svg { width: 18px; height: 18px; }
+.tile.l1 { --c: var(--l1); --cd: var(--l1d); --cs: var(--l1s); }
+.tile.l2 { --c: var(--l2); --cd: var(--l2d); --cs: var(--l2s); }
+.tile.l3 { --c: var(--l3); --cd: var(--l3d); --cs: var(--l3s); }
+.tile.l4 { --c: var(--l4); --cd: var(--l4d); --cs: var(--l4s); }
+.tile.coral { --c: #FF5A5F; --cd: #D63B40; --cs: #FFECEC; text-decoration: none; color: var(--ink); }
+.tile.sky { --c: #0BA5EC; --cd: #0086C9; --cs: #E0F2FE; text-decoration: none; color: var(--ink); }
+.tile.gold { --c: var(--gold); --cd: var(--gold-dark); --cs: #FEF0C7; }
+.tile .ic .lvnum { font-family: var(--display); font-size: 30px; line-height: 1; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.soon { color: var(--faint); font-size: 13px; text-align: center; }
+
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.seg button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 14px 8px; font-weight: 600; box-shadow: 0 4px 0 var(--line); }
+.seg button[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); box-shadow: 0 4px 0 #D9D1FF; }
+.big { border: 0; width: 100%; background: var(--brand); color: #FFFFFF; border-radius: 22px; padding: 16px; font-family: var(--display); font-size: 24px; box-shadow: 0 6px 0 var(--brand-dark); }
+.big:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--brand-dark); }
+.big.green { background: var(--l1); box-shadow: 0 6px 0 var(--l1d); }
+.big.red { background: var(--l3); box-shadow: 0 6px 0 var(--l3d); }
+.big.ghost { background: var(--soft); color: var(--ink); box-shadow: 0 6px 0 var(--line); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* player card */
+.pcard { position: relative; border-radius: 32px; overflow: hidden; background: #FFFFFF; border: 2px solid var(--cs, var(--brand-soft)); box-shadow: 0 8px 0 var(--cs, var(--brand-soft)); }
+.pcard.l1 { --c: var(--l1); --cs: var(--l1s); } .pcard.l2 { --c: var(--l2); --cs: var(--l2s); }
+.pcard.l3 { --c: var(--l3); --cs: var(--l3s); } .pcard.l4 { --c: var(--l4); --cs: var(--l4s); }
+.photo { position: relative; aspect-ratio: 4 / 3.4; max-width: 100%; background: linear-gradient(180deg, var(--cs), #FFFFFF); display: grid; place-items: center; overflow: hidden; }
+.photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+.photo .ini { font-family: var(--display); font-size: 72px; color: var(--c); }
+.badge { position: absolute; top: 14px; right: 14px; background: var(--c); color: #FFFFFF; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 999px; }
+.badge.era { right: auto; left: 14px; background: rgb(17 19 22 / .72); }
+.pname { padding: 16px 18px 4px; }
+.pname b { display: block; font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.15; }
+.pname span { color: var(--muted); font-size: 14px; direction: ltr; display: block; text-align: right; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px 16px; }
+.fact { background: var(--soft); border-radius: 18px; padding: 10px 8px; text-align: center; min-width: 0; }
+.fact small { display: block; color: var(--muted); font-size: 11px; }
+.fact b { display: block; font-weight: 600; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.clubs { padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.clubs h3 { margin: 4px 0 0; font-size: 13px; color: var(--muted); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--soft); border-radius: 14px; padding: 6px 10px; font-size: 13px; font-weight: 500; }
+.chip .yr { color: var(--muted); font-size: 11px; direction: ltr; display: inline-block; margin-inline-start: 6px; padding-inline-start: 6px; border-inline-start: 1px solid var(--line); }
+.chip.nt { background: var(--brand-soft); color: var(--brand-dark); }
+.cover { position: absolute; inset: 0; background: var(--brand); color: #FFFFFF; display: grid; place-items: center; text-align: center; padding: 24px; z-index: 2; border: 0; width: 100%; }
+.cover b { font-family: var(--display); font-weight: 400; font-size: 34px; display: block; }
+.cover small { opacity: .85; font-size: 14px; }
+.credit { color: var(--faint); font-size: 11px; text-align: center; }
+
+.hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.hud div { background: var(--soft); border-radius: 20px; padding: 10px; text-align: center; }
+.hud b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.1; direction: ltr; }
+.hud small { color: var(--muted); font-size: 11px; }
+.qbtn { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+.qbtn .big { font-size: 20px; }
+.minus { border: 0; background: var(--soft); border-radius: 22px; width: 64px; font-size: 24px; box-shadow: 0 6px 0 var(--line); }
+
+.result { text-align: center; background: var(--l1s); border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
+.result.lose { background: var(--l3s); }
+.result b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
+
+/* challenges */
+.prompt { background: var(--brand); color: #FFFFFF; border-radius: 28px; padding: 22px; box-shadow: 0 8px 0 var(--brand-dark); }
+.prompt small { opacity: .85; }
+.prompt b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.3; margin-top: 4px; }
+.timer { font-family: var(--display); font-size: 56px; text-align: center; line-height: 1; direction: ltr; margin-top: 10px; }
+.timer.low { color: var(--l3); }
+.answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ans { display: flex; align-items: center; gap: 8px; border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 8px 10px; text-align: right; min-width: 0; font-size: 13px; font-weight: 600; }
+.ans img, .ans .mini { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
+.ans span { min-width: 0; overflow-wrap: anywhere; line-height: 1.35; }
+.ans.hidden span { filter: blur(6px); }
+.ans.hidden img { filter: blur(6px); }
+.ans.got { border-color: var(--l1); background: var(--l1s); }
+.note { color: var(--muted); font-size: 13px; line-height: 1.7; margin: 0; }
+.loading { text-align: center; color: var(--muted); padding: 40px 0; }
+
+.pass2 { text-align: center; padding: 28px 18px; border-radius: 30px; background: var(--brand-soft); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.pass2 .who { font-family: var(--display); font-size: 46px; line-height: 1.1; color: var(--brand); overflow-wrap: anywhere; }
+.namesin { display: flex; flex-direction: column; gap: 8px; }
+.namesin input, .search { width: 100%; border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; background: #FFFFFF; font-size: 16px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pickbtn { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 12px; text-align: right; box-shadow: 0 4px 0 var(--line); min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pickbtn b { font-size: 15px; overflow-wrap: anywhere; line-height: 1.35; }
+.pickbtn small { color: var(--muted); font-size: 12px; }
+.prow { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; }
+.prow img, .prow .mini2 { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--soft); display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+.crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; color: var(--muted); font-size: 13px; }
+.crumbs button { border: 0; background: var(--soft); border-radius: 999px; padding: 4px 12px; font-weight: 600; }
+.status3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; }
+.status3 div { background: var(--soft); border-radius: 18px; padding: 8px; text-align: center; min-width: 0; }
+.status3 div.me { background: var(--brand-soft); box-shadow: inset 0 0 0 2px var(--brand); }
+.status3 b { display: block; font-size: 13px; overflow-wrap: anywhere; }
+.status3 span { font-family: var(--display); font-size: 22px; direction: ltr; display: block; line-height: 1.2; }
+.status3 small { color: var(--muted); font-size: 11px; }
+.hearts { color: var(--l3); letter-spacing: 2px; font-size: 14px; }
+.hints { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.hints li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 10px 12px; }
+.hints li span { width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; display: grid; place-items: center; font-family: var(--display); font-size: 16px; color: var(--muted); }
+.hints li.new { background: var(--gold); color: #1D2939; box-shadow: 0 4px 0 var(--gold-dark); }
+.hints li.new span { color: var(--gold-dark); }
+.hints li b { font-weight: 600; font-size: 15px; line-height: 1.5; }
+.ptsnow { text-align: center; color: var(--muted); font-size: 13px; }
+.ptsnow b { color: var(--ink); }
+.helpers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.helpers button { border: 2px solid var(--gold); background: #FEF0C7; border-radius: 18px; padding: 10px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 0 #FEDF89; }
+.helpers button[disabled] { opacity: .4; }
+.helpers button.armed { background: var(--gold); color: #1D2939; }
+.opt20 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.opt20 button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 10px; font-weight: 600; font-size: 14px; text-align: right; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; align-items: center; min-width: 0; }
+.opt20 img, .opt20 .mini2 { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
+.opt20 button span { overflow-wrap: anywhere; line-height: 1.35; }
+.flash { text-align: center; border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.flash.good { background: var(--l1s); } .flash.badf { background: var(--l3s); }
+.flash b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
+.board { display: flex; flex-direction: column; gap: 8px; }
+.board .r { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 12px 14px; }
+.board .r:first-child { background: #FEF0C7; }
+.board .r .pos { font-family: var(--display); font-size: 20px; text-align: center; }
+.board .r .t { font-family: var(--display); font-size: 26px; direction: ltr; }
+.board .r small { grid-column: 2 / -1; color: var(--muted); font-size: 12px; }
+.rules { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.7; }
+.confirm { background: var(--l3s); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+@media (prefers-reduced-motion: no-preference) {
+  .screen { animation: in .35s cubic-bezier(.2,.9,.3,1.15) both; }
+  @keyframes in { from { transform: translateY(12px) scale(.985); } to { transform: none; } }
+}
+@media (max-width: 380px) {
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .answers { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <a class="brand" href="./"><img src="../icons/icon.svg" alt=""><b>تحدي الأصحاب</b></a>
+    <button class="back" id="quit" type="button">خروج</button>
+  </div>
+  <main id="app" aria-live="polite"><div class="loading">بحمّل اللاعبين...</div></main>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const initials = (n) => { const w = String(n || "").split(/\s+/).filter(Boolean); return ((w[0]?.[0] || "") + (w.length > 1 ? w[w.length - 1][0] : "")).toUpperCase(); };
+const face = (p, cls) => p.img ? `<img src="${esc(p.img)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'${cls}',textContent:'${esc(initials(p.n))}'}))">` : `<span class="${cls}">${esc(initials(p.n))}</span>`;
+const store = { get(k, d) { try { const v = localStorage.getItem("party-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("party-" + k, JSON.stringify(v)); } catch {} } };
+
+const ROUNDS = 5, MAX_HINTS = 10, LIVES = 3, WRONG = -2;
+const pointsFor = (h) => 11 - h;   // من أول تلميح 10 نقاط، ومن العاشر نقطة وحدة
+
+let DATA, byId, clubLeague, G;
+const clubName = (c) => c[0];
+
+function render(html) { $("app").innerHTML = `<div class="screen">${html}</div>`; window.scrollTo(0, 0); }
+function bind(map) { for (const [id, fn] of Object.entries(map)) { const el = $(id); if (el) el.onclick = fn; } }
+function save() { store.set("game", G); }
+
+// ---------- setup ----------
+function intro() {
+  const saved = store.get("game", null);
+  render(`<h1>تحدي الأصحاب</h1>
+    <p class="sub">كل واحد بيختار لاعب لصاحبه، وكل واحد بيحاول يعرف لاعبه من التلميحات.</p>
+    <div class="card" style="background:#FFF;border:2px solid var(--brand-soft);border-radius:26px;padding:16px;box-shadow:0 6px 0 var(--brand-soft)"><ul class="rules">
+      <li>من 2 لـ3 لاعبين، و${ROUNDS} جولات.</li>
+      <li>بكل جولة: كل واحد بيختار لاعب بالسر (دوري، بعدين نادي، بعدين لاعب)، وبعدين اللاعبين بيتوزعوا.</li>
+      <li>بالدور، كل واحد بياخذ تلميح جديد. أول تلميح صعب، والعاشر سهل كثير.</li>
+      <li>الجواب الصح بيعطي نقاط حسب التلميح: من الأول <b>10</b>، ومن العاشر <b>1</b>.</li>
+      <li>الجواب الغلط <b>${WRONG}</b> وبيروح قلب. معك <b>3 قلوب</b> بكل جولة، وإذا خلصوا بتطلع من الجولة.</li>
+      <li>وسيلتين مساعدة بكل اللعبة: <b>احذف 10</b> من الخيارات، و<b>محاولة مجانية</b> ما بتخصم إشي.</li>
+    </ul></div>
+    ${saved && saved.round <= ROUNDS ? `<button class="big" id="resume" type="button">كمّلوا (الجولة ${saved.round})</button>` : ""}
+    <button class="big ${saved ? "ghost" : ""}" id="new" type="button">${saved ? "لعبة جديدة" : "يلا نبلش"}</button>`);
+  bind({ resume: () => { G = saved; resumeFlow(); }, new: () => setupPlayers() });
+}
+
+function setupPlayers(n = store.get("n", 3)) {
+  const names = store.get("names", []);
+  render(`<h1>كم واحد بيلعب؟</h1>
+    <div class="seg" style="grid-template-columns:1fr 1fr">${[2, 3].map((k) => `<button type="button" data-n="${k}" aria-pressed="${n === k}">${k} لاعبين</button>`).join("")}</div>
+    <h2 style="margin-top:6px">الأسماء</h2>
+    <div class="namesin">${Array.from({ length: n }, (_, i) => `<input id="nm-${i}" type="text" maxlength="14" placeholder="لاعب ${i + 1}" value="${esc(names[i] || "")}" autocomplete="off">`).join("")}</div>
+    <p class="note" id="err" hidden></p>
+    <button class="big" id="go" type="button">التالي</button>`);
+  document.querySelectorAll("[data-n]").forEach((b) => b.onclick = () => { store.set("names", Array.from({ length: n }, (_, i) => $("nm-" + i).value.trim())); setupPlayers(+b.dataset.n); });
+  bind({ go: () => {
+    const ps = Array.from({ length: n }, (_, i) => $("nm-" + i).value.trim() || `لاعب ${i + 1}`);
+    if (new Set(ps).size !== ps.length) { $("err").hidden = false; $("err").textContent = "في اسمين متشابهين."; return; }
+    store.set("n", n); store.set("names", ps);
+    G = { players: ps.map((name) => ({ name, total: 0, help: { cut: true, free: true } })), round: 1, phase: "pick", picker: 0, picks: [], hist: [] };
+    save(); pickPass();
+  } });
+}
+
+function resumeFlow() {
+  if (G.phase === "pick") pickPass();
+  else if (G.phase === "play") turnPass();
+  else roundEnd();
+}
+
+// ---------- picking: league -> club -> player ----------
+function pickPass() {
+  const me = G.players[G.picker];
+  render(`<div class="sub" style="text-align:center">الجولة ${G.round} من ${ROUNDS}</div>
+    <div class="pass2"><span class="sub">مرّروا التلفون لـ</span><span class="who">${esc(me.name)}</span><span class="note">اختار لاعب لصاحبك بالسر.</span></div>
+    <button class="big" id="go" type="button">أنا ${esc(me.name)}</button>`);
+  bind({ go: () => pickLeague() });
+}
+
+function leagues() {
+  const count = {};
+  for (const [club, [lg, n]] of Object.entries(DATA.clubs || {})) count[lg] = (count[lg] || 0) + n;
+  const TOP = ["الإنجليزي الممتاز", "الإسباني", "الإيطالي", "الألماني", "الفرنسي", "السعودي", "البرتغالي", "الهولندي", "التركي", "البرازيلي", "الأرجنتيني", "الأمريكي", "القطري", "الإماراتي", "المصري"];
+  const rank = (lg) => { if (/الثانية|الثالثة|البطولة/.test(lg)) return 99; const k = TOP.findIndex((t) => lg.includes(t)); return k < 0 ? 50 : k; };
+  return Object.entries(count).sort((a, b) => rank(a[0]) - rank(b[0]) || b[1] - a[1]).map(([lg]) => lg);
+}
+
+function crumbs(parts) {
+  return `<div class="crumbs">${parts.map(([t, fn], i) => `<button type="button" id="cr-${i}">${esc(t)}</button>`).join("<span>‹</span>")}</div>`;
+}
+
+function pickLeague() {
+  const ls = leagues().slice(0, 24);
+  render(`<h1>اختار الدوري</h1>
+    <input class="search" id="q" type="search" placeholder="أو ابحث عن لاعب بالاسم" autocomplete="off">
+    <div id="res"></div>
+    <div class="grid2">${ls.map((l, i) => `<button class="pickbtn" type="button" data-l="${i}"><b>${esc(l)}</b></button>`).join("")}</div>`);
+  document.querySelectorAll("[data-l]").forEach((b) => b.onclick = () => pickClub(ls[+b.dataset.l]));
+  $("q").oninput = () => {
+    const q = $("q").value.trim().toLowerCase();
+    if (q.length < 2) { $("res").innerHTML = ""; return; }
+    const hits = DATA.players.filter((p) => p.a.toLowerCase().includes(q) || p.n.toLowerCase().includes(q)).slice(0, 8);
+    $("res").innerHTML = `<div class="stack" style="gap:8px;margin-bottom:8px">${hits.map((p) => playerBtn(p)).join("")}</div>`;
+    bindPlayers();
+  };
+}
+
+function pickClub(league) {
+  const clubs = Object.entries(DATA.clubs).filter(([, [lg]]) => lg === league).sort((a, b) => b[1][1] - a[1][1]).map(([c]) => c);
+  render(`${crumbs([["الدوريات"], [league]])}<h1>اختار النادي</h1>
+    <div class="grid2">${clubs.map((c, i) => `<button class="pickbtn" type="button" data-c="${i}"><b>${esc(c)}</b><small>${DATA.clubs[c][1]} لاعب</small></button>`).join("")}</div>`);
+  bind({ "cr-0": pickLeague });
+  document.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => pickPlayer(league, clubs[+b.dataset.c]));
+}
+
+function playerBtn(p) {
+  return `<button class="pickbtn prow" type="button" data-p="${p.id}">${face(p, "mini2")}<span><b>${esc(p.a)}</b><small>${esc((p.pos || [])[0] || "")} · ${esc((p.nat || [])[0] || "")}</small></span></button>`;
+}
+function bindPlayers() { document.querySelectorAll("[data-p]").forEach((b) => b.onclick = () => confirmPick(byId.get(b.dataset.p))); }
+
+function pickPlayer(league, club) {
+  const ps = DATA.players.filter((p) => (p.c || []).some((c) => clubName(c) === club)).slice(0, 60);
+  render(`${crumbs([["الدوريات"], [league], [club]])}<h1>اختار اللاعب</h1>
+    <div class="stack" style="gap:8px">${ps.map(playerBtn).join("")}</div>`);
+  bind({ "cr-0": pickLeague, "cr-1": () => pickClub(league) });
+  bindPlayers();
+}
+
+function confirmPick(p) {
+  const me = G.players[G.picker];
+  render(`<div class="prow pickbtn" style="grid-template-columns:72px 1fr">${face(p, "mini2").replace('class="mini2"', 'class="mini2" style="width:72px;height:72px"').replace("<img ", '<img style="width:72px;height:72px" ')}<span><b style="font-size:20px">${esc(p.a)}</b><small>${esc(p.n)}</small></span></div>
+    <p class="sub">${esc(me.name)}، هاد اختيارك؟</p>
+    <button class="big green" id="yes" type="button">آه، هاد هو</button>
+    <button class="big ghost" id="no" type="button">بدي غيره</button>`);
+  bind({ yes: () => {
+    G.picks[G.picker] = p.id;
+    G.picker++;
+    if (G.picker < G.players.length) { save(); pickPass(); return; }
+    startPlay();
+  }, no: pickLeague });
+}
+
+// ---------- hints, from hard to easy ----------
+function hintsFor(p) {
+  const clubs = p.c || [];
+  const distinct = [...new Set(clubs.map(clubName))];
+  const longest = clubs.slice().sort((a, b) => ((b[2] || 2026) - (b[1] || 2026)) - ((a[2] || 2026) - (a[1] || 2026)))[0];
+  const first = clubs[0], last = clubs[clubs.length - 1];
+  const nat = (p.nat || [])[0];
+  const words = String(p.a).split(/\s+/).filter(Boolean);
+  const H = [
+    distinct.length ? `لعب بـ${distinct.length} ${distinct.length === 1 ? "نادي" : "أندية"} بمسيرته` : null,
+    p.h ? `طوله ${p.h} سم` : null,
+    p.by ? `من مواليد ${p.by}` : null,
+    (p.pos || []).length ? `بيلعب ${p.pos[0]}` : null,
+    p.act ? "لسا بيلعب لهلأ" : `معتزل${last && last[2] ? `، آخر سنة لعب فيها ${last[2]}` : ""}`,
+    first ? `بدأ مسيرته بـ${clubName(first)}` : null,
+    nat ? `جنسيته: ${nat}${(p.nt || []).length ? "، ولعب مع المنتخب" : ""}` : null,
+    longest && longest !== first ? `لعب بـ${clubName(longest)}${longest[1] ? ` من ${longest[1]}` : ""}` : null,
+    last ? (p.act ? `بيلعب هلأ بـ${clubName(last)}` : `آخر نادي لعب فيه ${clubName(last)}`) : null,
+    `اسمه ${words.length} ${words.length === 1 ? "كلمة" : "كلمات"} وبيبلش بحرف «${words[0]?.[0] || "?"}»: ${words.map((w) => w[0] + " " + "_ ".repeat(Math.max(0, w.length - 1)).trim()).join("   ")}`,
+  ].filter(Boolean);
+  const pad = [`عدد اللغات اللي إله فيها صفحة ويكيبيديا كبير، يعني لاعب معروف`, `${p.act ? "لاعب حالي" : "لاعب معتزل"}`];
+  while (H.length < MAX_HINTS) H.splice(H.length - 1, 0, pad.shift() || "فكّر منيح!");
+  return H.slice(0, MAX_HINTS);
+}
+
+// 20 خيار مدروسين: زملاء بنفس الأندية، نفس الجنسية، نفس المركز، ونفس الجيل
+function optionsFor(p) {
+  const clubs = new Set((p.c || []).map(clubName));
+  const scored = DATA.players.filter((x) => x.id !== p.id).map((x) => {
+    let s = 0;
+    if ((x.c || []).some((c) => clubs.has(clubName(c)))) s += 3;
+    if ((x.nat || [])[0] && x.nat[0] === (p.nat || [])[0]) s += 2;
+    if ((x.pos || [])[0] && x.pos[0] === (p.pos || [])[0]) s += 1.5;
+    if (x.by && p.by && Math.abs(x.by - p.by) <= 4) s += 1;
+    if (Math.abs(x.r - p.r) < 300) s += 0.5;
+    return [s + Math.random() * 1.2, x];
+  }).sort((a, b) => b[0] - a[0]);
+  return shuffle([p.id, ...scored.slice(0, 19).map(([, x]) => x.id)]);
+}
+
+function startPlay() {
+  const n = G.players.length;
+  // كل واحد بياخذ اللاعب اللي اختاره اللي قبله
+  G.targets = G.players.map((_, i) => G.picks[(i - 1 + n) % n]);
+  G.st = G.players.map((_, i) => ({ h: 0, lives: LIVES, pts: 0, done: null, opts: optionsFor(byId.get(G.targets[i])), cutUsed: false }));
+  G.hints = G.targets.map((id) => hintsFor(byId.get(id)));
+  G.turn = 0; G.phase = "play"; save();
+  turnPass();
+}
+
+const active = () => G.st.map((s, i) => [s, i]).filter(([s]) => !s.done).map(([, i]) => i);
+function advance() {
+  const act = active();
+  if (!act.length) { G.phase = "end"; save(); roundEnd(); return; }
+  let t = G.turn;
+  for (let k = 0; k < G.players.length; k++) { t = (t + 1) % G.players.length; if (!G.st[t].done) break; }
+  G.turn = t; save(); turnPass();
+}
+
+function statusBar() {
+  return `<div class="status3">${G.players.map((p, i) => { const s = G.st[i];
+    return `<div class="${i === G.turn ? "me" : ""}"><b>${esc(p.name)}</b><span>${p.total + s.pts}</span><small>${s.done === "solved" ? "عرفه" : s.done === "out" ? "طلع" : `<span class="hearts">${"♥".repeat(s.lives)}</span> · تلميح ${s.h}`}</small></div>`; }).join("")}</div>`;
+}
+
+function turnPass() {
+  const me = G.players[G.turn];
+  render(`<div class="sub" style="text-align:center">الجولة ${G.round} من ${ROUNDS}</div>${statusBar()}
+    <div class="pass2"><span class="sub">الدور على</span><span class="who">${esc(me.name)}</span><span class="note">مرّروا التلفون.</span></div>
+    <button class="big" id="go" type="button">أنا ${esc(me.name)}، فرجيني التلميح</button>`);
+  bind({ go: () => { const s = G.st[G.turn]; if (s.h < MAX_HINTS) s.h++; save(); turnView(); } });
+}
+
+function turnView(flash = "") {
+  const i = G.turn, s = G.st[i], me = G.players[i];
+  const hs = G.hints[i].slice(0, s.h);
+  const last = s.h >= MAX_HINTS;
+  render(`${statusBar()}${flash}
+    <h2>${esc(me.name)}، مين لاعبك؟</h2>
+    <ol class="hints">${hs.map((t, k) => `<li class="${k === hs.length - 1 ? "new" : ""}"><span>${k + 1}</span><b>${esc(t)}</b></li>`).join("")}</ol>
+    <p class="ptsnow">إذا عرفته هلأ بتاخذ <b>${pointsFor(s.h)}</b> ${pointsFor(s.h) === 1 ? "نقطة" : "نقاط"}. والغلط <b>${WRONG}</b>.</p>
+    <button class="big green" id="guess" type="button">بدي أحكي الاسم</button>
+    <button class="big ghost" id="pass" type="button">${last ? "استسلم (طلعت من الجولة)" : "مرّر لزميلك"}</button>`);
+  bind({ guess: guessView, pass: () => { if (last) { s.done = "out"; } advance(); } });
+}
+
+function guessView() {
+  const i = G.turn, s = G.st[i], help = G.players[i].help;
+  const opts = s.opts.map((id) => byId.get(id)).filter(Boolean);
+  render(`${statusBar()}<h2>اختار لاعبك</h2>
+    <div class="helpers">
+      <button type="button" id="cut" ${help.cut && !s.cutUsed ? "" : "disabled"}>احذف 10 خيارات</button>
+      <button type="button" id="free" class="${s.freeArmed ? "armed" : ""}" ${help.free || s.freeArmed ? "" : "disabled"}>${s.freeArmed ? "المحاولة المجانية شغّالة" : "محاولة مجانية"}</button>
+    </div>
+    <p class="note">${opts.length} خيار. الوسائل المساعدة مرة وحدة بكل اللعبة.</p>
+    <div class="opt20">${opts.map((p) => `<button type="button" data-g="${p.id}">${face(p, "mini2")}<span>${esc(p.a)}</span></button>`).join("")}</div>
+    <button class="big ghost" id="back2" type="button">رجوع للتلميحات</button>`);
+  bind({
+    cut: () => {
+      const target = G.targets[i];
+      const wrong = shuffle(s.opts.filter((id) => id !== target)).slice(0, 10);
+      s.opts = s.opts.filter((id) => !wrong.includes(id));
+      s.cutUsed = true; help.cut = false; save(); guessView();
+    },
+    free: () => { if (!s.freeArmed && help.free) { s.freeArmed = true; help.free = false; save(); guessView(); } },
+    back2: () => turnView(),
+  });
+  document.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => answer(b.dataset.g));
+}
+
+function answer(id) {
+  const i = G.turn, s = G.st[i];
+  const target = byId.get(G.targets[i]);
+  if (id === target.id) {
+    const pts = pointsFor(s.h);
+    s.pts += pts; s.done = "solved"; s.freeArmed = false; save();
+    render(`${statusBar()}<div class="flash good"><span>صح!</span><b>${esc(target.a)}</b><span>عرفته من التلميح ${s.h}: <b>+${pts}</b></span></div>
+      <button class="big" id="ok" type="button">كمّلوا</button>`);
+    bind({ ok: advance });
+    return;
+  }
+  const guessed = byId.get(id);
+  s.opts = s.opts.filter((x) => x !== id);
+  let msg;
+  if (s.freeArmed) { s.freeArmed = false; msg = "غلط، بس كانت المحاولة المجانية. ما انخصم إشي."; }
+  else {
+    s.pts += WRONG; s.lives--;
+    msg = s.lives > 0 ? `غلط! ${WRONG} وراح قلب. ضايلك ${s.lives}.` : `غلط! ${WRONG} وخلصت القلوب، طلعت من الجولة.`;
+    if (s.lives <= 0) s.done = "out";
+  }
+  save();
+  render(`${statusBar()}<div class="flash badf"><span>مش ${esc(guessed?.a)}</span><b>${esc(msg)}</b></div>
+    <button class="big" id="ok" type="button">مرّر لزميلك</button>`);
+  bind({ ok: advance });
+}
+
+function roundEnd() {
+  const n = G.players.length;
+  G.players.forEach((p, i) => { p.total += G.st[i].pts; });
+  G.hist.push(G.players.map((p, i) => ({ name: p.name, target: G.targets[i], pts: G.st[i].pts, done: G.st[i].done, h: G.st[i].h })));
+  const rows = G.hist[G.hist.length - 1];
+  const last = G.round >= ROUNDS;
+  G.round++; G.phase = "pick"; G.picker = 0; G.picks = [];
+  save();
+  const board = G.players.map((p, i) => i).sort((a, b) => G.players[b].total - G.players[a].total);
+  const top = Math.max(...G.players.map((p) => p.total));
+  const winners = G.players.filter((p) => p.total === top).map((p) => p.name);
+  render(`${last ? `<div class="flash good"><span>انتهت اللعبة!</span><b>${winners.length > 1 ? "تعادل: " + winners.map(esc).join(" و") : "الفائز " + esc(winners[0])}</b></div>` : `<h1>خلصت الجولة ${G.round - 1}</h1>`}
+    <div class="stack" style="gap:8px">${rows.map((r) => { const p = byId.get(r.target);
+      return `<div class="pickbtn prow">${face(p, "mini2")}<span><b>${esc(r.name)}: ${esc(p.a)}</b><small>${r.done === "solved" ? `عرفه من التلميح ${r.h}` : "ما عرفه"} · <bdi dir="ltr">${r.pts > 0 ? "+" : ""}${r.pts}</bdi></small></span></div>`; }).join("")}</div>
+    <h2>المجموع</h2>
+    <div class="board">${board.map((i, k) => `<div class="r"><span class="pos">${k + 1}</span><b>${esc(G.players[i].name)}</b><span class="t">${G.players[i].total}</span>
+      <small>المساعدة: ${G.players[i].help.cut ? "احذف 10 ✓" : "احذف 10 ✗"} · ${G.players[i].help.free ? "مجانية ✓" : "مجانية ✗"}</small></div>`).join("")}</div>
+    ${last ? `<button class="big" id="again" type="button">لعبة جديدة</button>` : `<button class="big" id="next" type="button">الجولة ${G.round}</button>`}`);
+  if (last) store.set("game", null);
+  bind({ next: pickPass, again: () => setupPlayers() });
+}
+
+$("quit").onclick = () => { location.href = "./"; };
+
+fetch("players.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
+  DATA = d; byId = new Map(d.players.map((p) => [p.id, p]));
+  if (!d.clubs) { $("app").innerHTML = `<div class="loading">قاعدة الأندية لسا بتتحدث. جرّب كمان شوي.</div>`; return; }
+  intro();
+}).catch(() => { $("app").innerHTML = `<div class="loading">ما قدرت أحمّل اللاعبين.</div>`; });
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+</body>
+</html>
