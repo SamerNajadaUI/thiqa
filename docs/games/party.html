@@ -448,10 +448,30 @@ function mostConfusing(p, links) {
   return scored.sort((a, b) => b[0] - a[0])[0][1];
 }
 
+// الترتيب بطبقات: أول طبقة كاملة قبل اللي بعدها، وجوّا كل طبقة الأشبه أول.
+// لاعب حالي: كل لاعبين ناديه بنفس مركزه، بعدين نفس المركز بنفس الدوري ونفس المنتخب، بعدين نفس المركز بنفس الدوري.
+// معتزل: نفس المنتخب ونفس المركز، بعدين نفس المركز ونفس نادي الاعتزال، بعدين نفس المركز.
 function optionsFor(p, link) {
-  const pool = poolFor(p);
-  const ranked = pool.map((x) => [similarity(p, link, x)[0] + Math.random() * 0.4, x]).sort((a, b) => b[0] - a[0]);
-  return shuffle([p.id, ...ranked.slice(0, OPTIONS - 1).map(([, x]) => x.id)]);
+  const pool = poolFor(p), pc = posCat(p), nt = ntOf(p);
+  const tiers = p.cur ? [
+    (x) => x.hc === p.hc && posCat(x) === pc,
+    (x) => posCat(x) === pc && ntOf(x) === nt,
+    (x) => posCat(x) === pc,
+    () => true,
+  ] : [
+    (x) => ntOf(x) === nt && posCat(x) === pc,
+    (x) => posCat(x) === pc && p.rc && x.rc === p.rc,
+    (x) => posCat(x) === pc,
+    () => true,
+  ];
+  const picked = [], seen = new Set();
+  for (const ok of tiers) {
+    const ranked = pool.filter((x) => !seen.has(x.id) && ok(x))
+      .map((x) => [similarity(p, link, x)[0] + Math.random() * 0.4, x]).sort((a, b) => b[0] - a[0]);
+    for (const [, x] of ranked) { if (picked.length >= OPTIONS - 1) break; picked.push(x.id); seen.add(x.id); }
+    if (picked.length >= OPTIONS - 1) break;
+  }
+  return shuffle([p.id, ...picked]);
 }
 
 // "احذف 3": بيشيل الخيارات اللي التلميحات اللي شافها اللاعب لحد هلأ بتستبعدها أكثر إشي
