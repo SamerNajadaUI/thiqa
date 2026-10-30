@@ -360,6 +360,10 @@ function confirmPick(p) {
 // 1) الدوري (أو نادي الاعتزال)  2) المركز  3) كأس العالم ودوري الأبطال  4) المنتخب  5) زميل أو مدرب مشهور
 const bi = (x) => (/^[؀-ۿ]/.test(String(x)) ? "ب" : "بـ") + x;
 const pick1 = (xs) => xs[Math.floor(Math.random() * xs.length)];
+function trophyKey(p) {
+  const wc = p.wc || [], ucl = p.ucl || [];
+  return `${wc.length ? 1 : 0}${ucl.length ? 1 : 0}`;
+}
 function hintsFor(p) {
   const cnt = (n) => n === 1 ? "مرة" : n === 2 ? "مرتين" : `${n} مرات`;
   const wc = p.wc || [], ucl = p.ucl || [];
@@ -371,57 +375,103 @@ function hintsFor(p) {
     : "ما فاز لا بكأس العالم ولا بدوري أبطال أوروبا";
   const nt = p.nt ? (p.cur ? `بيلعب مع ${p.nt}` : `لعب مع ${p.nt}`) : p.nat ? `منتخب بلده: منتخب ${p.nat}` : "ما إله منتخب معروف";
   const links = [
-    ...(p.tm || []).slice(0, 3).map(([n, w, isNt]) => `لعب مع ${n} ${isNt ? "بـ" + w : bi(w)}`),
-    ...(p.co || []).slice(0, 2).map(([c, w]) => `دربه ${c} ${bi(w)}`),
+    ...(p.tm || []).slice(0, 3).map(([n, w, isNt]) => ({ k: "tm", name: n, where: w, isNt: !!isNt, text: `لعب مع ${n} ${isNt ? "بـ" + w : bi(w)}` })),
+    ...(p.co || []).slice(0, 2).map(([c, w]) => ({ k: "co", name: c, where: w, text: `دربه ${c} ${bi(w)}` })),
   ];
-  const last = links.length ? pick1(links) : p.num ? `بيلبس القميص رقم ${p.num}` : `اسمه بيبلش بحرف «${String(p.a)[0]}»`;
-  return [
+  const link = links.length ? mostConfusing(p, links)
+    : p.num ? { k: "num", text: `بيلبس القميص رقم ${p.num}` }
+    : { k: "letter", text: `اسمه بيبلش بحرف «${String(p.a)[0]}»` };
+  return { link, text: [
     p.cur ? `لاعب حالي، بيلعب ${bi(p.lg)}` : `معتزل${p.rc ? `، واعتزل ${bi(p.rc)}` : ""}`,
     `مركزه: ${POS_AR[posCat(p)]}`,
     trophies,
     nt,
-    last,
-  ];
+    link.text,
+  ] };
 }
 
-// 10 خيارات محيّرة: للاعب الحالي من ناديه ونفس مركزه، وللمعتزل من منتخبه ونفس مركزه
-function optionsFor(p) {
-  const pc = posCat(p), nt = ntOf(p);
-  const others = DATA.players.filter((x) => x.id !== p.id);
-  const fameSort = (xs) => xs.map((x) => [-(x.r || 0) * (0.6 + Math.random() * 0.8), x]).sort((a, b) => a[0] - b[0]).map(([, x]) => x);
-  const groups = p.cur ? [
-    others.filter((x) => x.cur && x.hc === p.hc && posCat(x) === pc),
-    others.filter((x) => x.cur && x.hc === p.hc),
-    others.filter((x) => x.cur && x.lg === p.lg && posCat(x) === pc),
-  ] : [
-    others.filter((x) => !x.cur && ntOf(x) === nt && posCat(x) === pc),
-    others.filter((x) => !x.cur && ntOf(x) === nt),
-    others.filter((x) => !x.cur && posCat(x) === pc),
-  ];
-  const seen = new Set();
-  const picked = groups.flatMap(fameSort).filter((x) => !seen.has(x.id) && seen.add(x.id)).slice(0, OPTIONS - 1);
-  return shuffle([p.id, ...picked.map((x) => x.id)]);
+// ---------- محرّك التشابه ----------
+// كل خيار غلط لازم ينطبق عليه أكبر عدد ممكن من التلميحات الخمسة، عشان حتى بعد آخر تلميح
+// يضل في أكثر من اسم ممكن. وبعدها: نفس الشهرة، نفس الجيل، ونفس لغة الاسم (عربي/إنجليزي).
+const isAr = (t) => /[؀-ۿ]/.test(String(t));
+function hintFit(p, link, x) {
+  const f = [0, 0, 0, 0, 0];   // كل تلميح: 1 = ينطبق تماماً، 0.5 = قريب، 0 = لا
+  // 1) الدوري الحالي، أو نادي الاعتزال
+  if (p.cur) f[0] = x.cur && x.lg === p.lg ? 1 : 0;
+  else f[0] = !x.cur ? (p.rc && x.rc === p.rc ? 1 : p.rc && (x.cl || []).includes(p.rc) ? 0.5 : 0.25) : 0;
+  // 2) المركز
+  f[1] = posCat(x) === posCat(p) ? 1 : 0;
+  // 3) كأس العالم ودوري الأبطال: نفس الحالة، وأحسن إذا نفس السنين أو العدد
+  const sameT = trophyKey(x) === trophyKey(p);
+  const exactT = sameT && (x.wc || []).join() === (p.wc || []).join() && (x.ucl || []).length === (p.ucl || []).length;
+  f[2] = exactT ? 1 : sameT ? 0.8 : 0;
+  // 4) المنتخب
+  f[3] = ntOf(x) === ntOf(p) ? 1 : 0;
+  // 5) الزميل أو المدرب أو الرقم
+  if (link.k === "tm") {
+    const knows = (x.tm || []).some((t) => t[0] === link.name);
+    if (x.a === link.name) f[4] = 0;
+    else if (link.isNt) f[4] = knows ? 1 : ntOf(x) === link.where ? 0.8 : 0;
+    else f[4] = knows ? 1 : ((x.cl || []).includes(link.where) || x.hc === link.where) ? 0.8 : 0;
+  } else if (link.k === "co") {
+    const coached = (x.co || []).some((c) => c[0] === link.name);
+    f[4] = coached ? 1 : ((x.cl || []).includes(link.where) || x.hc === link.where) ? 0.6 : 0;
+  } else if (link.k === "num") {
+    f[4] = x.num === p.num ? 1 : 0;
+  } else {
+    f[4] = String(x.a)[0] === String(p.a)[0] ? 1 : 0;
+  }
+  return f;
+}
+const HINT_W = [5, 5, 3, 5, 4];
+function similarity(p, link, x) {
+  const f = hintFit(p, link, x);
+  let sc = f.reduce((s, v, i) => s + v * HINT_W[i], 0);
+  const fame = Math.abs(Math.log(((x.r || 0) + 3) / ((p.r || 0) + 3)));
+  sc += 2.5 * Math.exp(-fame);                                  // نفس مستوى الشهرة
+  if (x.by && p.by) sc += 1.5 * Math.exp(-Math.abs(x.by - p.by) / 4); // نفس الجيل
+  if (isAr(x.a) === isAr(p.a)) sc += 3;                          // الاسم بنفس اللغة، ما يفضح
+  if (p.cur && x.hc === p.hc) sc += 1.5;                         // من نفس النادي
+  return [sc, f];
 }
 
-// "احذف 3": بيشيل أبعد 3 عن التلميحات (مركز مختلف، عمر بعيد، منتخب مختلف)
-function easyWrong(target, ids, k) {
+const poolFor = (p) => DATA.players.filter((x) => x.id !== p.id && (p.cur
+  ? x.cur && x.lg === p.lg
+  : !x.cur && (ntOf(x) === ntOf(p) || posCat(x) === posCat(p) || (p.rc && x.rc === p.rc))));
+
+// التلميح الخامس: من بين الزملاء والمدربين، بنختار اللي بينطبق على أكثر عدد من المنافسين الأقوياء
+function mostConfusing(p, links) {
+  const pool = poolFor(p);
+  const top = pool.map((x) => [hintFit(p, { k: "letter" }, x).slice(0, 4).reduce((s, v, i) => s + v * HINT_W[i], 0), x])
+    .sort((a, b) => b[0] - a[0]).slice(0, 40).map(([, x]) => x);
+  const scored = links.map((l) => [top.filter((x) => hintFit(p, l, x)[4] >= 0.8).length + Math.random() * 0.5, l]);
+  return scored.sort((a, b) => b[0] - a[0])[0][1];
+}
+
+function optionsFor(p, link) {
+  const pool = poolFor(p);
+  const ranked = pool.map((x) => [similarity(p, link, x)[0] + Math.random() * 0.4, x]).sort((a, b) => b[0] - a[0]);
+  return shuffle([p.id, ...ranked.slice(0, OPTIONS - 1).map(([, x]) => x.id)]);
+}
+
+// "احذف 3": بيشيل الخيارات اللي التلميحات اللي شافها اللاعب لحد هلأ بتستبعدها أكثر إشي
+function easyWrong(target, ids, k, link, seen = MAX_HINTS) {
   return ids.filter((id) => id !== target.id).map((id) => {
     const x = byId.get(id);
-    let d = 0;
-    if (!!x.cur !== !!target.cur) d += 5;
-    if (posCat(x) !== posCat(target)) d += 3 + Math.abs(POS_ORDER[posCat(x)] - POS_ORDER[posCat(target)]);
-    if (ntOf(x) !== ntOf(target)) d += 1.5;
-    if (x.by && target.by) d += Math.min(3, Math.abs(x.by - target.by) / 4);
-    return [d + Math.random() * 0.3, id];
-  }).sort((a, b) => b[0] - a[0]).slice(0, k).map(([, id]) => id);
+    const f = hintFit(target, link, x);
+    const fitSeen = f.slice(0, Math.max(1, seen)).reduce((s, v, i) => s + v * HINT_W[i], 0);
+    return [fitSeen + similarity(target, link, x)[0] * 0.05 + Math.random() * 0.1, id];
+  }).sort((a, b) => a[0] - b[0]).slice(0, k).map(([, id]) => id);
 }
 
 function startPlay() {
   const n = G.players.length;
   // كل واحد بياخذ اللاعب اللي اختاره اللي قبله
   G.targets = G.players.map((_, i) => G.picks[(i - 1 + n) % n]);
-  G.st = G.players.map((_, i) => ({ h: 0, lives: LIVES, pts: 0, done: null, opts: optionsFor(byId.get(G.targets[i])), cutUsed: false }));
-  G.hints = G.targets.map((id) => hintsFor(byId.get(id)));
+  const H = G.targets.map((id) => hintsFor(byId.get(id)));
+  G.hints = H.map((h) => h.text);
+  G.links = H.map((h) => h.link);
+  G.st = G.players.map((_, i) => ({ h: 0, lives: LIVES, pts: 0, done: null, opts: optionsFor(byId.get(G.targets[i]), G.links[i]), cutUsed: false }));
   G.turn = 0; G.phase = "play"; save();
   turnPass();
 }
@@ -475,7 +525,7 @@ function guessView() {
   bind({
     cut: () => {
       const target = G.targets[i];
-      const wrong = easyWrong(byId.get(target), s.opts, CUT);
+      const wrong = easyWrong(byId.get(target), s.opts, CUT, (G.links || [])[i] || { k: "letter" }, s.h);
       s.opts = s.opts.filter((id) => !wrong.includes(id));
       s.cutUsed = true; help.cut = false; save(); guessView();
     },

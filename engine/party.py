@@ -378,6 +378,7 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, coaches: dict, team_
             "rc": last[0] if (last and not cur) else None, "num": (sq or {}).get("num"),
             "nt": nt, "nat": nat, "by": base["by"], "wc": base["wc"], "ucl": base["ucl"],
             "tm": tm, "co": co[:3], "r": links[pid],
+            "cl": list(dict.fromkeys(c[0] for c in clubs if c[0]))[:12],
         })
 
     # لاعبين ESPN اللي ما لقيناهم بـ Wikidata: بالاسم الإنجليزي، والزملاء من ناديهم الحالي
@@ -393,7 +394,7 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, coaches: dict, team_
             "pc": e["pc"] or "mf", "cur": True, "lg": e["lg"], "hc": e["club_ar"], "rc": None, "num": e["num"],
             "nt": clean_nt(e["nat_ar"]) if e["nat_ar"] else None, "nat": e["nat_ar"],
             "by": (NOW_YEAR - e["age"]) if isinstance(e.get("age"), int) else None,
-            "wc": [], "ucl": [], "tm": [], "co": [], "r": 0, "x": 1,
+            "wc": [], "ucl": [], "tm": [], "co": [], "r": 0, "x": 1, "cl": [e["club_ar"]],
         })
     out.sort(key=lambda p: -p["r"])
     data = {"generated": time.strftime("%Y-%m-%d"), "leagues": [l for _, _, l in LEAGUES], "players": out}
