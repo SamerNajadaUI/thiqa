@@ -174,9 +174,10 @@ function intro() {
       <li><span>الفريق اللي رقمه أقرب للجواب بياخذ نقطة. وإذا جابه بالضبط بياخذ نقطتين.</span></li>
       <li><span>بتضلوا تلعبوا جولات لحد ما تكبسوا «إنهاء اللعبة».</span></li>
     </ol></div>
-    ${resume ? `<button class="big" id="resume" type="button">كمّلوا (الجولة ${G.round + 1})</button>` : ""}
-    <button class="big ${resume ? "ghost" : ""}" id="new" type="button">${resume ? "لعبة جديدة" : "يلا نلعب"}</button>`);
-  bind({ resume: nextQuestion, new: () => { G.scores = null; G.round = 0; save(); setup(); } });
+    <button class="big" id="online" type="button" style="background:#12B76A;box-shadow:0 6px 0 #087443">كل واحد من تلفونه</button>
+    ${resume ? `<button class="big" id="resume" type="button">كمّلوا على تلفون واحد (الجولة ${G.round + 1})</button>` : ""}
+    <button class="big ghost" id="new" type="button">${resume ? "لعبة جديدة على تلفون واحد" : "على تلفون واحد"}</button>`);
+  bind({ resume: nextQuestion, new: () => { G.scores = null; G.round = 0; save(); setup(); }, online: () => window.nearOnlineMenu && nearOnlineMenu() });
 }
 
 function setup() {
@@ -267,5 +268,7 @@ function finish() {
 intro();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
 </script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script src="numbers-online.js"></script>
 </body>
 </html>
