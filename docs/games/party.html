@@ -232,9 +232,10 @@ function intro() {
       <li>الجواب الغلط <b>${WRONG}</b> وبيروح قلب. معك <b>قلبين</b> بكل جولة، وإذا خلصوا بتطلع من الجولة.</li>
       <li>وسيلتين مساعدة بكل اللعبة: <b>احذف ${CUT}</b> من الخيارات الغلط، و<b>محاولة مجانية</b> ما بتخصم إشي.</li>
     </ul></div>
-    ${saved && saved.round <= ROUNDS ? `<button class="big" id="resume" type="button">كمّلوا (الجولة ${saved.round})</button>` : ""}
-    <button class="big ${saved ? "ghost" : ""}" id="new" type="button">${saved ? "لعبة جديدة" : "يلا نبلش"}</button>`);
-  bind({ resume: () => { G = saved; resumeFlow(); }, new: () => setupPlayers() });
+    <button class="big green" id="online" type="button">كل واحد من تلفونه</button>
+    ${saved && saved.round <= ROUNDS ? `<button class="big" id="resume" type="button">كمّلوا على تلفون واحد (الجولة ${saved.round})</button>` : ""}
+    <button class="big ghost" id="new" type="button">${saved ? "لعبة جديدة على تلفون واحد" : "على تلفون واحد"}</button>`);
+  bind({ resume: () => { G = saved; resumeFlow(); }, new: () => setupPlayers(), online: () => window.onlineMenu && onlineMenu() });
 }
 
 function setupPlayers(n = store.get("n", 3)) {
@@ -342,7 +343,9 @@ function playerBtn(p) {
 }
 function bindPlayers() { document.querySelectorAll("[data-p]").forEach((b) => b.onclick = () => confirmPick(byId.get(b.dataset.p))); }
 
+let onPicked = null;   // وضع الأونلاين بيستلم الاختيار بداله
 function confirmPick(p) {
+  if (onPicked) return onPicked(p);
   const me = G.players[G.picker];
   render(`<div class="prow pickbtn" style="grid-template-columns:72px 1fr">${face(p, "mini2").replace('class="mini2"', 'class="mini2" style="width:72px;height:72px"').replace("<img ", '<img style="width:72px;height:72px" ')}<span><b style="font-size:20px">${esc(p.a)}</b><small>${esc(p.n)}</small></span></div>
     <p class="sub">${esc(me.name)}، هاد اختيارك؟</p>
@@ -608,9 +611,12 @@ $("quit").onclick = () => { location.href = "./"; };
 fetch("party.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
   DATA = d; byId = new Map(d.players.map((p) => [p.id, p]));
   if (!d.players || !d.players.length) { $("app").innerHTML = `<div class="loading">قاعدة اللاعبين لسا بتتحدث. جرّب كمان شوي.</div>`; return; }
+  if (window.onlineBoot && onlineBoot()) return;
   intro();
 }).catch(() => { $("app").innerHTML = `<div class="loading">ما قدرت أحمّل اللاعبين.</div>`; });
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
 </script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script src="party-online.js"></script>
 </body>
 </html>
