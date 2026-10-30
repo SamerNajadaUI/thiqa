@@ -4,6 +4,7 @@
 /* global mqtt, QUESTIONS, render, bind, esc, store, parseNum, fmt, intro */
 (function () {
   const Q_MS = 40000;
+  const TARGET = 30;
   const MAX_PLAYERS = 8;
   const BROKERS = ["wss://broker.emqx.io:8084/mqtt", "wss://broker.hivemq.com:8884/mqtt", "wss://test.mosquitto.org:8081/mqtt"];
   const ROOT = "abuodeh-near-v1";
@@ -167,9 +168,17 @@
       case "again":
         if (!host) return;
         S.players.forEach((p) => { p.score = 0; });
-        S.round = 0; S.phase = "lobby"; S.last = null; S.q = null;
+        S.round = 0; S.phase = "lobby"; S.last = null; S.q = null; P.used = P.used || [];
         return publish();
     }
+  }
+
+  // الفايز: واحد بس بالصدارة ووصل الهدف (إذا تعادلوا فوق الهدف بنكمل)
+  function winner() {
+    const max = Math.max(...S.players.map((p) => p.score));
+    if (max < TARGET) return null;
+    const top = S.players.filter((p) => p.score === max);
+    return top.length === 1 ? top[0] : null;
   }
 
   function uniqueName(n) {
@@ -213,7 +222,8 @@
     rows.forEach((r) => { r.pts = r.d !== null && r.d === best ? (r.d === 0 ? 2 : 1) : 0; });
     rows.forEach((r) => { const p = S.players.find((x) => x.id === r.id); if (p) p.score += r.pts; });
     S.last = { ans, note: S.note, rows };
-    S.phase = "reveal"; S.deadline = null;
+    S.deadline = null;
+    S.phase = winner() ? "over" : "reveal";   // أول واحد بيوصل 30 نقطة لحاله بالصدارة بيفوز
     publish();
   }
 
@@ -293,6 +303,7 @@
         <div class="score">${S.players.map((p, i) => `<div class="r" style="grid-template-columns:minmax(0,1fr) auto"><span class="nm">${chip(i)}${esc(p.name)}${p.id === S.host ? " · صاحب الغرفة" : ""}${p.id === me.id ? " (إنت)" : ""}</span>${isHost && p.id !== me.id ? `<button type="button" class="back" data-kick="${p.id}" style="border:0;background:#FFF;border-radius:12px;padding:6px 10px">شيل</button>` : "<span></span>"}</div>`).join("")}</div></div>
       <div class="card"><h2>الأقسام</h2><p class="note">${S.cats.length ? "" : "ما في إشي مختار، يعني الأسئلة من كل الأقسام."}</p>
         <div class="cats">${cats.map((c) => `<button type="button" data-cat="${esc(c)}" aria-pressed="${S.cats.includes(c)}" ${isHost ? "" : "disabled"}>${esc(c)} (${QUESTIONS[c].length})</button>`).join("")}</div></div>
+      <p class="note" style="text-align:center">أول واحد بيوصل <b>${TARGET} نقطة</b> بيفوز.</p>
       ${isHost ? `<button class="big" id="start" type="button" ${S.players.length < 2 ? "disabled" : ""}>${S.players.length < 2 ? "استنى حدا يدخل" : "ابدأ اللعبة"}</button>` : ""}
       <button class="big ghost" id="out" type="button">اطلع من الغرفة</button>`);
     bind({
@@ -352,6 +363,7 @@
         return `<div class="r ${r.pts ? "win" : ""}"><b>${chip(i)}${esc(p.name)}${r.pts ? ` · <bdi dir="ltr">+${r.pts}</bdi>` : ""}</b><span class="g">${r.g === null ? "—" : fmt(r.g)}</span>
         <small>${r.g === null ? "ما جاوب" : r.d === 0 ? "جابه بالضبط!" : `بعيد ${fmt(+r.d.toFixed(3))}`}</small></div>`; }).join("")}</div>
       <h2>النقاط</h2>${board(delta)}
+      <p class="note" style="text-align:center">الهدف: أول واحد بيوصل ${TARGET} نقطة</p>
       ${isHost ? `<button class="big" id="next" type="button">السؤال الجاي</button><button class="big ghost" id="end" type="button">إنهاء اللعبة</button>`
         : `<p class="note" style="text-align:center">استنى صاحب الغرفة يجيب السؤال الجاي.</p>`}
       <button class="big ghost" id="out" type="button">اطلع</button>`);
@@ -361,9 +373,12 @@
   function drawOver() {
     const max = Math.max(...S.players.map((p) => p.score));
     const winners = S.players.filter((p) => p.score === max).map((p) => p.name);
-    render(`${header()}<div class="verdict good"><span>انتهت اللعبة بعد ${S.round} ${S.round === 1 ? "سؤال" : "أسئلة"}</span>
+    const L = S.last;
+    const reached = max >= TARGET && winners.length === 1;
+    render(`${header()}<div class="verdict good"><span>${reached ? `وصل ${TARGET} نقطة!` : `انتهت اللعبة بعد ${S.round} ${S.round === 1 ? "سؤال" : "أسئلة"}`}</span>
         <b>${winners.length > 1 ? "تعادل بين " + winners.map(esc).join(" و") : "فاز " + esc(winners[0]) + "!"}</b></div>
-      ${board(null)}
+      ${L && S.q ? `<div class="answer"><small>جواب آخر سؤال: ${esc(S.q.text)}</small><b>${fmt(L.ans)}${S.q.unit ? ` <span style="font-size:22px">${esc(S.q.unit)}</span>` : ""}</b></div>` : ""}
+      ${board(L ? Object.fromEntries(L.rows.map((r) => [r.id, r.pts])) : null)}
       ${isHost ? `<button class="big" id="again" type="button">لعبة جديدة بنفس الغرفة</button>` : `<p class="note" style="text-align:center">صاحب الغرفة بيقدر يبدأ لعبة جديدة.</p>`}
       <button class="big ghost" id="out" type="button">اطلع</button>`);
     bind({ again: () => send({ t: "again" }), out: confirmLeave });
