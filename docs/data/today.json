@@ -1,7 +1,7 @@
 {
  "date": "2026-10-29",
  "generated_at": "2026-10-29T09:32:04Z",
- "updated_at": "2026-10-29T21:58:13Z",
+ "updated_at": "2026-10-30T02:07:21Z",
  "demo": false,
  "coupons": [
   {
@@ -1005,9 +1005,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cle.png",
      "live": {
-      "state": "pre",
-      "detail": "10/29 - 8:00 PM EDT",
-      "score": null
+      "state": "in",
+      "detail": "6:35 - 4th",
+      "score": "99-94"
      },
      "panel": {
       "p": [
@@ -1952,8 +1952,8 @@
    "sharp_prob": 0.7418,
    "prob": 0.7398,
    "books": 21,
-   "result": "pending",
-   "score": null,
+   "result": "miss",
+   "score": "1-2",
    "crowd_prob": 0.745,
    "crowd_volume": 2131,
    "model_prob": null,
@@ -1976,9 +1976,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/sui.png",
    "live": {
-    "state": "in",
-    "detail": "1st",
-    "score": "0-1"
+    "state": "post",
+    "detail": "Final",
+    "score": "1-2"
    },
    "panel": {
     "p": [
