@@ -227,13 +227,13 @@
       if (v === "yes") {
         const pts = pointsFor(s.h) * mult;
         s.pts += pts; s.done = "solved";
-        S.flash = { who: i, good: true, text: `${p.name} عرف لاعبه من التلميح ${s.h}${mult > 1 ? " ودبّلها" : ""}: +${pts}` };
+        S.flash = { id: Date.now(), who: i, good: true, text: `${p.name} عرف لاعبه من التلميح ${s.h}${mult > 1 ? " ودبّلها" : ""}: +${pts}` };
       } else {
         const said = ans.id ? (byId.get(ans.id) || {}).a : ans.text;
         if (ans.id && s.three) s.three = s.three.filter((x) => x !== ans.id);
         s.pts += WRONG * mult; s.lives--;
         if (s.lives <= 0) s.done = "out";
-        S.flash = { who: i, good: false, text: `${p.name} قال «${said}» وغلط: ${WRONG * mult}${s.done ? "، وطلع من الجولة" : ""}` };
+        S.flash = { id: Date.now(), who: i, good: false, bad: true, text: `${p.name} قال «${said}» وغلط: ${WRONG * mult}${s.done ? "، وطلع من الجولة" : ""}` };
       }
       return advance();
     }
@@ -282,6 +282,15 @@
     const fresh = !S || st.phase !== S.phase || st.round !== S.round || st.turnId !== S.turnId;
     S = st;
     offset = (st.now || Date.now()) - Date.now();
+    // التأثيرات عند كل التلفونات: كونفيتي للصح، وشاشة حمرا للغلط، وكونفيتي كبير للفايز
+    const fid = S.flash && S.flash.id;
+    if (fid && fid !== lastFx && Date.now() - fid < 15000) {
+      const kind = S.flash.good ? "good" : S.flash.bad ? "bad" : "";
+      setTimeout(() => fx(kind), 80);
+    }
+    lastFx = fid || lastFx;
+    if (S.phase === "over" && lastPhaseFx && lastPhaseFx !== "over") setTimeout(() => fx("win"), 120);
+    lastPhaseFx = S.phase;
     if (!isHost && myIndex() < 0 && st.phase !== "lobby") { render(`<h1>اللعبة بلّشت</h1><p class="sub">ما لحقت تدخل هالمرة. استنى الجولة الجاية أو اطلب منهم يعملوا لعبة جديدة.</p><button class="big ghost" id="back" type="button">رجوع</button>`); bind({ back: leave }); return; }
     if (fresh && view !== "pick") view = "main";
     if (view === "pick" && (S.phase !== "pick" || S.picks[myIndex()])) view = "main";
@@ -390,7 +399,7 @@
     startTicker();
   }
 
-  let typedName = "";
+  let typedName = "", lastFx = null, lastPhaseFx = null;
   function drawGuess(mi) {
     const s = S.st[mi], help = S.players[mi].help;
     const target = byId.get(S.targets[mi]);
@@ -402,6 +411,7 @@
     const inp = $("nameIn");
     inp.value = typedName; inp.oninput = () => { typedName = inp.value; };
     inp.onkeydown = (e) => { if (e.key === "Enter") $("sayIt").click(); };
+    bindMic(target, (heard) => { typedName = heard; });
     bind({
       sayIt: () => { const t = inp.value.trim(); if (!t) return; typedName = ""; send({ t: "guess", text: t }); loading("لحظة..."); },
       back2: () => { view = "main"; draw(); },

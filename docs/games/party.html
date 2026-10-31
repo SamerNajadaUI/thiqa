@@ -172,6 +172,12 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .opt20 button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 10px; font-weight: 600; font-size: 14px; text-align: right; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; align-items: center; min-width: 0; }
 .opt20 img, .opt20 .mini2 { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
 .opt20 button span { overflow-wrap: anywhere; line-height: 1.35; }
+.microw { display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; }
+.mic { border: 2px solid var(--brand-soft); background: #FFFFFF; border-radius: 18px; padding: 12px 10px; font-weight: 700; font-size: 15px; color: var(--brand); box-shadow: 0 4px 0 var(--brand-soft); display: flex; align-items: center; justify-content: center; gap: 6px; }
+.mic .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--l3); display: none; }
+.mic.on { background: #FEE4E2; border-color: #F97066; color: #B42318; box-shadow: 0 4px 0 #FDA29B; animation: micpulse 1s ease-in-out infinite; }
+.mic.on .dot { display: inline-block; }
+@keyframes micpulse { 50% { transform: scale(1.03); } }
 .flash { text-align: center; border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
 .flash.good { background: var(--l1s); } .flash.badf { background: var(--l3s); }
 .flash b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
@@ -230,8 +236,8 @@ function intro() {
       <li>بالدور، كل واحد بياخذ تلميح جديد، لحد ${MAX_HINTS} تلميحات.</li>
       <li>الجواب الصح بيعطي نقاط حسب التلميح: من الأول <b>${pointsFor(1)}</b>، ومن الأخير <b>${pointsFor(MAX_HINTS)}</b>.</li>
       <li>الجواب الغلط <b>${WRONG}</b> وبيروح قلب. معك <b>قلبين</b> بكل جولة، وإذا خلصوا بتطلع من الجولة.</li>
-      <li>لما تعرفه، <b>اكتب اسمه</b> (عربي أو إنجليزي، واسم العيلة بيكفي، والغلطة الصغيرة بالكتابة بتنقبل).</li>
-      <li>4 وسائل مساعدة، كل وحدة مرة بكل اللعبة: 📸 صورته مغبّشة، 🔤 حروف اسمه، 🎯 3 خيارات، و✖️2 دبّلها (الصح ضعف والغلط ضعف).</li>
+      <li>لما تعرفه، <b>اكتب اسمه أو احكيه بصوتك</b> 🎤 (عربي أو إنجليزي، واسم العيلة بيكفي، والغلطة الصغيرة بتنقبل).</li>
+      <li>وسيلتين مساعدة، كل وحدة مرة وحدة بكل الجولات الخمسة: 🔤 حروف اسمه، و✖️2 دبّلها (الصح ضعف النقاط والغلط ضعف الخصم).</li>
     </ul></div>
     <button class="big green" id="online" type="button">كل واحد من تلفونه</button>
     ${saved && saved.round <= ROUNDS ? `<button class="big" id="resume" type="button">كمّلوا على تلفون واحد (الجولة ${saved.round})</button>` : ""}
@@ -535,6 +541,156 @@ function turnView(flash = "") {
   bind({ guess: guessView, pass: () => { if (last) { s.done = "out"; } advance(); } });
 }
 
+// ---------- تأثيرات: كونفيتي للصح، شاشة حمرا للغلط، صوت واهتزاز ----------
+let AC = null;
+function audio() {
+  try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); } catch { AC = null; }
+  return AC;
+}
+document.addEventListener("pointerdown", () => audio(), { once: true });
+function tone(freq, start, dur, type = "sine", vol = 0.18) {
+  const ac = audio(); if (!ac) return;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, ac.currentTime + start);
+  g.gain.setValueAtTime(0.0001, ac.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol, ac.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + start + dur);
+  o.connect(g).connect(ac.destination); o.start(ac.currentTime + start); o.stop(ac.currentTime + start + dur + 0.05);
+}
+function haptic(kind) {
+  try { window.webkit?.messageHandlers?.haptic?.postMessage(kind); } catch {}
+  try { navigator.vibrate && navigator.vibrate(kind === "error" ? [80, 60, 120] : [40]); } catch {}
+}
+function confettiBurst(big = false) {
+  const cv = document.createElement("canvas");
+  cv.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999";
+  document.body.appendChild(cv);
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+  const c = cv.getContext("2d"); c.scale(dpr, dpr);
+  const colors = ["#6C47FF", "#FDB022", "#12B76A", "#F04438", "#0BA5EC", "#EE46BC", "#FFFFFF"];
+  const N = big ? 260 : 160, parts = [];
+  for (let i = 0; i < N; i++) {
+    const fromLeft = i % 2 === 0;
+    parts.push({
+      x: fromLeft ? -10 : innerWidth + 10, y: innerHeight * (0.55 + Math.random() * 0.3),
+      vx: (fromLeft ? 1 : -1) * (6 + Math.random() * 9), vy: -(10 + Math.random() * 12),
+      w: 6 + Math.random() * 7, h: 8 + Math.random() * 10, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4,
+      col: colors[i % colors.length], shape: Math.random() < 0.3 ? "c" : "r",
+    });
+  }
+  const t0 = performance.now();
+  (function frame(t) {
+    const el = (t - t0) / 1000;
+    c.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of parts) {
+      p.vy += 0.38; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      c.save(); c.translate(p.x, p.y); c.rotate(p.r); c.globalAlpha = Math.max(0, 1 - Math.max(0, el - 1.8) / 0.8);
+      c.fillStyle = p.col;
+      if (p.shape === "c") { c.beginPath(); c.arc(0, 0, p.w / 2, 0, 7); c.fill(); }
+      else c.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r * 2)) + 2);
+      c.restore();
+    }
+    if (el < 2.6) requestAnimationFrame(frame); else cv.remove();
+  })(t0);
+}
+function redFlash() {
+  const o = document.createElement("div");
+  o.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:9998;background:radial-gradient(circle at 50% 45%,rgba(240,68,56,.25),rgba(217,45,32,.75));opacity:0;transition:opacity .12s";
+  document.body.appendChild(o);
+  requestAnimationFrame(() => { o.style.opacity = "1"; });
+  setTimeout(() => { o.style.transition = "opacity .6s"; o.style.opacity = "0"; }, 380);
+  setTimeout(() => o.remove(), 1100);
+  const app = document.querySelector(".wrap") || document.body;
+  app.animate([{ transform: "translateX(0)" }, { transform: "translateX(-14px)" }, { transform: "translateX(12px)" },
+    { transform: "translateX(-9px)" }, { transform: "translateX(6px)" }, { transform: "translateX(0)" }], { duration: 480, easing: "ease-out" });
+}
+function fx(kind) {
+  if (kind === "good" || kind === "win") {
+    confettiBurst(kind === "win");
+    [523, 659, 784, 1047].forEach((f, k) => tone(f, k * 0.09, 0.28, "triangle", 0.16));
+    haptic("success");
+  } else if (kind === "bad") {
+    redFlash();
+    tone(196, 0, 0.22, "sawtooth", 0.12); tone(147, 0.18, 0.35, "sawtooth", 0.12);
+    haptic("error");
+  }
+}
+
+// ---------- الجواب بالصوت ----------
+// جوّا تطبيق الآيفون بنستعمل التعرّف على الكلام تبع التلفون نفسه (أدق)، وبالمتصفح بنستعمل تبع المتصفح
+const NATIVE_SPEECH = !!(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.speech);
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const CAN_SPEAK = NATIVE_SPEECH || !!SR;
+let rec = null;
+function micButton() {
+  if (!CAN_SPEAK) return `<p class="note" style="text-align:center">🎤 الجواب بالصوت مش مدعوم بهالمتصفح. فيك تكبس على المايك بكيبورد التلفون وتحكي الاسم.</p>`;
+  return `<div class="microw">
+      <button type="button" id="micAr" class="mic"><span class="dot"></span>🎤 احكيه بالعربي</button>
+      <button type="button" id="micEn" class="mic"><span class="dot"></span>🎤 English</button>
+    </div>
+    <p class="note" id="micNote" hidden style="text-align:center"></p>`;
+}
+// بيسمع، وبيختار من الاحتمالات اللي سمعها أقرب واحد لاسم اللاعب، وبيحطه بالخانة
+function bindMic(target, onHeard) {
+  if (!CAN_SPEAK) return;
+  let finalAlts = [], btn = null, listening = false;
+  const note = () => $("micNote");
+  const say = (t) => { const n = note(); if (n) { n.hidden = false; n.textContent = t; } };
+  const off = () => { listening = false; document.querySelectorAll(".mic").forEach((b) => b.classList.remove("on")); };
+  const heard = (alts) => { if ($("nameIn") && alts[0]) $("nameIn").value = alts[0]; };
+  const finish = () => {
+    off();
+    if (!finalAlts.length) { say("ما سمعت إشي. اكبس وجرّب كمان مرة."); return; }
+    const rank = { yes: 2, close: 1, no: 0 };
+    const best = finalAlts.map((a) => [rank[nameVerdict(target, a)], a]).sort((x, y) => y[0] - x[0])[0][1];
+    if ($("nameIn")) $("nameIn").value = best;
+    say(`سمعتك تقول: «${best}». إذا صح اكبس جاوب، وإذا لا عدّل الكتابة أو احكيه كمان مرة.`);
+    onHeard && onHeard(best);
+  };
+  const fail = (err) => {
+    off();
+    say(err === "not-allowed" || err === "service-not-allowed"
+      ? "لازم تسمح للمايك والتعرّف على الكلام: Settings ← أبو عودة (أو Safari) ← Microphone و Speech Recognition."
+      : err === "no-speech" ? "ما سمعت إشي. اكبس وجرّب كمان مرة." : "صار في مشكلة بالصوت. جرّب كمان مرة أو اكتب الاسم.");
+  };
+  const start = (lang, b) => {
+    if (listening) { // كبسة ثانية = خلصت حكي
+      if (NATIVE_SPEECH) window.webkit.messageHandlers.speech.postMessage({ cmd: "stop" }); else try { rec && rec.stop(); } catch {}
+      return;
+    }
+    finalAlts = []; btn = b; listening = true;
+    document.querySelectorAll(".mic").forEach((x) => x.classList.remove("on"));
+    b.classList.add("on");
+    say("بسمعك... احكي اسم اللاعب (واكبس كمان مرة لما تخلص)");
+    if (NATIVE_SPEECH) {
+      window.__speech = (m) => {
+        if (m.type === "partial") heard(m.alts || []);
+        else if (m.type === "final") { finalAlts = m.alts || []; heard(finalAlts); }
+        else if (m.type === "error") fail(m.error);
+        else if (m.type === "end") { if (listening) finish(); }
+      };
+      window.webkit.messageHandlers.speech.postMessage({ cmd: "start", lang });
+      return;
+    }
+    try { rec && rec.abort(); } catch {}
+    rec = new SR();
+    rec.lang = lang; rec.interimResults = true; rec.maxAlternatives = 5; rec.continuous = false;
+    rec.onresult = (e) => {
+      const res = e.results[e.results.length - 1];
+      const alts = Array.from(res).map((a) => a.transcript.trim()).filter(Boolean);
+      heard(alts);
+      if (res.isFinal) finalAlts = alts;
+    };
+    rec.onerror = (e) => { listening = false; fail(e.error); };
+    rec.onend = () => { if (listening) finish(); };
+    try { rec.start(); } catch { fail("start"); }
+  };
+  const ar = $("micAr"), en = $("micEn");
+  if (ar) ar.onclick = () => start("ar-JO", ar);
+  if (en) en.onclick = () => start("en-US", en);
+}
+
 // ---------- كتابة الاسم بدل الخيارات ----------
 // بنقبل: الاسم الكامل، أو اسم العيلة، أو أي جزء مميز من الاسم (مش اسم أول شائع)، بالعربي أو الإنجليزي،
 // ومع غلطة إملائية بسيطة. ولو الاسم مكتوب بالإنجليزي بس، بنقارن "هيكل الحروف" عشان العربي ينقبل.
@@ -639,9 +795,7 @@ function nameVerdictRaw(target, input) {
 
 // ---------- الوسائل المساعدة (كل وحدة مرة بكل اللعبة) ----------
 const HELPS = [
-  { k: "photo", icon: "📸", t: "الصورة", d: "صورة لاعبك مغبّشة" },
   { k: "letters", icon: "🔤", t: "الحروف", d: "أول حرف وعدد حروف كل كلمة" },
-  { k: "three", icon: "🎯", t: "3 خيارات", d: "بتختار من 3 أسماء بدل ما تكتب" },
   { k: "double", icon: "✖️2", t: "دبّلها", d: "الجواب الجاي: الصح ضعف النقاط، والغلط ضعف الخصم" },
 ];
 const newHelp = () => Object.fromEntries(HELPS.map((h) => [h.k, true]));
@@ -676,8 +830,9 @@ function guessPanel(s, help, target) {
   const three = s.three ? `<div class="opt20">${s.three.map((id) => { const p = byId.get(id); return p ? `<button type="button" data-g="${p.id}">${face(p, "mini2")}<span>${esc(p.a)}</span></button>` : ""; }).join("")}</div>` : "";
   const dbl = s.double ? `<p class="note" style="text-align:center;color:var(--l3)"><b>دبّلتها!</b> الصح ضعف النقاط، والغلط ضعف الخصم.</p>` : "";
   return `<div class="helpers" style="grid-template-columns:repeat(2,1fr)">${btns}</div>
-    <p class="note">كل وسيلة مرة وحدة بكل اللعبة.</p>${photo}${letters}${dbl}${three}
+    <p class="note">كل وسيلة مرة وحدة بكل اللعبة (الجولات الخمسة).</p>${photo}${letters}${dbl}${three}
     <input class="search" id="nameIn" type="text" placeholder="اكتب اسم اللاعب" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" style="font-size:20px;text-align:center">
+    ${micButton()}
     <p class="note" id="close" hidden style="text-align:center;color:var(--gold-dark)"></p>
     <button class="big green" id="sayIt" type="button">جاوب</button>`;
 }
@@ -693,12 +848,13 @@ function guessView(note = "") {
   render(`${statusBar()}<h2>مين لاعبك؟</h2>
     ${guessPanel(s, help, target)}
     <button class="big ghost" id="back2" type="button">رجوع للتلميحات</button>`);
-  if (note) { $("close").hidden = false; $("close").textContent = note; }
+  if (typeof note === "string" && note) { $("close").hidden = false; $("close").textContent = note; }
   bind({
     sayIt: () => { const t = $("nameIn").value.trim(); if (t) answer({ text: t }); },
     back2: () => turnView(),
   });
   $("nameIn").onkeydown = (e) => { if (e.key === "Enter") $("sayIt").click(); };
+  bindMic(target);
   document.querySelectorAll("[data-help]").forEach((b) => b.onclick = () => { if (applyHelp(b.dataset.help, s, help, target)) { save(); guessView(); } });
   document.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => answer({ id: b.dataset.g }));
 }
@@ -715,6 +871,7 @@ function answer(ans) {
     s.pts += pts; s.done = "solved"; save();
     render(`${statusBar()}<div class="flash good"><span>صح!${mult > 1 ? " ودبّلتها" : ""}</span><b>${esc(target.a)}</b><span>عرفته من التلميح ${s.h}: <b>+${pts}</b></span></div>
       <button class="big" id="ok" type="button">كمّلوا</button>`);
+    fx("good");
     bind({ ok: advance });
     return;
   }
@@ -726,6 +883,7 @@ function answer(ans) {
   save();
   render(`${statusBar()}<div class="flash badf"><span>مش «${esc(said)}»</span><b>${esc(msg)}</b></div>
     <button class="big" id="ok" type="button">مرّر لزميلك</button>`);
+  fx("bad");
   bind({ ok: advance });
 }
 
@@ -747,7 +905,7 @@ function roundEnd() {
     <div class="board">${board.map((i, k) => `<div class="r"><span class="pos">${k + 1}</span><b>${esc(G.players[i].name)}</b><span class="t">${G.players[i].total}</span>
       <small>المساعدة: ${HELPS.map((h) => `${h.icon} ${G.players[i].help[h.k] ? "✓" : "✗"}`).join(" · ")}</small></div>`).join("")}</div>
     ${last ? `<button class="big" id="again" type="button">لعبة جديدة</button>` : `<button class="big" id="next" type="button">الجولة ${G.round}</button>`}`);
-  if (last) store.set("game", null);
+  if (last) { store.set("game", null); fx("win"); }
   bind({ next: pickPass, again: () => setupPlayers() });
 }
 

@@ -89,7 +89,8 @@ struct SplashView: View {
     }
 }
 
-final class WebModel: NSObject, ObservableObject, WKNavigationDelegate {
+final class WebModel: NSObject, ObservableObject, WKNavigationDelegate, WKUIDelegate {
+    let bridge = NativeBridge()
     @Published var loaded = false
     @Published var failed = false
     let startedAt = Date()
@@ -143,6 +144,36 @@ final class WebModel: NSObject, ObservableObject, WKNavigationDelegate {
 
     @objc func refresh() { webView?.reload() }
 
+    // المايك من جوّا الصفحة (إذا الموقع طلبه): نسمح للموقع تبعنا بس
+    func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+                 initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType,
+                 decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+        decisionHandler(origin.host == siteURL.host ? .grant : .prompt)
+    }
+
+    // نوافذ confirm/alert من الصفحة
+    func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
+                 initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "لا", style: .cancel) { _ in completionHandler(false) })
+        alert.addAction(UIAlertAction(title: "آه", style: .default) { _ in completionHandler(true) })
+        topController()?.present(alert, animated: true) ?? completionHandler(false)
+    }
+
+    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
+                 initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "تمام", style: .default) { _ in completionHandler() })
+        topController()?.present(alert, animated: true) ?? completionHandler()
+    }
+
+    private func topController() -> UIViewController? {
+        let scene = UIApplication.shared.connectedScenes.first { $0.activationState == .foregroundActive } as? UIWindowScene
+        var top = scene?.windows.first { $0.isKeyWindow }?.rootViewController
+        while let next = top?.presentedViewController { top = next }
+        return top
+    }
+
     // بنجهّز الصفحة من أول ما يفتح التطبيق، قبل ما الواجهة تنرسم
     func makeWebView() -> WKWebView {
         if let web = webView { return web }
@@ -151,8 +182,14 @@ final class WebModel: NSObject, ObservableObject, WKNavigationDelegate {
         config.applicationNameForUserAgent = "AbuOdehApp/1.0"
         config.allowsInlineMediaPlayback = true
         config.suppressesIncrementalRendering = false
+        config.mediaTypesRequiringUserActionForPlayback = []
+        let handler = WeakHandler(bridge)
+        config.userContentController.add(handler, name: "haptic")
+        config.userContentController.add(handler, name: "speech")
         let web = WKWebView(frame: UIScreen.main.bounds, configuration: config)
         web.navigationDelegate = self
+        web.uiDelegate = self
+        bridge.webView = web
         web.isOpaque = false
         web.backgroundColor = .white
         web.scrollView.backgroundColor = .white
