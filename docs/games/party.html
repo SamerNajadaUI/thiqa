@@ -172,8 +172,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .opt20 button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 10px; font-weight: 600; font-size: 14px; text-align: right; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; align-items: center; min-width: 0; }
 .opt20 img, .opt20 .mini2 { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
 .opt20 button span { overflow-wrap: anywhere; line-height: 1.35; }
-.microw { display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; }
-.mic { border: 2px solid var(--brand-soft); background: #FFFFFF; border-radius: 18px; padding: 12px 10px; font-weight: 700; font-size: 15px; color: var(--brand); box-shadow: 0 4px 0 var(--brand-soft); display: flex; align-items: center; justify-content: center; gap: 6px; }
+.mic { width: 100%; border: 2px solid var(--brand-soft); background: #FFFFFF; border-radius: 18px; padding: 14px 10px; font-weight: 700; font-size: 15px; color: var(--brand); box-shadow: 0 4px 0 var(--brand-soft); display: flex; align-items: center; justify-content: center; gap: 6px; }
 .mic .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--l3); display: none; }
 .mic.on { background: #FEE4E2; border-color: #F97066; color: #B42318; box-shadow: 0 4px 0 #FDA29B; animation: micpulse 1s ease-in-out infinite; }
 .mic.on .dot { display: inline-block; }
@@ -236,7 +235,7 @@ function intro() {
       <li>بالدور، كل واحد بياخذ تلميح جديد، لحد ${MAX_HINTS} تلميحات.</li>
       <li>الجواب الصح بيعطي نقاط حسب التلميح: من الأول <b>${pointsFor(1)}</b>، ومن الأخير <b>${pointsFor(MAX_HINTS)}</b>.</li>
       <li>الجواب الغلط <b>${WRONG}</b> وبيروح قلب. معك <b>قلبين</b> بكل جولة، وإذا خلصوا بتطلع من الجولة.</li>
-      <li>لما تعرفه، <b>اكتب اسمه أو احكيه بصوتك</b> 🎤 (عربي أو إنجليزي، واسم العيلة بيكفي، والغلطة الصغيرة بتنقبل).</li>
+      <li>لما تعرفه، <b>اكتب اسمه أو احكيه بصوتك</b> 🎤 والحكم بيقرر لحاله صح ولا غلط (عربي أو إنجليزي، واسم العيلة بيكفي، والغلطة بالكتابة بتنقبل طالما ما في لاعب ثاني اسمه أقرب).</li>
       <li>وسيلتين مساعدة، كل وحدة مرة وحدة بكل الجولات الخمسة: 🔤 حروف اسمه، و✖️2 دبّلها (الصح ضعف النقاط والغلط ضعف الخصم).</li>
     </ul></div>
     <button class="big green" id="online" type="button">كل واحد من تلفونه</button>
@@ -625,10 +624,7 @@ const CAN_SPEAK = NATIVE_SPEECH || !!SR;
 let rec = null;
 function micButton() {
   if (!CAN_SPEAK) return `<p class="note" style="text-align:center">🎤 الجواب بالصوت مش مدعوم بهالمتصفح. فيك تكبس على المايك بكيبورد التلفون وتحكي الاسم.</p>`;
-  return `<div class="microw">
-      <button type="button" id="micAr" class="mic"><span class="dot"></span>🎤 احكيه بالعربي</button>
-      <button type="button" id="micEn" class="mic"><span class="dot"></span>🎤 English</button>
-    </div>
+  return `<button type="button" id="micAr" class="mic"><span class="dot"></span>🎤 احكي اسم اللاعب بصوتك</button>
     <p class="note" id="micNote" hidden style="text-align:center"></p>`;
 }
 // بيسمع، وبيختار من الاحتمالات اللي سمعها أقرب واحد لاسم اللاعب، وبيحطه بالخانة
@@ -645,8 +641,9 @@ function bindMic(target, onHeard) {
     const rank = { yes: 2, close: 1, no: 0 };
     const best = finalAlts.map((a) => [rank[nameVerdict(target, a)], a]).sort((x, y) => y[0] - x[0])[0][1];
     if ($("nameIn")) $("nameIn").value = best;
-    say(`سمعتك تقول: «${best}». إذا صح اكبس جاوب، وإذا لا عدّل الكتابة أو احكيه كمان مرة.`);
-    onHeard && onHeard(best);
+    say(`سمعتك تقول: «${best}»`);
+    // بنحكم على الجواب لحاله: صح أو غلط (وإذا قريب بس مش أكيد بيطلب يعيد بدون خصم)
+    setTimeout(() => onHeard && onHeard(best), 450);
   };
   const fail = (err) => {
     off();
@@ -686,9 +683,9 @@ function bindMic(target, onHeard) {
     rec.onend = () => { if (listening) finish(); };
     try { rec.start(); } catch { fail("start"); }
   };
-  const ar = $("micAr"), en = $("micEn");
+  // التعرّف بالعربي بيفهم الأسماء الأجنبية كمان (بيكتبها بالعربي) والحكم بيقارنها بالاسمين
+  const ar = $("micAr");
   if (ar) ar.onclick = () => start("ar-JO", ar);
-  if (en) en.onclick = () => start("en-US", en);
 }
 
 // ---------- كتابة الاسم بدل الخيارات ----------
@@ -698,7 +695,7 @@ const COMMON_FIRST = new Set(["محمد", "احمد", "علي", "عبد", "عب�
   "mohamed", "mohammed", "muhammad", "ahmed", "ali", "abdullah", "abdul", "omar", "ibrahim", "youssef", "hassan"]);
 function normName(x) {
   return String(x || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
-    .replace(/[ً-ٰٟـ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي")
+    .replace(/[ً-ٰٟـ]/g, "").replace(/[\u200B-\u200F\u202A-\u202E]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه").replace(/[ىیې]/g, "ي").replace(/ک/g, "ك").replace(/[ہھ]/g, "ه").replace(/ڤ/g, "ف").replace(/گ/g, "ك").replace(/چ/g, "ج").replace(/پ/g, "ب")
     .replace(/ؤ/g, "و").replace(/ئ/g, "ي").replace(/ß/g, "ss").replace(/ø/g, "o").replace(/ł/g, "l").replace(/ı/g, "i")
     .replace(/[^a-z0-9ء-ي\s-]/g, "").replace(/-/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -724,74 +721,68 @@ function skeleton(x) {
     "ك": "k", "ق": "k", "ج": "g", "غ": "g", "ف": "f", "ل": "l", "م": "m", "ن": "n", "ر": "r" };
   return [...t].map((ch) => map[ch] || "").join("").replace(/(.)\1+/g, "$1");
 }
-// أسماء كل اللاعبين (الكامل والعيلة) عشان ما نقبل اسم لاعب ثاني بالغلط (رونالدينيو مش رونالدو)
-let NAME_INDEX = null;
-function otherPlayerNamed(q, target) {
-  if (!NAME_INDEX) {
-    NAME_INDEX = new Map();
-    for (const p of DATA.players) for (const nm of [p.a, p.n].filter(Boolean).map(normName)) {
-      const words = nm.split(" ");
-      for (const k of [nm.replace(/\s/g, ""), words[words.length - 1]]) {
-        if (!NAME_INDEX.has(k)) NAME_INDEX.set(k, new Set());
-        NAME_INDEX.get(k).add(p.id);
-      }
-    }
-  }
-  const ids = NAME_INDEX.get(q.replace(/\s/g, "")) || NAME_INDEX.get(q.split(" ").pop());
-  return !!ids && !ids.has(target.id);
-}
-// "yes" = صح، "close" = قريب كثير (غلطة كتابة)، "no" = غلط
-function nameVerdict(target, input) {
-  const v = nameVerdictRaw(target, input);
-  if (v !== "no" && otherPlayerNamed(normName(input), target)) {
-    // الجواب اسم لاعب ثاني بالزبط: بنرفضه إلا إذا كان مطابق تماماً لاسم لاعبنا كمان
-    const q = normName(input).replace(/\s/g, "");
-    const exact = [target.a, target.n].filter(Boolean).map(normName).some((nm) => nm.replace(/\s/g, "") === q || nm.split(" ").pop() === q || nm.split(" ").includes(q));
-    const sq = skeleton(input);
-    const sameSound = [target.a, target.n].filter(Boolean).map(normName).some((nm) => skeleton(nm) === sq || skeleton(nm.split(" ").pop()) === sq);
-    if (!exact && !sameSound) return "no";
-  }
-  return v;
-}
-function nameVerdictRaw(target, input) {
-  const q = normName(input);
-  if (q.length < 2) return "no";
-  const qq = q.replace(/\s/g, "");
-  const names = [target.a, target.n].filter(Boolean).map(normName);
-  const cands = new Set();
-  for (const nm of names) {
-    cands.add(nm.replace(/\s/g, ""));
+// ---------- الحكم على الجواب ----------
+// الفكرة: الجواب صح إذا كان أقرب لاسم لاعبك من أي لاعب ثاني بالقاعدة، وكان قريب كفاية.
+// يعني "دونروما" صح لدوناروما، "ميسى" صح لميسي، بس "رونالدينيو" غلط لرونالدو لأنه اسم لاعب ثاني.
+function nameKeys(p) {
+  if (p._keys) return p._keys;
+  const keys = new Set(), skel = { ar: new Set(), la: new Set() };
+  for (const nm of [p.a, p.n].filter(Boolean).map(normName)) {
+    const bucket = /[\u0621-\u064A]/.test(nm) ? skel.ar : skel.la;
+    if (!nm) continue;
     const words = nm.split(" ").filter(Boolean);
+    keys.add(nm.replace(/\s/g, ""));
     words.forEach((w, k) => {
-      if (w.length >= 3 && (k === words.length - 1 || (w.length >= 4 && !COMMON_FIRST.has(w)))) { cands.add(w); cands.add(stripAl(w)); }
+      if (w.length >= 3 && (k === words.length - 1 || (w.length >= 4 && !COMMON_FIRST.has(w)))) { keys.add(w); keys.add(stripAl(w)); }
     });
-    if (words.length >= 3) cands.add(words.slice(-2).join(""));
+    if (words.length >= 3) keys.add(words.slice(-2).join(""));
+    const sk = skeleton(nm); if (sk.length >= 3) bucket.add(sk);
+    const sl = skeleton(words[words.length - 1] || ""); if (sl.length >= 3) bucket.add(sl);
+    words.filter((w) => w.length >= 4 && !COMMON_FIRST.has(w)).forEach((w) => { const x = skeleton(w); if (x.length >= 3) bucket.add(x); });
   }
-  let best = 0;
-  for (const c of cands) {
-    if (!c) continue;
-    if (c === qq || c === stripAl(qq)) return "yes";
-    const r = ratio(qq, c);
-    if (r > best) best = r;
-    // اسم العيلة جوّا الجواب (مثلاً كتب "ليونيل ميسي" والاسم المسجل "ميسي")
-    if (c.length >= 4 && q.split(" ").some((w) => w === c || stripAl(w) === c)) return "yes";
-  }
-  if (best >= 0.8) return "yes";
-  // الاسم بالإنجليزي بس والجواب بالعربي (أو العكس): نقارن الهيكل
-  const sq = skeleton(q);
-  if (sq.length >= 3) {
-    for (const nm of names) {
-      const words = nm.split(" ");
-      const parts = [nm, words[words.length - 1], ...words.filter((w) => w.length >= 4 && !COMMON_FIRST.has(w))];
-      for (const p of parts) {
-        const sp = skeleton(p);
-        if (sp.length >= 3 && ratio(sq, sp) >= 0.75) return "yes";
-        if (sp.length >= 3 && ratio(sq, sp) >= 0.55) best = Math.max(best, 0.65);
-      }
-    }
-  }
-  return best >= 0.6 ? "close" : "no";
+  p._keys = { keys: [...keys].filter(Boolean), skel: { ar: [...skel.ar], la: [...skel.la] } };
+  return p._keys;
 }
+// قديش الجواب قريب من اسم اللاعب (0 لـ 1)
+function nameScore(p, q, qs, words) {
+  const { keys, skel } = nameKeys(p);
+  let best = 0;
+  for (const k of keys) {
+    if (k === q) return 1;
+    if (k.length >= 4 && words.includes(k)) best = Math.max(best, 0.97);   // اسم العيلة جوّا جوابه
+    // غلطة أو غلطتين بالأسماء الطويلة مقبولة
+    const d = lev(q, k), L = Math.max(q.length, k.length);
+    let r = 1 - d / L;
+    if (L >= 6 && d <= 2) r = Math.max(r, 0.85);
+    else if (L >= 4 && d <= 1) r = Math.max(r, 0.82);
+    best = Math.max(best, r);
+  }
+  // عربي مقابل إنجليزي: بنقارن هيكل الحروف مع الاسم المكتوب باللغة الثانية بس
+  const other = /[\u0621-\u064A]/.test(q) ? skel.la : skel.ar;
+  if (qs.length >= 3) for (const k of other) { const r = ratio(qs, k); best = Math.max(best, r === 1 ? 0.99 : r * 0.94); }
+  return best;
+}
+// "yes" = صح، "close" = قريب بس مش متأكدين (جرّب كمان مرة بدون خصم)، "no" = غلط
+function nameVerdict(target, input) {
+  const qn = normName(input);
+  if (qn.replace(/\s/g, "").length < 2) return "no";
+  const q = qn.replace(/\s/g, ""), qs = skeleton(qn);
+  const words = qn.split(" ").map(stripAl).concat(qn.split(" "));
+  const st = nameScore(target, q, qs, words);
+  if (st < 0.5) return "no";
+  // في لاعب ثاني اسمه أقرب للجواب؟
+  let other = 0;
+  for (const p of DATA.players) {
+    if (p.id === target.id) continue;
+    const sc = nameScore(p, q, qs, words);
+    if (sc > other) other = sc;
+    if (other > st + 0.08) break;
+  }
+  if (other > st + 0.08) return "no";
+  if (st >= 0.72) return "yes";
+  return "close";
+}
+const nameVerdictRaw = nameVerdict;
 
 // ---------- الوسائل المساعدة (كل وحدة مرة بكل اللعبة) ----------
 const HELPS = [
@@ -854,7 +845,7 @@ function guessView(note = "") {
     back2: () => turnView(),
   });
   $("nameIn").onkeydown = (e) => { if (e.key === "Enter") $("sayIt").click(); };
-  bindMic(target);
+  bindMic(target, (heard) => answer({ text: heard }));
   document.querySelectorAll("[data-help]").forEach((b) => b.onclick = () => { if (applyHelp(b.dataset.help, s, help, target)) { save(); guessView(); } });
   document.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => answer({ id: b.dataset.g }));
 }

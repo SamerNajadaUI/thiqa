@@ -411,7 +411,7 @@
     const inp = $("nameIn");
     inp.value = typedName; inp.oninput = () => { typedName = inp.value; };
     inp.onkeydown = (e) => { if (e.key === "Enter") $("sayIt").click(); };
-    bindMic(target, (heard) => { typedName = heard; });
+    bindMic(target, (heard) => { typedName = ""; send({ t: "guess", text: heard }); loading("لحظة..."); });
     bind({
       sayIt: () => { const t = inp.value.trim(); if (!t) return; typedName = ""; send({ t: "guess", text: t }); loading("لحظة..."); },
       back2: () => { view = "main"; draw(); },
