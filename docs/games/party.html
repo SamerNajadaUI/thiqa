@@ -229,8 +229,9 @@ const initials = (n) => { const w = String(n || "").split(/\s+/).filter(Boolean)
 const face = (p, cls) => p.img ? `<img src="${esc(p.img)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'${cls}',textContent:'${esc(initials(p.n))}'}))">` : `<span class="${cls}">${esc(initials(p.n))}</span>`;
 const store = { get(k, d) { try { const v = localStorage.getItem("party-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("party-" + k, JSON.stringify(v)); } catch {} } };
 
-const ROUNDS = 5, MAX_HINTS = 5, LIVES = 2, WRONG = -2, OPTIONS = 10, CUT = 3;
-const pointsFor = (h) => (MAX_HINTS + 1 - h) * 2;   // من أول تلميح 10 نقاط، ومن الخامس 2
+const ROUNDS = 5, MAX_HINTS = 7, LIVES = 2, WRONG = -2, OPTIONS = 10, CUT = 3;
+const POINTS = [10, 8, 6, 5, 4, 3, 2];
+const pointsFor = (h) => POINTS[Math.min(Math.max(h, 1), POINTS.length) - 1];   // من أول تلميح 10 نقاط، ومن السابع 2
 
 let DATA, byId, G;
 const clubName = (c) => c[0];
@@ -396,6 +397,22 @@ function trophyKey(p) {
   const wc = p.wc || [], ucl = p.ucl || [];
   return `${wc.length ? 1 : 0}${ucl.length ? 1 : 0}`;
 }
+// التلميح السادس: ناديه (الحالي، أو أول نادي للمعتزل لأنه نادي الاعتزال انحكى بأول تلميح)
+function clubHint(p) {
+  const cl = p.cl || [];
+  if (p.cur && p.hc) return `بيلعب هلأ ${bi(p.hc)}`;
+  const first = cl.find((c) => c !== p.rc) || cl[0];
+  return first ? `بدأ مسيرته ${bi(first)}` : "لعب مع نفس النادي طول مسيرته";
+}
+// التلميح السابع: مسيرته الكروية (الأندية بالترتيب)
+function careerHint(p) {
+  const cl = [...new Set(p.cl || [])];
+  if (p.cur && p.hc && !cl.includes(p.hc)) cl.push(p.hc);
+  if (p.x) return `ما عنا مسيرته كاملة، بس هلأ مع ${p.hc || cl[0] || "نادي"} ورقم قميصه ${p.num || "مش معروف"}`;
+  if (cl.length <= 1) return cl.length ? `ما لعب إلا مع ${cl[0]}` : "مسيرته مش مسجّلة";
+  const shown = cl.length > 7 ? [...cl.slice(0, 3), "…", ...cl.slice(-3)] : cl;
+  return `مسيرته: ${shown.join(" ← ")}`;
+}
 function hintsFor(p) {
   const cnt = (n) => n === 1 ? "مرة" : n === 2 ? "مرتين" : `${n} مرات`;
   const wc = p.wc || [], ucl = p.ucl || [];
@@ -419,6 +436,8 @@ function hintsFor(p) {
     trophies,
     nt,
     link.text,
+    clubHint(p),
+    careerHint(p),
   ] };
 }
 
