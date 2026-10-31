@@ -194,7 +194,9 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
             except Exception:
                 roster = []
             club = best if score >= 0.5 else None
-            teams.append({"lg": lg_ar, "espn": t.get("displayName"), "club": club,
+            logo = ((t.get("logos") or [{}])[0] or {}).get("href") or ""
+            m = re.search(r"/teamlogos/soccer/\d+/(\d+)\.png", logo)
+            teams.append({"lg": lg_ar, "espn": t.get("displayName"), "club": club, "logo": m.group(1) if m else (str(t.get("id") or "")),
                           "club_ar": (cands[club]["ar"] if club else None) or t.get("displayName"), "roster": roster})
             if not club:
                 log(f"  ما لقيت نادي Wikidata لـ {t.get('displayName')} ({slug})")
@@ -300,7 +302,8 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
             time.sleep(1)
     arabs = sorted(arabs.items(), key=lambda x: -x[1])[:1500]
     log(f"  لاعبين عرب: {len(arabs)}")
-    return {"squads": squads, "espn_only": espn_only, "arabs": arabs, "countries": countries}
+    return {"squads": squads, "espn_only": espn_only, "arabs": arabs, "countries": countries,
+            "logos": {t["club_ar"]: t["logo"] for t in teams if t.get("logo")}}
 
 
 # ---------------------------------------------------------------- build
@@ -430,7 +433,8 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, coaches: dict, team_
             p.pop("n", None)
         if not p.get("cur"):
             p.pop("cur", None)
-    data = {"generated": time.strftime("%Y-%m-%d"), "leagues": [l for _, _, l in LEAGUES], "players": out}
+    # شعار كل نادي حالي (رقم الفريق عند ESPN، والصفحة بتركّب الرابط)
+    data = {"generated": time.strftime("%Y-%m-%d"), "leagues": [l for _, _, l in LEAGUES], "logos": col.get("logos", {}), "players": out}
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     cur = [p for p in out if p.get("cur")]
     log(f"party.json: {len(cur)} لاعب حالي، {len(out) - len(cur)} معتزل، "

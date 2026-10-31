@@ -187,6 +187,11 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .linkish { border: 0; background: none; color: var(--muted); font-weight: 700; text-decoration: underline; padding: 4px; }
 .wave { display: flex; gap: 4px; align-items: center; justify-content: center; height: 34px; }
 .wave i { width: 5px; border-radius: 3px; background: #F04438; height: 6px; transition: height .08s; }
+.clubbtn { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
+.crest { object-fit: contain; flex: none; }
+.crest-fb { display: grid; place-items: center; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 800; font-size: 16px; }
+.clubhead { display: flex; align-items: center; gap: 12px; }
+.clubhead h1 { margin: 0; }
 .flash { text-align: center; border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
 .flash.good { background: var(--l1s); } .flash.badf { background: var(--l3s); }
 .flash b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
@@ -318,11 +323,19 @@ function pickLeague() {
   };
 }
 
+// شعار النادي من ESPN (إذا موجود)، وإلا دائرة بأول حرفين
+function crest(club, size = 56) {
+  const id = DATA.logos && DATA.logos[club];
+  const fb = `<span class="crest crest-fb" style="width:${size}px;height:${size}px">${esc(String(club).replace(/^نادي\s+/, "").slice(0, 2))}</span>`;
+  if (!id) return fb;
+  return `<img class="crest" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/${esc(id)}.png&h=${size * 2}&w=${size * 2}" alt="" width="${size}" height="${size}" loading="eager" onerror="this.outerHTML='${fb.replace(/'/g, "&#39;").replace(/"/g, "&quot;")}'">`;
+}
+
 function pickClub(league) {
   const m = countBy(current().filter((p) => p.lg === league), (p) => p.hc);
   const clubs = [...m.keys()].sort((a, b) => a.localeCompare(b, "ar"));
   render(`${crumbs([["الدوريات"], [league]])}<h1>اختار النادي</h1>
-    <div class="grid2">${clubs.map((c, i) => `<button class="pickbtn" type="button" data-c="${i}"><b>${esc(c)}</b><small>${m.get(c)} لاعب</small></button>`).join("")}</div>`);
+    <div class="grid2">${clubs.map((c, i) => `<button class="pickbtn clubbtn" type="button" data-c="${i}">${crest(c)}<b>${esc(c)}</b><small>${m.get(c)} لاعب</small></button>`).join("")}</div>`);
   bind({ "cr-0": pickLeague });
   document.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => pickPlayer(league, clubs[+b.dataset.c]));
 }
@@ -330,7 +343,7 @@ function pickClub(league) {
 function pickPlayer(league, club) {
   const ps = current().filter((p) => p.lg === league && p.hc === club)
     .sort((a, b) => POS_ORDER[posCat(a)] - POS_ORDER[posCat(b)] || (a.num || 99) - (b.num || 99));
-  render(`${crumbs([["الدوريات"], [league], [club]])}<h1>تشكيلة ${esc(club)}</h1>
+  render(`${crumbs([["الدوريات"], [league], [club]])}<div class="clubhead">${crest(club, 64)}<h1>تشكيلة ${esc(club)}</h1></div>
     <div class="stack" style="gap:8px">${ps.map(playerBtn).join("")}</div>`);
   bind({ "cr-0": pickLeague, "cr-1": () => pickClub(league) });
   bindPlayers();
