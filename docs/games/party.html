@@ -227,10 +227,11 @@ function intro() {
     <div class="card" style="background:#FFF;border:2px solid var(--brand-soft);border-radius:26px;padding:16px;box-shadow:0 6px 0 var(--brand-soft)"><ul class="rules">
       <li>من 2 لـ5 لاعبين، و${ROUNDS} جولات.</li>
       <li>بكل جولة: كل واحد بيختار لاعب بالسر (دوري، نادي، لاعب من التشكيلة، أو المعتزلين حسب المنتخب)، وبعدين اللاعبين بيتوزعوا.</li>
-      <li>بالدور، كل واحد بياخذ تلميح جديد، لحد ${MAX_HINTS} تلميحات. وبتختار من ${OPTIONS} خيارات.</li>
+      <li>بالدور، كل واحد بياخذ تلميح جديد، لحد ${MAX_HINTS} تلميحات.</li>
       <li>الجواب الصح بيعطي نقاط حسب التلميح: من الأول <b>${pointsFor(1)}</b>، ومن الأخير <b>${pointsFor(MAX_HINTS)}</b>.</li>
       <li>الجواب الغلط <b>${WRONG}</b> وبيروح قلب. معك <b>قلبين</b> بكل جولة، وإذا خلصوا بتطلع من الجولة.</li>
-      <li>وسيلتين مساعدة بكل اللعبة: <b>احذف ${CUT}</b> من الخيارات الغلط، و<b>محاولة مجانية</b> ما بتخصم إشي.</li>
+      <li>لما تعرفه، <b>اكتب اسمه</b> (عربي أو إنجليزي، واسم العيلة بيكفي، والغلطة الصغيرة بالكتابة بتنقبل).</li>
+      <li>4 وسائل مساعدة، كل وحدة مرة بكل اللعبة: 📸 صورته مغبّشة، 🔤 حروف اسمه، 🎯 3 خيارات، و✖️2 دبّلها (الصح ضعف والغلط ضعف).</li>
     </ul></div>
     <button class="big green" id="online" type="button">كل واحد من تلفونه</button>
     ${saved && saved.round <= ROUNDS ? `<button class="big" id="resume" type="button">كمّلوا على تلفون واحد (الجولة ${saved.round})</button>` : ""}
@@ -251,7 +252,7 @@ function setupPlayers(n = store.get("n", 3)) {
     const ps = Array.from({ length: n }, (_, i) => $("nm-" + i).value.trim() || `لاعب ${i + 1}`);
     if (new Set(ps).size !== ps.length) { $("err").hidden = false; $("err").textContent = "في اسمين متشابهين."; return; }
     store.set("n", n); store.set("names", ps);
-    G = { players: ps.map((name) => ({ name, total: 0, help: { cut: true, free: true } })), round: 1, phase: "pick", picker: 0, picks: [], hist: [] };
+    G = { players: ps.map((name) => ({ name, total: 0, help: newHelp() })), round: 1, phase: "pick", picker: 0, picks: [], hist: [] };
     save(); pickPass();
   } });
 }
@@ -494,7 +495,7 @@ function startPlay() {
   const H = G.targets.map((id) => hintsFor(byId.get(id)));
   G.hints = H.map((h) => h.text);
   G.links = H.map((h) => h.link);
-  G.st = G.players.map((_, i) => ({ h: 0, lives: LIVES, pts: 0, done: null, opts: optionsFor(byId.get(G.targets[i]), G.links[i]), cutUsed: false }));
+  G.st = G.players.map((_, i) => ({ h: 0, lives: LIVES, pts: 0, done: null, opts: optionsFor(byId.get(G.targets[i]), G.links[i]) }));
   G.turn = 0; G.phase = "play"; save();
   turnPass();
 }
@@ -534,52 +535,196 @@ function turnView(flash = "") {
   bind({ guess: guessView, pass: () => { if (last) { s.done = "out"; } advance(); } });
 }
 
-function guessView() {
-  const i = G.turn, s = G.st[i], help = G.players[i].help;
-  const opts = s.opts.map((id) => byId.get(id)).filter(Boolean);
-  render(`${statusBar()}<h2>اختار لاعبك</h2>
-    <div class="helpers">
-      <button type="button" id="cut" ${help.cut && !s.cutUsed ? "" : "disabled"}>احذف ${CUT} خيارات</button>
-      <button type="button" id="free" class="${s.freeArmed ? "armed" : ""}" ${help.free || s.freeArmed ? "" : "disabled"}>${s.freeArmed ? "المحاولة المجانية شغّالة" : "محاولة مجانية"}</button>
-    </div>
-    <p class="note">${opts.length} خيار. الوسائل المساعدة مرة وحدة بكل اللعبة.</p>
-    <div class="opt20">${opts.map((p) => `<button type="button" data-g="${p.id}">${face(p, "mini2")}<span>${esc(p.a)}</span></button>`).join("")}</div>
-    <button class="big ghost" id="back2" type="button">رجوع للتلميحات</button>`);
-  bind({
-    cut: () => {
-      const target = G.targets[i];
-      const wrong = easyWrong(byId.get(target), s.opts, CUT, (G.links || [])[i] || { k: "letter" }, s.h);
-      s.opts = s.opts.filter((id) => !wrong.includes(id));
-      s.cutUsed = true; help.cut = false; save(); guessView();
-    },
-    free: () => { if (!s.freeArmed && help.free) { s.freeArmed = true; help.free = false; save(); guessView(); } },
-    back2: () => turnView(),
-  });
-  document.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => answer(b.dataset.g));
+// ---------- كتابة الاسم بدل الخيارات ----------
+// بنقبل: الاسم الكامل، أو اسم العيلة، أو أي جزء مميز من الاسم (مش اسم أول شائع)، بالعربي أو الإنجليزي،
+// ومع غلطة إملائية بسيطة. ولو الاسم مكتوب بالإنجليزي بس، بنقارن "هيكل الحروف" عشان العربي ينقبل.
+const COMMON_FIRST = new Set(["محمد", "احمد", "علي", "عبد", "عبدالله", "عبدالرحمن", "خالد", "عمر", "مصطفي", "ابراهيم", "يوسف", "حسن", "حسين", "سعد", "فهد",
+  "mohamed", "mohammed", "muhammad", "ahmed", "ali", "abdullah", "abdul", "omar", "ibrahim", "youssef", "hassan"]);
+function normName(x) {
+  return String(x || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[ً-ٰٟـ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي")
+    .replace(/ؤ/g, "و").replace(/ئ/g, "ي").replace(/ß/g, "ss").replace(/ø/g, "o").replace(/ł/g, "l").replace(/ı/g, "i")
+    .replace(/[^a-z0-9ء-ي\s-]/g, "").replace(/-/g, " ").replace(/\s+/g, " ").trim();
+}
+const stripAl = (t) => (t.length > 4 && t.startsWith("ال") ? t.slice(2) : t);
+function lev(a, b) {
+  if (a === b) return 0;
+  const m = a.length, n = b.length; if (!m || !n) return m || n;
+  let prev = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    const cur = [i];
+    for (let j = 1; j <= n; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = cur;
+  }
+  return prev[n];
+}
+const ratio = (a, b) => 1 - lev(a, b) / Math.max(a.length, b.length, 1);
+// هيكل الحروف: الحروف الساكنة بس، بنفس الرموز للعربي والإنجليزي
+function skeleton(x) {
+  let t = normName(x).replace(/\s/g, "");
+  t = t.replace(/sh/g, "s").replace(/ch/g, "k").replace(/ck/g, "k").replace(/ph/g, "f").replace(/th/g, "t").replace(/x/g, "ks");
+  const map = { b: "b", p: "b", v: "f", f: "f", t: "t", d: "d", s: "s", z: "z", c: "k", k: "k", q: "k", g: "g", j: "g", l: "l", m: "m", n: "n", r: "r",
+    "ب": "b", "پ": "b", "ت": "t", "ط": "t", "ث": "t", "د": "d", "ض": "d", "ذ": "d", "س": "s", "ص": "s", "ش": "s", "ز": "z", "ظ": "z",
+    "ك": "k", "ق": "k", "ج": "g", "غ": "g", "ف": "f", "ل": "l", "م": "m", "ن": "n", "ر": "r" };
+  return [...t].map((ch) => map[ch] || "").join("").replace(/(.)\1+/g, "$1");
+}
+// أسماء كل اللاعبين (الكامل والعيلة) عشان ما نقبل اسم لاعب ثاني بالغلط (رونالدينيو مش رونالدو)
+let NAME_INDEX = null;
+function otherPlayerNamed(q, target) {
+  if (!NAME_INDEX) {
+    NAME_INDEX = new Map();
+    for (const p of DATA.players) for (const nm of [p.a, p.n].filter(Boolean).map(normName)) {
+      const words = nm.split(" ");
+      for (const k of [nm.replace(/\s/g, ""), words[words.length - 1]]) {
+        if (!NAME_INDEX.has(k)) NAME_INDEX.set(k, new Set());
+        NAME_INDEX.get(k).add(p.id);
+      }
+    }
+  }
+  const ids = NAME_INDEX.get(q.replace(/\s/g, "")) || NAME_INDEX.get(q.split(" ").pop());
+  return !!ids && !ids.has(target.id);
+}
+// "yes" = صح، "close" = قريب كثير (غلطة كتابة)، "no" = غلط
+function nameVerdict(target, input) {
+  const v = nameVerdictRaw(target, input);
+  if (v !== "no" && otherPlayerNamed(normName(input), target)) {
+    // الجواب اسم لاعب ثاني بالزبط: بنرفضه إلا إذا كان مطابق تماماً لاسم لاعبنا كمان
+    const q = normName(input).replace(/\s/g, "");
+    const exact = [target.a, target.n].filter(Boolean).map(normName).some((nm) => nm.replace(/\s/g, "") === q || nm.split(" ").pop() === q || nm.split(" ").includes(q));
+    const sq = skeleton(input);
+    const sameSound = [target.a, target.n].filter(Boolean).map(normName).some((nm) => skeleton(nm) === sq || skeleton(nm.split(" ").pop()) === sq);
+    if (!exact && !sameSound) return "no";
+  }
+  return v;
+}
+function nameVerdictRaw(target, input) {
+  const q = normName(input);
+  if (q.length < 2) return "no";
+  const qq = q.replace(/\s/g, "");
+  const names = [target.a, target.n].filter(Boolean).map(normName);
+  const cands = new Set();
+  for (const nm of names) {
+    cands.add(nm.replace(/\s/g, ""));
+    const words = nm.split(" ").filter(Boolean);
+    words.forEach((w, k) => {
+      if (w.length >= 3 && (k === words.length - 1 || (w.length >= 4 && !COMMON_FIRST.has(w)))) { cands.add(w); cands.add(stripAl(w)); }
+    });
+    if (words.length >= 3) cands.add(words.slice(-2).join(""));
+  }
+  let best = 0;
+  for (const c of cands) {
+    if (!c) continue;
+    if (c === qq || c === stripAl(qq)) return "yes";
+    const r = ratio(qq, c);
+    if (r > best) best = r;
+    // اسم العيلة جوّا الجواب (مثلاً كتب "ليونيل ميسي" والاسم المسجل "ميسي")
+    if (c.length >= 4 && q.split(" ").some((w) => w === c || stripAl(w) === c)) return "yes";
+  }
+  if (best >= 0.8) return "yes";
+  // الاسم بالإنجليزي بس والجواب بالعربي (أو العكس): نقارن الهيكل
+  const sq = skeleton(q);
+  if (sq.length >= 3) {
+    for (const nm of names) {
+      const words = nm.split(" ");
+      const parts = [nm, words[words.length - 1], ...words.filter((w) => w.length >= 4 && !COMMON_FIRST.has(w))];
+      for (const p of parts) {
+        const sp = skeleton(p);
+        if (sp.length >= 3 && ratio(sq, sp) >= 0.75) return "yes";
+        if (sp.length >= 3 && ratio(sq, sp) >= 0.55) best = Math.max(best, 0.65);
+      }
+    }
+  }
+  return best >= 0.6 ? "close" : "no";
 }
 
-function answer(id) {
+// ---------- الوسائل المساعدة (كل وحدة مرة بكل اللعبة) ----------
+const HELPS = [
+  { k: "photo", icon: "📸", t: "الصورة", d: "صورة لاعبك مغبّشة" },
+  { k: "letters", icon: "🔤", t: "الحروف", d: "أول حرف وعدد حروف كل كلمة" },
+  { k: "three", icon: "🎯", t: "3 خيارات", d: "بتختار من 3 أسماء بدل ما تكتب" },
+  { k: "double", icon: "✖️2", t: "دبّلها", d: "الجواب الجاي: الصح ضعف النقاط، والغلط ضعف الخصم" },
+];
+const newHelp = () => Object.fromEntries(HELPS.map((h) => [h.k, true]));
+function lettersHint(p) {
+  const words = String(p.a).split(/\s+/).filter(Boolean);
+  return words.map((w) => w[0] + " " + "_ ".repeat(Math.max(0, w.length - 1)).trim()).join("     ");
+}
+// بيطبّق وسيلة على حالة اللاعب بالجولة (s) وعلى رصيده (help). بيرجع true إذا انطبقت.
+function applyHelp(kind, s, help, target) {
+  if (!help || !help[kind]) return false;
+  if (kind === "three") {
+    // أشبه اثنين: نفس النادي ونفس المركز (أو نفس المنتخب للمعتزل)، بعدين الأقرب بالتلميحات
+    const tier = (x) => (posCat(x) === posCat(target) ? 2 : 0) + (target.cur ? (x.hc === target.hc ? 3 : 0) : (ntOf(x) === ntOf(target) ? 3 : 0));
+    const others = s.opts.filter((id) => id !== target.id).map((id) => byId.get(id)).filter(Boolean)
+      .map((x) => [tier(x) + similarity(target, { k: "letter" }, x)[0] * 0.01 + Math.random() * 0.001, x.id]).sort((a, b) => b[0] - a[0]);
+    s.three = shuffle([target.id, ...others.slice(0, 2).map(([, id]) => id)]);
+  } else if (kind === "double") s.double = true;
+  else s[kind] = true;
+  help[kind] = false;
+  return true;
+}
+// الجزء اللي بيطلع فوق خانة الكتابة: الوسائل والمساعدات اللي انفتحت
+function guessPanel(s, help, target) {
+  const btns = HELPS.map((h) => {
+    const on = h.k === "double" ? s.double : h.k === "three" ? !!s.three : s[h.k];
+    return `<button type="button" data-help="${h.k}" class="${on ? "armed" : ""}" ${help[h.k] ? "" : "disabled"}><span style="font-size:18px">${h.icon}</span> ${h.t}</button>`;
+  }).join("");
+  const photo = s.photo ? (target.img
+    ? `<div style="display:grid;place-items:center"><img src="${esc(target.img)}" alt="" referrerpolicy="no-referrer" style="width:150px;height:150px;border-radius:28px;object-fit:cover;object-position:50% 18%;filter:blur(9px) saturate(.6);transform:scale(1.02)"></div>`
+    : `<p class="note" style="text-align:center">ما في صورة لهاللاعب، فهي الحروف بدالها: <b>${esc(lettersHint(target))}</b></p>`) : "";
+  const letters = s.letters ? `<div class="flash" style="background:var(--soft);padding:12px"><span>الحروف</span><b style="font-size:24px;letter-spacing:1px;direction:rtl">${esc(lettersHint(target))}</b></div>` : "";
+  const three = s.three ? `<div class="opt20">${s.three.map((id) => { const p = byId.get(id); return p ? `<button type="button" data-g="${p.id}">${face(p, "mini2")}<span>${esc(p.a)}</span></button>` : ""; }).join("")}</div>` : "";
+  const dbl = s.double ? `<p class="note" style="text-align:center;color:var(--l3)"><b>دبّلتها!</b> الصح ضعف النقاط، والغلط ضعف الخصم.</p>` : "";
+  return `<div class="helpers" style="grid-template-columns:repeat(2,1fr)">${btns}</div>
+    <p class="note">كل وسيلة مرة وحدة بكل اللعبة.</p>${photo}${letters}${dbl}${three}
+    <input class="search" id="nameIn" type="text" placeholder="اكتب اسم اللاعب" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" style="font-size:20px;text-align:center">
+    <p class="note" id="close" hidden style="text-align:center;color:var(--gold-dark)"></p>
+    <button class="big green" id="sayIt" type="button">جاوب</button>`;
+}
+// بيقرر نتيجة الجواب: id (من الخيارات الثلاثة) أو نص مكتوب
+function judgeAnswer(target, ans) {
+  if (ans.id) return ans.id === target.id ? "yes" : "no";
+  return nameVerdict(target, ans.text);
+}
+
+function guessView(note = "") {
+  const i = G.turn, s = G.st[i], help = G.players[i].help;
+  const target = byId.get(G.targets[i]);
+  render(`${statusBar()}<h2>مين لاعبك؟</h2>
+    ${guessPanel(s, help, target)}
+    <button class="big ghost" id="back2" type="button">رجوع للتلميحات</button>`);
+  if (note) { $("close").hidden = false; $("close").textContent = note; }
+  bind({
+    sayIt: () => { const t = $("nameIn").value.trim(); if (t) answer({ text: t }); },
+    back2: () => turnView(),
+  });
+  $("nameIn").onkeydown = (e) => { if (e.key === "Enter") $("sayIt").click(); };
+  document.querySelectorAll("[data-help]").forEach((b) => b.onclick = () => { if (applyHelp(b.dataset.help, s, help, target)) { save(); guessView(); } });
+  document.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => answer({ id: b.dataset.g }));
+}
+
+function answer(ans) {
   const i = G.turn, s = G.st[i];
   const target = byId.get(G.targets[i]);
-  if (id === target.id) {
-    const pts = pointsFor(s.h);
-    s.pts += pts; s.done = "solved"; s.freeArmed = false; save();
-    render(`${statusBar()}<div class="flash good"><span>صح!</span><b>${esc(target.a)}</b><span>عرفته من التلميح ${s.h}: <b>+${pts}</b></span></div>
+  const v = judgeAnswer(target, ans);
+  if (v === "close") { guessView("قريب كثير! تأكد من الكتابة وجرّب كمان مرة (ما انحسبت)."); return; }
+  const mult = s.double ? 2 : 1;
+  s.double = false;
+  if (v === "yes") {
+    const pts = pointsFor(s.h) * mult;
+    s.pts += pts; s.done = "solved"; save();
+    render(`${statusBar()}<div class="flash good"><span>صح!${mult > 1 ? " ودبّلتها" : ""}</span><b>${esc(target.a)}</b><span>عرفته من التلميح ${s.h}: <b>+${pts}</b></span></div>
       <button class="big" id="ok" type="button">كمّلوا</button>`);
     bind({ ok: advance });
     return;
   }
-  const guessed = byId.get(id);
-  s.opts = s.opts.filter((x) => x !== id);
-  let msg;
-  if (s.freeArmed) { s.freeArmed = false; msg = "غلط، بس كانت المحاولة المجانية. ما انخصم إشي."; }
-  else {
-    s.pts += WRONG; s.lives--;
-    msg = s.lives > 0 ? `غلط! ${WRONG} وراح قلب. ضايلك ${s.lives}.` : `غلط! ${WRONG} وخلصت القلوب، طلعت من الجولة.`;
-    if (s.lives <= 0) s.done = "out";
-  }
+  const said = ans.id ? (byId.get(ans.id) || {}).a : ans.text;
+  if (ans.id && s.three) s.three = s.three.filter((x) => x !== ans.id);
+  s.pts += WRONG * mult; s.lives--;
+  if (s.lives <= 0) s.done = "out";
+  const msg = s.lives > 0 ? `غلط! ${WRONG * mult} وراح قلب. ضايلك ${s.lives}.` : `غلط! ${WRONG * mult} وخلصت القلوب، طلعت من الجولة.`;
   save();
-  render(`${statusBar()}<div class="flash badf"><span>مش ${esc(guessed?.a)}</span><b>${esc(msg)}</b></div>
+  render(`${statusBar()}<div class="flash badf"><span>مش «${esc(said)}»</span><b>${esc(msg)}</b></div>
     <button class="big" id="ok" type="button">مرّر لزميلك</button>`);
   bind({ ok: advance });
 }
@@ -600,7 +745,7 @@ function roundEnd() {
       return `<div class="pickbtn prow">${face(p, "mini2")}<span><b>${esc(r.name)}: ${esc(p.a)}</b><small>${r.done === "solved" ? `عرفه من التلميح ${r.h}` : "ما عرفه"} · <bdi dir="ltr">${r.pts > 0 ? "+" : ""}${r.pts}</bdi></small></span></div>`; }).join("")}</div>
     <h2>المجموع</h2>
     <div class="board">${board.map((i, k) => `<div class="r"><span class="pos">${k + 1}</span><b>${esc(G.players[i].name)}</b><span class="t">${G.players[i].total}</span>
-      <small>المساعدة: ${G.players[i].help.cut ? `احذف ${CUT} ✓` : `احذف ${CUT} ✗`} · ${G.players[i].help.free ? "مجانية ✓" : "مجانية ✗"}</small></div>`).join("")}</div>
+      <small>المساعدة: ${HELPS.map((h) => `${h.icon} ${G.players[i].help[h.k] ? "✓" : "✗"}`).join(" · ")}</small></div>`).join("")}</div>
     ${last ? `<button class="big" id="again" type="button">لعبة جديدة</button>` : `<button class="big" id="next" type="button">الجولة ${G.round}</button>`}`);
   if (last) store.set("game", null);
   bind({ next: pickPass, again: () => setupPlayers() });
@@ -609,6 +754,14 @@ function roundEnd() {
 $("quit").onclick = () => { location.href = "./"; };
 
 fetch("party.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
+  // نرجّع الحقول المختصرة بملف party.json
+  for (const p of d.players) {
+    if (typeof p.img === "string" && p.img.startsWith("c:")) p.img = "https://commons.wikimedia.org/wiki/Special:FilePath/" + p.img.slice(2) + "?width=360";
+    else if (typeof p.img === "string" && p.img.startsWith("e:")) p.img = "https://a.espncdn.com/i/headshots/soccer/players/full/" + p.img.slice(2) + ".png";
+    if (!p.n) p.n = p.a;
+    p.cur = !!p.cur;
+    for (const k of ["wc", "ucl", "tm", "co", "cl"]) if (!p[k]) p[k] = [];
+  }
   DATA = d; byId = new Map(d.players.map((p) => [p.id, p]));
   if (!d.players || !d.players.length) { $("app").innerHTML = `<div class="loading">قاعدة اللاعبين لسا بتتحدث. جرّب كمان شوي.</div>`; return; }
   if (window.onlineBoot && onlineBoot()) return;

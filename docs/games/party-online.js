@@ -112,7 +112,7 @@
     loading("عم بفتح الغرفة...");
     connect(() => {
       client.subscribe([topic("s"), topic("a")], { qos: 1 });
-      S = restored || { v: 0, room, host: me.id, phase: "lobby", round: 1, players: [{ id: me.id, name: me.name, total: 0, help: { cut: true, free: true } }], picks: [], hist: [] };
+      S = restored || { v: 0, room, host: me.id, phase: "lobby", round: 1, players: [{ id: me.id, name: me.name, total: 0, help: newHelp() }], picks: [], hist: [] };
       publish();
       if (S.phase === "play" && S.deadline) armTimer();
     });
@@ -133,7 +133,7 @@
       case "join":
         if (i >= 0) { if (a.name && S.players[i].name !== a.name) { S.players[i].name = a.name; } publish(); return; }
         if (S.phase !== "lobby" || S.players.length >= MAX_PLAYERS) { publish(); return; }
-        S.players.push({ id: a.pid, name: uniqueName(a.name), total: 0, help: { cut: true, free: true } });
+        S.players.push({ id: a.pid, name: uniqueName(a.name), total: 0, help: newHelp() });
         return publish();
       case "kick":
         if (a.pid !== S.host || S.phase !== "lobby") return;
@@ -148,7 +148,7 @@
         S.picks[i] = a.id;
         if (S.picks.every(Boolean)) startPlay(); else publish();
         return;
-      case "pass": case "guess": case "cut": case "free":
+      case "pass": case "guess": case "help":
         if (S.phase !== "play" || i !== S.turn) return;
         return turnAction(i, a);
       case "next":
@@ -157,7 +157,7 @@
         return publish();
       case "again":
         if (a.pid !== S.host || S.phase !== "over") return;
-        S.players.forEach((p) => { p.total = 0; p.help = { cut: true, free: true }; });
+        S.players.forEach((p) => { p.total = 0; p.help = newHelp(); });
         S.round = 1; S.hist = []; S.phase = "pick"; S.picks = S.players.map(() => null); S.flash = null;
         return publish();
     }
@@ -175,7 +175,7 @@
     const H = S.targets.map((id) => hintsFor(byId.get(id)));
     S.hints = H.map((h) => h.text);
     S.links = H.map((h) => h.link);
-    S.st = S.players.map((_, i) => ({ h: 0, lives: LIVES, pts: 0, done: null, opts: optionsFor(byId.get(S.targets[i]), S.links[i]), cutUsed: false, freeArmed: false }));
+    S.st = S.players.map((_, i) => ({ h: 0, lives: LIVES, pts: 0, done: null, opts: optionsFor(byId.get(S.targets[i]), S.links[i]) }));
     S.phase = "play"; S.flash = null;
     beginTurn(0);
   }
@@ -209,35 +209,31 @@
       S.flash = { who: i, good: false, text: s.done ? `${p.name} استسلم` : `${p.name} مرّر` };
       return advance();
     }
-    if (a.t === "cut") {
-      if (!p.help.cut || s.cutUsed) return;
+    if (a.t === "help") {
       const target = byId.get(S.targets[i]);
-      const wrong = easyWrong(target, s.opts, CUT, S.links[i] || { k: "letter" }, s.h);
-      s.opts = s.opts.filter((id) => !wrong.includes(id));
-      s.cutUsed = true; p.help.cut = false;
-      return publish();
-    }
-    if (a.t === "free") {
-      if (!p.help.free || s.freeArmed) return;
-      s.freeArmed = true; p.help.free = false;
-      return publish();
+      if (applyHelp(a.kind, s, p.help, target)) publish();
+      return;
     }
     if (a.t === "guess") {
-      if (!s.opts.includes(a.id)) return;
       const target = byId.get(S.targets[i]);
-      if (a.id === target.id) {
-        const pts = pointsFor(s.h);
-        s.pts += pts; s.done = "solved"; s.freeArmed = false;
-        S.flash = { who: i, good: true, text: `${p.name} عرف لاعبه من التلميح ${s.h}: +${pts}` };
+      const ans = a.id ? { id: a.id } : { text: String(a.text || "").slice(0, 60) };
+      if (ans.id && !(s.three || []).includes(ans.id)) return;
+      if (!ans.id && !ans.text.trim()) return;
+      const v = judgeAnswer(target, ans);
+      if (v === "close") { s.close = (s.close || 0) + 1; return publish(); }   // قريب كثير: ما بتنحسب، وبيجرّب كمان مرة
+      s.close = 0;
+      const mult = s.double ? 2 : 1;
+      s.double = false;
+      if (v === "yes") {
+        const pts = pointsFor(s.h) * mult;
+        s.pts += pts; s.done = "solved";
+        S.flash = { who: i, good: true, text: `${p.name} عرف لاعبه من التلميح ${s.h}${mult > 1 ? " ودبّلها" : ""}: +${pts}` };
       } else {
-        const g = byId.get(a.id);
-        s.opts = s.opts.filter((x) => x !== a.id);
-        if (s.freeArmed) { s.freeArmed = false; S.flash = { who: i, good: false, text: `${p.name} قال ${g ? g.a : ""} وغلط، بس كانت محاولة مجانية` }; }
-        else {
-          s.pts += WRONG; s.lives--;
-          if (s.lives <= 0) s.done = "out";
-          S.flash = { who: i, good: false, text: `${p.name} قال ${g ? g.a : ""} وغلط: ${WRONG}${s.done ? "، وطلع من الجولة" : ""}` };
-        }
+        const said = ans.id ? (byId.get(ans.id) || {}).a : ans.text;
+        if (ans.id && s.three) s.three = s.three.filter((x) => x !== ans.id);
+        s.pts += WRONG * mult; s.lives--;
+        if (s.lives <= 0) s.done = "out";
+        S.flash = { who: i, good: false, text: `${p.name} قال «${said}» وغلط: ${WRONG * mult}${s.done ? "، وطلع من الجولة" : ""}` };
       }
       return advance();
     }
@@ -394,19 +390,24 @@
     startTicker();
   }
 
+  let typedName = "";
   function drawGuess(mi) {
     const s = S.st[mi], help = S.players[mi].help;
-    const opts = s.opts.map((id) => byId.get(id)).filter(Boolean);
+    const target = byId.get(S.targets[mi]);
     render(`${header()}<div style="text-align:center"><span class="sub">باقي</span> <b id="timer" style="font-family:var(--display);font-size:30px">30</b></div>
       <h2>مين لاعبك؟</h2>
-      <div class="helpers">
-        <button type="button" id="cut" ${help.cut && !s.cutUsed ? "" : "disabled"}>احذف ${CUT} خيارات</button>
-        <button type="button" id="free" class="${s.freeArmed ? "armed" : ""}" ${help.free || s.freeArmed ? "" : "disabled"}>${s.freeArmed ? "المحاولة المجانية شغّالة" : "محاولة مجانية"}</button>
-      </div>
-      <div class="opt20">${opts.map((p) => `<button type="button" data-g="${p.id}">${face(p, "mini2")}<span>${esc(p.a)}</span></button>`).join("")}</div>
+      ${guessPanel(s, help, target)}
       <button class="big ghost" id="back2" type="button">رجوع للتلميحات</button>`);
-    bind({ cut: () => send({ t: "cut" }), free: () => send({ t: "free" }), back2: () => { view = "main"; draw(); } });
-    document.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => { view = "main"; send({ t: "guess", id: b.dataset.g }); loading("لحظة..."); });
+    if (s.close) { $("close").hidden = false; $("close").textContent = "قريب كثير! تأكد من الكتابة وجرّب كمان مرة (ما انحسبت)."; }
+    const inp = $("nameIn");
+    inp.value = typedName; inp.oninput = () => { typedName = inp.value; };
+    inp.onkeydown = (e) => { if (e.key === "Enter") $("sayIt").click(); };
+    bind({
+      sayIt: () => { const t = inp.value.trim(); if (!t) return; typedName = ""; send({ t: "guess", text: t }); loading("لحظة..."); },
+      back2: () => { view = "main"; draw(); },
+    });
+    document.querySelectorAll("[data-help]").forEach((b) => b.onclick = () => send({ t: "help", kind: b.dataset.help }));
+    document.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => { send({ t: "guess", id: b.dataset.g }); loading("لحظة..."); });
     startTicker();
   }
 

@@ -20,6 +20,8 @@ from collections import defaultdict
 from pathlib import Path
 
 OUT = Path(__file__).resolve().parent.parent / "docs" / "games" / "party.json"
+COMMONS = "https://commons.wikimedia.org/wiki/Special:FilePath/"
+ESPN_IMG = "https://a.espncdn.com/i/headshots/soccer/players/full/"
 
 # (ESPN، صفحة ويكيبيديا الإنجليزية، الاسم بالعربي)
 LEAGUES = [
@@ -397,6 +399,23 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, coaches: dict, team_
             "wc": [], "ucl": [], "tm": [], "co": [], "r": 0, "x": 1, "cl": [e["club_ar"]],
         })
     out.sort(key=lambda p: -p["r"])
+    # الملف أخف (أسرع بالتحميل): روابط الصور بنكتبها مختصرة والصفحة بترجعها كاملة
+    for p in out:
+        img = p.get("img") or ""
+        if img.startswith(COMMONS) and img.endswith("?width=360"):
+            p["img"] = "c:" + img[len(COMMONS):-len("?width=360")]
+        elif img.startswith(ESPN_IMG) and img.endswith(".png"):
+            p["img"] = "e:" + img[len(ESPN_IMG):-4]
+        for k in ("rc", "num", "lg", "hc", "nat", "by"):
+            if p.get(k) is None:
+                p.pop(k, None)
+        for k in ("wc", "ucl", "tm", "co", "cl"):
+            if not p.get(k):
+                p.pop(k, None)
+        if p.get("n") == p.get("a"):
+            p.pop("n", None)
+        if not p.get("cur"):
+            p.pop("cur", None)
     data = {"generated": time.strftime("%Y-%m-%d"), "leagues": [l for _, _, l in LEAGUES], "players": out}
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     cur = [p for p in out if p["cur"]]
