@@ -3138,9 +3138,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
      "live": {
-      "state": "pre",
-      "detail": "10/30 - 7:30 PM EDT",
-      "score": null
+      "state": "in",
+      "detail": "11:56 - 3rd",
+      "score": "78-49"
      }
     },
     {
@@ -3339,9 +3339,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mia.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ind.png",
      "live": {
-      "state": "pre",
-      "detail": "10/30 - 8:00 PM EDT",
-      "score": null
+      "state": "in",
+      "detail": "5:25 - 2nd",
+      "score": "53-54"
      }
     },
     {
@@ -3538,9 +3538,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
      "live": {
-      "state": "pre",
-      "detail": "10/30 - 7:30 PM EDT",
-      "score": null
+      "state": "in",
+      "detail": "Halftime",
+      "score": "49-56"
      }
     },
     {
@@ -3752,9 +3752,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lac.png",
      "live": {
-      "state": "pre",
-      "detail": "10/30 - 8:00 PM EDT",
-      "score": null
+      "state": "in",
+      "detail": "2:10 - 2nd",
+      "score": "62-54"
      }
     },
     {
@@ -4045,9 +4045,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
      "live": {
-      "state": "pre",
-      "detail": "10/30 - 8:00 PM EDT",
-      "score": null
+      "state": "in",
+      "detail": "3:33 - 2nd",
+      "score": "38-38"
      }
     }
    ],
@@ -4347,9 +4347,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
        "live": {
-        "state": "pre",
-        "detail": "10/30 - 7:30 PM EDT",
-        "score": null
+        "state": "in",
+        "detail": "11:56 - 3rd",
+        "score": "78-49"
        }
       },
       {
@@ -4453,9 +4453,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mia.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ind.png",
        "live": {
-        "state": "pre",
-        "detail": "10/30 - 8:00 PM EDT",
-        "score": null
+        "state": "in",
+        "detail": "5:25 - 2nd",
+        "score": "53-54"
        }
       }
      ],
@@ -4857,9 +4857,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
        "live": {
-        "state": "pre",
-        "detail": "10/30 - 7:30 PM EDT",
-        "score": null
+        "state": "in",
+        "detail": "Halftime",
+        "score": "49-56"
        }
       },
       {
@@ -4963,9 +4963,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lac.png",
        "live": {
-        "state": "pre",
-        "detail": "10/30 - 8:00 PM EDT",
-        "score": null
+        "state": "in",
+        "detail": "2:10 - 2nd",
+        "score": "62-54"
        }
       }
      ],

@@ -127,8 +127,8 @@
     "sharp_prob": 0.7576,
     "prob": 0.7656,
     "books": 21,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "4-1",
     "model_prob": 0.8203,
     "support": 3,
     "signals": 3,
@@ -209,9 +209,9 @@
      "sw": false
     },
     "live": {
-     "state": "in",
-     "detail": "72'",
-     "score": "3-0"
+     "state": "post",
+     "detail": "FT",
+     "score": "4-1"
     }
    },
    {
