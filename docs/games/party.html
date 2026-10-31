@@ -845,7 +845,8 @@ function phraseScore(p, ph) {
   }
   if (ph.ar && qp.length >= 3) for (const k of pk) { const r = ratio(qp, k); best = Math.max(best, r === 1 ? 0.95 : r * 0.9); }   // اللفظ الأردني
   const other = ph.ar ? skel.la : skel.ar;   // عربي مقابل إنجليزي
-  if (qs.length >= 3) for (const k of other) { const r = ratio(qs, k); best = Math.max(best, r === 1 ? 0.99 : r * 0.94); }
+  // الهيكل القصير (3 حروف ساكنة) ممكن يطابق بالصدفة، فوزنه أقل
+  if (qs.length >= 3) for (const k of other) { const r = ratio(qs, k); best = Math.max(best, r === 1 ? (qs.length >= 4 ? 0.99 : 0.9) : r * (qs.length >= 4 ? 0.94 : 0.85)); }
   return best;
 }
 function scoreFor(p, phrases, nick, learnt) {
@@ -881,8 +882,11 @@ function judgeName(target, input) {
   // كذا لاعب قريبين من اللي انحكى؟ بنسأل بدون ما نكشف مين لاعبك (الأسماء حسب اللي انحكى بس)
   const all = [{ id: target.id, sc: st }, ...top].filter((x) => x.sc >= 0.6).sort((x, y) => y.sc - x.sc);
   const head = all.length ? all[0].sc : 0;
-  const near = all.filter((x) => x.sc >= head - 0.06 && x.sc >= 0.6).slice(0, 3);
-  if (near.length >= 2) return { v: "ask", choices: shuffle(near.map((x) => x.id)) };
+  const near = all.filter((x) => x.sc >= head - 0.1 && x.sc >= 0.6).slice(0, 4);
+  // إذا في اسم واحد بس مطابق تماماً للي انحكى والباقي بعاد، ما في داعي نسأل
+  const exact = all.filter((x) => x.sc >= 0.97);
+  const clearWinner = exact.length === 1 && (all[1] ? all[1].sc < head - 0.1 : true);
+  if (near.length >= 2 && !clearWinner) return { v: "ask", choices: shuffle(near.map((x) => x.id)) };
   if (other >= 0.72) return { v: "no" };
   if (Math.max(st, other) >= 0.5) return { v: "close" };
   return { v: "no" };
