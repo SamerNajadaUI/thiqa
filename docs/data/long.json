@@ -231,8 +231,8 @@
     "sharp_prob": 0.7734,
     "prob": 0.7857,
     "books": 25,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-0",
     "model_prob": 0.8548,
     "support": 6,
     "signals": 6,
@@ -316,9 +316,9 @@
      "sw": false
     },
     "live": {
-     "state": "in",
-     "detail": "60'",
-     "score": "1-0"
+     "state": "post",
+     "detail": "FT",
+     "score": "2-0"
     }
    },
    {
@@ -338,8 +338,8 @@
     "sharp_prob": 0.7855,
     "prob": 0.7819,
     "books": 21,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-4",
     "model_prob": 0.7692,
     "support": 3,
     "signals": 3,
@@ -412,6 +412,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 78%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.799
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ger.1",
+     "id": "401884753",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "2-4"
     }
    },
    {
@@ -431,8 +442,8 @@
     "sharp_prob": 0.7537,
     "prob": 0.7623,
     "books": 21,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-0",
     "model_prob": 0.7999,
     "support": 3,
     "signals": 3,
@@ -505,6 +516,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 76%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.758
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ger.1",
+     "id": "401884748",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "2-0"
     }
    },
    {
@@ -524,8 +546,8 @@
     "sharp_prob": 0.7601,
     "prob": 0.762,
     "books": 21,
-    "result": "pending",
-    "score": null,
+    "result": "miss",
+    "score": "0-0",
     "model_prob": 0.7732,
     "support": 3,
     "signals": 3,
@@ -598,6 +620,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 76%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.758
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ger.1",
+     "id": "401884749",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "0-0"
     }
    },
    {
@@ -617,8 +650,8 @@
     "sharp_prob": 0.7847,
     "prob": 0.7882,
     "books": 25,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "0-1",
     "model_prob": 0.8102,
     "support": 3,
     "signals": 3,
@@ -691,6 +724,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 79%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.799
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "eng.1",
+     "id": "401879245",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "0-1"
     }
    },
    {
@@ -710,8 +754,8 @@
     "sharp_prob": 0.6131,
     "prob": 0.6233,
     "books": 20,
-    "result": "pending",
-    "score": null,
+    "result": "miss",
+    "score": "3-0",
     "model_prob": 0.7162,
     "support": 5,
     "signals": 6,
@@ -788,6 +832,17 @@
       "t": "الصافي: ضد. ما بنصح بـ⁨Celta Vigo⁩ ما بيخسر. المخاطرة عالية: احتمال الخيبة 38% وفي 1 تحذيرات.",
       "score": -0.332
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "esp.1",
+     "id": "401882818",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "3-0"
     }
    },
    {
@@ -881,6 +936,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 79%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.799
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ita.1",
+     "id": "401874990",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "87'",
+     "score": "2-4"
     }
    },
    {
@@ -2006,7 +2072,7 @@
   "prob": 0.004984,
   "fair_odds": 200.6,
   "reached": true,
-  "result": "pending"
+  "result": "lost"
  },
  "monthly": {
   "kind": "monthly",
@@ -2136,8 +2202,8 @@
     "sharp_prob": 0.7601,
     "prob": 0.7581,
     "books": 21,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "0-2",
     "model_prob": 0.7478,
     "support": 3,
     "signals": 3,
@@ -2210,6 +2276,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 76%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.758
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ger.1",
+     "id": "401884747",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "0-2"
     }
    },
    {
