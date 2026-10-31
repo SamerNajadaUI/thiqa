@@ -148,7 +148,7 @@
         S.picks[i] = a.id;
         if (S.picks.every(Boolean)) startPlay(); else publish();
         return;
-      case "pass": case "guess": case "help":
+      case "pass": case "guess": case "help": case "noask":
         if (S.phase !== "play" || i !== S.turn) return;
         return turnAction(i, a);
       case "next":
@@ -209,6 +209,7 @@
       S.flash = { who: i, good: false, text: s.done ? `${p.name} استسلم` : `${p.name} مرّر` };
       return advance();
     }
+    if (a.t === "noask") { s.ask = null; return publish(); }
     if (a.t === "help") {
       const target = byId.get(S.targets[i]);
       if (applyHelp(a.kind, s, p.help, target)) publish();
@@ -217,11 +218,12 @@
     if (a.t === "guess") {
       const target = byId.get(S.targets[i]);
       const ans = a.id ? { id: a.id } : { text: String(a.text || "").slice(0, 60) };
-      if (ans.id && !(s.three || []).includes(ans.id)) return;
+      if (ans.id && !(s.ask || []).includes(ans.id)) return;
       if (!ans.id && !ans.text.trim()) return;
-      const v = judgeAnswer(target, ans);
-      if (v === "close") { s.close = (s.close || 0) + 1; return publish(); }   // قريب كثير: ما بتنحسب، وبيجرّب كمان مرة
-      s.close = 0;
+      const r = judgeAnswer(target, ans), v = r.v;
+      if (v === "close") { s.close = (s.close || 0) + 1; s.ask = null; return publish(); }   // قريب كثير: ما بتنحسب، وبيجرّب كمان مرة
+      if (v === "ask") { s.ask = r.choices; s.close = 0; return publish(); }               // قصدك مين؟
+      s.close = 0; s.ask = null;
       const mult = s.double ? 2 : 1;
       s.double = false;
       if (v === "yes") {
@@ -230,7 +232,6 @@
         S.flash = { id: Date.now(), who: i, good: true, text: `${p.name} عرف لاعبه من التلميح ${s.h}${mult > 1 ? " ودبّلها" : ""}: +${pts}` };
       } else {
         const said = ans.id ? (byId.get(ans.id) || {}).a : ans.text;
-        if (ans.id && s.three) s.three = s.three.filter((x) => x !== ans.id);
         s.pts += WRONG * mult; s.lives--;
         if (s.lives <= 0) s.done = "out";
         S.flash = { id: Date.now(), who: i, good: false, bad: true, text: `${p.name} قال «${said}» وغلط: ${WRONG * mult}${s.done ? "، وطلع من الجولة" : ""}` };
@@ -312,6 +313,7 @@
 
   function draw() {
     clearInterval(ticker);
+    if (view !== "guess") stopMic();
     const mi = myIndex();
     if (S.phase === "lobby") return drawLobby();
     if (S.phase === "pick") return drawPickWait(mi);
@@ -405,14 +407,16 @@
     const target = byId.get(S.targets[mi]);
     render(`${header()}<div style="text-align:center"><span class="sub">باقي</span> <b id="timer" style="font-family:var(--display);font-size:30px">30</b></div>
       <h2>مين لاعبك؟</h2>
+      ${askBox(s)}
       ${guessPanel(s, help, target)}
       <button class="big ghost" id="back2" type="button">رجوع للتلميحات</button>`);
-    if (s.close) { $("close").hidden = false; $("close").textContent = "قريب كثير! تأكد من الكتابة وجرّب كمان مرة (ما انحسبت)."; }
+    if (s.close && !s.ask) { $("close").hidden = false; $("close").textContent = "قريب كثير! تأكد من الكتابة وجرّب كمان مرة (ما انحسبت)."; }
     const inp = $("nameIn");
     inp.value = typedName; inp.oninput = () => { typedName = inp.value; };
     inp.onkeydown = (e) => { if (e.key === "Enter") $("sayIt").click(); };
-    bindMic(target, (heard) => { typedName = ""; send({ t: "guess", text: heard }); loading("لحظة..."); });
+    bindMic(target, (heard) => { typedName = ""; send({ t: "guess", text: heard }); loading("لحظة..."); }, speechHints(s));
     bind({
+      noneOf: () => send({ t: "noask" }),
       sayIt: () => { const t = inp.value.trim(); if (!t) return; typedName = ""; send({ t: "guess", text: t }); loading("لحظة..."); },
       back2: () => { view = "main"; draw(); },
     });

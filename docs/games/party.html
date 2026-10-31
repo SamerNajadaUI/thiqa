@@ -177,6 +177,16 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .mic.on { background: #FEE4E2; border-color: #F97066; color: #B42318; box-shadow: 0 4px 0 #FDA29B; animation: micpulse 1s ease-in-out infinite; }
 .mic.on .dot { display: inline-block; }
 @keyframes micpulse { 50% { transform: scale(1.03); } }
+.ptimer { position: relative; height: 34px; border-radius: 999px; background: var(--soft); overflow: hidden; display: grid; place-items: center; }
+.ptimer i { position: absolute; inset: 0 auto 0 0; width: 100%; background: linear-gradient(90deg, #12B76A, #32D583); transition: width .2s linear; }
+.ptimer.hot i { background: linear-gradient(90deg, #F04438, #F97066); }
+.ptimer span { position: relative; font-weight: 800; font-size: 15px; color: #0B1B10; }
+.ptimer.hot span { color: #FFFFFF; animation: micpulse .6s ease-in-out infinite; }
+.askbox { background: #FEF0C7; border: 2px solid var(--gold); border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 8px; text-align: center; }
+.askbox > b { font-size: 20px; }
+.linkish { border: 0; background: none; color: var(--muted); font-weight: 700; text-decoration: underline; padding: 4px; }
+.wave { display: flex; gap: 4px; align-items: center; justify-content: center; height: 34px; }
+.wave i { width: 5px; border-radius: 3px; background: #F04438; height: 6px; transition: height .08s; }
 .flash { text-align: center; border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
 .flash.good { background: var(--l1s); } .flash.badf { background: var(--l3s); }
 .flash b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
@@ -232,7 +242,7 @@ function intro() {
     <div class="card" style="background:#FFF;border:2px solid var(--brand-soft);border-radius:26px;padding:16px;box-shadow:0 6px 0 var(--brand-soft)"><ul class="rules">
       <li>من 2 لـ5 لاعبين، و${ROUNDS} جولات.</li>
       <li>بكل جولة: كل واحد بيختار لاعب بالسر (دوري، نادي، لاعب من التشكيلة، أو المعتزلين حسب المنتخب)، وبعدين اللاعبين بيتوزعوا.</li>
-      <li>بالدور، كل واحد بياخذ تلميح جديد، لحد ${MAX_HINTS} تلميحات.</li>
+      <li>بالدور، كل واحد بياخذ تلميح جديد، لحد ${MAX_HINTS} تلميحات. ومعك <b>30 ثانية</b> بكل دور، وإذا خلصت بيروح دورك.</li>
       <li>الجواب الصح بيعطي نقاط حسب التلميح: من الأول <b>${pointsFor(1)}</b>، ومن الأخير <b>${pointsFor(MAX_HINTS)}</b>.</li>
       <li>الجواب الغلط <b>${WRONG}</b> وبيروح قلب. معك <b>قلبين</b> بكل جولة، وإذا خلصوا بتطلع من الجولة.</li>
       <li>لما تعرفه، <b>اكتب اسمه أو احكيه بصوتك</b> 🎤 والحكم بيقرر لحاله صح ولا غلط (عربي أو إنجليزي، واسم العيلة بيكفي، والغلطة بالكتابة بتنقبل طالما ما في لاعب ثاني اسمه أقرب).</li>
@@ -524,20 +534,21 @@ function turnPass() {
   render(`<div class="sub" style="text-align:center">الجولة ${G.round} من ${ROUNDS}</div>${statusBar()}
     <div class="pass2"><span class="sub">الدور على</span><span class="who">${esc(me.name)}</span><span class="note">مرّروا التلفون.</span></div>
     <button class="big" id="go" type="button">أنا ${esc(me.name)}، فرجيني التلميح</button>`);
-  bind({ go: () => { const s = G.st[G.turn]; if (s.h < MAX_HINTS) s.h++; save(); turnView(); } });
+  bind({ go: () => { const s = G.st[G.turn]; if (s.h < MAX_HINTS) s.h++; G.deadline = Date.now() + TURN_SECONDS * 1000; G.inTurn = true; save(); turnView(); } });
 }
 
 function turnView(flash = "") {
   const i = G.turn, s = G.st[i], me = G.players[i];
   const hs = G.hints[i].slice(0, s.h);
   const last = s.h >= MAX_HINTS;
-  render(`${statusBar()}${flash}
+  render(`${statusBar()}${timerBar()}${flash}
     <h2>${esc(me.name)}، مين لاعبك؟</h2>
     <ol class="hints">${hs.map((t, k) => `<li class="${k === hs.length - 1 ? "new" : ""}"><span>${k + 1}</span><b>${esc(t)}</b></li>`).join("")}</ol>
     <p class="ptsnow">إذا عرفته هلأ بتاخذ <b>${pointsFor(s.h)}</b> ${pointsFor(s.h) === 1 ? "نقطة" : "نقاط"}. والغلط <b>${WRONG}</b>.</p>
     <button class="big green" id="guess" type="button">بدي أحكي الاسم</button>
     <button class="big ghost" id="pass" type="button">${last ? "استسلم (طلعت من الجولة)" : "مرّر لزميلك"}</button>`);
-  bind({ guess: guessView, pass: () => { if (last) { s.done = "out"; } advance(); } });
+  bind({ guess: () => guessView(), pass: () => { G.inTurn = false; G.deadline = null; if (last) { s.done = "out"; } advance(); } });
+  G.inTurn = true; tickTimer();
 }
 
 // ---------- تأثيرات: كونفيتي للصح، شاشة حمرا للغلط، صوت واهتزاز ----------
@@ -617,33 +628,51 @@ function fx(kind) {
 }
 
 // ---------- الجواب بالصوت ----------
-// جوّا تطبيق الآيفون بنستعمل التعرّف على الكلام تبع التلفون نفسه (أدق)، وبالمتصفح بنستعمل تبع المتصفح
+// جوّا تطبيق الآيفون: التعرّف تبع التلفون، بيسمع بالعربي والإنجليزي بنفس اللحظة، وبنعطيه أسماء اللاعبين المتوقعة.
+// بالمتصفح: التعرّف تبع المتصفح بالعربي.
 const NATIVE_SPEECH = !!(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.speech);
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const CAN_SPEAK = NATIVE_SPEECH || !!SR;
-let rec = null;
+let rec = null, micStop = null;
+function stopMic() { try { micStop && micStop(); } catch {} micStop = null; }
 function micButton() {
   if (!CAN_SPEAK) return `<p class="note" style="text-align:center">🎤 الجواب بالصوت مش مدعوم بهالمتصفح. فيك تكبس على المايك بكيبورد التلفون وتحكي الاسم.</p>`;
-  return `<button type="button" id="micAr" class="mic"><span class="dot"></span>🎤 احكي اسم اللاعب بصوتك</button>
+  return `<button type="button" id="micAr" class="mic"><span class="dot"></span><span id="micLabel">🎤 احكي اسم اللاعب بصوتك</span></button>
+    <div class="wave" id="wave" hidden>${"<i></i>".repeat(11)}</div>
     <p class="note" id="micNote" hidden style="text-align:center"></p>`;
 }
-// بيسمع، وبيختار من الاحتمالات اللي سمعها أقرب واحد لاسم اللاعب، وبيحطه بالخانة
-function bindMic(target, onHeard) {
+// موجة الصوت: بتتحرك حسب قوة الصوت (من التطبيق)، أو حركة تلقائية بالمتصفح
+let waveTimer = null;
+function waveLevel(v) {
+  const bars = document.querySelectorAll("#wave i");
+  bars.forEach((b, k) => { const mid = 1 - Math.abs(k - 5) / 6; b.style.height = Math.max(6, Math.min(34, 6 + v * 60 * mid * (0.6 + Math.random() * 0.8))) + "px"; });
+}
+function waveOn(auto) {
+  const w = $("wave"); if (w) w.hidden = false;
+  clearInterval(waveTimer);
+  if (auto) waveTimer = setInterval(() => waveLevel(0.25 + Math.random() * 0.35), 110);
+}
+function waveOff() { clearInterval(waveTimer); const w = $("wave"); if (w) w.hidden = true; }
+
+// بيسمع، وبيختار من الاحتمالات اللي سمعها (بالعربي والإنجليزي) أقرب واحد لاسم اللاعب، وبيحكم لحاله
+function bindMic(target, onHeard, hints = []) {
   if (!CAN_SPEAK) return;
-  let finalAlts = [], btn = null, listening = false;
-  const note = () => $("micNote");
-  const say = (t) => { const n = note(); if (n) { n.hidden = false; n.textContent = t; } };
-  const off = () => { listening = false; document.querySelectorAll(".mic").forEach((b) => b.classList.remove("on")); };
+  let finalAlts = [], listening = false;
+  const btn = $("micAr");
+  const say = (t) => { const n = $("micNote"); if (n) { n.hidden = false; n.textContent = t; } };
+  const off = () => { listening = false; if (btn) btn.classList.remove("on"); const l = $("micLabel"); if (l) l.textContent = "🎤 احكي اسم اللاعب بصوتك"; waveOff(); micStop = null; };
   const heard = (alts) => { if ($("nameIn") && alts[0]) $("nameIn").value = alts[0]; };
   const finish = () => {
     off();
-    if (!finalAlts.length) { say("ما سمعت إشي. اكبس وجرّب كمان مرة."); return; }
-    const rank = { yes: 2, close: 1, no: 0 };
-    const best = finalAlts.map((a) => [rank[nameVerdict(target, a)], a]).sort((x, y) => y[0] - x[0])[0][1];
+    const alts = [...new Set(finalAlts.map((x) => String(x).trim()).filter(Boolean))];
+    if (!alts.length) { say("ما سمعت إشي. اكبس وجرّب كمان مرة."); return; }
+    // أحسن احتمال: اللي حكمه "صح"، بعدين "قصدك مين؟"، بعدين "قريب"
+    const rank = { yes: 3, ask: 2, close: 1, no: 0 };
+    let best = alts[0], br = -1;
+    for (const a of alts.slice(0, 5)) { const r = rank[nameVerdict(target, a)]; if (r > br) { br = r; best = a; } if (r === 3) break; }
     if ($("nameIn")) $("nameIn").value = best;
     say(`سمعتك تقول: «${best}»`);
-    // بنحكم على الجواب لحاله: صح أو غلط (وإذا قريب بس مش أكيد بيطلب يعيد بدون خصم)
-    setTimeout(() => onHeard && onHeard(best), 450);
+    setTimeout(() => onHeard && onHeard(best), 400);
   };
   const fail = (err) => {
     off();
@@ -651,28 +680,30 @@ function bindMic(target, onHeard) {
       ? "لازم تسمح للمايك والتعرّف على الكلام: Settings ← أبو عودة (أو Safari) ← Microphone و Speech Recognition."
       : err === "no-speech" ? "ما سمعت إشي. اكبس وجرّب كمان مرة." : "صار في مشكلة بالصوت. جرّب كمان مرة أو اكتب الاسم.");
   };
-  const start = (lang, b) => {
-    if (listening) { // كبسة ثانية = خلصت حكي
-      if (NATIVE_SPEECH) window.webkit.messageHandlers.speech.postMessage({ cmd: "stop" }); else try { rec && rec.stop(); } catch {}
-      return;
-    }
-    finalAlts = []; btn = b; listening = true;
-    document.querySelectorAll(".mic").forEach((x) => x.classList.remove("on"));
-    b.classList.add("on");
-    say("بسمعك... احكي اسم اللاعب (واكبس كمان مرة لما تخلص)");
+  const stopNow = () => { if (NATIVE_SPEECH) window.webkit.messageHandlers.speech.postMessage({ cmd: "stop" }); else try { rec && rec.stop(); } catch {} };
+  const start = () => {
+    if (listening) { stopNow(); return; }   // كبسة ثانية = خلصت حكي
+    finalAlts = []; listening = true;
+    btn.classList.add("on");
+    const l = $("micLabel"); if (l) l.textContent = "بسمعك... (اكبس لما تخلص)";
+    say("احكي اسم اللاعب، عادي بلهجتك");
+    micStop = () => { listening = false; stopNow(); };
     if (NATIVE_SPEECH) {
+      waveOn(false);
       window.__speech = (m) => {
-        if (m.type === "partial") heard(m.alts || []);
+        if (m.type === "level") waveLevel(m.v || 0);
+        else if (m.type === "partial") heard(m.alts || []);
         else if (m.type === "final") { finalAlts = m.alts || []; heard(finalAlts); }
         else if (m.type === "error") fail(m.error);
         else if (m.type === "end") { if (listening) finish(); }
       };
-      window.webkit.messageHandlers.speech.postMessage({ cmd: "start", lang });
+      window.webkit.messageHandlers.speech.postMessage({ cmd: "start", lang: "ar-JO", also: "en-US", hints });
       return;
     }
+    waveOn(true);
     try { rec && rec.abort(); } catch {}
     rec = new SR();
-    rec.lang = lang; rec.interimResults = true; rec.maxAlternatives = 5; rec.continuous = false;
+    rec.lang = "ar-JO"; rec.interimResults = true; rec.maxAlternatives = 5; rec.continuous = false;
     rec.onresult = (e) => {
       const res = e.results[e.results.length - 1];
       const alts = Array.from(res).map((a) => a.transcript.trim()).filter(Boolean);
@@ -680,12 +711,10 @@ function bindMic(target, onHeard) {
       if (res.isFinal) finalAlts = alts;
     };
     rec.onerror = (e) => { listening = false; fail(e.error); };
-    rec.onend = () => { if (listening) finish(); };
+    rec.onend = () => { if (listening) finish(); else off(); };
     try { rec.start(); } catch { fail("start"); }
   };
-  // التعرّف بالعربي بيفهم الأسماء الأجنبية كمان (بيكتبها بالعربي) والحكم بيقارنها بالاسمين
-  const ar = $("micAr");
-  if (ar) ar.onclick = () => start("ar-JO", ar);
+  if (btn) btn.onclick = start;
 }
 
 // ---------- كتابة الاسم بدل الخيارات ----------
@@ -722,67 +751,150 @@ function skeleton(x) {
   return [...t].map((ch) => map[ch] || "").join("").replace(/(.)\1+/g, "$1");
 }
 // ---------- الحكم على الجواب ----------
-// الفكرة: الجواب صح إذا كان أقرب لاسم لاعبك من أي لاعب ثاني بالقاعدة، وكان قريب كفاية.
-// يعني "دونروما" صح لدوناروما، "ميسى" صح لميسي، بس "رونالدينيو" غلط لرونالدو لأنه اسم لاعب ثاني.
+// الجواب صح إذا كان أقرب لاسم لاعبك من أي لاعب ثاني بالقاعدة، وكان قريب كفاية.
+// وبنفهم الجملة كاملة ("اعتقد انه هاد دوناروما يا زلمة")، واللفظ الأردني (ق=ء=g، ث=ت، ذ=د...)،
+// والألقاب (البرغوث، الدون، CR7...)، وبنتعلم من التصحيحات. وإذا في لاعبين قريبين بنسأل "قصدك مين؟".
+
+// كلمات الحشو اللي الناس بتحكيها مع الاسم
+const FILLERS = new Set(("هاد هذا هذه هاي هو هي هوه انه إنه انو انها اكيد أكيد يمكن ممكن بعتقد اعتقد بظن اظن أظن والله ولله يا زلمه زلمة زلمه " +
+  "اللاعب لاعب لاعبي الكابتن كابتن اسمه اسمو اسم بس لا اه آه ايوه اه طيب يعني شو هالمره خلص هلا هلأ اول مره احكي بقول بقولك قول " +
+  "is it the player i think its maybe sure name his he guess ok okay yes no um uh").split(/\s+/).map((w) => normName(w)).filter(Boolean));
+// المفتاح الصوتي باللهجة الأردنية: الحروف اللي بتنلفظ زي بعض بتصير حرف واحد، والحركات بتنشال
+function phon(x) {
+  const t = normName(x).replace(/\s/g, "");
+  const map = { "ق": "ك", "گ": "ك", "ك": "ك", "ج": "ج", "غ": "ج", "ث": "ت", "ت": "ت", "ط": "ت", "ذ": "د", "د": "د", "ض": "د", "ظ": "ز", "ز": "ز",
+    "ص": "س", "س": "س", "ش": "ش", "ح": "ه", "ه": "ه", "خ": "ه", "ب": "ب", "ف": "ف", "ل": "ل", "م": "م", "ن": "ن", "ر": "ر" };
+  return [...t].map((c) => map[c] || "").join("").replace(/(.)\1+/g, "$1");
+}
+// ألقاب مشهورة بالعربي (بنربطها باللاعب عن طريق اسمه الإنجليزي)
+const NICKS = {
+  "البرغوث": "Lionel Messi", "ليو": "Lionel Messi", "ليونيل": "Lionel Messi",
+  "الدون": "Cristiano Ronaldo", "cr7": "Cristiano Ronaldo", "سي ار سفن": "Cristiano Ronaldo", "كريس": "Cristiano Ronaldo",
+  "الظاهره": "Ronaldo", "ار تسعه": "Ronaldo", "r9": "Ronaldo", "رونالدو البرازيلي": "Ronaldo",
+  "الفرعون": "Mohamed Salah", "مو صلاح": "Mohamed Salah", "مو": "Mohamed Salah", "مو صلا": "Mohamed Salah",
+  "زيزو": "Zinedine Zidane", "ابرا": "Zlatan Ibrahimović", "ايبرا": "Zlatan Ibrahimović", "كي دي بي": "Kevin De Bruyne", "kdb": "Kevin De Bruyne",
+  "فيني": "Vinícius Júnior", "فينيسيوس": "Vinícius Júnior", "نيمار جونيور": "Neymar", "بيكهام": "David Beckham", "القيصر": "Franz Beckenbauer",
+  "جيجي": "Gianluigi Buffon", "رونالدينهو": "Ronaldinho", "الساحر": "Ronaldinho", "كاكا": "Kaká", "تشافي": "Xavi", "شافي": "Xavi",
+  "انيستا": "Andrés Iniesta", "الرسام": "Andrés Iniesta", "بنزيما": "Karim Benzema", "البنز": "Karim Benzema", "ليفا": "Robert Lewandowski",
+  "ليفاندوفسكي": "Robert Lewandowski", "ابو تريكه": "Mohamed Aboutrika", "الماجيكو": "Mohamed Aboutrika", "مودريتش": "Luka Modrić",
+};
+let NICK_IDS = null;
+function nickIds() {
+  if (NICK_IDS) return NICK_IDS;
+  NICK_IDS = new Map();
+  const byN = new Map(DATA.players.map((p) => [normName(p.n), p.id]));
+  for (const [k, n] of Object.entries(NICKS)) { const id = byN.get(normName(n)); if (id) NICK_IDS.set(normName(k).replace(/\s/g, ""), id); }
+  return NICK_IDS;
+}
+// اللي اتعلمناه من التصحيحات على هالتلفون: كلمة سمعناها → لاعب
+const learned = () => store.get("learn", {});
+function learn(heard, id) {
+  const k = normName(heard).replace(/\s/g, "");
+  if (k.length < 2 || !id) return;
+  const m = learned(); m[k] = id;
+  const keys = Object.keys(m); if (keys.length > 400) delete m[keys[0]];
+  store.set("learn", m);
+}
+
 function nameKeys(p) {
   if (p._keys) return p._keys;
-  const keys = new Set(), skel = { ar: new Set(), la: new Set() };
-  for (const nm of [p.a, p.n].filter(Boolean).map(normName)) {
-    const bucket = /[\u0621-\u064A]/.test(nm) ? skel.ar : skel.la;
+  const keys = new Set(), skel = { ar: new Set(), la: new Set() }, ph = new Set();
+  for (const nm of [p.a, p.n, ...(p.al || [])].filter(Boolean).map(normName)) {
     if (!nm) continue;
+    const bucket = /[ء-ي]/.test(nm) ? skel.ar : skel.la;
     const words = nm.split(" ").filter(Boolean);
     keys.add(nm.replace(/\s/g, ""));
     words.forEach((w, k) => {
       if (w.length >= 3 && (k === words.length - 1 || (w.length >= 4 && !COMMON_FIRST.has(w)))) { keys.add(w); keys.add(stripAl(w)); }
     });
     if (words.length >= 3) keys.add(words.slice(-2).join(""));
-    const sk = skeleton(nm); if (sk.length >= 3) bucket.add(sk);
-    const sl = skeleton(words[words.length - 1] || ""); if (sl.length >= 3) bucket.add(sl);
-    words.filter((w) => w.length >= 4 && !COMMON_FIRST.has(w)).forEach((w) => { const x = skeleton(w); if (x.length >= 3) bucket.add(x); });
+    const add = (x) => { if (x.length >= 3) bucket.add(x); };
+    add(skeleton(nm)); add(skeleton(words[words.length - 1] || ""));
+    words.filter((w) => w.length >= 4 && !COMMON_FIRST.has(w)).forEach((w) => add(skeleton(w)));
+    if (bucket === skel.ar) {
+      [nm, words[words.length - 1] || "", ...words.filter((w) => w.length >= 4 && !COMMON_FIRST.has(w))].forEach((w) => { const k2 = phon(w); if (k2.length >= 3) ph.add(k2); });
+    }
   }
-  p._keys = { keys: [...keys].filter(Boolean), skel: { ar: [...skel.ar], la: [...skel.la] } };
+  p._keys = { keys: [...keys].filter(Boolean), skel: { ar: [...skel.ar], la: [...skel.la] }, ph: [...ph] };
   return p._keys;
 }
-// قديش الجواب قريب من اسم اللاعب (0 لـ 1)
-function nameScore(p, q, qs, words) {
-  const { keys, skel } = nameKeys(p);
+// المقاطع اللي ممكن تكون هي الاسم: كل كلمة، وكل كلمتين وثلاث ورا بعض، بعد ما نشيل الحشو
+function phrasesOf(input) {
+  const words = normName(input).split(" ").filter((w) => w && !FILLERS.has(w) && !FILLERS.has(stripAl(w)));
+  const out = new Set();
+  if (!words.length) return [];
+  out.add(words.join(""));
+  for (let n = 1; n <= 3; n++) for (let i = 0; i + n <= words.length; i++) out.add(words.slice(i, i + n).join(""));
+  return [...out].filter((x) => x.length >= 2).map((q) => ({ q, qs: skeleton(q), qp: phon(q), ar: /[ء-ي]/.test(q), words }));
+}
+// قديش المقطع قريب من اسم اللاعب (0 لـ 1)
+function phraseScore(p, ph) {
+  const { keys, skel, ph: pk } = nameKeys(p);
+  const { q, qs, qp } = ph;
   let best = 0;
   for (const k of keys) {
     if (k === q) return 1;
-    if (k.length >= 4 && words.includes(k)) best = Math.max(best, 0.97);   // اسم العيلة جوّا جوابه
-    // غلطة أو غلطتين بالأسماء الطويلة مقبولة
-    const d = lev(q, k), L = Math.max(q.length, k.length);
+    const L = Math.max(q.length, k.length);
+    if (1 - Math.abs(q.length - k.length) / L < 0.5 && !(k.length >= 4 && ph.words.includes(k))) continue;   // فرق الطول كبير
+    if (k.length >= 4 && ph.words.includes(k)) best = Math.max(best, 0.97);
+    const d = lev(q, k);
     let r = 1 - d / L;
     if (L >= 6 && d <= 2) r = Math.max(r, 0.85);
     else if (L >= 4 && d <= 1) r = Math.max(r, 0.82);
-    best = Math.max(best, r);
+    if (r > best) best = r;
   }
-  // عربي مقابل إنجليزي: بنقارن هيكل الحروف مع الاسم المكتوب باللغة الثانية بس
-  const other = /[\u0621-\u064A]/.test(q) ? skel.la : skel.ar;
+  if (ph.ar && qp.length >= 3) for (const k of pk) { const r = ratio(qp, k); best = Math.max(best, r === 1 ? 0.95 : r * 0.9); }   // اللفظ الأردني
+  const other = ph.ar ? skel.la : skel.ar;   // عربي مقابل إنجليزي
   if (qs.length >= 3) for (const k of other) { const r = ratio(qs, k); best = Math.max(best, r === 1 ? 0.99 : r * 0.94); }
   return best;
 }
-// "yes" = صح، "close" = قريب بس مش متأكدين (جرّب كمان مرة بدون خصم)، "no" = غلط
-function nameVerdict(target, input) {
-  const qn = normName(input);
-  if (qn.replace(/\s/g, "").length < 2) return "no";
-  const q = qn.replace(/\s/g, ""), qs = skeleton(qn);
-  const words = qn.split(" ").map(stripAl).concat(qn.split(" "));
-  const st = nameScore(target, q, qs, words);
-  if (st < 0.5) return "no";
-  // في لاعب ثاني اسمه أقرب للجواب؟
-  let other = 0;
+function scoreFor(p, phrases, nick, learnt) {
+  let best = 0;
+  for (const ph of phrases) {
+    if (nick.get(ph.q) === p.id || learnt[ph.q] === p.id) return 1;
+    const sc = phraseScore(p, ph);
+    if (sc > best) best = sc;
+    if (best === 1) break;
+  }
+  return best;
+}
+// التحليل الكامل: قديش الجواب قريب من لاعبك، ومين أقرب اللاعبين الثانيين
+function analyzeAnswer(target, input) {
+  const phrases = phrasesOf(input);
+  if (!phrases.length) return { st: 0, top: [] };
+  const nick = nickIds(), learnt = learned();
+  const st = scoreFor(target, phrases, nick, learnt);
+  const top = [];   // أقرب 4 لاعبين غير لاعبك
   for (const p of DATA.players) {
     if (p.id === target.id) continue;
-    const sc = nameScore(p, q, qs, words);
-    if (sc > other) other = sc;
-    if (other > st + 0.08) break;
+    const sc = scoreFor(p, phrases, nick, learnt);
+    if (sc < 0.55 || (top.length >= 4 && sc <= top[top.length - 1].sc)) continue;
+    top.push({ id: p.id, sc }); top.sort((x, y) => y.sc - x.sc); if (top.length > 4) top.pop();
   }
-  if (other > st + 0.08) return "no";
-  if (st >= 0.72) return "yes";
-  return "close";
+  return { st, top };
 }
+// النتيجة: yes = صح، no = غلط، close = قريب بس مش أكيد (جرّب كمان مرة)، ask = في كذا لاعب قريبين (قصدك مين؟)
+function judgeName(target, input) {
+  const { st, top } = analyzeAnswer(target, input);
+  const other = top.length ? top[0].sc : 0;
+  if (st >= 0.72 && other <= st + 0.08) return { v: "yes" };
+  // كذا لاعب قريبين من اللي انحكى؟ بنسأل بدون ما نكشف مين لاعبك (الأسماء حسب اللي انحكى بس)
+  const all = [{ id: target.id, sc: st }, ...top].filter((x) => x.sc >= 0.6).sort((x, y) => y.sc - x.sc);
+  const head = all.length ? all[0].sc : 0;
+  const near = all.filter((x) => x.sc >= head - 0.06 && x.sc >= 0.6).slice(0, 3);
+  if (near.length >= 2) return { v: "ask", choices: shuffle(near.map((x) => x.id)) };
+  if (other >= 0.72) return { v: "no" };
+  if (Math.max(st, other) >= 0.5) return { v: "close" };
+  return { v: "no" };
+}
+function nameVerdict(target, input) { return judgeName(target, input).v; }
 const nameVerdictRaw = nameVerdict;
+// أسماء نعطيها للتعرّف على الكلام قبل ما يسمع (لاعبك والشبيهين إله)، عشان يفهم الأسماء أحسن
+function speechHints(s) {
+  const out = new Set();
+  for (const id of s.opts || []) { const p = byId.get(id); if (!p) continue; [p.a, p.n, ...(p.al || [])].forEach((x) => x && out.add(x)); String(p.a || "").split(/\s+/).forEach((w) => w.length >= 3 && out.add(w)); }
+  return [...out].slice(0, 90);
+}
 
 // ---------- الوسائل المساعدة (كل وحدة مرة بكل اللعبة) ----------
 const HELPS = [
@@ -827,37 +939,59 @@ function guessPanel(s, help, target) {
     <p class="note" id="close" hidden style="text-align:center;color:var(--gold-dark)"></p>
     <button class="big green" id="sayIt" type="button">جاوب</button>`;
 }
-// بيقرر نتيجة الجواب: id (من الخيارات الثلاثة) أو نص مكتوب
+// بيقرر نتيجة الجواب: id (من "قصدك مين؟") أو نص مكتوب أو محكي
 function judgeAnswer(target, ans) {
-  if (ans.id) return ans.id === target.id ? "yes" : "no";
-  return nameVerdict(target, ans.text);
+  if (ans.id) return { v: ans.id === target.id ? "yes" : "no" };
+  return judgeName(target, ans.text);
+}
+function askBox(s) {
+  if (!s.ask || !s.ask.length) return "";
+  return `<div class="askbox"><b>قصدك مين؟</b><span class="note">سمعنا اسم قريب من أكثر من لاعب. اختار (ما انحسبت عليك).</span>
+    <div class="opt20">${s.ask.map((id) => { const p = byId.get(id); return p ? `<button type="button" data-g="${p.id}">${face(p, "mini2")}<span>${esc(p.a)}</span></button>` : ""; }).join("")}</div>
+    <button type="button" class="linkish" id="noneOf">ولا واحد منهم</button></div>`;
 }
 
 function guessView(note = "") {
   const i = G.turn, s = G.st[i], help = G.players[i].help;
   const target = byId.get(G.targets[i]);
-  render(`${statusBar()}<h2>مين لاعبك؟</h2>
+  render(`${statusBar()}${timerBar()}<h2>مين لاعبك؟</h2>
+    ${askBox(s)}
     ${guessPanel(s, help, target)}
     <button class="big ghost" id="back2" type="button">رجوع للتلميحات</button>`);
   if (typeof note === "string" && note) { $("close").hidden = false; $("close").textContent = note; }
   bind({
     sayIt: () => { const t = $("nameIn").value.trim(); if (t) answer({ text: t }); },
     back2: () => turnView(),
+    noneOf: () => { s.ask = null; save(); guessView("تمام، احكيه أو اكتبه كمان مرة."); },
   });
   $("nameIn").onkeydown = (e) => { if (e.key === "Enter") $("sayIt").click(); };
-  bindMic(target, (heard) => answer({ text: heard }));
+  bindMic(target, (heard) => answer({ text: heard, voice: true }), speechHints(s));
   document.querySelectorAll("[data-help]").forEach((b) => b.onclick = () => { if (applyHelp(b.dataset.help, s, help, target)) { save(); guessView(); } });
   document.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => answer({ id: b.dataset.g }));
+  G.inTurn = true; tickTimer();
 }
 
 function answer(ans) {
   const i = G.turn, s = G.st[i];
   const target = byId.get(G.targets[i]);
-  const v = judgeAnswer(target, ans);
-  if (v === "close") { guessView("قريب كثير! تأكد من الكتابة وجرّب كمان مرة (ما انحسبت)."); return; }
+  const r = judgeAnswer(target, ans);
+  if (r.v === "close") {
+    if (ans.voice) s.heard = ans.text;
+    save(); guessView("قريب كثير! تأكد واحكيه أو اكتبه كمان مرة (ما انحسبت).");
+    return;
+  }
+  if (r.v === "ask") {
+    s.ask = r.choices; s.heard = ans.text; save();
+    guessView();
+    return;
+  }
+  // تعلّم: إذا قبل شوي سمعنا كلمة ما فهمناها، وهلأ عرف لاعبه، بنحفظ إنه هالكلمة = هاللاعب
+  if (r.v === "yes" && s.heard && s.heard !== ans.text) learn(s.heard, target.id);
+  s.ask = null; s.heard = null;
+  G.inTurn = false; G.deadline = null;
   const mult = s.double ? 2 : 1;
   s.double = false;
-  if (v === "yes") {
+  if (r.v === "yes") {
     const pts = pointsFor(s.h) * mult;
     s.pts += pts; s.done = "solved"; save();
     render(`${statusBar()}<div class="flash good"><span>صح!${mult > 1 ? " ودبّلتها" : ""}</span><b>${esc(target.a)}</b><span>عرفته من التلميح ${s.h}: <b>+${pts}</b></span></div>
@@ -867,12 +1001,40 @@ function answer(ans) {
     return;
   }
   const said = ans.id ? (byId.get(ans.id) || {}).a : ans.text;
-  if (ans.id && s.three) s.three = s.three.filter((x) => x !== ans.id);
   s.pts += WRONG * mult; s.lives--;
   if (s.lives <= 0) s.done = "out";
   const msg = s.lives > 0 ? `غلط! ${WRONG * mult} وراح قلب. ضايلك ${s.lives}.` : `غلط! ${WRONG * mult} وخلصت القلوب، طلعت من الجولة.`;
   save();
   render(`${statusBar()}<div class="flash badf"><span>مش «${esc(said)}»</span><b>${esc(msg)}</b></div>
+    <button class="big" id="ok" type="button">مرّر لزميلك</button>`);
+  fx("bad");
+  bind({ ok: advance });
+}
+
+// ---------- مؤقت الدور: 30 ثانية من لما يشوف التلميح، وإذا خلص بيروح الدور ----------
+const TURN_SECONDS = 30;
+function timerBar() {
+  return `<div class="ptimer" id="ptimer"><i id="ptimerBar"></i><span>⏱ <b id="ptimerNum">${TURN_SECONDS}</b></span></div>`;
+}
+function tickTimer() {
+  if (!G || G.phase !== "play" || !G.deadline) return;
+  const left = Math.max(0, (G.deadline - Date.now()) / 1000);
+  const num = $("ptimerNum"), bar = $("ptimerBar"), box = $("ptimer");
+  if (num) num.textContent = Math.ceil(left);
+  if (bar) bar.style.width = (left / TURN_SECONDS * 100) + "%";
+  if (box) box.classList.toggle("hot", left <= 10);
+  if (left <= 0 && G.inTurn) timeUp();
+}
+setInterval(() => { try { tickTimer(); } catch {} }, 200);
+function timeUp() {
+  G.inTurn = false; G.deadline = null;
+  stopMic();
+  const i = G.turn, s = G.st[i];
+  s.ask = null; s.double = s.double || false;
+  const out = s.h >= MAX_HINTS;
+  if (out) s.done = "out";
+  save();
+  render(`${statusBar()}<div class="flash badf"><span>⏱ خلص الوقت!</span><b>${out ? "طلعت من الجولة" : "راح دورك"}</b><span>${esc(G.players[i].name)} ما لحق يجاوب.</span></div>
     <button class="big" id="ok" type="button">مرّر لزميلك</button>`);
   fx("bad");
   bind({ ok: advance });
