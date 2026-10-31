@@ -305,6 +305,19 @@ def collect(sparql, qid, v, year, get_json, log, espn_base: str) -> dict:
 
 # ---------------------------------------------------------------- build
 
+def aliases(p: dict, base: dict) -> list[str]:
+    """أسماء بديلة قصيرة ومفيدة للحكم (مش نفس الاسم، ومش طويلة كثير)."""
+    seen = {re.sub(r"\s+", " ", (base.get("a") or "")).strip().lower(), re.sub(r"\s+", " ", (base.get("n") or "")).strip().lower()}
+    out = []
+    for a in p.get("alias") or []:
+        a = re.sub(r"\s*\([^)]*\)\s*", " ", a or "").strip()
+        k = a.lower()
+        if 2 <= len(a) <= 30 and k not in seen and not re.search(r"[|/]", a):
+            seen.add(k)
+            out.append(a)
+    return out[:5]
+
+
 def clean_nt(name: str | None) -> str | None:
     if not name:
         return None
@@ -381,6 +394,7 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, coaches: dict, team_
             "nt": nt, "nat": nat, "by": base["by"], "wc": base["wc"], "ucl": base["ucl"],
             "tm": tm, "co": co[:3], "r": links[pid],
             "cl": list(dict.fromkeys(c[0] for c in clubs if c[0]))[:12],
+            "al": aliases(raw[pid], base),
         })
 
     # لاعبين ESPN اللي ما لقيناهم بـ Wikidata: بالاسم الإنجليزي، والزملاء من ناديهم الحالي
@@ -409,7 +423,7 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, coaches: dict, team_
         for k in ("rc", "num", "lg", "hc", "nat", "by"):
             if p.get(k) is None:
                 p.pop(k, None)
-        for k in ("wc", "ucl", "tm", "co", "cl"):
+        for k in ("wc", "ucl", "tm", "co", "cl", "al"):
             if not p.get(k):
                 p.pop(k, None)
         if p.get("n") == p.get("a"):

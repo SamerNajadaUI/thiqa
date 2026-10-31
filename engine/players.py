@@ -162,6 +162,14 @@ def fetch_details(ids: list[str]) -> dict:
             x = P[qid(v(b, "p"))]
             x.setdefault("awards", {}).setdefault(v(b, "en") or "", set()).add(year(v(b, "t")) or v(b, "st"))
         time.sleep(1)
+        # الأسماء البديلة والألقاب (عربي وإنجليزي) عشان الجواب بالاسم أو بالصوت
+        try:
+            for b in sparql(f"""SELECT ?p ?al WHERE {{ VALUES ?p {{ {vals} }}
+                ?p skos:altLabel ?al FILTER(LANG(?al)="en" || LANG(?al)="ar") }}""", tries=2):
+                P[qid(v(b, "p"))].setdefault("alias", []).append(v(b, "al"))
+        except SystemExit:
+            log("  ما زبط جلب الأسماء البديلة لهالدفعة")
+        time.sleep(1)
         for b in sparql(f"""SELECT ?p ?en WHERE {{ VALUES ?p {{ {vals} }} ?p wdt:P552 ?f.
             ?f rdfs:label ?en FILTER(LANG(?en)="en") }}"""):
             en = (v(b, "en") or "").lower()
