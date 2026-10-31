@@ -29,6 +29,13 @@ jobs:
         working-directory: ios
         run: xcodegen generate
 
+      - name: Zip the ready Xcode project (to open and run from your own Mac)
+        run: |
+          rm -rf /tmp/AbuOdeh-Xcode && mkdir -p /tmp/AbuOdeh-Xcode
+          cp -R ios/AbuOdeh ios/AbuOdeh.xcodeproj ios/README.md /tmp/AbuOdeh-Xcode/
+          (cd /tmp && zip -qry "$GITHUB_WORKSPACE/ios/AbuOdeh-Xcode.zip" AbuOdeh-Xcode)
+          ls -la ios/AbuOdeh-Xcode.zip
+
       - name: Build (unsigned)
         working-directory: ios
         run: |
@@ -50,6 +57,6 @@ jobs:
         working-directory: ios
         run: |
           gh release delete ios-latest --yes --cleanup-tag || true
-          gh release create ios-latest AbuOdeh.ipa \
+          gh release create ios-latest AbuOdeh.ipa AbuOdeh-Xcode.zip \
             --title "أبو عودة للآيفون" \
-            --notes "نزّل AbuOdeh.ipa وركّبه على تلفونك بـ Sideloadly. التعليمات بـ ios/README.md"
+            --notes "طريقتين: AbuOdeh-Xcode.zip تفتحه بـ Xcode على الماك وتشغّله على تلفونك مباشرة، أو AbuOdeh.ipa تركّبه بـ Sideloadly. التعليمات بـ ios/README.md"

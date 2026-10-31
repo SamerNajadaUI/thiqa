@@ -18,7 +18,17 @@
 **Automatic Refresh** بـ Sideloadly، وهو بيجدده لحاله لما يكون الماك والتلفون على نفس الواي فاي.
 مع اشتراك مطوّر آبل (99 دولار بالسنة) بيضل شغّال سنة كاملة.
 
-## بديل: Xcode
+## بالـ Xcode (من الماك مباشرة، بدون Sideloadly)
 
-إذا ركّبت Xcode من App Store: `brew install xcodegen`، بعدين `cd ios && xcodegen generate`،
-افتح `AbuOdeh.xcodeproj`، اختار حسابك من Signing & Capabilities، ووصّل التلفون واكبس ▶︎.
+1. نزّل `AbuOdeh-Xcode.zip` من نفس صفحة Releases، وافتحه. جواه مشروع جاهز.
+2. دبل كليك على `AbuOdeh.xcodeproj`، فبيفتح بـ Xcode.
+3. أول مرة: Xcode ← Settings ← Accounts ← **+** ← Apple ID، وسجّل دخول بحسابك.
+4. من القائمة اليسار اكبس على **AbuOdeh** (الأزرق فوق)، بعدين **Signing & Capabilities**،
+   وبخانة **Team** اختار اسمك (Personal Team).
+   إذا طلع خطأ إنه الـ Bundle Identifier مستعمل، غيّر آخره لأي إشي، مثلاً `abuodeh.samer`.
+5. وصّل الآيفون بالكيبل، واكبس **Trust** على التلفون.
+6. فوق بالنص اختار تلفونك بدل الـ Simulator، واكبس ▶︎.
+7. أول مرة على الآيفون: الإعدادات ← الخصوصية والأمان ← **Developer Mode** ← شغّله (بيعمل ريستارت)،
+   وبعدين الإعدادات ← عام ← VPN وإدارة الأجهزة ← حسابك ← **Trust**.
+
+نفس قصة الـ 7 أيام بالحساب المجاني: بعدها بتوصّل التلفون وبتكبس ▶︎ مرة ثانية.
