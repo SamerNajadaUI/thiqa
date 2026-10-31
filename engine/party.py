@@ -432,9 +432,9 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, coaches: dict, team_
             p.pop("cur", None)
     data = {"generated": time.strftime("%Y-%m-%d"), "leagues": [l for _, _, l in LEAGUES], "players": out}
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    cur = [p for p in out if p["cur"]]
+    cur = [p for p in out if p.get("cur")]
     log(f"party.json: {len(cur)} لاعب حالي، {len(out) - len(cur)} معتزل، "
-        f"{sum(1 for p in out if p['tm'] or p['co'])} عندهم زميل/مدرب ({OUT.stat().st_size // 1024} KB)")
+        f"{sum(1 for p in out if p.get('tm') or p.get('co'))} عندهم زميل/مدرب، {sum(1 for p in out if p.get('al'))} عندهم أسماء بديلة ({OUT.stat().st_size // 1024} KB)")
     for lg in data["leagues"]:
-        clubs = {p["hc"] for p in cur if p["lg"] == lg}
-        log(f"  {lg}: {len(clubs)} نادي، {sum(1 for p in cur if p['lg'] == lg)} لاعب")
+        clubs = {p.get("hc") for p in cur if p.get("lg") == lg}
+        log(f"  {lg}: {len(clubs)} نادي، {sum(1 for p in cur if p.get('lg') == lg)} لاعب")
