@@ -5749,9 +5749,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "in",
+      "detail": "HT",
+      "score": "0-1"
      }
     },
     {
@@ -6428,9 +6428,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "in",
+        "detail": "HT",
+        "score": "0-1"
        }
       },
       {
