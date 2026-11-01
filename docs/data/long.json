@@ -1369,8 +1369,8 @@
     "sharp_prob": null,
     "prob": 0.791,
     "books": 3,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "0-3",
     "model_prob": 0.7915,
     "support": 2,
     "signals": 2,
@@ -1452,8 +1452,8 @@
      "sw": false
     },
     "live": {
-     "state": "in",
-     "detail": "75'",
+     "state": "post",
+     "detail": "FT",
      "score": "0-3"
     }
    },
@@ -1548,6 +1548,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.758
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "fra.1",
+     "id": "401876417",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "77'",
+     "score": "2-0"
     }
    },
    {
