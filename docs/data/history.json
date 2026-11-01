@@ -4190,8 +4190,8 @@
      "sharp_prob": 0.8345,
      "prob": 0.827,
      "books": 22,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "121-111",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -4272,9 +4272,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
      "live": {
-      "state": "pre",
-      "detail": "10/31 - 8:00 PM EDT",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "121-111"
      }
     },
     {
@@ -4379,9 +4379,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mem.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png",
      "live": {
-      "state": "pre",
-      "detail": "10/31 - 8:00 PM EDT",
-      "score": null
+      "state": "in",
+      "detail": "2:09 - 4th",
+      "score": "129-101"
      }
     },
     {
@@ -5304,8 +5304,8 @@
        "sharp_prob": 0.8345,
        "prob": 0.827,
        "books": 22,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "121-111",
        "model_prob": null,
        "support": 1,
        "signals": 1,
@@ -5385,9 +5385,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
        "live": {
-        "state": "pre",
-        "detail": "10/31 - 8:00 PM EDT",
-        "score": null
+        "state": "post",
+        "detail": "Final",
+        "score": "121-111"
        }
       },
       {
@@ -5491,9 +5491,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mem.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png",
        "live": {
-        "state": "pre",
-        "detail": "10/31 - 8:00 PM EDT",
-        "score": null
+        "state": "in",
+        "detail": "2:09 - 4th",
+        "score": "129-101"
        }
       }
      ],
@@ -5959,8 +5959,8 @@
        "sharp_prob": 0.7495,
        "prob": 0.7486,
        "books": 22,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "111-136",
        "crowd_prob": 0.745,
        "crowd_volume": 69133,
        "model_prob": null,
@@ -6043,9 +6043,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cle.png",
        "live": {
-        "state": "pre",
-        "detail": "10/31 - 8:00 PM EDT",
-        "score": null
+        "state": "post",
+        "detail": "Final",
+        "score": "111-136"
        }
       }
      ],
