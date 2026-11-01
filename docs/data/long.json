@@ -1057,8 +1057,8 @@
     "sharp_prob": 0.835,
     "prob": 0.8368,
     "books": 22,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "1-0",
     "model_prob": 0.8533,
     "support": 3,
     "signals": 3,
@@ -1131,6 +1131,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 84%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 1.099
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ita.1",
+     "id": "401875002",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "1-0"
     }
    },
    {
@@ -1150,8 +1161,8 @@
     "sharp_prob": 0.8009,
     "prob": 0.7946,
     "books": 22,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-1",
     "model_prob": 0.7946,
     "support": 3,
     "signals": 3,
@@ -1224,6 +1235,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 79%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.799
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ita.1",
+     "id": "401874983",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "2-1"
     }
    },
    {
@@ -1243,8 +1265,8 @@
     "sharp_prob": 0.7616,
     "prob": 0.7641,
     "books": 22,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "5-1",
     "model_prob": 0.7768,
     "support": 3,
     "signals": 3,
@@ -1317,6 +1339,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 76%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.758
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "fra.1",
+     "id": "401876414",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "5-1"
     }
    },
    {
@@ -1411,6 +1444,17 @@
       "t": "الصافي: مع. أكثر من 2.5 أهداف باحتمال 79%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.496
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "esp.1",
+     "id": "401882819",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "75'",
+     "score": "0-3"
     }
    },
    {
