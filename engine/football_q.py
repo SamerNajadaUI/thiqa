@@ -130,6 +130,12 @@ def _al(name: str) -> str:
     return ("ل" if re.match(r"[\u0600-\u06FF]", name) else "لـ") + name
 
 
+def _nt(name):
+    x = re.sub(r"\s*(الوطني\s*)?لكرة القدم.*$", "", _clean(name))
+    x = re.sub(r"\s+للرجال$", "", x).strip()
+    return x if x.startswith("منتخب") else "منتخب " + x
+
+
 def build(raw: dict, ids: list[str], col: dict, wins: dict, team_names: dict, is_youth, sparql, qid, v, year, log, NOW_YEAR: int) -> None:
     rnd = random.Random(2026)
     qs: list[list] = []
@@ -175,19 +181,26 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, team_names: dict, is
     famous = [i for i in famous if i in raw]
     squads = col.get("squads", {})
 
-    # شهرة الأندية: كم لاعب مشهور لعب فيها
+    # شهرة الأندية: كم لاعب من الأشهر (أول 600) لعب فيها. هيك الأندية الكبيرة بتطلع والدوريات المغمورة لا
+    elite = set(ids[:600])
     club_fame = defaultdict(int)
     for pid in famous:
         for t in {t["t"] for t in raw[pid]["teams"] if not t["nat"] and not is_youth(t)}:
-            club_fame[t] += 1
-    big_club = {t for t, n in club_fame.items() if n >= 8}
-    ok_club = {t for t, n in club_fame.items() if n >= 4}
+            if pid in elite:
+                club_fame[t] += 1
+    big_club = {t for t, n in club_fame.items() if n >= 6}
+    ok_club = {t for t, n in club_fame.items() if n >= 3}
+    arab_set = set(arab_ids)
 
-    per_player = 0
+    per_cands = []
     for pid in famous:
         p = raw[pid]
         name = _clean(p.get("ar"))
-        if not name or not re.search(r"[؀-ۿ]", name):
+        if not name or not re.search(r"[\u0600-\u06FF]", name):
+            continue
+        clubs_all = [t for t in p["teams"] if not is_youth(t) and not t["nat"]]
+        # بس لاعبين معروفين: لعب بنادي كبير، أو لاعب عربي
+        if pid not in arab_set and not any(t["t"] in big_club for t in clubs_all):
             continue
         by = p.get("by")
         spells = [t for t in p["teams"] if not is_youth(t)]
@@ -205,33 +218,35 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, team_names: dict, is
         firsts = {}
         for t in sorted(clubs, key=lambda t: t["s"] or 9999):
             firsts.setdefault(t["t"], t)
+        joins = []
         for t in firsts.values():
             cname = _clean(t["ar"])
-            if t["t"] not in ok_club or not t["s"]:
+            if not t["s"] or (t["t"] not in ok_club and pid not in arab_set):
                 continue
-            cand.append((f"بأي سنة انضم {name} {_al(cname)}؟", t["s"], "", f"وضل فيه لحد {t['e']}" if t["e"] else "ولسا فيه"))
+            joins.append((f"بأي سنة انضم {name} {_al(cname)}؟", t["s"], "", f"وضل فيه لحد {t['e']}" if t["e"] else "ولسا فيه"))
             if t["e"] and t["e"] - t["s"] >= 2:
                 cand.append((f"كم سنة لعب {name} مع {cname}؟", t["e"] - t["s"], "سنين", f"من {t['s']} لـ{t['e']}"))
             if by and t["t"] in big_club and 15 <= t["s"] - by <= 38:
                 cand.append((f"كم كان عمر {name} لما انضم {_al(cname)}؟", t["s"] - by, "سنة", f"سنة {t['s']}"))
+        rnd.shuffle(joins)
+        cand.extend(joins[:2])
         for t in clubs:
             cname = _clean(t["ar"])
-            if t.get("goals") and t["goals"] >= 10 and not gk:
+            if t.get("goals") and 10 <= t["goals"] <= 700 and not gk:
                 cand.append((f"كم هدف سجّل {name} بالدوري مع {cname}؟", t["goals"], "هدف", f"في {t['apps']} مباراة" if t.get("apps") else ""))
-            if t.get("apps") and t["apps"] >= 50:
+            if t.get("apps") and 50 <= t["apps"] <= 800:
                 cand.append((f"كم مباراة لعب {name} بالدوري مع {cname}؟", t["apps"], "مباراة", f"من {t['s']}" if t["s"] else ""))
-            if t.get("num") and t["t"] in ok_club:
+            if t.get("num") and (t["t"] in ok_club or pid in arab_set):
                 cand.append((f"شو رقم قميص {name} مع {cname}؟", t["num"], "", ""))
         for t in nts:
-            ntn = _clean(t["ar"])
-            if t.get("apps") and t["apps"] >= 20:
+            ntn = _nt(t["ar"])
+            if t.get("apps") and 20 <= t["apps"] <= 250:
                 cand.append((f"كم مباراة دولية لعب {name} مع {ntn}؟", t["apps"], "مباراة", f"وسجّل {t['goals']} هدف" if t.get("goals") else ""))
-            if t.get("goals") and t["goals"] >= 10:
+            if t.get("goals") and 10 <= t["goals"] <= 150:
                 cand.append((f"كم هدف دولي سجّل {name} مع {ntn}؟", t["goals"], "هدف", ""))
         sq = squads.get(pid)
         if sq and sq.get("num"):
             cand.append((f"شو رقم قميص {name} مع {sq['club_ar']} هلأ؟", sq["num"], "", ""))
-        # كأس العالم ودوري الأبطال (محسوبين من البيانات)
         nt_ids = {t["t"] for t in nts}
         wc = sorted({y for ev, (team, y) in wins["wc"].items() if ev in p.get("events", set()) and team in nt_ids})
         if len(wc) == 1:
@@ -241,12 +256,22 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, team_names: dict, is
         if last_end and not open_spell and not p.get("dy") and by and by < NOW_YEAR - 36 and last_end - by >= 30:
             cand.append((f"بأي سنة لعب {name} آخر موسم إله كمحترف؟", last_end, "", ""))
         rnd.shuffle(cand)
-        for c in cand[:7]:
+        per_cands.append(cand)
+
+    # بنزيد عدد الأسئلة لكل لاعب لحد ما نوصل 7500 سؤال بالمجموع
+    per_player = 0
+    for cap in range(5, 14):
+        if sum(min(len(c), cap) for c in per_cands) >= 7500:
+            break
+    for cand in per_cands:
+        for c in cand[:cap]:
+            before = len(qs)
             add(*c)
-            per_player += 1
+            per_player += len(qs) - before
+    log(f"  لاعبين بالأسئلة: {len(per_cands)}، لحد {cap} سؤال لكل لاعب")
 
     # ---------------- الأندية: تأسيس، ملعب، دوري الأبطال
-    top_clubs = sorted((t for t in club_fame if club_fame[t] >= 10), key=lambda t: -club_fame[t])[:350]
+    top_clubs = sorted(big_club, key=lambda t: -club_fame[t])[:300]
     ucl = defaultdict(int)
     for team, _y in wins["ucl"]:
         ucl[team] += 1
