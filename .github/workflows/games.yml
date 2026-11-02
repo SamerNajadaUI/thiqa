@@ -4,7 +4,7 @@ name: Games data
 on:
   push:
     branches: [main]
-    paths: ["engine/players.py", "engine/party.py", "engine/football_q.py", "engine/numbers_gen.py", ".github/workflows/games.yml"]
+    paths: ["engine/players.py", "engine/party.py", "engine/football_q.py", ".github/workflows/games.yml"]
   schedule:
     - cron: "23 2 * * 1"
   workflow_dispatch: {}
@@ -30,7 +30,6 @@ jobs:
           set -o pipefail
           pip install -q unidecode
           python -u engine/players.py 2>&1 | tee docs/games/build.log
-          python -u engine/numbers_gen.py 2>&1 | tee -a docs/games/build.log || true
       - name: Save
         if: always()
         run: |

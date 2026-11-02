@@ -1,0 +1,43 @@
+name: Numbers questions
+
+# أسئلة الرقم الأقرب (غير كرة القدم) من Wikidata: بتتحدث كل أسبوع، ولما يتغير المولّد
+on:
+  push:
+    branches: [main]
+    paths: ["engine/numbers_gen.py", ".github/workflows/numbers.yml"]
+  schedule:
+    - cron: "41 3 * * 2"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: numbers-questions
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build questions
+        run: |
+          set -o pipefail
+          pip install -q unidecode
+          python -u engine/numbers_gen.py 2>&1 | tee docs/games/numbers_build.log
+      - name: Save
+        if: always()
+        run: |
+          git config user.name "thiqa-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/games/numbers_q.json docs/games/numbers_build.log
+          if git diff --cached --quiet; then echo "No changes"; else
+            git commit -m "Numbers questions $(date +%F)"
+            git pull --rebase -X theirs origin main || git rebase --abort
+            git push
+          fi

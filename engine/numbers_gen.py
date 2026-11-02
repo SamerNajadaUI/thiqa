@@ -138,10 +138,15 @@ def islamic(B: Bank):
     for n, r in PRAYERS:
         B.add(C, f"كم ركعة فرض صلاة {n}؟", r, "ركعات" if r > 2 else "ركعتين", "")
     # سور جزء عمّ القصيرة: مجموع آيات سورتين ورا بعض (سهل ومسلّي للحفّاظ)
-    for k in range(77, 113):
+    for k in range(113):
         B.add(C, f"كم آية بسورتي {SURAHS[k]} و{SURAHS[k + 1]} مع بعض؟", AYAT[k] + AYAT[k + 1], "آية", f"{AYAT[k]} + {AYAT[k + 1]}")
-    for k in range(66, 77):
-        B.add(C, f"كم آية بسورتي {SURAHS[k]} و{SURAHS[k + 1]} مع بعض؟", AYAT[k] + AYAT[k + 1], "آية", f"{AYAT[k]} + {AYAT[k + 1]}")
+    from collections import Counter
+    for j, n in sorted(Counter(JUZ).items()):
+        if n >= 2:
+            B.add(C, f"كم سورة بتبدأ بالجزء {j}؟", n, "سور", "")
+    for k in range(113):
+        if AYAT[k] != AYAT[k + 1]:
+            B.add(C, f"قديش الفرق بعدد الآيات بين سورة {SURAHS[k]} وسورة {SURAHS[k + 1]}؟", abs(AYAT[k] - AYAT[k + 1]), "آية", f"{AYAT[k]} و{AYAT[k + 1]}")
     B.add(C, "كم سورة بجزء عمّ (الجزء الثلاثين)؟", 37, "سورة", "من النبأ للناس")
     B.add(C, "كم سورة بجزء تبارك (الجزء 29)؟", 11, "سورة", "من الملك للمرسلات")
 
@@ -229,8 +234,9 @@ def geo_features(B: Bank):
 
 
 def events(B: Bank):
-    specs = [("Q178561", 35, 320, "بأي سنة صارت {n}؟"), ("Q198", 45, 160, "بأي سنة بلّشت {n}؟"), ("Q131569", 30, 120, "بأي سنة انوقّعت {n}؟"),
-             ("Q3839081", 40, 80, "بأي سنة صارت {n}؟"), ("Q8065", 45, 80, "بأي سنة صار {n}؟")]
+    specs = [("Q178561", 30, 320, "بأي سنة صارت {n}؟"), ("Q198", 35, 180, "بأي سنة بلّشت {n}؟"), ("Q131569", 25, 120, "بأي سنة انوقّعت {n}؟"),
+             ("Q10931", 30, 80, "بأي سنة صارت {n}؟"), ("Q2133344", 35, 60, "بأي سنة انطلقت {n}؟"), ("Q7944", 35, 60, "بأي سنة صار {n}؟"),
+             ("Q168983", 30, 60, "بأي سنة صار {n}؟")]
     for cls, minl, lim, tmpl in specs:
         rows = q_safe(f"""SELECT ?x ?ar ?l ?t WHERE {{ ?x wdt:P31 wd:{cls}; wikibase:sitelinks ?l. FILTER(?l >= {minl})
             {{ ?x wdt:P585 ?t }} UNION {{ ?x wdt:P580 ?t }} ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""")
@@ -243,14 +249,40 @@ def events(B: Bank):
         log(f"  {cls}: {n}")
 
 
+def history_extra(B: Bank):
+    rows = q_safe("""SELECT ?x ?ar ?l ?a ?b WHERE { ?x wdt:P31 wd:Q48349; wikibase:sitelinks ?l. FILTER(?l >= 40)
+        OPTIONAL { ?x wdt:P571 ?a } OPTIONAL { ?x wdt:P576 ?b } ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }""")
+    for name, b in labelled(rows)[:120]:
+        a, z = year(v(b, "a")), year(v(b, "b"))
+        if a and 500 <= a <= 1950:
+            B.add("تاريخ", f"بأي سنة تأسست {name}؟", a, "", "")
+        if z and 500 <= z <= 2000:
+            B.add("تاريخ", f"بأي سنة انتهت {name}؟", z, "", "")
+    rows = q_safe("""SELECT ?x ?ar ?l ?t WHERE { ?x p:P166 ?st. ?st ps:P166 ?pr; pq:P585 ?t. ?pr wdt:P31 wd:Q7191.
+        ?x wikibase:sitelinks ?l. FILTER(?l >= 60) ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }""")
+    for name, b in labelled(rows)[:180]:
+        y = year(v(b, "t"))
+        if y:
+            B.add("تاريخ", f"بأي سنة أخذ {name} جائزة نوبل؟", y, "", "")
+    for cls, word in (("Q12518", "انبنى"), ("Q570116", "افتتح"), ("Q839954", "انبنى")):
+        rows = q_safe(f"""SELECT ?x ?ar ?l ?t WHERE {{ ?x wdt:P31 wd:{cls}; wikibase:sitelinks ?l; wdt:P571 ?t. FILTER(?l >= 45)
+            ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""")
+        for name, b in labelled(rows)[:120]:
+            y = year(v(b, "t"))
+            if y and 1000 <= y <= NOW:
+                B.add("تاريخ", f"بأي سنة {word} «{name}»؟", y, "", "")
+
+
 def people(B: Bank):
     groups = [  # (مهنة، أقل شهرة، كم، القسم)
-        ("Q82955", 150, 260, "تاريخ"), ("Q116", 60, 90, "تاريخ"), ("Q33999", 110, 140, "أرقام من حياتنا"), ("Q177220", 110, 120, "أرقام من حياتنا"),
-        ("Q36180", 140, 120, "تاريخ"), ("Q1028181", 120, 80, "تاريخ"), ("Q169470", 90, 120, "علوم وجسم الإنسان"),
-        ("Q593644", 80, 80, "علوم وجسم الإنسان"), ("Q170790", 90, 90, "علوم وجسم الإنسان"), ("Q205375", 60, 80, "علوم وجسم الإنسان"),
-        ("Q864503", 70, 60, "علوم وجسم الإنسان"), ("Q11063", 70, 50, "علوم وجسم الإنسان"),
-        ("Q3665646", 60, 150, "رياضة"), ("Q10833314", 70, 130, "رياضة"), ("Q10841764", 70, 100, "رياضة"), ("Q11338576", 60, 80, "رياضة"),
-        ("Q10843402", 60, 60, "رياضة"), ("Q11513337", 60, 60, "رياضة"),
+        ("Q116", 60, 120, "تاريخ"), ("Q33999", 90, 220, "أرقام من حياتنا"), ("Q177220", 70, 160, "أرقام من حياتنا"),
+        ("Q36180", 110, 150, "تاريخ"), ("Q1028181", 80, 90, "تاريخ"), ("Q4964182", 90, 80, "تاريخ"), ("Q36834", 70, 70, "أرقام من حياتنا"),
+        ("Q169470", 70, 150, "علوم وجسم الإنسان"), ("Q593644", 60, 90, "علوم وجسم الإنسان"), ("Q170790", 60, 100, "علوم وجسم الإنسان"),
+        ("Q205375", 45, 100, "علوم وجسم الإنسان"), ("Q864503", 50, 60, "علوم وجسم الإنسان"), ("Q11063", 50, 60, "علوم وجسم الإنسان"),
+        ("Q39631", 50, 60, "علوم وجسم الإنسان"),
+        ("Q3665646", 35, 160, "رياضة"), ("Q10833314", 35, 150, "رياضة"), ("Q10841764", 35, 110, "رياضة"), ("Q11338576", 30, 100, "رياضة"),
+        ("Q10843402", 30, 80, "رياضة"), ("Q11513337", 30, 100, "رياضة"), ("Q10873124", 35, 70, "رياضة"), ("Q2309784", 40, 50, "رياضة"),
+        ("Q11303721", 35, 40, "رياضة"), ("Q11607585", 30, 50, "رياضة"), ("Q13474373", 40, 50, "رياضة"),
     ]
     used = set()
     for occ, minl, lim, cat in groups:
@@ -305,34 +337,45 @@ def animals(B: Bank):
              ("P2043", "كم سنتيمتر تقريباً طول جسم {n}؟", 1, "سم", lambda x: x * 100), ("P2250", "كم سنة تقريباً بيعيش {n}؟", 1, "سنة", lambda x: x / 31557600),
              ("P3063", "كم يوم تقريباً مدة حمل {n}؟", 1, "يوم", lambda x: x / 86400), ("P2052", "كم كيلو بالساعة تقريباً أعلى سرعة عند {n}؟", 1, "كم/س", lambda x: x * 3.6)]
     for prop, tmpl, _, unit, conv in props:
-        rows = q_safe(f"""SELECT ?x ?ar ?l ?val WHERE {{ ?x wdt:P105 wd:Q7432; wikibase:sitelinks ?l; p:{prop}/psn:{prop}/wikibase:quantityAmount ?val.
-            FILTER(?l >= 40) ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""")
+        rows = q_safe(f"""SELECT ?x ?ar ?l ?val WHERE {{ ?x p:{prop}/psn:{prop}/wikibase:quantityAmount ?val; wdt:P171 ?par; wikibase:sitelinks ?l.
+            FILTER(?l >= 35) ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""", 3)
         n = 0
-        for name, b in labelled(rows)[:150]:
+        for name, b in labelled(rows)[:160]:
             val = conv(float(v(b, "val")))
             if val > 0:
                 B.add(C, tmpl.format(n=name), nice(val), unit, "حسب الأرقام المسجلة، وبتختلف من حيوان لحيوان")
                 n += 1
         log(f"  حيوانات {prop}: {n}")
-    # كم رجل: حسب الصنف (سهلة ومضمونة)
-    classes = [("Q1390", 6, "أرجل", "لأنه حشرة"), ("Q1358", 8, "أرجل", "لأنه عنكبوتي"), ("Q5113", 2, "رجلين", "لأنه طير")]
-    for cls, legs, unit, why in classes:
-        rows = q_safe(f"""SELECT ?x ?ar ?l WHERE {{ ?x wdt:P105 wd:Q7432; wdt:P171+ wd:{cls}; wikibase:sitelinks ?l. FILTER(?l >= 45)
-            ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }} LIMIT 400""", 1)
+    # كم رجل: طيور (2) وعناكب (8) وحشرات (6)، من رتب معروفة (مستوى أو مستويين تحت الصنف)
+    groups = [("Q5113", 2, "رجلين", "لأنه طير"), ("Q1390", 6, "أرجل", "لأنه حشرة"), ("Q1358", 8, "أرجل", "لأنه من العنكبوتيات")]
+    for cls, legs, unit, why in groups:
+        rows = q_safe(f"""SELECT ?x ?ar ?l WHERE {{ ?x wdt:P171/wdt:P171/wdt:P171 wd:{cls}; wikibase:sitelinks ?l. FILTER(?l >= 40)
+            ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""", 1)
+        rows += q_safe(f"""SELECT ?x ?ar ?l WHERE {{ ?x wdt:P171/wdt:P171/wdt:P171/wdt:P171 wd:{cls}; wikibase:sitelinks ?l. FILTER(?l >= 40)
+            ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""", 1)
         n = 0
-        for name, b in labelled(rows)[:110]:
+        for name, b in labelled(rows)[:140]:
             B.add(C, f"كم رجل عند {name}؟", legs, unit, why)
             n += 1
         log(f"  أرجل {cls}: {n}")
+    # حجرات القلب حسب الصنف
+    for cls, ch, why in (("Q5113", 4, "قلب الطيور 4 حجرات"), ("Q10811", 3, "قلب الزواحف غالباً 3 حجرات"), ("Q10908", 3, "قلب البرمائيات 3 حجرات")):
+        rows = q_safe(f"""SELECT ?x ?ar ?l WHERE {{ ?x wdt:P171/wdt:P171/wdt:P171 wd:{cls}; wikibase:sitelinks ?l. FILTER(?l >= 50)
+            ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""", 1)
+        for name, b in labelled(rows)[:40]:
+            if "تمساح" in name:
+                continue
+            B.add(C, f"كم حجرة بقلب {name}؟", ch, "حجرات", why)
 
 
 def culture(B: Bank):
     C = "أرقام من حياتنا"
-    specs = [("Q11424", 110, 260, "بأي سنة نزل فيلم «{n}»؟", "P577"), ("Q7889", 70, 120, "بأي سنة نزلت لعبة «{n}»؟", "P577"),
-             ("Q5398426", 80, 100, "بأي سنة نزل مسلسل «{n}»؟", "P580"), ("Q581714", 50, 60, "بأي سنة نزل الكرتون «{n}»؟", "P580")]
+    specs = [("Q11424", 60, 260, "بأي سنة نزل فيلم «{n}»؟", "P577"), ("Q7889", 45, 150, "بأي سنة نزلت لعبة «{n}»؟", "P577"),
+             ("Q5398426", 45, 120, "بأي سنة نزل مسلسل «{n}»؟", "P580"), ("Q581714", 30, 80, "بأي سنة نزل الكرتون «{n}»؟", "P580"),
+             ("Q35127", 50, 80, "بأي سنة انطلق موقع «{n}»؟", "P571"), ("Q166142", 50, 60, "بأي سنة نزل تطبيق «{n}»؟", "P577")]
     for cls, minl, lim, tmpl, prop in specs:
-        rows = q_safe(f"""SELECT ?x ?ar ?l ?t WHERE {{ ?x wdt:P31 wd:{cls}; wikibase:sitelinks ?l; wdt:{prop} ?t. FILTER(?l >= {minl})
-            ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""")
+        rows = q_safe(f"""SELECT ?x ?ar ?l ?t WHERE {{ ?x wdt:P31 wd:{cls}; wdt:{prop} ?t; wikibase:sitelinks ?l. FILTER(?l >= {minl})
+            ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""", 3)
         n = 0
         for name, b in labelled(rows)[:lim]:
             y = year(v(b, "t"))
@@ -340,7 +383,9 @@ def culture(B: Bank):
                 B.add(C, tmpl.format(n=name), y, "", "")
                 n += 1
         log(f"  {cls}: {n}")
-    for cls, minl, lim, tmpl in [("Q4830453", 90, 220, "بأي سنة تأسست شركة {n}؟"), ("Q786820", 40, 90, "بأي سنة تأسست {n}؟"), ("Q167270", 60, 80, "بأي سنة انطلقت ماركة {n}؟")]:
+    for cls, minl, lim, tmpl in [("Q4830453", 60, 160, "بأي سنة تأسست شركة {n}؟"), ("Q891723", 60, 160, "بأي سنة تأسست شركة {n}؟"),
+                                 ("Q6881511", 60, 120, "بأي سنة تأسست شركة {n}؟"), ("Q786820", 35, 90, "بأي سنة تأسست {n}؟"),
+                                 ("Q431289", 40, 100, "بأي سنة انطلقت ماركة {n}؟"), ("Q167270", 40, 80, "بأي سنة انطلقت ماركة {n}؟")]:
         rows = q_safe(f"""SELECT ?x ?ar ?l ?t WHERE {{ ?x wdt:P31 wd:{cls}; wikibase:sitelinks ?l; wdt:P571 ?t. FILTER(?l >= {minl})
             ?x rdfs:label ?ar FILTER(LANG(?ar)="ar") }}""")
         n = 0
@@ -357,7 +402,7 @@ def main() -> int:
     islamic(B)
     space(B)
     olympics(B)
-    for step in (countries, geo_features, events, people, science, animals, culture):
+    for step in (countries, geo_features, events, history_extra, people, science, animals, culture):
         log(f"بجيب: {step.__name__}")
         try:
             step(B)
