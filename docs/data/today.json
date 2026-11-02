@@ -1,7 +1,7 @@
 {
  "date": "2026-11-01",
  "generated_at": "2026-11-01T09:39:11Z",
- "updated_at": "2026-11-01T21:21:55Z",
+ "updated_at": "2026-11-02T00:59:46Z",
  "demo": false,
  "coupons": [
   {
@@ -698,8 +698,8 @@
      "sharp_prob": 0.7075,
      "prob": 0.6879,
      "books": 22,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "2-0",
      "movement": -0.0044,
      "crowd_prob": 0.7094,
      "crowd_volume": 133571,
@@ -787,9 +787,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
      "live": {
-      "state": "in",
-      "detail": "78'",
-      "score": "1-0"
+      "state": "post",
+      "detail": "FT",
+      "score": "2-0"
      }
     },
     {
@@ -809,8 +809,8 @@
      "sharp_prob": 0.727,
      "prob": 0.7153,
      "books": 19,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "2-1",
      "movement": -0.0018,
      "crowd_prob": 0.7337,
      "crowd_volume": 124405,
@@ -898,8 +898,8 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/93.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/89.png",
      "live": {
-      "state": "in",
-      "detail": "57'",
+      "state": "post",
+      "detail": "FT",
       "score": "2-1"
      }
     }
@@ -1380,8 +1380,8 @@
    "sharp_prob": 0.727,
    "prob": 0.7153,
    "books": 19,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "2-1",
    "movement": -0.0018,
    "crowd_prob": 0.7337,
    "crowd_volume": 124405,
@@ -1470,8 +1470,8 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/93.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/89.png",
    "live": {
-    "state": "in",
-    "detail": "57'",
+    "state": "post",
+    "detail": "FT",
     "score": "2-1"
    }
   },
@@ -1592,8 +1592,8 @@
    "sharp_prob": 0.7075,
    "prob": 0.6879,
    "books": 22,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "2-0",
    "movement": -0.0044,
    "crowd_prob": 0.7094,
    "crowd_volume": 133571,
@@ -1682,9 +1682,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/114.png",
    "live": {
-    "state": "in",
-    "detail": "78'",
-    "score": "1-0"
+    "state": "post",
+    "detail": "FT",
+    "score": "2-0"
    }
   },
   {
