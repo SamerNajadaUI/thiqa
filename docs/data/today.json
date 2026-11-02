@@ -1,7 +1,7 @@
 {
  "date": "2026-11-02",
  "generated_at": "2026-11-02T08:12:37Z",
- "updated_at": "2026-11-02T08:12:37Z",
+ "updated_at": "2026-11-02T18:47:44Z",
  "demo": false,
  "coupons": [
   {
@@ -338,9 +338,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3997.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "in",
+      "detail": "59'",
+      "score": "1-2"
      }
     },
     {
@@ -1334,9 +1334,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3997.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
    "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
+    "state": "in",
+    "detail": "59'",
+    "score": "1-2"
    }
   },
   {

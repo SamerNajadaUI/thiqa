@@ -7371,9 +7371,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3997.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "in",
+      "detail": "59'",
+      "score": "1-2"
      }
     },
     {
@@ -8041,9 +8041,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3997.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "in",
+        "detail": "59'",
+        "score": "1-2"
        }
       },
       {
