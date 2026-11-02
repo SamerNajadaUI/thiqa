@@ -110,6 +110,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; 
 .q { background: var(--c); color: #FFFFFF; border-radius: 30px; padding: 22px; box-shadow: 0 8px 0 var(--cd); display: flex; flex-direction: column; gap: 6px; }
 .q small { opacity: .85; font-weight: 600; }
 .q b { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 7.5vw, 34px); line-height: 1.3; }
+.peek { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); background: rgb(0 0 0 / .78); color: #fff; padding: 6px 16px; border-radius: 999px; font-size: 15px; font-weight: 700; z-index: 99; pointer-events: none; transition: opacity .3s; }
 .q .unit { align-self: flex-start; background: rgb(255 255 255 / .2); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
 .numin { width: 100%; border: 3px solid var(--c); border-radius: 22px; padding: 16px; font-family: var(--display); font-size: 40px; text-align: center; direction: ltr; background: #FFFFFF; }
 .answer { text-align: center; background: var(--oks); border-radius: 28px; padding: 20px; }
@@ -229,6 +230,25 @@ function nextQuestion() {
   R = { c: pick.c, text: pick.q[0], ans: pick.q[1], unit: pick.q[2], note: pick.q[3], i: 0, guesses: [] };
   turn();
 }
+
+// سرّ: 3 كبسات ورا بعض على السؤال بتورجي الجواب لثانية (للي ماسك التلفون)
+(() => {
+  let taps = [], tm = null;
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest || !e.target.closest(".q")) return;
+    const now = Date.now();
+    taps = taps.filter((t) => now - t < 800); taps.push(now);
+    if (taps.length < 3) return;
+    taps = [];
+    const on = window.onlinePeek ? window.onlinePeek() : undefined;
+    const a = on !== undefined ? on : (typeof R !== "undefined" && R ? R.ans : null);
+    if (a === null || a === undefined) return;
+    let el = document.querySelector(".peek");
+    if (!el) { el = document.createElement("div"); el.className = "peek"; document.body.appendChild(el); }
+    el.textContent = fmt(a); el.style.opacity = "1";
+    clearTimeout(tm); tm = setTimeout(() => { el.style.opacity = "0"; }, 1200);
+  });
+})();
 
 const qCard = () => `<div class="q"><small>الجولة ${G.round} · ${esc(R.c)}</small><b>${esc(R.text)}</b>${R.unit ? `<span class="unit">الجواب بـ: ${esc(R.unit)}</span>` : ""}</div>`;
 

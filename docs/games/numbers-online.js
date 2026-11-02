@@ -13,6 +13,8 @@
   const $ = (id) => document.getElementById(id);
 
   let client = null, room = null, isHost = false, S = null, offset = 0, ticker = null, hostTimer = null;
+  // للكبسات الثلاث: الجواب بس عند المضيف (الباقي ما عندهم الجواب أصلاً)
+  window.onlinePeek = () => (room ? (isHost && P && P.ans != null && S && S.q ? P.ans : null) : undefined);
   let P = null;   // أسرار المضيف: الجواب الحالي وأرقام اللاعبين لحد الكشف
   const me = { id: store.get("pid", null), name: store.get("myname", "") };
   if (!me.id) { me.id = Math.random().toString(36).slice(2, 10); store.set("pid", me.id); }
