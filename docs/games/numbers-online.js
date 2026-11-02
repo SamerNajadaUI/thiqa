@@ -189,11 +189,9 @@
 
   function nextQuestion() {
     const cats = S.cats.length ? S.cats : Object.keys(QUESTIONS);
-    const pool = cats.flatMap((c) => QUESTIONS[c].map((q) => ({ c, q })));
-    let fresh = pool.filter((x) => !P.used.includes(x.q[0]));
-    if (!fresh.length) { P.used = []; fresh = pool; }
-    const pick = fresh[Math.floor(Math.random() * fresh.length)];
-    P.used.push(pick.q[0]);
+    const pick = pickQuestion(cats, P.used);
+    if (pick.reset) P.used = P.used.filter((u) => !pick.all.some((q) => q[0] === u));
+    P.used.push(pick.q[0]); if (P.used.length > 3000) P.used = P.used.slice(-3000);
     P.ans = pick.q[1]; P.guesses = {};
     S.round++;
     S.q = { c: pick.c, text: pick.q[0], unit: pick.q[2] };

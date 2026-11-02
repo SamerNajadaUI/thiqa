@@ -177,7 +177,7 @@ function intro() {
   const resume = G.scores;
   render(`<h1>مين بيجيب الرقم الأقرب؟</h1>
     <div class="card"><ol class="steps">
-      <li><span>بيطلع سؤال جوابه رقم، من 7 أقسام: رياضة، إسلامية، حيوانات، جغرافيا، تاريخ، علوم وجسم الإنسان، وأرقام من حياتنا.</span></li>
+      <li><span>بيطلع سؤال جوابه رقم، من 8 أقسام: كرة قدم ⚽، رياضة، إسلامية، حيوانات، جغرافيا، تاريخ، علوم وجسم الإنسان، وأرقام من حياتنا.</span></li>
       <li><span>كل فريق بيكتب رقمه بالسر وبيمرّر التلفون.</span></li>
       <li><span>الفريق اللي رقمه أقرب للجواب بياخذ نقطة. وإذا جابه بالضبط بياخذ نقطتين.</span></li>
       <li><span>أول فريق بيوصل <b>${TARGET} نقطة</b> بيفوز. وفيكم تنهوا قبل بـ«إنهاء اللعبة».</span></li>
@@ -210,13 +210,22 @@ function setup() {
   });
 }
 
+// بنختار القسم أول (بالتساوي) وبعدين سؤال منه، عشان قسم كرة القدم الكبير ما يغطّي على الباقي
+function pickQuestion(cats, used) {
+  cats = cats.filter((c) => (QUESTIONS[c] || []).length);
+  const c = cats[Math.floor(Math.random() * cats.length)];
+  const all = QUESTIONS[c];
+  let fresh = all.filter((q) => !used.includes(q[0]));
+  let reset = false;
+  if (!fresh.length) { fresh = all; reset = true; }
+  return { c, q: fresh[Math.floor(Math.random() * fresh.length)], reset, all };
+}
 function nextQuestion() {
   const cats = G.cats.length ? G.cats : Object.keys(QUESTIONS);
-  let pool = cats.flatMap((c) => QUESTIONS[c].map((q) => ({ c, q })));
-  let fresh = pool.filter((x) => !G.used.includes(x.q[0]));
-  if (!fresh.length) { G.used = G.used.filter((u) => !pool.some((x) => x.q[0] === u)); fresh = pool; }
-  const pick = fresh[Math.floor(Math.random() * fresh.length)];
-  G.used.push(pick.q[0]); G.round++; save();
+  const pick = pickQuestion(cats, G.used);
+  if (pick.reset) G.used = G.used.filter((u) => !pick.all.some((q) => q[0] === u));
+  G.used.push(pick.q[0]); if (G.used.length > 3000) G.used = G.used.slice(-3000);
+  G.round++; save();
   R = { c: pick.c, text: pick.q[0], ans: pick.q[1], unit: pick.q[2], note: pick.q[3], i: 0, guesses: [] };
   turn();
 }
@@ -275,6 +284,12 @@ function finish() {
   bind({ again: setup });
 }
 
+// قسم كرة القدم (آلاف الأسئلة) بيتحمّل من ملف لحاله
+QUESTIONS["كرة قدم"] = [];
+fetch("football_q.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
+  QUESTIONS["كرة قدم"] = d.questions || [];
+  document.querySelectorAll('[data-cat="كرة قدم"]').forEach((b) => { b.textContent = `كرة قدم (${QUESTIONS["كرة قدم"].length})`; });
+}).catch(() => {});
 intro();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
 </script>

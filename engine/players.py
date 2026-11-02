@@ -26,6 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import party  # noqa: E402
+import football_q  # noqa: E402
 
 OUT = Path(__file__).resolve().parent.parent / "docs" / "games" / "players.json"
 SPARQL = "https://query.wikidata.org/sparql"
@@ -566,6 +567,11 @@ def main() -> int:
     }
     log("بجهّز بيانات تحدي الأصحاب...")
     party.build(raw, all_ids, col, wins, coaches, team_names, shape, is_youth, NOW_YEAR, log)
+    log("بجهّز أسئلة كرة القدم للرقم الأقرب...")
+    try:
+        football_q.build(raw, ids, col, wins, team_names, is_youth, sparql, qid, v, year, log, NOW_YEAR)
+    except Exception as e:  # ما بنخلي أسئلة الرقم الأقرب توقف تحديث اللاعبين
+        log(f"  أسئلة كرة القدم ما زبطت: {e}")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     log(f"كتبت {len(kept)} لاعب و{len(challenges)} تحدي ({OUT.stat().st_size // 1024} KB).")
