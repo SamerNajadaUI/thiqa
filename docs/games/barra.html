@@ -72,6 +72,12 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; 
 .toggle input { width: 22px; height: 22px; accent-color: var(--c); }
 .pass { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 26px 18px; }
 .pass .who { font-family: var(--display); font-size: 48px; line-height: 1.1; color: var(--c); overflow-wrap: anywhere; }
+.hintq { border: 2px dashed var(--brand); background: #FFFFFF; color: var(--brand); border-radius: 20px; padding: 12px; font-weight: 700; font-size: 15px; }
+.hintq small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; }
+.suggbox { background: #FEF0C7; border: 2px solid #FDB022; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 10px; text-align: center; }
+.suggbox b { font-size: 22px; line-height: 1.5; }
+.suggbox button { border: 0; border-radius: 14px; padding: 10px; font-weight: 700; background: #FFFFFF; }
+.cats button.adult[aria-pressed="true"] { background: #F04438; border-color: #F04438; color: #FFFFFF; }
 .secret { text-align: center; padding: 28px 18px; border-radius: 32px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
 .secret.in { background: var(--oks); }
 .secret.out { background: var(--ink); color: #FFFFFF; }
@@ -139,6 +145,58 @@ const G = {
   rounds: 2,
 };
 
+// ---------- قسم +18 (ما بيدخل بالخلطة إلا إذا انختار، وبيسأل عن العمر) ----------
+const ADULT = "شغلات +18";
+WORDS[ADULT] = ["ليلة الدخلة", "شهر العسل", "ملابس داخلية", "حبوب منع الحمل", "فحص الحمل", "الطلاق", "الزوجة الثانية", "الخيانة",
+  "الإكس", "تطبيق تعارف", "مكالمة نص الليل", "سكرين شوت للمحادثة", "حذف الرسالة", "بلوك", "بوسة", "حضن", "مساج", "كازينو",
+  "سهرة شباب", "الحماة", "الكنّة", "الكرش", "ضرطة", "تكريعة", "ريحة الجرابات", "ريحة الإبط", "الإسهال", "حمام عمومي",
+  "شعر الصدر", "حبوب الشباب", "الصلعة", "مايوه", "فياغرا", "رسالة حب", "الغيرة", "صورة سيلفي بالحمام", "السهر للصبح", "الكذب على المرة"];
+
+// ---------- أسئلة مقترحة ----------
+// اللي بيعرف الكلمة: سؤال بيبيّن إنه فاهم القسم والكلمة بس بدون ما يفضحها.
+// اللي برا السالفة: سؤال عام بيمشي على أي إشي، عشان يسأل كأنه فاهم.
+const Q_GENERIC = [
+  "إمتى آخر مرة تعاملت معه؟", "بتحبه ولا لا؟ وليش؟", "لو بدك توصفه بكلمة وحدة شو بتقول؟", "بتنصح فيه حدا؟",
+  "إله علاقة بالصيف أكثر ولا بالشتا؟", "بتشوفه كل يوم؟", "إمك بتحبه؟", "لو اختفى من الدنيا بتزعل؟", "غالي ولا رخيص؟",
+  "بتلاقيه بالبيت ولا لازم تطلع؟", "بتتذكر أول مرة شفته؟", "الصغار بحبوه أكثر ولا الكبار؟", "بيعمل صوت؟",
+  "لونه بيفرق معك؟", "بتحكي عنه مع صحابك؟", "إله ريحة؟", "كبير ولا صغير؟", "بتستعمله لحالك ولا مع ناس؟",
+  "بيذكّرك بإشي معين؟", "بتفضّله بالنهار ولا بالليل؟", "شو أول إشي بخطر ببالك لما تسمع اسمه؟", "في منه أنواع كثير؟",
+  "بتعرف حدا بكرهه؟", "بتصوّره وبتنزّله ستوري؟", "مرتبط بمناسبة معينة؟", "سهل تلاقيه بعمّان؟",
+];
+const Q_INSIDE = {
+  "أكل": ["بتاكله بالإيد ولا بالمعلقة؟", "طبخة يوم الجمعة ولا أكلة سريعة؟", "مين بيعمله أطيب، إمك ولا المطعم؟", "بتاكله سخن ولا بارد؟", "بيلزمه لبن ولا سلطة جنبه؟", "بتعزم عليه ضيوف؟", "بيتقل على المعدة؟", "بتطلبه دليفري؟"],
+  "حلويات": ["بتاكله بالعيد أكثر؟", "بالبيت بيتعمل ولا بنشتريه؟", "بيلزمه قطر؟", "بتاكله مع قهوة ولا لحاله؟", "سخن أطيب ولا بارد؟", "بتجيبه لما تزور حدا؟", "بالكاسات ولا بالصدر؟", "لما تكون معصّب بتاكل منه؟"],
+  "مشروبات": ["بتشربه سخن ولا بارد؟", "بتحطله سكر؟", "الصبح ولا بالليل؟", "بالكافيه أطيب ولا بالبيت؟", "بيصحّي؟", "بتقدّمه للضيوف؟", "بالكاسة ولا بالفنجان؟", "بتشربه وإنت مريض؟"],
+  "فواكه وخضار": ["بتاكله ني ولا مطبوخ؟", "موسمه الصيف ولا الشتا؟", "بتقشّره؟", "بيدخل بالسلطة؟", "بتلاقيه بالحسبة كل السنة؟", "لونه من برا زي لونه من جوا؟", "حلو ولا مالح؟", "بتغسله منيح قبل ما تاكله؟"],
+  "حيوانات": ["بتربيه بالبيت؟", "بتخاف منه؟", "بتشوفه بالحديقة ولا بالشارع؟", "بيعيش بالمي ولا عاليابسة؟", "بيآكل لحمة؟", "بيطلع صوته عالي؟", "بيعيش بالأردن؟", "سريع ولا بطيء؟"],
+  "مهن": ["بيلبس زي معين بالشغل؟", "بتحتاجه مرة بالسنة ولا كل يوم؟", "بيشتغل بالليل؟", "بدها دراسة جامعة؟", "معاشه منيح؟", "بيتعامل مع ناس كثير؟", "شغله تعب جسدي؟", "بتتصل فيه لما يصير معك مشكلة؟"],
+  "أماكن": ["بتروحله لحالك ولا مع العيلة؟", "بتدفع لما تفوت؟", "مسكّر بالليل؟", "بدك تلبس إشي معين لتروح؟", "بتقعد فيه كثير ولا بتطلع بسرعة؟", "فيه ناس كثير عادة؟", "بتروحه بالعطلة؟", "بتاخذ صور فيه؟"],
+  "ملابس": ["بتلبسه بالشتا ولا بالصيف؟", "بتلبسه برا البيت؟", "إله مقاسات؟", "بيلبسوه الرجال والنسوان؟", "بتلبسه بالعرس؟", "بتغسله كل يوم؟", "بيبيّن ولا تحت الأواعي؟", "إله ألوان كثير؟"],
+  "أغراض البيت": ["بأي غرفة بتلاقيه؟", "بيشتغل عالكهربا؟", "بتستعمله كل يوم؟", "بيخرب بسرعة؟", "بتنظفه كثير؟", "بتجيبه أول ما تتزوج؟", "تقيل ولا خفيف؟", "إمك بتزعل إذا خربته؟"],
+  "أدوات المطبخ": ["بتستعمله بالطبخ ولا بالأكل؟", "معدن ولا زجاج؟", "بينغسل بالجلاية؟", "بتحتاجه لما تعمل قهوة؟", "خطر عالصغار؟", "بيشتغل عالكهربا؟", "عندك منه كثير بالبيت؟", "بتعيره للجيران؟"],
+  "مواصلات": ["بتركبه كل يوم؟", "بدك رخصة لتسوقه؟", "بيمشي عالأرض؟", "بتدفع أجرة؟", "بيتسع لناس كثير؟", "سريع؟", "في منه بعمّان؟", "بيعمل أزمة سير؟"],
+  "تكنولوجيا": ["بتشحنه؟", "بتحمله بإيدك؟", "بتستعمله بالشغل ولا للتسلية؟", "بدو نت؟", "بيخرب إذا وقع؟", "بتستعمله قبل ما تنام؟", "آبل بتعمل منه؟", "بتجيب جديد كل سنة؟"],
+  "رياضة": ["بتنلعب لحال ولا فريق؟", "بدها كرة؟", "بتنلعب بالداخل ولا برا؟", "خطرة؟", "بتشوفها عالتلفزيون؟", "بالأولمبياد؟", "بدها لياقة كثير؟", "في منها بطولة كبيرة كل سنة؟"],
+  "أندية كرة قدم": ["بتشجعه؟", "لونه الأساسي غامق ولا فاتح؟", "فاز بدوري الأبطال؟", "عنده جمهور كبير بالأردن؟", "ملعبه كبير؟", "عنده نجم عربي؟", "بتلعب فيه بفيفا؟", "إله غريم تقليدي؟"],
+  "لاعبين": ["لسا بيلعب؟", "عربي ولا أجنبي؟", "مهاجم؟", "فاز بالكرة الذهبية؟", "بتحبه؟", "لعب بأكثر من نادي كبير؟", "عمره فوق الثلاثين؟", "إله جمهور كبير بالأردن؟"],
+  "مدن العالم": ["رحتلها؟", "بدها فيزا؟", "عربية؟", "فيها بحر؟", "غالية؟", "بتحب تعيش فيها؟", "جوها حار؟", "فيها فريق كرة مشهور؟"],
+  "أماكن بالأردن": ["بعيد عن عمّان؟", "بتروحه بالصيف؟", "سياحي؟", "بتنام فيه ولا رحلة يوم؟", "فيه أكل مشهور؟", "زحمة؟", "بالشمال ولا بالجنوب؟", "رحتله مع المدرسة؟"],
+  "أشياء بالمدرسة": ["بتحبه ولا بتكرهه؟", "بيكون بالشنطة؟", "إله علاقة بالأستاذ؟", "بيصير كل يوم؟", "بالفرصة؟", "بتخاف منه؟", "بتشتريه من المكتبة؟", "بتتذكره من أيام المدرسة؟"],
+  "أشياء بالعرس": ["إله علاقة بالعريس ولا بالعروس؟", "قبل العرس ولا يومه؟", "بيصرف عليه فلوس كثير؟", "فيه صوت؟", "بتصوّره؟", "النسوان بيهتموا فيه أكثر؟", "بيصير بالصالة؟", "بيكون بكل عرس؟"],
+  "ألعاب وتسلية": ["بتلعبها لحالك ولا مع ناس؟", "بدها كهربا؟", "لعبتها وإنت صغير؟", "بتنلعب برا البيت؟", "فيها خسارة وربح؟", "بتطوّل؟", "بتسبب مشاكل بين الصحاب؟", "بتلعبها برمضان؟"],
+  "مشاعر وحالات": ["بتحس فيه كثير؟", "حلو ولا مش حلو؟", "بيبيّن على وجهك؟", "بيصير معك بالشغل؟", "بتحس فيه قبل الامتحان؟", "بيروح بسرعة؟", "الأكل بيساعد فيه؟", "بتحكي عنه للناس؟"],
+  [ADULT]: ["بتحكي عنه قدام أهلك؟", "بتستحي منه؟", "بيصير بالسر ولا عادي؟", "إله علاقة بالمتزوجين أكثر؟", "بيعمل مشاكل بالبيت؟", "بتضحك لما تسمعه؟", "الرجال بيحكوا فيه أكثر ولا النسوان؟", "بيصير بالليل أكثر؟", "إمك لو سمعت فيه شو بتعمل؟"],
+};
+function suggestQuestion(asker) {
+  const out = asker === R.outsider;
+  const pool = out ? Q_GENERIC : (Math.random() < 0.75 ? (Q_INSIDE[R.cat] || Q_GENERIC) : Q_GENERIC);
+  R.lastQ = R.lastQ || {};
+  let q = pick(pool), tries = 0;
+  while (q === R.lastQ[asker] && tries++ < 5) q = pick(pool);
+  R.lastQ[asker] = q;
+  return q;
+}
+
 function render(html) { $("app").innerHTML = `<div class="screen">${html}</div>`; window.scrollTo(0, 0); }
 function bind(map) { for (const [id, fn] of Object.entries(map)) { const el = $(id); if (el) el.onclick = fn; } }
 const players = () => G.names.slice(0, G.count);
@@ -172,7 +230,8 @@ function setupPlayers() {
     <div class="card"><h2>الأسماء</h2><div class="names">${Array.from({ length: n }, (_, i) =>
       `<label><span>${i + 1}</span><input id="name-${i}" type="text" maxlength="16" placeholder="لاعب ${i + 1}" value="${esc(G.names[i] || "")}" autocomplete="off"></label>`).join("")}</div></div>
     <div class="card"><h2>الأقسام</h2><p class="note">اختاروا قسم أو أكثر. إذا ما اخترتوا إشي، بتطلع الكلمة من كل الأقسام.</p>
-      <div class="cats">${Object.keys(WORDS).map((c) => `<button type="button" data-cat="${esc(c)}" aria-pressed="${G.cats.includes(c)}">${esc(c)}</button>`).join("")}</div>
+      <div class="cats">${Object.keys(WORDS).map((c) => `<button type="button" data-cat="${esc(c)}" aria-pressed="${G.cats.includes(c)}" ${c === ADULT ? 'class="adult"' : ""}>${c === ADULT ? "🔞 " : ""}${esc(c)}</button>`).join("")}</div>
+      <p class="note">قسم 🔞 ما بيطلع إلا إذا اخترتوه.</p>
       <label class="toggle"><span>اللي برا السالفة بيعرف القسم</span><input type="checkbox" id="showcat" ${G.showCat ? "checked" : ""}></label></div>
     <p class="note" id="err" hidden></p>
     <button class="big" id="go" type="button">التالي</button>`);
@@ -194,7 +253,9 @@ function setupPlayers() {
     },
   });
   document.querySelectorAll("[data-cat]").forEach((b) => b.onclick = () => {
-    const c = b.dataset.cat; G.cats = G.cats.includes(c) ? G.cats.filter((x) => x !== c) : [...G.cats, c];
+    const c = b.dataset.cat;
+    if (c === ADULT && !G.cats.includes(c) && !confirm("قسم +18 فيه شغلات محرجة ووقحة شوي. كل اللاعبين فوق 18 سنة؟")) return;
+    G.cats = G.cats.includes(c) ? G.cats.filter((x) => x !== c) : [...G.cats, c];
     b.setAttribute("aria-pressed", G.cats.includes(c));
   });
 }
@@ -203,7 +264,7 @@ function setupPlayers() {
 let R = null;
 function setupRound() {
   const ps = players();
-  const cats = G.cats.length ? G.cats : Object.keys(WORDS);
+  const cats = G.cats.length ? G.cats : Object.keys(WORDS).filter((c) => c !== ADULT);
   const cat = pick(cats);
   const used = store.get("used", []);
   let options = WORDS[cat].filter((w) => !used.includes(cat + "|" + w));
@@ -246,10 +307,17 @@ function question() {
   render(`<div class="sub" style="text-align:center">الجولة ${R.round} · سؤال ${R.q + 1} من ${R.pairs.length}</div>
     <div class="turn"><div class="names2"><span class="a">${esc(a)}</span> بيسأل <span class="t">${esc(t)}</span></div>
       <small>اسأل عن الكلمة بدون ما تحكيها. واللي بيجاوب ما يفضح حاله!</small></div>
+    <button class="hintq" id="sugg" type="button">💡 ${esc(a)}، بدك سؤال مقترح؟ <small>(بس إنت اطّلع)</small></button>
+    <div class="suggbox" id="suggbox" hidden><small>سؤال مقترح لـ${esc(a)}</small><b id="suggq"></b><button type="button" id="another">سؤال ثاني</button><button type="button" id="hideq">خبّيه</button></div>
     <div class="progress">${R.pairs.map((_, k) => `<i class="${k <= R.q ? "on" : ""}"></i>`).join("")}</div>
     <button class="big purple" id="next" type="button">${R.q + 1 < R.pairs.length ? "السؤال الجاي" : "خلصت الجولة"}</button>
     <button class="big ghost" id="vote" type="button">روحوا للتصويت هلأ</button>`);
-  bind({ next: () => { if (R.q + 1 < R.pairs.length) { R.q++; question(); } else roundEnd(); }, vote: startVote });
+  bind({
+    next: () => { if (R.q + 1 < R.pairs.length) { R.q++; question(); } else roundEnd(); }, vote: startVote,
+    sugg: () => { $("suggq").textContent = suggestQuestion(a); $("suggbox").hidden = false; $("sugg").hidden = true; },
+    another: () => { $("suggq").textContent = suggestQuestion(a); },
+    hideq: () => { $("suggbox").hidden = true; $("sugg").hidden = false; },
+  });
 }
 
 function roundEnd() {
