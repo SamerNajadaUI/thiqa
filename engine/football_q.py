@@ -188,9 +188,29 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, team_names: dict, is
         for t in {t["t"] for t in raw[pid]["teams"] if not t["nat"] and not is_youth(t)}:
             if pid in elite:
                 club_fame[t] += 1
-    big_club = {t for t, n in club_fame.items() if n >= 6}
-    ok_club = {t for t, n in club_fame.items() if n >= 3}
+    # الأندية اللي أغلب لاعبينها من شرق آسيا (الدوري الياباني مثلاً) مش معروفة عندنا، فبنستثنيها
+    far_east = ("اليابان", "كوريا", "الصين")
+    club_players = defaultdict(list)
+    for pid in famous:
+        for t in {t["t"] for t in raw[pid]["teams"] if not t["nat"] and not is_youth(t)}:
+            club_players[t].append(pid)
+    def east_share(t):
+        ps = club_players.get(t, [])
+        if not ps:
+            return 0
+        n = sum(1 for pid in ps if any(any(k in x for k in far_east) for x in (raw[pid].get("sport_nat") or raw[pid].get("nat") or [])))
+        return n / len(ps)
+    big_club = {t for t, n in club_fame.items() if n >= 6 and east_share(t) < 0.5}
+    ok_club = {t for t, n in club_fame.items() if n >= 3 and east_share(t) < 0.5}
     arab_set = set(arab_ids)
+    # الأندية العربية المعروفة: لعب فيها 4 لاعبين عرب مشهورين أو أكثر
+    arab_club = defaultdict(int)
+    for pid in arab_ids:
+        if pid in raw:
+            for t in {t["t"] for t in raw[pid]["teams"] if not t["nat"] and not is_youth(t)}:
+                arab_club[t] += 1
+    known_arab_club = {t for t, n in arab_club.items() if n >= 4}
+    rank = {pid: k for k, pid in enumerate(famous)}
 
     per_cands = []
     for pid in famous:
@@ -203,6 +223,8 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, team_names: dict, is
         if pid not in arab_set and not any(t["t"] in big_club for t in clubs_all):
             continue
         by = p.get("by")
+        if by and by < 1950 and rank.get(pid, 9999) > 300:   # لاعبين قدام كثير: بس المشاهير
+            continue
         spells = [t for t in p["teams"] if not is_youth(t)]
         clubs = [t for t in spells if not t["nat"] and t["ar"]]
         nts = [t for t in spells if t["nat"] and t["ar"]]
@@ -221,7 +243,7 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, team_names: dict, is
         joins = []
         for t in firsts.values():
             cname = _clean(t["ar"])
-            if not t["s"] or (t["t"] not in ok_club and pid not in arab_set):
+            if not t["s"] or not (t["t"] in ok_club or (pid in arab_set and t["t"] in known_arab_club)):
                 continue
             joins.append((f"بأي سنة انضم {name} {_al(cname)}؟", t["s"], "", f"وضل فيه لحد {t['e']}" if t["e"] else "ولسا فيه"))
             if t["e"] and t["e"] - t["s"] >= 2:
@@ -232,6 +254,8 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, team_names: dict, is
         cand.extend(joins[:2])
         for t in clubs:
             cname = _clean(t["ar"])
+            if t["t"] not in ok_club and t["t"] not in known_arab_club:
+                continue   # أرقام بأندية مغمورة: صعبة وما بتهم حدا
             if t.get("goals") and 10 <= t["goals"] <= 700 and not gk:
                 cand.append((f"كم هدف سجّل {name} بالدوري مع {cname}؟", t["goals"], "هدف", f"في {t['apps']} مباراة" if t.get("apps") else ""))
             if t.get("apps") and 50 <= t["apps"] <= 800:
@@ -256,15 +280,17 @@ def build(raw: dict, ids: list[str], col: dict, wins: dict, team_names: dict, is
         if last_end and not open_spell and not p.get("dy") and by and by < NOW_YEAR - 36 and last_end - by >= 30:
             cand.append((f"بأي سنة لعب {name} آخر موسم إله كمحترف؟", last_end, "", ""))
         rnd.shuffle(cand)
-        per_cands.append(cand)
+        per_cands.append((rank.get(pid, 9999), cand))
 
-    # بنزيد عدد الأسئلة لكل لاعب لحد ما نوصل 7500 سؤال بالمجموع
+    # الأشهر بياخذ أسئلة أكثر، وبنزيد لحد ما نوصل 7500 سؤال بالمجموع
+    weight = lambda r: 2 if r < 300 else 1.4 if r < 900 else 1
     per_player = 0
-    for cap in range(5, 14):
-        if sum(min(len(c), cap) for c in per_cands) >= 7500:
+    for base in range(4, 14):
+        if sum(min(len(c), int(base * weight(r))) for r, c in per_cands) >= 7500:
             break
-    for cand in per_cands:
-        for c in cand[:cap]:
+    cap = base
+    for r, cand in per_cands:
+        for c in cand[:int(cap * weight(r))]:
             before = len(qs)
             add(*c)
             per_player += len(qs) - before
