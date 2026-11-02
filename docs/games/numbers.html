@@ -284,6 +284,15 @@ function finish() {
   bind({ again: setup });
 }
 
+// أسئلة إضافية لكل الأقسام (لحد 1000 بكل قسم) من ملف لحاله، بتنضاف على الأسئلة المكتوبة هون
+fetch("numbers_q.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
+  for (const [cat, qs] of Object.entries(d.cats || {})) {
+    if (!QUESTIONS[cat]) continue;
+    const seen = new Set(QUESTIONS[cat].map((q) => q[0]));
+    for (const q of qs) if (!seen.has(q[0])) { QUESTIONS[cat].push(q); seen.add(q[0]); }
+    document.querySelectorAll(`[data-cat="${cat}"]`).forEach((b) => { if (!b.textContent.includes("🔞")) b.textContent = `${cat} (${QUESTIONS[cat].length})`; });
+  }
+}).catch(() => {});
 // قسم كرة القدم (آلاف الأسئلة) بيتحمّل من ملف لحاله
 QUESTIONS["كرة قدم"] = [];
 fetch("football_q.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
