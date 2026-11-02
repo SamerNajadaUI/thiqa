@@ -2,13 +2,16 @@
   دول: 215
 بجيب: geo_features
   محاولة 1: IncompleteRead(0 bytes read)
-  Q8502: 259
+  محاولة 2: IncompleteRead(0 bytes read)
+  ما زبط استعلام، بنكمل
+  Q8502: 0
   Q4022: 180
   Q23442: 90
   Q23397: 80
 بجيب: events
   Q178561: 265
-  Q198: 155
+  محاولة 1: HTTP Error 502: Bad Gateway
+  Q198: 154
   Q131569: 114
   Q10931: 42
   Q2133344: 1
@@ -20,7 +23,7 @@
   Q33999: 220
   Q177220: 160
   محاولة 1: HTTP Error 504: Gateway Timeout
-  محاولة 2: HTTP Error 502: Bad Gateway
+  محاولة 2: HTTP Error 504: Gateway Timeout
   ما زبط استعلام، بنكمل
   Q36180: 0
   Q1028181: 90
@@ -45,23 +48,19 @@
   Q11607585: 27
   Q13474373: 40
 بجيب: science
+  محاولة 1: Expecting ',' delimiter: line 2465 column 1 (char 64298)
   اختراعات: 200
+بجيب: animals_fixed
 بجيب: animals
-  محاولة 1: Expecting ',' delimiter: line 12920 column 3 (char 328847)
-  محاولة 2: Expecting property name enclosed in double quotes: line 1578 column 9 (char 40125)
-  محاولة 3: Expecting property name enclosed in double quotes: line 6616 column 2 (char 168409)
+  حيوانات P2067: 160
+  حيوانات P2048: 15
+  حيوانات P2043: 18
+  حيوانات P2250: 23
+  حيوانات P3063: 116
+  حيوانات P2052: 3
+  محاولة 1: HTTP Error 429: Too Many Requests
   ما زبط استعلام، بنكمل
-  حيوانات P2067: 0
-  محاولة 1: HTTP Error 504: Gateway Timeout
-  محاولة 2: HTTP Error 502: Bad Gateway
-  محاولة 3: HTTP Error 504: Gateway Timeout
-  ما زبط استعلام، بنكمل
-  حيوانات P2048: 0
-  حيوانات P2043: 125
-  حيوانات P2250: 31
-  حيوانات P3063: 160
-  حيوانات P2052: 4
-  أرجل Q5113: 22
+  أرجل Q5113: 8
   أرجل Q1390: 3
   أرجل Q1358: 4
 بجيب: culture
@@ -80,8 +79,8 @@
   إسلامية: 621
   علوم وجسم الإنسان: 1000
   رياضة: 1000
-  جغرافيا: 1000
+  جغرافيا: 964
   أرقام من حياتنا: 1000
   تاريخ: 1000
-  حيوانات: 358
-numbers_q.json: 5979 سؤال (478 KB)
+  حيوانات: 1000
+numbers_q.json: 6585 سؤال (544 KB)
