@@ -1,9 +1,7 @@
 عناوين: 379
-  ما لقيت: Zico
-  ما لقيت: Luis Suárez
-  ما لقيت: Fabinho
-  ما لقيت: Jorginho
-لاعبين بـWikidata: 374
+  ما لقيت: Fabinho (footballer, born October 1993)
+  ما لقيت: Jorginho (footballer, born 1991)
+لاعبين بـWikidata: 376
   محاولة 1: https://site.api.espn.com/apis/site/v2/sports/soccer/qat.1/teams HTTP Error 404: Not Found
   محاولة 2: https://site.api.espn.com/apis/site/v2/sports/soccer/qat.1/teams HTTP Error 404: Not Found
   محاولة 1: https://site.api.espn.com/apis/site/v2/sports/soccer/uae.1/teams HTTP Error 404: Not Found
@@ -11,85 +9,29 @@
   محاولة 1: https://site.api.espn.com/apis/site/v2/sports/soccer/egy.1/teams HTTP Error 404: Not Found
   محاولة 2: https://site.api.espn.com/apis/site/v2/sports/soccer/egy.1/teams HTTP Error 404: Not Found
   ESPN: 723 اسم فريق
-  40/374
-  80/374
-  120/374
-  160/374
-  200/374
-  240/374
-  280/374
-  320/374
-  360/374
-  374/374
+  40/376
+  80/376
+  120/376
+  160/376
+  200/376
+  240/376
+  280/376
+  320/376
+  360/376
+  376/376
   أقل من ناديين: Paolo Maldini (1)
-  أقل من ناديين: Kenny Dalglish (0)
   أقل من ناديين: Lev Yashin (1)
-  أقل من ناديين: Ryan Giggs (0)
+  أقل من ناديين: Ryan Giggs (1)
   أقل من ناديين: Franco Baresi (1)
   أقل من ناديين: Giacinto Facchetti (1)
-  أقل من ناديين: Stanley Matthews (1)
-  أقل من ناديين: Alan Shearer (0)
-  أقل من ناديين: Steven Gerrard (1)
-  أقل من ناديين: Frank Lampard (1)
-  أقل من ناديين: Ian Rush (1)
-  أقل من ناديين: Paul Gascoigne (1)
-  أقل من ناديين: Peter Shilton (0)
-  أقل من ناديين: Paul Scholes (0)
-  أقل من ناديين: John Barnes (0)
-  أقل من ناديين: Roy Keane (0)
-  أقل من ناديين: Rivelino (1)
-  أقل من ناديين: Jimmy Greaves (1)
-  أقل من ناديين: Pat Jennings (0)
-  أقل من ناديين: Uwe Seeler (1)
-  أقل من ناديين: Valentino Mazzola (1)
-  أقل من ناديين: Alan Hansen (0)
-  أقل من ناديين: Neville Southall (0)
-  أقل من ناديين: Denis Law (1)
-  أقل من ناديين: Gary Speed (0)
-  أقل من ناديين: Gary Neville (0)
+  أقل من ناديين: Paul Scholes (1)
+  أقل من ناديين: Gary Neville (1)
   أقل من ناديين: Carles Puyol (1)
-  أقل من ناديين: Jamie Carragher (0)
+  أقل من ناديين: Jamie Carragher (1)
   أقل من ناديين: Sepp Maier (1)
-  أقل من ناديين: Matt Le Tissier (0)
-  أقل من ناديين: Bryan Robson (0)
-  أقل من ناديين: Glenn Hoddle (1)
-  أقل من ناديين: Phil Neal (0)
-  أقل من ناديين: Dixie Dean (0)
-  أقل من ناديين: Tony Adams (0)
-  أقل من ناديين: Steve McManaman (1)
-  أقل من ناديين: Rio Ferdinand (1)
-  أقل من ناديين: Sol Campbell (0)
-  أقل من ناديين: Billy Bremner (1)
-  أقل من ناديين: Gigi Riva (1)
-  أقل من ناديين: Andy Cole (0)
-  أقل من ناديين: Tom Finney (0)
-  أقل من ناديين: Ray Clemence (0)
-  أقل من ناديين: Billy Wright (0)
-  أقل من ناديين: Jack Charlton (0)
-  أقل من ناديين: Ally McCoist (0)
-  أقل من ناديين: Nat Lofthouse (0)
-  أقل من ناديين: Stan Mortensen (0)
-  أقل من ناديين: Emlyn Hughes (0)
-  أقل من ناديين: Les Ferdinand (1)
-  أقل من ناديين: Nobby Stiles (1)
-  أقل من ناديين: Denis Irwin (0)
-  أقل من ناديين: Gilmar (0)
-  أقل من ناديين: Gary McAllister (0)
-  أقل من ناديين: Vincent Kompany (1)
-  أقل من ناديين: Harry Kane (1)
-  أقل من ناديين: Marcelo Vieira (1)
-  أقل من ناديين: Wayne Rooney (0)
-  أقل من ناديين: Virgil van Dijk (1)
-  أقل من ناديين: Raheem Sterling (1)
-  أقل من ناديين: Alisson Becker (1)
-  أقل من ناديين: Trent Alexander-Arnold (1)
-  أقل من ناديين: Andy Robertson (0)
-  أقل من ناديين: Jadon Sancho (1)
-  أقل من ناديين: Kai Havertz (1)
-  أقل من ناديين: Jack Grealish (0)
-  أقل من ناديين: Phil Foden (0)
-  أقل من ناديين: Rúben Dias (1)
-  أقل من ناديين: Kyle Walker (1)
-  أقل من ناديين: Mason Mount (1)
-  أقل من ناديين: Marcus Rashford (1)
-career.json: 302 لاعب، 1496 نادي، بدون شعار: 367
+  أقل من ناديين: Tony Adams (1)
+  أقل من ناديين: Billy Wright (1)
+  أقل من ناديين: Jack Charlton (1)
+  أقل من ناديين: Nat Lofthouse (1)
+  أقل من ناديين: Phil Foden (1)
+career.json: 360 لاعب، 2186 نادي، بدون شعار: 508
