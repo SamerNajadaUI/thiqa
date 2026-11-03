@@ -1,5 +1,5 @@
 // أبو عودة: تشغيل كتطبيق، ويضل يفتح حتى لو النت ضعيف
-const VERSION = "abu-odeh-v2";
+const VERSION = "abu-odeh-v3";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
@@ -13,7 +13,7 @@ self.addEventListener("activate", (e) => {
 async function networkFirst(req) {
   const cache = await caches.open(VERSION);
   try {
-    const res = await fetch(req);
+    const res = await fetch(req, { cache: "no-cache" });   // دايماً بنتأكد من آخر نسخة (بدون كاش المتصفح القديم)
     if (res.ok) cache.put(req, res.clone());
     return res;
   } catch {

@@ -782,7 +782,7 @@ function imgUrl(u) {
 function qImage(c) {
   if (!c.img) return "";
   const cls = c.img.includes("flagcdn") ? "flag" : c.img.includes("teamlogos") ? "crest" : "";
-  return `<img class="qimg ${cls}" src="${esc(imgUrl(c.img))}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">`;
+  return `<img class="qimg ${cls}" src="${esc(imgUrl(c.img))}" data-alt="${esc(c.img)}" alt="" referrerpolicy="no-referrer" onerror="if(this.dataset.alt&&this.src!==this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt='';}else{this.style.display='none'}">`;
 }
 function drawQ() {
   const c = S.cur, t = S.teams[c.team];
