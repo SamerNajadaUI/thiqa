@@ -525,15 +525,52 @@ function intro() {
   render(`<h1>مسيرة لاعب</h1>
     <p class="sub">بتطلع شعارات الأندية اللي لعب فيها لاعب، واحد ورا الثاني. مين بيعرفه أول؟</p>
     <div class="card" style="background:#FFF;border:2px solid var(--brand-soft);border-radius:26px;padding:16px;box-shadow:0 6px 0 var(--brand-soft)"><ul class="rules">
-      <li>لاعبين (أو لحد ${MAX_PLAYERS})، <b>كل واحد من تلفونه</b>.</li>
+      <li>من 2 لـ${MAX_PLAYERS} لاعبين: <b>كل واحد من تلفونه</b>، أو <b>كلكم على تلفون واحد</b>.</li>
       <li>بيطلع أول نادي لعب فيه اللاعب. إذا عرفته، <b>اكتب اسمه</b> (عربي أو إنجليزي، واسم العيلة بيكفي).</li>
       <li>إذا ما عرفتوه، كل واحد بيكبس <b>«النادي الجاي»</b>، ولما الكل يكبس بيطلع النادي اللي بعده، لحد آخر نادي.</li>
       <li>أول واحد بيجاوب صح بياخذ النقاط: من أول شعار <b>5</b>، وبعدها 4، 3، 2، ومن الخامس وطالع <b>1</b>.</li>
       <li>الجواب الغلط بيقفل عليك لحد ما يطلع النادي الجاي.</li>
       <li>اللاعبين من أعظم لاعبين بالتاريخ ونجوم آخر 15 سنة (${DATA.players.length} لاعب).</li>
     </ul></div>
-    <button class="big green" id="online" type="button">يلا نلعب</button>`);
-  bind({ online: () => onlineMenu() });
+    <button class="big green" id="online" type="button">كل واحد من تلفونه</button>
+    ${store.get("local", null) && store.get("local").phase !== "over" ? `<button class="big" id="resume" type="button">كمّلوا اللعبة على تلفون واحد</button>` : ""}
+    <button class="big ${store.get("local", null) ? "ghost" : ""}" id="one" type="button">على تلفون واحد</button>`);
+  bind({ online: () => onlineMenu(), one: () => localSetup(), resume: () => startLocal(store.get("local", null)) });
+}
+
+// ---------- على تلفون واحد: نفس المحرك بس بدون اتصال ----------
+let LOCAL = false, who = null;
+function localSetup(n = store.get("n", 2)) {
+  const names = store.get("names", []);
+  render(`<h1>على تلفون واحد</h1>
+    <h2>كم واحد بيلعب؟</h2>
+    <div class="seg">${[2, 3, 4].map((k) => `<button type="button" data-n="${k}" aria-pressed="${n === k}">${k}</button>`).join("")}</div>
+    <h2>الأسماء</h2>
+    <div class="namesin">${Array.from({ length: n }, (_, i) => `<input id="nm-${i}" type="text" maxlength="14" placeholder="لاعب ${i + 1}" value="${esc(names[i] || "")}" autocomplete="off">`).join("")}</div>
+    <h2>كم لاعب نحزر؟</h2>
+    <div class="seg" id="rs">${[5, 10, 15].map((k) => `<button type="button" data-r="${k}" aria-pressed="${store.get("rounds", 10) === k}">${k}</button>`).join("")}</div>
+    <p class="note" id="err" hidden></p>
+    <button class="big green" id="go" type="button">يلا</button>
+    <button class="big ghost" id="back" type="button">رجوع</button>`);
+  const keep = () => store.set("names", Array.from({ length: n }, (_, i) => $("nm-" + i).value.trim()));
+  document.querySelectorAll("[data-n]").forEach((b) => b.onclick = () => { keep(); localSetup(+b.dataset.n); });
+  document.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => { store.set("rounds", +b.dataset.r); keep(); localSetup(n); });
+  bind({
+    back: intro,
+    go: () => {
+      const ps = Array.from({ length: n }, (_, i) => $("nm-" + i).value.trim() || `لاعب ${i + 1}`);
+      if (new Set(ps).size !== ps.length) { $("err").hidden = false; $("err").textContent = "في اسمين متشابهين."; return; }
+      store.set("n", n); store.set("names", ps);
+      startLocal({ v: 0, room: null, host: me.id, phase: "lobby", rounds: store.get("rounds", 10), round: 0, players: ps.map((name, i) => ({ id: "l" + i, name, total: 0 })), used: store.get("localused", []) });
+      send({ t: "start" });
+    },
+  });
+}
+function startLocal(st) {
+  LOCAL = true; isHost = true; room = null; client = null; who = null;
+  S = st; lastKey = ""; lastShown = 0;
+  if (S.phase === "lobby") return;
+  draw();
 }
 
 // ---------- أونلاين: نفس فكرة تحدي الأصحاب (المضيف هو اللي بيمسك اللعبة) ----------
@@ -612,7 +649,8 @@ function boot() {
 function leave() {
   try { if (client && isHost && room) client.publish(topic("s"), "", { qos: 1, retain: true }); } catch {}
   const c = client; setTimeout(() => { try { c && c.end(true); } catch {} }, 300);
-  client = null; room = null; S = null; isHost = false;
+  if (LOCAL) store.set("local", null);
+  client = null; room = null; S = null; isHost = false; LOCAL = false; who = null;
   store.set("online", null);
   history.replaceState(null, "", location.pathname);
   intro();
@@ -632,6 +670,7 @@ function hostRoom(code, restored) {
 }
 function publish() {
   S.v++; S.now = Date.now();
+  if (LOCAL) { store.set("local", S); store.set("localused", S.used); return onState(S); }
   store.set("hoststate-" + room, S);
   store.set("online", { room, host: true, at: Date.now() });
   client.publish(topic("s"), JSON.stringify(S), { qos: 1, retain: true });
@@ -679,9 +718,9 @@ function onAction(a) {
       S.players.forEach((p) => { p.total = 0; }); S.round = 0;
       return nextRound();
     case "next":   // جاهز للنادي الجاي
-      if (S.phase !== "play" || i < 0 || S.key !== a.key) return;
+      if (S.phase !== "play" || (i < 0 && !LOCAL) || S.key !== a.key) return;
       if (!S.ready.includes(a.pid)) S.ready.push(a.pid);
-      if (S.ready.length >= S.players.length) {
+      if (LOCAL || S.ready.length >= S.players.length) {
         if (S.k < S.n) { S.k++; S.ready = []; S.locked = {}; S.flash = null; }
         else { S.phase = "reveal"; S.result = { who: null }; }
       }
@@ -726,7 +765,7 @@ function joinRoom(code) {
   });
 }
 function send(a) {
-  a.pid = me.id;
+  a.pid = LOCAL && a.as ? a.as : me.id;
   if (isHost) { onAction(a); return; }
   if (client) client.publish(topic("a"), JSON.stringify(a), { qos: 1 });
 }
@@ -738,8 +777,8 @@ function onState(st) {
   S = st;
   const fid = S.flash && S.flash.id;
   if (fid && fid !== lastFx && Date.now() - fid < 15000) {
-    const mine = S.flash.who === me.id;
-    if (S.flash.good) setTimeout(() => fx(S.result && S.result.who === me.id ? "good" : ""), 60);
+    const mine = LOCAL || S.flash.who === me.id;
+    if (S.flash.good) setTimeout(() => fx(LOCAL || (S.result && S.result.who === me.id) ? "good" : ""), 60);
     else if (S.flash.bad && mine) setTimeout(() => fx("bad"), 60);
   }
   lastFx = fid || lastFx;
@@ -748,16 +787,17 @@ function onState(st) {
   // ما نقطع على اللي عم يكتب إذا ما تغير إشي مهم
   const typing = document.activeElement && document.activeElement.id === "ans";
   if (typing) local.draft = document.activeElement.value;
-  if (S.key !== lastKey) { local = { locked: null, msg: "", ask: null, draft: "" }; lastShown = 0; lastKey = S.key; }
+  if (S.key !== lastKey) { local = { locked: null, msg: "", ask: null, draft: "" }; lastShown = 0; lastKey = S.key; who = null; }
+  if (LOCAL && who && S.locked && S.locked[who] === S.k) who = null;
   draw();
   if (typing && $("ans")) { const el = $("ans"); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
 }
 
 function scoreBar() {
-  return `<div class="status3">${S.players.map((p) => `<div class="${p.id === me.id ? "me" : ""}"><b>${esc(p.name)}${p.id === me.id ? " (إنت)" : ""}</b><span>${p.total}</span>
-    ${S.phase === "play" ? `<small>${S.locked && S.locked[p.id] === S.k ? "❌ غلط" : S.ready.includes(p.id) ? "⏭ جاهز" : "بيفكر..."}</small>` : ""}</div>`).join("")}</div>`;
+  return `<div class="status3">${S.players.map((p) => `<div class="${p.id === me.id || (LOCAL && p.id === who) ? "me" : ""}"><b>${esc(p.name)}${p.id === me.id ? " (إنت)" : ""}</b><span>${p.total}</span>
+    ${S.phase === "play" ? `<small>${S.locked && S.locked[p.id] === S.k ? "❌ غلط" : LOCAL ? "" : S.ready.includes(p.id) ? "⏭ جاهز" : "بيفكر..."}</small>` : ""}</div>`).join("")}</div>`;
 }
-const header = () => `<div class="sub" style="text-align:center">الغرفة <b style="letter-spacing:3px">${esc(room)}</b>${S.round ? ` · اللاعب ${S.round} من ${S.rounds}` : ""}</div>`;
+const header = () => `<div class="sub" style="text-align:center">${LOCAL ? "تلفون واحد" : `الغرفة <b style="letter-spacing:3px">${esc(room)}</b>`}${S.round ? ` · اللاعب ${S.round} من ${S.rounds}` : ""}</div>`;
 
 function draw() {
   if (S.phase === "lobby") return drawLobby();
@@ -794,6 +834,7 @@ function drawPlay() {
   const fresh = S.k > lastShown && lastShown > 0 ? S.k - 1 : -1;
   if (S.k > lastShown && lastShown > 0) { try { navigator.vibrate && navigator.vibrate(30); } catch {} }
   lastShown = S.k;
+  if (LOCAL) return drawPlayLocal(p);
   const locked = S.locked && S.locked[me.id] === S.k;
   const ready = S.ready.includes(me.id);
   const last = S.k >= S.n;
@@ -831,6 +872,55 @@ function drawPlay() {
   document.querySelectorAll("[data-ch]").forEach((b) => b.onclick = () => {
     const id = b.dataset.ch; local.ask = null;
     send({ t: "guess", ok: id === p.id, text: byId.get(id).a, key: S.key });
+  });
+}
+
+// على تلفون واحد: اللي بيعرفه بيكبس على اسمه وبيكتب الجواب
+function drawPlayLocal(p) {
+  const fresh = S.k > lastShown && lastShown > 0 ? S.k - 1 : -1;
+  lastShown = S.k;
+  const last = S.k >= S.n;
+  const free = S.players.filter((x) => !(S.locked && S.locked[x.id] === S.k));
+  const cur = who ? S.players.find((x) => x.id === who) : null;
+  const wrongOne = S.flash && S.flash.bad && S.locked[S.flash.who] === S.k ? S.players.find((x) => x.id === S.flash.who) : null;
+  render(`${header()}${scoreBar()}
+    <h2 style="text-align:center">مين هاللاعب؟</h2>
+    <p class="ptsnow">النادي <b>${S.k}</b> من <b>${S.n}</b> · الجواب الصح هلأ بـ<b>${pointsFor(S.k)}</b> ${pointsFor(S.k) === 1 ? "نقطة" : "نقاط"}</p>
+    ${pathView(p, S.k, fresh)}
+    ${wrongOne && !cur ? `<p class="note" style="text-align:center">${esc(wrongOne.name)} جاوب غلط ❌ ومقفول عليه لحد النادي الجاي</p>` : ""}
+    ${local.ask ? `<div class="askbox"><b>قصدك مين؟</b><div class="choices">${local.ask.map((id) => `<button type="button" data-ch="${id}">${esc(byId.get(id).a)}</button>`).join("")}</div>
+      <button class="linkish" id="noask" type="button">ولا واحد منهم</button></div>`
+    : cur ? `<p class="turnline" style="text-align:center;font-weight:700">جواب <b>${esc(cur.name)}</b>:</p>
+      <div class="ansrow"><input class="search" id="ans" type="text" placeholder="اكتب اسم اللاعب" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(local.draft)}" enterkeyhint="send">
+      <button class="big green" id="go" type="button">جاوب</button></div>
+      <button class="linkish" id="cancel" type="button" style="align-self:center">رجوع</button>`
+    : free.length ? `<h2 style="text-align:center;font-size:20px">مين عرفه؟ اكبس على اسمك</h2>
+      <div class="choices">${free.map((x) => `<button type="button" data-who="${x.id}" style="font-size:17px;padding:14px">✋ ${esc(x.name)}</button>`).join("")}</div>` : ""}
+    ${local.msg ? `<p class="note" style="text-align:center;color:var(--l2d);font-weight:700">${esc(local.msg)}</p>` : ""}
+    ${cur ? "" : `<button class="big" id="nx" type="button">${last ? "ما حدا عرفه، اكشفه" : "النادي الجاي ⏭"}</button>`}
+    <button class="linkish" id="out" type="button" style="align-self:center">إنهاء اللعبة</button>`);
+  if ($("ans")) $("ans").focus();
+  const submit = () => {
+    const text = ($("ans") ? $("ans").value : "").trim();
+    if (!text) return;
+    local.draft = "";
+    const r = judgeName(p, text);
+    if (r.v === "close") { local.msg = "قريب! بس مش متأكد، اكتبه أوضح 🤏"; local.draft = text; return draw(); }
+    if (r.v === "ask") { local.ask = r.choices; local.msg = ""; return draw(); }
+    local.msg = ""; const as = who; who = null;
+    send({ t: "guess", ok: r.v === "yes", text, key: S.key, as });
+  };
+  bind({
+    go: submit, cancel: () => { who = null; local.msg = ""; draw(); },
+    out: () => { if (confirm("أكيد بدكم تنهوا اللعبة؟")) leave(); },
+    nx: () => send({ t: "next", key: S.key }),
+    noask: () => { local.ask = null; draw(); },
+  });
+  if ($("ans")) $("ans").onkeydown = (e) => { if (e.key === "Enter") submit(); };
+  document.querySelectorAll("[data-who]").forEach((b) => b.onclick = () => { who = b.dataset.who; local.msg = ""; draw(); });
+  document.querySelectorAll("[data-ch]").forEach((b) => b.onclick = () => {
+    const id = b.dataset.ch; local.ask = null; const as = who; who = null;
+    send({ t: "guess", ok: id === p.id, text: byId.get(id).a, key: S.key, as });
   });
 }
 
