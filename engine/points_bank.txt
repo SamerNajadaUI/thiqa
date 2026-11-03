@@ -1414,7 +1414,7 @@
 
 # ---------- أصوات: الصعوبة|كلمة البحث بـCommons|الجواب ----------
 ## sounds | أصوات حيوانات | 🔊 | audio | شو هالحيوان؟ 🔊
-1|Panthera leo|أسد
+1|Lion roaring|أسد
 1|Dog barking|كلب
 1|Cat meow|قطة
 1|Cow moo|بقرة
@@ -1456,7 +1456,7 @@
 4|Kookaburra|كوكابورا (الطائر الضاحك)
 4|Phoca vitulina|فقمة
 4|Odobenus rosmarus|فظ
-4|Hippopotamus amphibius|فرس النهر
+4|Hippo grunting|فرس النهر
 4|Equus quagga|حمار وحشي
 4|Flamingo|فلامنغو
 4|Penguin|بطريق
