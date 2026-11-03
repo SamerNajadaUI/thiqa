@@ -4,290 +4,196 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>جمع نقاط</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#141A66">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="أبو عودة للمرح">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: same chunky game-app skin as the main app. One screen at a time: games list -> mode -> level -> era -> player card, or challenges -> challenge. Light-only by design. */
+/* جمع نقاط: شكل استوديو برنامج مسابقات. خلفية زرقا ملكية، لوحة بخانات زرقا وأرقام ذهبية، وكل فريق إله ضو بلونه. */
 :root {
-  color-scheme: light;
-  --bg: #FFFFFF; --soft: #F4F5F7; --line: #ECEEF1; --ink: #111316; --muted: #6B7280; --faint: #A9AEB6;
-  --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
-  --l1: #12B76A; --l1d: #0A8A4F; --l1s: #E6F8EF;
-  --l2: #F79009; --l2d: #C26A00; --l2s: #FEF3E2;
-  --l3: #F04438; --l3d: #B42318; --l3s: #FEECEA;
-  --l4: #1D2939; --l4d: #000000; --l4s: #EAECF0;
-  --gold: #FDB022; --gold-dark: #DC6803;
-  --font: "Readex Pro", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
-  --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+  color-scheme: dark;
+  --stage: #141A66; --stage2: #0B0F45; --tile: #2A32A3; --tile2: #222989; --edge: #3B44C7;
+  --gold: #FFC93C; --gold2: #E9A800;
+  --on: #F3F5FF; --dim: #AAB1EA; --faint: #6E76C2;
+  --paper: #FFFFFF; --ink: #151A4A; --ink2: #5A6094;
+  --good: #22C27A; --bad: #F2544B;
+  --t0: #A58BFF; --t1: #FF9F1C; --t2: #2FD58E;
+  --font: "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+  --display: "Lalezar", "Readex Pro", sans-serif;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html, body { background: var(--bg); }
-body { margin: 0; color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
-.wrap { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: calc(12px + env(safe-area-inset-top, 0px)) calc(32px + env(safe-area-inset-bottom, 0px)); }
+html { background: var(--stage2); }
+body { margin: 0; min-height: 100vh; color: var(--on); font-family: var(--font); font-size: 15px; line-height: 1.55;
+  background: radial-gradient(120% 70% at 50% -10%, #2A33B0 0%, var(--stage) 45%, var(--stage2) 100%) fixed;
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+html, body, button, a, input { touch-action: manipulation; }
 button { font: inherit; color: inherit; cursor: pointer; }
-button:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
-bdi { unicode-bidi: isolate; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;
+  padding: calc(10px + env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left)); }
+.bar { display: flex; justify-content: space-between; align-items: center; min-height: 40px; }
+.logo { font-family: var(--display); font-size: 26px; color: var(--gold); text-decoration: none; line-height: 1; text-shadow: 0 3px 0 rgb(0 0 0 / .25); }
+.ghostbtn { border: 1px solid rgb(255 255 255 / .18); background: rgb(255 255 255 / .06); border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600; color: var(--dim); }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 8.5vw, 40px); line-height: 1.15; margin: 0; }
+h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px 0 0; color: var(--on); }
+.sub { color: var(--dim); margin: 0; font-size: 14px; }
+.center { text-align: center; }
 
-.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.back { display: inline-flex; align-items: center; gap: 6px; border: 0; background: var(--soft); border-radius: 16px; padding: 10px 14px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); }
-.back svg { width: 18px; height: 18px; }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
-.brand img { width: 44px; height: 44px; border-radius: 14px; box-shadow: 0 4px 0 var(--brand-dark); }
-.brand b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1; }
-h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
-.sub { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
-h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px 0 0; }
+/* الأزرار */
+.btn { border: 0; width: 100%; border-radius: 18px; padding: 15px 16px; font-family: var(--display); font-size: 23px; line-height: 1.1;
+  background: var(--gold); color: #2A1E00; box-shadow: 0 5px 0 var(--gold2); transition: transform .08s; }
+.btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--gold2); }
+.btn.alt { background: rgb(255 255 255 / .09); color: var(--on); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .16); }
+.btn[disabled] { opacity: .4; }
+.input { width: 100%; border: 1px solid rgb(255 255 255 / .2); background: rgb(255 255 255 / .07); color: var(--on); border-radius: 14px; padding: 13px 14px; font-size: 17px; font-family: var(--font); }
+.input::placeholder { color: var(--faint); }
+.err { color: #FFB4AE; font-size: 13px; margin: 0; }
+.panel { background: rgb(255 255 255 / .06); border: 1px solid rgb(255 255 255 / .1); border-radius: 22px; padding: 16px; }
+.rules { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 7px; font-size: 14px; color: var(--dim); }
+.rules b { color: var(--on); font-weight: 600; }
+.seg { display: flex; gap: 8px; }
+.seg button { flex: 1; border: 1px solid rgb(255 255 255 / .16); background: transparent; border-radius: 14px; padding: 11px 6px; font-weight: 700; font-size: 15px; color: var(--dim); }
+.seg button[aria-pressed="true"] { background: var(--on); color: var(--ink); border-color: var(--on); }
 
-/* big chunky buttons/cards */
-.tile { --c: var(--brand); --cd: var(--brand-dark); --cs: var(--brand-soft);
-  display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; text-align: right; width: 100%;
-  background: #FFFFFF; border: 2px solid var(--cs); border-radius: 28px; padding: 16px; box-shadow: 0 6px 0 var(--cs); transition: transform .1s; }
-.tile:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--cs); }
-.tile .ic { width: 64px; height: 64px; border-radius: 20px; background: var(--c); box-shadow: 0 4px 0 var(--cd); display: grid; place-items: center; color: #FFFFFF; }
-.tile .ic svg { width: 34px; height: 34px; }
-.tile b { display: block; font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.2; }
-.tile small { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; }
-.tile .go { width: 36px; height: 36px; border-radius: 50%; background: var(--cs); color: var(--c); display: grid; place-items: center; }
-.tile .go svg { width: 18px; height: 18px; }
-.tile.l1 { --c: var(--l1); --cd: var(--l1d); --cs: var(--l1s); }
-.tile.l2 { --c: var(--l2); --cd: var(--l2d); --cs: var(--l2s); }
-.tile.l3 { --c: var(--l3); --cd: var(--l3d); --cs: var(--l3s); }
-.tile.l4 { --c: var(--l4); --cd: var(--l4d); --cs: var(--l4s); }
-.tile.coral { --c: #FF5A5F; --cd: #D63B40; --cs: #FFECEC; text-decoration: none; color: var(--ink); }
-.tile.sky { --c: #0BA5EC; --cd: #0086C9; --cs: #E0F2FE; text-decoration: none; color: var(--ink); }
-.tile.gold { --c: var(--gold); --cd: var(--gold-dark); --cs: #FEF0C7; }
-.tile .ic .lvnum { font-family: var(--display); font-size: 30px; line-height: 1; }
-.stack { display: flex; flex-direction: column; gap: 14px; }
-.soon { color: var(--faint); font-size: 13px; text-align: center; }
+/* لوحة النتيجة: ضو لكل فريق */
+.score { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 8px; }
+.pod { position: relative; border-radius: 16px; padding: 8px 10px 9px; background: rgb(255 255 255 / .06); border: 1px solid rgb(255 255 255 / .08); min-width: 0; transition: background .25s, box-shadow .25s; }
+.pod .nm { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pod .nm i { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); }
+.pod .pts { font-family: var(--display); font-size: 30px; line-height: 1.05; direction: ltr; text-align: right; color: var(--on); }
+.pod .life { position: absolute; left: 9px; bottom: 9px; display: flex; gap: 3px; font-size: 12px; }
+.pod .life span.off { opacity: .18; filter: grayscale(1); }
+.pod.on { background: color-mix(in srgb, var(--c) 22%, transparent); box-shadow: inset 0 0 0 2px var(--c); }
+.pod.on .nm { color: var(--on); }
+.pod.t0 { --c: var(--t0); } .pod.t1 { --c: var(--t1); } .pod.t2 { --c: var(--t2); }
+.turn { text-align: center; font-weight: 700; font-size: 15px; color: var(--c, var(--on)); margin: -2px 0 0; }
+.turn.t0 { --c: var(--t0); } .turn.t1 { --c: var(--t1); } .turn.t2 { --c: var(--t2); }
 
-.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.seg button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 14px 8px; font-weight: 600; box-shadow: 0 4px 0 var(--line); }
-.seg button[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); box-shadow: 0 4px 0 #D9D1FF; }
-.big { border: 0; width: 100%; background: var(--brand); color: #FFFFFF; border-radius: 22px; padding: 16px; font-family: var(--display); font-size: 24px; box-shadow: 0 6px 0 var(--brand-dark); }
-.big:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--brand-dark); }
-.big.green { background: var(--l1); box-shadow: 0 6px 0 var(--l1d); }
-.big.red { background: var(--l3); box-shadow: 0 6px 0 var(--l3d); }
-.big.ghost { background: var(--soft); color: var(--ink); box-shadow: 0 6px 0 var(--line); }
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+/* اللوحة */
+.board { display: grid; grid-template-columns: repeat(var(--c, 4), minmax(0, 1fr)); gap: 6px; }
+.board .head { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; padding: 4px 2px 6px; text-align: center; min-width: 0; }
+.board .head span { font-size: 24px; line-height: 1.15; }
+.board .head b { font-size: 11.5px; font-weight: 600; line-height: 1.25; color: var(--dim); overflow-wrap: anywhere; }
+.cell { position: relative; border: 0; border-radius: 12px; height: clamp(44px, 6.6vh, 58px); display: grid; place-items: center;
+  background: linear-gradient(180deg, var(--tile) 0%, var(--tile2) 100%); box-shadow: inset 0 1px 0 rgb(255 255 255 / .14), 0 3px 0 #10145A;
+  font-family: var(--display); font-size: clamp(19px, 5.4vw, 26px); color: var(--gold); direction: ltr; text-shadow: 0 2px 0 rgb(0 0 0 / .35); transition: transform .08s; }
+.cell:active { transform: scale(.95); }
+.cell .lv { position: absolute; top: 5px; right: 6px; width: 6px; height: 6px; border-radius: 50%; }
+.cell .lv.d1 { background: #34D399; } .cell .lv.d2 { background: #60A5FA; } .cell .lv.d3 { background: #FBBF24; } .cell .lv.d4 { background: #F87171; }
+.cell.done { background: transparent; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .08); color: transparent; text-shadow: none; cursor: default; }
+.cell.done::after { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--w, rgb(255 255 255 / .12)); }
+.cell.done.miss::after { content: "✕"; width: auto; height: auto; background: none; color: rgb(255 255 255 / .22); font-family: var(--font); font-size: 15px; }
+.cell.w0 { --w: var(--t0); } .cell.w1 { --w: var(--t1); } .cell.w2 { --w: var(--t2); }
+.board.wait .cell:not(.done) { filter: saturate(.55) brightness(.8); pointer-events: none; }
+.board.wide { gap: 4px; } .board.wide .cell { font-size: 16px; border-radius: 9px; } .board.wide .head b { font-size: 9.5px; } .board.wide .head span { font-size: 19px; }
+.legend { display: flex; justify-content: center; gap: 12px; font-size: 12px; color: var(--faint); flex-wrap: wrap; }
+.legend span::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-inline-end: 5px; background: var(--k); vertical-align: 1px; }
 
-/* player card */
-.pcard { position: relative; border-radius: 32px; overflow: hidden; background: #FFFFFF; border: 2px solid var(--cs, var(--brand-soft)); box-shadow: 0 8px 0 var(--cs, var(--brand-soft)); }
-.pcard.l1 { --c: var(--l1); --cs: var(--l1s); } .pcard.l2 { --c: var(--l2); --cs: var(--l2s); }
-.pcard.l3 { --c: var(--l3); --cs: var(--l3s); } .pcard.l4 { --c: var(--l4); --cs: var(--l4s); }
-.photo { position: relative; aspect-ratio: 4 / 3.4; max-width: 100%; background: linear-gradient(180deg, var(--cs), #FFFFFF); display: grid; place-items: center; overflow: hidden; }
-.photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
-.photo .ini { font-family: var(--display); font-size: 72px; color: var(--c); }
-.badge { position: absolute; top: 14px; right: 14px; background: var(--c); color: #FFFFFF; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 999px; }
-.badge.era { right: auto; left: 14px; background: rgb(17 19 22 / .72); }
-.pname { padding: 16px 18px 4px; }
-.pname b { display: block; font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.15; }
-.pname span { color: var(--muted); font-size: 14px; direction: ltr; display: block; text-align: right; }
-.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px 16px; }
-.fact { background: var(--soft); border-radius: 18px; padding: 10px 8px; text-align: center; min-width: 0; }
-.fact small { display: block; color: var(--muted); font-size: 11px; }
-.fact b { display: block; font-weight: 600; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
-.clubs { padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 8px; }
-.clubs h3 { margin: 4px 0 0; font-size: 13px; color: var(--muted); font-weight: 600; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { background: var(--soft); border-radius: 14px; padding: 6px 10px; font-size: 13px; font-weight: 500; }
-.chip .yr { color: var(--muted); font-size: 11px; direction: ltr; display: inline-block; margin-inline-start: 6px; padding-inline-start: 6px; border-inline-start: 1px solid var(--line); }
-.chip.nt { background: var(--brand-soft); color: var(--brand-dark); }
-.cover { position: absolute; inset: 0; background: var(--brand); color: #FFFFFF; display: grid; place-items: center; text-align: center; padding: 24px; z-index: 2; border: 0; width: 100%; }
-.cover b { font-family: var(--display); font-weight: 400; font-size: 34px; display: block; }
-.cover small { opacity: .85; font-size: 14px; }
-.credit { color: var(--faint); font-size: 11px; text-align: center; }
-
-.hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.hud div { background: var(--soft); border-radius: 20px; padding: 10px; text-align: center; }
-.hud b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.1; direction: ltr; }
-.hud small { color: var(--muted); font-size: 11px; }
-.qbtn { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
-.qbtn .big { font-size: 20px; }
-.minus { border: 0; background: var(--soft); border-radius: 22px; width: 64px; font-size: 24px; box-shadow: 0 6px 0 var(--line); }
-
-.result { text-align: center; background: var(--l1s); border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
-.result.lose { background: var(--l3s); }
-.result b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
-
-/* challenges */
-.prompt { background: var(--brand); color: #FFFFFF; border-radius: 28px; padding: 22px; box-shadow: 0 8px 0 var(--brand-dark); }
-.prompt small { opacity: .85; }
-.prompt b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.3; margin-top: 4px; }
-.timer { font-family: var(--display); font-size: 56px; text-align: center; line-height: 1; direction: ltr; margin-top: 10px; }
-.timer.low { color: var(--l3); }
-.answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.ans { display: flex; align-items: center; gap: 8px; border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 8px 10px; text-align: right; min-width: 0; font-size: 13px; font-weight: 600; }
-.ans img, .ans .mini { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
-.ans span { min-width: 0; overflow-wrap: anywhere; line-height: 1.35; }
-.ans.hidden span { filter: blur(6px); }
-.ans.hidden img { filter: blur(6px); }
-.ans.got { border-color: var(--l1); background: var(--l1s); }
-.note { color: var(--muted); font-size: 13px; line-height: 1.7; margin: 0; }
-.loading { text-align: center; color: var(--muted); padding: 40px 0; }
-
-.pass2 { text-align: center; padding: 28px 18px; border-radius: 30px; background: var(--brand-soft); display: flex; flex-direction: column; gap: 8px; align-items: center; }
-.pass2 .who { font-family: var(--display); font-size: 46px; line-height: 1.1; color: var(--brand); overflow-wrap: anywhere; }
-.namesin { display: flex; flex-direction: column; gap: 8px; }
-.namesin input, .search { width: 100%; border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; background: #FFFFFF; font-size: 16px; }
-.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.pickbtn { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 12px; text-align: right; box-shadow: 0 4px 0 var(--line); min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.pickbtn b { font-size: 15px; overflow-wrap: anywhere; line-height: 1.35; }
-.pickbtn small { color: var(--muted); font-size: 12px; }
-.prow { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; }
-.prow img, .prow .mini2 { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--soft); display: grid; place-items: center; font-size: 12px; color: var(--muted); }
-.crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; color: var(--muted); font-size: 13px; }
-.crumbs button { border: 0; background: var(--soft); border-radius: 999px; padding: 4px 12px; font-weight: 600; }
-.status3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(62px, 1fr)); gap: 6px; }
-.status3 div { background: var(--soft); border-radius: 18px; padding: 8px; text-align: center; min-width: 0; }
-.status3 div.me { background: var(--brand-soft); box-shadow: inset 0 0 0 2px var(--brand); }
-.status3 b { display: block; font-size: 13px; overflow-wrap: anywhere; }
-.status3 span { font-family: var(--display); font-size: 22px; direction: ltr; display: block; line-height: 1.2; }
-.status3 small { color: var(--muted); font-size: 11px; }
-.hearts { color: var(--l3); letter-spacing: 2px; font-size: 14px; }
-.hints { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.hints li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 10px 12px; }
-.hints li span { width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; display: grid; place-items: center; font-family: var(--display); font-size: 16px; color: var(--muted); }
-.hints li.new { background: var(--gold); color: #1D2939; box-shadow: 0 4px 0 var(--gold-dark); }
-.hints li.new span { color: var(--gold-dark); }
-.hints li b { font-weight: 600; font-size: 15px; line-height: 1.5; }
-.ptsnow { text-align: center; color: var(--muted); font-size: 13px; }
-.ptsnow b { color: var(--ink); }
-.helpers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.helpers button { border: 2px solid var(--gold); background: #FEF0C7; border-radius: 18px; padding: 10px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 0 #FEDF89; }
-.helpers button[disabled] { opacity: .4; }
-.helpers button.armed { background: var(--gold); color: #1D2939; }
-.opt20 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.opt20 button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 10px; font-weight: 600; font-size: 14px; text-align: right; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; align-items: center; min-width: 0; }
-.opt20 img, .opt20 .mini2 { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
-.opt20 button span { overflow-wrap: anywhere; line-height: 1.35; }
-.mic { width: 100%; border: 2px solid var(--brand-soft); background: #FFFFFF; border-radius: 18px; padding: 14px 10px; font-weight: 700; font-size: 15px; color: var(--brand); box-shadow: 0 4px 0 var(--brand-soft); display: flex; align-items: center; justify-content: center; gap: 6px; }
-.mic .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--l3); display: none; }
-.mic.on { background: #FEE4E2; border-color: #F97066; color: #B42318; box-shadow: 0 4px 0 #FDA29B; animation: micpulse 1s ease-in-out infinite; }
-.mic.on .dot { display: inline-block; }
-@keyframes micpulse { 50% { transform: scale(1.03); } }
-.ptimer { position: relative; height: 34px; border-radius: 999px; background: var(--soft); overflow: hidden; display: grid; place-items: center; }
-.ptimer i { position: absolute; inset: 0 auto 0 0; width: 100%; background: linear-gradient(90deg, #12B76A, #32D583); transition: width .2s linear; }
-.ptimer.hot i { background: linear-gradient(90deg, #F04438, #F97066); }
-.ptimer span { position: relative; font-weight: 800; font-size: 15px; color: #0B1B10; }
-.ptimer.hot span { color: #FFFFFF; animation: micpulse .6s ease-in-out infinite; }
-.askbox { background: #FEF0C7; border: 2px solid var(--gold); border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 8px; text-align: center; }
-.askbox > b { font-size: 20px; }
-.linkish { border: 0; background: none; color: var(--muted); font-weight: 700; text-decoration: underline; padding: 4px; }
-.wave { display: flex; gap: 4px; align-items: center; justify-content: center; height: 34px; }
-.wave i { width: 5px; border-radius: 3px; background: #F04438; height: 6px; transition: height .08s; }
-.clubbtn { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
-.crest { object-fit: contain; flex: none; }
-.crest-fb { display: grid; place-items: center; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 800; font-size: 16px; }
-.clubhead { display: flex; align-items: center; gap: 12px; }
-.clubhead h1 { margin: 0; }
-.flash { text-align: center; border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
-.flash.good { background: var(--l1s); } .flash.badf { background: var(--l3s); }
-.flash b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
-.board { display: flex; flex-direction: column; gap: 8px; }
-.board .r { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 12px 14px; }
-.board .r:first-child { background: #FEF0C7; }
-.board .r .pos { font-family: var(--display); font-size: 20px; text-align: center; }
-.board .r .t { font-family: var(--display); font-size: 26px; direction: ltr; }
-.board .r small { grid-column: 2 / -1; color: var(--muted); font-size: 12px; }
-.rules { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.7; }
-.confirm { background: var(--l3s); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-@media (prefers-reduced-motion: no-preference) {
-  .screen { animation: in .35s cubic-bezier(.2,.9,.3,1.15) both; }
-  @keyframes in { from { transform: translateY(12px) scale(.985); } to { transform: none; } }
-}
-@media (max-width: 380px) {
-  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .answers { grid-template-columns: 1fr; }
-}
-/* جمع نقاط */
-:root { --t0: #5B3DF5; --t0d: #3F25C9; --t0s: #EEEAFF; --t1: #F79009; --t1d: #C26A00; --t1s: #FEF3E2; --t2: #12B76A; --t2d: #0A8A4F; --t2s: #E6F8EF; }
-.teams { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 8px; }
-.team { border-radius: 22px; padding: 10px 12px; background: var(--soft); text-align: center; min-width: 0; border: 3px solid transparent; transition: transform .2s; }
-.team.t0 { background: var(--t0s); } .team.t1 { background: var(--t1s); } .team.t2 { background: var(--t2s); }
-.team.on.t0 { border-color: var(--t0); transform: scale(1.03); } .team.on.t1 { border-color: var(--t1); transform: scale(1.03); } .team.on.t2 { border-color: var(--t2); transform: scale(1.03); }
-.team b { display: block; font-size: 14px; overflow-wrap: anywhere; line-height: 1.3; }
-.team .sc { font-family: var(--display); font-size: 34px; line-height: 1.1; direction: ltr; display: block; }
-.team.t0 .sc { color: var(--t0d); } .team.t1 .sc { color: var(--t1d); } .team.t2 .sc { color: var(--t2d); }
-.team small { font-size: 13px; letter-spacing: 2px; }
-.team small i { font-style: normal; opacity: .25; }
-.turnline { text-align: center; font-weight: 700; font-size: 15px; }
-.turnline.t0 { color: var(--t0); } .turnline.t1 { color: var(--t1d); } .turnline.t2 { color: var(--t2d); }
-.board { display: grid; grid-template-columns: repeat(var(--c, 4), minmax(0, 1fr)); gap: 8px; }
-.board.c6 { gap: 5px; } .board.c6 .cell { font-size: 17px; padding: 10px 0; } .board.c6 .head b { font-size: 10px; }
-.team.small b { font-size: 12px; } .team.small .sc { font-size: 26px; } .team.small small { font-size: 11px; letter-spacing: 0; }
-.board .head { text-align: center; background: var(--l4); color: #FFF; border-radius: 16px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
-.board .head span { font-size: 22px; line-height: 1.1; }
-.board .head b { font-size: 11.5px; line-height: 1.25; overflow-wrap: anywhere; }
-.cell { border: 0; border-radius: 16px; padding: 12px 2px; font-family: var(--display); font-size: 22px; direction: ltr; color: #FFF; box-shadow: 0 4px 0 rgb(0 0 0 / .2); transition: transform .1s; }
-.cell:active { transform: translateY(2px); }
-.cell.d1 { background: #12B76A; } .cell.d2 { background: #0BA5EC; } .cell.d3 { background: #F79009; } .cell.d4 { background: #F04438; }
-.cell[disabled] { background: var(--soft) !important; color: var(--faint); box-shadow: none; font-size: 15px; font-family: var(--font); font-weight: 700; cursor: default; }
-.cell[disabled].w0 { background: var(--t0s) !important; color: var(--t0); } .cell[disabled].w1 { background: var(--t1s) !important; color: var(--t1d); } .cell[disabled].w2 { background: var(--t2s) !important; color: var(--t2d); }
-.board.wait .cell:not([disabled]) { opacity: .55; pointer-events: none; }
-.legend { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 4px; vertical-align: -1px; }
-.qhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-.chip2 { background: var(--soft); border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 700; }
-.chip2.d1 { background: #E6F8EF; color: #0A8A4F; } .chip2.d2 { background: #E0F2FE; color: #0086C9; } .chip2.d3 { background: #FEF3E2; color: #C26A00; } .chip2.d4 { background: #FEECEA; color: #B42318; }
-.chip2.dbl { background: linear-gradient(90deg, #FDB022, #F04438); color: #FFF; animation: micpulse 1s ease-in-out infinite; }
-.qcard { background: #FFFFFF; border: 2px solid var(--line); border-radius: 28px; padding: 18px; box-shadow: 0 6px 0 var(--line); display: flex; flex-direction: column; gap: 12px; }
-.qcard .qt { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 6.5vw, 30px); line-height: 1.35; text-align: center; }
-.qimg { width: 100%; max-height: 240px; object-fit: contain; border-radius: 18px; background: var(--soft); }
-.qimg.flag { object-fit: contain; background: #FFF; border: 1px solid var(--line); max-height: 180px; }
-.qimg.crest { max-height: 160px; background: #FFF; }
-.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.opt { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 14px 10px; font-weight: 700; font-size: 16px; line-height: 1.35; box-shadow: 0 4px 0 var(--line); min-height: 64px; overflow-wrap: anywhere; display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; }
-.opt .k { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--soft); display: grid; place-items: center; font-size: 13px; color: var(--muted); }
+/* السؤال */
+.qmeta { display: flex; align-items: center; gap: 8px; }
+.qmeta .cat { font-weight: 600; font-size: 14px; color: var(--dim); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip { flex: none; border-radius: 999px; padding: 4px 12px; font-family: var(--display); font-size: 18px; line-height: 1.2; background: rgb(255 255 255 / .1); color: var(--gold); direction: ltr; }
+.chip.dbl { background: linear-gradient(90deg, #FFB020, #FF4D3D); color: #FFF; }
+.clock { position: relative; height: 8px; border-radius: 999px; background: rgb(255 255 255 / .1); overflow: hidden; }
+.clock i { position: absolute; inset: 0 0 0 auto; width: 100%; background: var(--gold); border-radius: 999px; transition: width .2s linear; }
+.clock.hot i { background: var(--bad); }
+.secs { font-family: var(--display); font-size: 20px; direction: ltr; min-width: 34px; text-align: left; color: var(--on); }
+.secs.hot { color: #FF8A80; }
+.qtext { font-family: var(--display); font-weight: 400; font-size: clamp(25px, 6.8vw, 32px); line-height: 1.35; text-align: center; margin: 4px 0; text-wrap: balance; }
+.qimg { display: block; width: 100%; max-height: 230px; object-fit: contain; border-radius: 18px; background: var(--paper); padding: 6px; }
+.qimg.flag { padding: 14px; max-height: 170px; }
+.qimg.crest { padding: 14px; max-height: 160px; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.opt { position: relative; border: 0; background: var(--paper); color: var(--ink); border-radius: 16px; padding: 14px 10px 14px 12px; min-height: 66px;
+  font-weight: 700; font-size: 16px; line-height: 1.35; text-align: center; display: grid; grid-template-columns: 24px 1fr; align-items: center; gap: 6px;
+  box-shadow: 0 4px 0 #C9CDF0; transition: transform .08s, opacity .2s; overflow-wrap: anywhere; }
+.opt:active { transform: translateY(2px); box-shadow: 0 2px 0 #C9CDF0; }
+.opt .k { width: 24px; height: 24px; border-radius: 50%; background: #ECEEFB; color: var(--ink2); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
 .opt[disabled] { cursor: default; }
-.opt.gone { opacity: .2; text-decoration: line-through; }
-.opt.right { background: #D1FADF; border-color: #12B76A; box-shadow: 0 4px 0 #6CE9A6; }
-.opt.wrong { background: #FEE4E2; border-color: #F04438; box-shadow: 0 4px 0 #FDA29B; }
-.opt.mine { outline: 3px solid var(--brand); }
-@media (max-width: 360px) { .opts { grid-template-columns: 1fr; } }
-.lifes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.lifes button { border: 2px solid var(--gold); background: #FEF0C7; border-radius: 16px; padding: 8px 4px; font-weight: 700; font-size: 13px; box-shadow: 0 3px 0 #FEDF89; line-height: 1.3; }
-.lifes button[disabled] { opacity: .35; }
-.lifes button span { display: block; font-size: 20px; }
-.banner { text-align: center; border-radius: 26px; padding: 16px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
-.banner b { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.2; }
-.banner.good { background: var(--l1s); } .banner.bad { background: var(--l3s); } .banner.steal { background: #FEF0C7; }
-.dblover { position: fixed; inset: 0; z-index: 9990; display: grid; place-items: center; background: radial-gradient(circle, rgba(253,176,34,.95), rgba(240,68,56,.95)); color: #FFF; text-align: center; padding: 24px; animation: dblin .4s cubic-bezier(.2,.9,.3,1.4) both; }
-.dblover b { font-family: var(--display); font-size: clamp(54px, 16vw, 90px); line-height: 1; display: block; text-shadow: 0 6px 0 rgb(0 0 0 / .15); }
-.dblover small { font-size: 18px; font-weight: 700; display: block; margin-top: 10px; }
-@keyframes dblin { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
-.catpick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.catpick button { border: 2px solid var(--line); background: #FFF; border-radius: 20px; padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 700; box-shadow: 0 4px 0 var(--line); }
-.catpick button span { font-size: 30px; line-height: 1.1; }
-.catpick button small { color: var(--muted); font-weight: 500; font-size: 11px; }
-.catpick button[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 4px 0 #D9D1FF; }
-.catpick button[aria-pressed="true"]::after { content: "✓"; color: var(--brand); font-weight: 800; }
-.final { display: flex; flex-direction: column; gap: 10px; }
-.final .r { display: grid; grid-template-columns: 1fr auto; align-items: center; border-radius: 20px; padding: 14px 16px; }
-.final .r b { font-size: 18px; } .final .r span { font-family: var(--display); font-size: 34px; direction: ltr; }
-.final .r.t0 { background: var(--t0s); color: var(--t0d); } .final .r.t1 { background: var(--t1s); color: var(--t1d); } .final .r.t2 { background: var(--t2s); color: var(--t2d); }
-.waitnote { text-align: center; color: var(--muted); font-size: 14px; }
-/* no double-tap zoom */
-html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
+.opt.gone { opacity: .16; }
+.opt.wrong { background: #FFE1DE; color: #8A1E17; box-shadow: 0 4px 0 #F6A39C; }
+.opt.right { background: #D3F8E5; color: #0B5C38; box-shadow: 0 4px 0 #74DDA7; animation: pulse .9s ease-in-out 2; }
+.opt.right .k, .opt.wrong .k { background: rgb(255 255 255 / .7); }
+.opts.locked .opt:not(.right):not(.wrong):not(.gone) { opacity: .55; }
+@keyframes pulse { 50% { transform: scale(1.03); } }
+@media (max-width: 350px) { .opts { grid-template-columns: 1fr; } }
+.helps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.helps button { border: 1px dashed rgb(255 201 60 / .55); background: rgb(255 201 60 / .08); border-radius: 14px; padding: 7px 4px; font-size: 12.5px; font-weight: 600; color: var(--on); display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.helps button span { font-size: 19px; line-height: 1.2; }
+.helps button[disabled] { opacity: .28; }
+.note { color: var(--dim); font-size: 13.5px; text-align: center; margin: 0; }
+
+/* السرقة: الأسرع بياخذها */
+.steal { border-radius: 20px; padding: 14px; background: linear-gradient(135deg, rgb(255 201 60 / .22), rgb(255 77 61 / .18)); border: 1px solid rgb(255 201 60 / .4); text-align: center; display: flex; flex-direction: column; gap: 10px; }
+.steal b { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.2; }
+.steal small { color: var(--dim); }
+.buzz { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+.buzz button { border: 0; border-radius: 18px; padding: 18px 10px; font-family: var(--display); font-size: 24px; color: #1A1300; background: var(--c); box-shadow: 0 5px 0 color-mix(in srgb, var(--c) 60%, #000); animation: buzz 1s ease-in-out infinite; }
+.buzz button.t0 { --c: var(--t0); } .buzz button.t1 { --c: var(--t1); } .buzz button.t2 { --c: var(--t2); }
+@keyframes buzz { 50% { transform: scale(1.04); } }
+
+/* النتيجة فوق السؤال */
+.verdict { position: relative; border-radius: 20px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; overflow: hidden; }
+.verdict.good { background: color-mix(in srgb, var(--c, var(--good)) 28%, #0B0F45); box-shadow: inset 0 0 0 2px var(--c, var(--good)); }
+.verdict.none { background: rgb(242 84 75 / .16); box-shadow: inset 0 0 0 2px rgb(242 84 75 / .5); }
+.verdict.t0 { --c: var(--t0); } .verdict.t1 { --c: var(--t1); } .verdict.t2 { --c: var(--t2); }
+.verdict b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.2; }
+.verdict small { display: block; color: var(--dim); font-size: 13px; }
+.verdict .plus { font-family: var(--display); font-size: 40px; line-height: 1; color: var(--gold); direction: ltr; animation: rise .6s cubic-bezier(.2,.9,.3,1.3) both; }
+@keyframes rise { from { transform: translateY(14px) scale(.6); opacity: 0; } }
+.autonext { position: relative; width: 100%; border: 0; border-radius: 16px; padding: 13px; background: rgb(255 255 255 / .08); color: var(--dim); font-weight: 600; overflow: hidden; }
+.autonext i { position: absolute; inset: 0 0 0 auto; background: rgb(255 201 60 / .16); width: 0; }
+.autonext span { position: relative; }
+
+/* اختيار الأقسام */
+.cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.cats button { position: relative; border: 1px solid rgb(255 255 255 / .12); background: rgb(255 255 255 / .05); border-radius: 16px; padding: 12px 4px 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--on); min-width: 0; }
+.cats button span { font-size: 28px; line-height: 1.1; }
+.cats button small { color: var(--faint); font-size: 11px; font-weight: 500; }
+.cats button[aria-pressed="true"] { background: rgb(255 201 60 / .14); border-color: var(--gold); }
+.cats button .ord { position: absolute; top: 6px; left: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--gold); color: #2A1E00; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+.dock { position: sticky; bottom: calc(10px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: center; padding: 8px; border-radius: 22px;
+  background: rgb(11 15 69 / .9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgb(255 255 255 / .1); }
+.dock .rnd { border: 0; background: rgb(255 255 255 / .09); border-radius: 16px; width: 54px; height: 54px; font-size: 24px; }
+.dock .btn { padding: 13px; }
+
+/* الغرفة */
+.code { font-family: var(--display); font-size: 54px; letter-spacing: 8px; direction: ltr; text-align: center; color: var(--gold); line-height: 1.1; }
+.teamlist { display: flex; flex-direction: column; gap: 8px; }
+.teamlist div { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 16px; background: rgb(255 255 255 / .06); font-weight: 600; }
+.teamlist i { width: 12px; height: 12px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); }
+.teamlist small { margin-inline-start: auto; color: var(--faint); font-weight: 500; }
+.teamlist .t0 { --c: var(--t0); } .teamlist .t1 { --c: var(--t1); } .teamlist .t2 { --c: var(--t2); }
+.teamlist .slot { border: 1px dashed rgb(255 255 255 / .16); background: none; color: var(--faint); justify-content: center; font-weight: 500; }
+
+/* النهاية */
+.podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; padding-top: 10px; }
+.podium .col { flex: 1; max-width: 150px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.podium .blk { width: 100%; border-radius: 14px 14px 6px 6px; background: color-mix(in srgb, var(--c) 35%, #10145A); box-shadow: inset 0 0 0 2px var(--c); display: grid; place-items: center; font-family: var(--display); font-size: 30px; direction: ltr; color: var(--on); }
+.podium .col.t0 { --c: var(--t0); } .podium .col.t1 { --c: var(--t1); } .podium .col.t2 { --c: var(--t2); }
+.podium b { font-size: 14px; overflow-wrap: anywhere; line-height: 1.3; }
+.podium .medal { font-size: 28px; line-height: 1; }
+
+.dblover { position: fixed; inset: 0; z-index: 9990; display: grid; place-items: center; text-align: center; padding: 24px; color: #FFF;
+  background: radial-gradient(circle at 50% 45%, rgba(255,176,32,.96), rgba(255,77,61,.96) 60%, rgba(120,20,40,.97)); animation: dblin .35s cubic-bezier(.2,.9,.3,1.4) both; }
+.dblover b { font-family: var(--display); font-size: clamp(64px, 20vw, 110px); line-height: 1; display: block; text-shadow: 0 6px 0 rgb(0 0 0 / .18); }
+.dblover small { font-size: 18px; font-weight: 700; display: block; margin-top: 12px; }
+@keyframes dblin { from { transform: scale(.5); opacity: 0; } }
+.loading { text-align: center; color: var(--dim); padding: 48px 0; }
+.linkish { border: 0; background: none; color: var(--faint); font-size: 13px; text-decoration: underline; align-self: center; padding: 6px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="bar">
-    <a class="brand" href="./"><img src="../icons/icon.svg" alt=""><b>جمع نقاط</b></a>
-    <button class="back" id="quit" type="button">خروج</button>
-  </div>
+  <div class="bar"><a class="logo" href="./">جمع نقاط</a><button class="ghostbtn" id="quit" type="button">الألعاب</button></div>
   <main id="app" aria-live="polite"><div class="loading">بحمّل الأسئلة...</div></main>
 </div>
 <script>
@@ -295,7 +201,7 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const store = { get(k, d) { try { const v = localStorage.getItem("points-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("points-" + k, JSON.stringify(v)); } catch {} } };
-function render(html) { $("app").innerHTML = `<div class="screen">${html}</div>`; }
+function render(html) { $("app").innerHTML = `<div class="wrap" style="padding:0">${html}</div>`; }
 function bind(map) { for (const [id, fn] of Object.entries(map)) { const el = $(id); if (el) el.onclick = fn; } }
 
 // ---------- القواعد ----------
@@ -303,14 +209,12 @@ const LEVELS = [null, { name: "سهل", pts: 100 }, { name: "متوسط", pts: 2
 const LAYOUT = [1, 1, 2, 2, 3, 3, 4, 4];          // 8 أسئلة بكل قسم
 const MAX_TEAMS = 3;
 const catChoices = (n) => (n === 3 ? [3, 6] : [2, 4, 6]);   // عشان كل فريق ياخذ نفس عدد الأسئلة
-const catsN = () => (S && S.catsN) || (S && S.teams.length === 3 ? 3 : 4);
-const nT = () => S.teams.length;
 const Q_MS = (d) => (d >= 4 ? 40000 : 30000);
-const STEAL_MS = 15000;
+const STEAL_MS = 15000, BUZZ_MS = 8000, NEXT_MS = 3800;
 const HELPS = [
-  { k: "cut", icon: "✂️", name: "حذف إجابتين" },
-  { k: "two", icon: "✌️", name: "جاوب مرتين" },
-  { k: "swap", icon: "🔄", name: "بدّل السؤال" },
+  { k: "cut", icon: "✂️", name: "حذف ثنتين" },
+  { k: "two", icon: "✌️", name: "محاولتين" },
+  { k: "swap", icon: "🔄", name: "سؤال ثاني" },
 ];
 const newHelp = () => ({ cut: true, two: true, swap: true });
 let DATA, CAT;
@@ -392,12 +296,11 @@ function fx(kind) {
 
 
 
-// ---------- المحرك (بيشتغل عند صاحب الغرفة، أو على التلفون الواحد) ----------
-let S = null;            // الحالة اللي بيشوفها الكل
-let SECRET = null;       // عند المحرك بس: الأجوبة الصح والأسئلة
-let mode = null;         // "local" | "host" | "guest"
-let timer = null;
 
+// ---------- المحرك (عند صاحب الغرفة، أو على التلفون الواحد) ----------
+let S = null, SECRET = null, mode = null, timer = null, nextTimer = null;
+const nT = () => S.teams.length;
+const catsN = () => (S && S.catsN) || (S && nT() === 3 ? 3 : 4);
 function usedSet() { return new Set(store.get("used", [])); }
 function markUsed(key) { const u = store.get("used", []); u.push(key); store.set("used", u.slice(-4000)); }
 const qkey = (q) => q[1] + "|" + (q[3] || "");
@@ -410,7 +313,6 @@ function drawQuestion(cid, d, avoid) {
   if (!pool.length) pool = CAT.get(cid).qs.filter((q) => q[0] === d);
   return pool[Math.floor(Math.random() * pool.length)];
 }
-
 function newGame(cats) {
   SECRET = { taken: new Set(), pre: {} };
   S.cats = cats; S.board = {};
@@ -421,32 +323,24 @@ function newGame(cats) {
   const flat = cats.flatMap((cid) => S.board[cid].map((_, i) => `${cid}:${i}`));
   SECRET.dbl = flat[Math.floor(Math.random() * flat.length)];
   S.teams.forEach((t) => { t.score = 0; t.help = newHelp(); });
-  S.turn = Math.random() < 0.5 ? 0 : 1;
-  S.phase = "board"; S.cur = null; S.res = null; S.n = 0;
-  preloadImages();
+  S.turn = Math.floor(Math.random() * nT());
+  S.phase = "board"; S.cur = null; S.res = null;
+  for (const cid of cats) for (const q of SECRET.pre[cid]) if (q[3]) { const im = new Image(); im.referrerPolicy = "no-referrer"; im.src = imgUrl(q[3]); }
 }
-function preloadImages() {
-  for (const cid of S.cats) for (const q of SECRET.pre[cid]) if (q[3]) { const im = new Image(); im.referrerPolicy = "no-referrer"; im.src = imgUrl(q[3]); }
-}
-
 function openCell(team, cid, i) {
   const cell = S.board[cid] && S.board[cid][i];
   if (!cell || cell.w !== null || S.phase !== "board" || team !== S.turn) return false;
-  const q = SECRET.pre[cid][i];
-  setQuestion(q, cid, i, team);
-  S.cur.dbl = SECRET.dbl === `${cid}:${i}`;
+  S.cur = { dbl: SECRET.dbl === `${cid}:${i}` };
+  setQuestion(SECRET.pre[cid][i], cid, i, team);
   if (S.cur.dbl) S.fxId = { id: Date.now(), kind: "dbl", team };
   return true;
 }
 function setQuestion(q, cid, i, team) {
   const order = shuffle([0, 1, 2, 3]);
-  SECRET.right = order.indexOf(0);
-  SECRET.q = q;
-  const d = q[0];
-  S.cur = Object.assign(S.cur && S.cur.cid === cid && S.cur.i === i ? S.cur : {}, {
-    cid, i, d, text: q[1], img: q[3] || null, opts: order.map((k) => q[2][k]),
-    team, gone: [], wrong: [], tries: 1, steal: false, deadline: Date.now() + Q_MS(d) + (S.cur && S.cur.dbl ? 2500 : 0),
-  });
+  SECRET.right = order.indexOf(0); SECRET.q = q;
+  Object.assign(S.cur, { cid, i, d: q[0], text: q[1], img: q[3] || null, opts: order.map((k) => q[2][k]),
+    team, picker: team, gone: [], wrong: [], tries: 1, steal: null, buzzers: null,
+    deadline: Date.now() + Q_MS(q[0]) + (S.cur.dbl ? 2500 : 0) });
   S.phase = "q";
   markUsed(qkey(q));
   arm();
@@ -454,44 +348,60 @@ function setQuestion(q, cid, i, team) {
 function arm() {
   clearTimeout(timer);
   const id = S.cur && S.cur.deadline;
-  timer = setTimeout(() => { if (S.phase === "q" && S.cur.deadline === id) { timeUp(); commit(); } }, Math.max(0, S.cur.deadline - Date.now()) + 250);
+  timer = setTimeout(() => { if (S && S.phase === "q" && S.cur.deadline === id) { timeUp(); commit(); } }, Math.max(0, S.cur.deadline - Date.now()) + 250);
+}
+const leftOpts = (c) => [0, 1, 2, 3].filter((k) => !c.gone.includes(k) && !c.wrong.includes(k)).length;
+// غلط أو خلص الوقت: الفرق الثانية بتقدر تسرق. مع فريقين بيجاوب الثاني على طول، ومع 3 فرق الأسرع بالكبسة بياخذها
+function openSteal() {
+  const c = S.cur;
+  if (leftOpts(c) < 2) return finish(null, null);
+  const others = S.teams.map((_, k) => k).filter((k) => k !== c.picker);
+  c.lastWrong = c.picker;
+  if (others.length === 1) { c.steal = "answer"; c.team = others[0]; c.deadline = Date.now() + STEAL_MS; }
+  else { c.steal = "buzz"; c.buzzers = others; c.team = null; c.deadline = Date.now() + BUZZ_MS; }
+  S.fxId = { id: Date.now(), kind: "steal" };
+  arm();
 }
 function timeUp() {
   const c = S.cur;
-  if (!c.steal || (c.queue && c.queue.length)) startSteal(null);
-  else finish(null, null);
+  if (!c.steal) openSteal(); else finish(null, null);
 }
-function startSteal(wrongIdx) {
+function buzz(team) {
   const c = S.cur;
-  if (wrongIdx !== null && !c.wrong.includes(wrongIdx)) c.wrong.push(wrongIdx);
-  if (!c.steal) { c.queue = []; for (let k = 1; k < nT(); k++) c.queue.push((c.team + k) % nT()); }   // الفرق الثانية بالدور
-  c.lastWrong = c.team;
-  c.steal = true; c.team = c.queue.shift();
-  c.deadline = Date.now() + STEAL_MS;
-  S.fxId = { id: Date.now(), kind: "steal", team: c.team };
+  if (S.phase !== "q" || c.steal !== "buzz" || !c.buzzers.includes(team)) return false;
+  c.steal = "answer"; c.team = team; c.deadline = Date.now() + STEAL_MS;
+  S.fxId = { id: Date.now(), kind: "buzz", team };
   arm();
+  return true;
 }
-function cellPoints(c) { return LEVELS[c.d].pts * (c.dbl ? 2 : 1); }
+const cellPoints = (c) => LEVELS[c.d].pts * (c.dbl ? 2 : 1);
 function finish(winner, pick) {
   clearTimeout(timer);
   const c = S.cur;
   let pts = 0;
   if (winner !== null) { pts = c.steal ? Math.round(cellPoints(c) / 2) : cellPoints(c); S.teams[winner].score += pts; }
   S.board[c.cid][c.i].w = winner === null ? -1 : winner;
-  S.res = { winner, pts, right: SECRET.right, pick, steal: c.steal, dbl: c.dbl, text: c.text };
-  S.cur.right = SECRET.right;
-  S.phase = "res"; S.n++;
+  S.res = { winner, pts, right: SECRET.right, pick, steal: !!c.steal, dbl: c.dbl, until: Date.now() + NEXT_MS };
+  c.right = SECRET.right; c.team = winner;
+  S.phase = "res";
   S.fxId = { id: Date.now(), kind: winner === null ? "none" : "good", team: winner };
   S.turn = (S.turn + 1) % nT();
+  armNext();
+}
+// بعد الجواب بنرجع للوحة لحالنا
+function armNext() {
+  clearTimeout(nextTimer);
+  const id = S.res && S.res.until;
+  nextTimer = setTimeout(() => { if (S && S.phase === "res" && S.res.until === id) { backToBoard(); commit(); } }, Math.max(0, S.res.until - Date.now()));
 }
 function answer(team, k) {
   const c = S.cur;
-  if (S.phase !== "q" || team !== c.team || c.gone.includes(k) || c.wrong.includes(k)) return;
+  if (S.phase !== "q" || c.steal === "buzz" || team !== c.team || c.gone.includes(k) || c.wrong.includes(k)) return;
   if (k === SECRET.right) return finish(team, k);
-  if (!c.steal && c.tries > 1) { c.tries--; c.wrong.push(k); S.fxId = { id: Date.now(), kind: "bad", team }; return; }
   S.fxId = { id: Date.now(), kind: "bad", team };
-  if (!c.steal || (c.queue && c.queue.length && c.wrong.length + c.gone.length < 2)) startSteal(k);
-  else { c.wrong.push(k); finish(null, k); }
+  c.wrong.push(k);
+  if (!c.steal && c.tries > 1) { c.tries--; return; }
+  if (!c.steal) openSteal(); else finish(null, k);
 }
 function useHelp(team, h) {
   const c = S.cur, t = S.teams[team];
@@ -507,22 +417,19 @@ function useHelp(team, h) {
     if (!q) return;
     SECRET.taken.add(qkey(q));
     t.help[h] = false;
-    const keepDbl = c.dbl;
     setQuestion(q, c.cid, c.i, team);
-    S.cur.dbl = keepDbl; S.cur.used = (S.cur.used || []).concat("swap");
     return;
   }
   t.help[h] = false;
-  c.used = (c.used || []).concat(h);
 }
 function backToBoard() {
   if (S.phase !== "res") return;
+  clearTimeout(nextTimer);
   const left = S.cats.some((cid) => S.board[cid].some((c) => c.w === null));
   S.phase = left ? "board" : "over"; S.cur = null;
   if (!left) S.fxId = { id: Date.now(), kind: "win" };
 }
 
-// الحركات (من التلفون نفسه أو من التلفون الثاني)
 function act(a) {
   const team = mode === "local" ? a.team : teamOf(a.pid);
   switch (a.t) {
@@ -536,18 +443,15 @@ function act(a) {
     case "cats":
       if (S.phase !== "cats" || (mode !== "local" && a.pid !== S.host)) return;
       if (!Array.isArray(a.cats) || !catChoices(nT()).includes(a.cats.length) || a.cats.some((c) => !CAT.has(c))) return;
-      S.catsN = a.cats.length;
-      newGame(a.cats); break;
+      S.catsN = a.cats.length; newGame(a.cats); break;
     case "open": if (!openCell(team, a.cid, a.i)) return; break;
     case "ans": answer(team, a.k); break;
+    case "buzz": if (!buzz(team)) return; break;
     case "help": useHelp(team, a.h); break;
     case "next": backToBoard(); break;
     case "again":
-      if (S.phase !== "over") return;
+      if (S.phase !== "over" || (mode !== "local" && a.pid !== S.host)) return;
       S.phase = "cats"; S.cats = []; S.board = {}; break;
-    case "rename":
-      if (team >= 0 && team < nT()) S.teams[team].name = String(a.name || "").slice(0, 16) || S.teams[team].name;
-      break;
     default: return;
   }
   commit();
@@ -557,7 +461,7 @@ function join(a) {
   if (mode !== "host") return;
   const i = teamOf(a.pid);
   if (i >= 0) { if (a.name) S.teams[i].name = String(a.name).slice(0, 16); return commit(); }
-  if (S.phase !== "lobby" || nT() >= MAX_TEAMS) return commit();   // الغرفة مليانة أو اللعبة بلّشت
+  if (S.phase !== "lobby" || nT() >= MAX_TEAMS) return commit();
   S.teams.push({ pid: a.pid, name: String(a.name || `الفريق ${nT() + 1}`).slice(0, 16), score: 0, help: newHelp() });
   commit();
 }
@@ -565,22 +469,22 @@ function join(a) {
 // ---------- الاتصال (MQTT) ----------
 const BROKERS = ["wss://broker.emqx.io:8084/mqtt", "wss://broker.hivemq.com:8884/mqtt", "wss://test.mosquitto.org:8081/mqtt"];
 const qs = new URLSearchParams(location.search);
-const ROOT = "abuodeh-points-v1";
+const ROOT = "abuodeh-points-v2";
 let client = null, room = null, offset = 0, lastFx = null, ticker = null;
 const me = { id: store.get("pid", null), name: store.get("team", "") };
 if (!me.id) { me.id = Math.random().toString(36).slice(2, 10); store.set("pid", me.id); }
 const topic = (k) => `${ROOT}/${room}/${k}`;
 const now = () => Date.now() + offset;
+const snap = () => ({ S, SECRET: Object.assign({}, SECRET, { taken: [...(SECRET ? SECRET.taken : [])] }) });
+const unsnap = (saved) => { S = saved.S; SECRET = Object.assign(saved.SECRET || {}, { taken: new Set((saved.SECRET && saved.SECRET.taken) || []) }); if (S.phase === "q") arm(); if (S.phase === "res") armNext(); };
 
 function commit() {
   S.v = (S.v || 0) + 1; S.now = Date.now();
   if (mode === "host") {
-    store.set("host-" + room, { S, SECRET: Object.assign({}, SECRET, { taken: [...(SECRET ? SECRET.taken : [])] }) });
+    store.set("host-" + room, snap());
     store.set("online", { room, host: true, at: Date.now() });
     try { client.publish(topic("s"), JSON.stringify(S), { qos: 1, retain: true }); } catch {}
-  } else if (mode === "local") {
-    store.set("local", { S, SECRET: Object.assign({}, SECRET, { taken: [...(SECRET ? SECRET.taken : [])] }) });
-  }
+  } else if (mode === "local") store.set("local", snap());
   onState(S);
 }
 function send(a) {
@@ -589,7 +493,7 @@ function send(a) {
   if (client) client.publish(topic("a"), JSON.stringify(a), { qos: 1 });
 }
 function connect(onReady, k = 0) {
-  if (typeof mqtt === "undefined") return fail("ما قدرت أحمّل مكتبة الاتصال. تأكد من الإنترنت.");
+  if (typeof mqtt === "undefined") return fail("ما قدرت أحمّل الاتصال. تأكد من الإنترنت وارجع جرّب.");
   const url = qs.get("broker") || BROKERS[k % BROKERS.length];
   let ready = false;
   const c = mqtt.connect(url, { clientId: "ap_" + me.id + "_" + Math.random().toString(36).slice(2, 6), reconnectPeriod: 2000, connectTimeout: 8000, clean: true });
@@ -606,23 +510,22 @@ function connect(onReady, k = 0) {
     else if (t === topic("a") && mode === "host") act(m);
   });
 }
-function fail(msg) { render(`<h1>مشكلة بالاتصال</h1><p class="sub">${esc(msg)}</p><button class="big" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
+function fail(msg) { render(`<h1>مشكلة بالاتصال</h1><p class="sub">${esc(msg)}</p><button class="btn" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
 function leave() {
   try { if (client && mode === "host" && room) client.publish(topic("s"), "", { qos: 1, retain: true }); } catch {}
   const c = client; setTimeout(() => { try { c && c.end(true); } catch {} }, 300);
-  client = null; room = null; S = null; SECRET = null; mode = null; clearTimeout(timer); clearInterval(ticker);
+  client = null; room = null; S = null; SECRET = null; mode = null; clearTimeout(timer); clearTimeout(nextTimer); clearInterval(ticker);
   store.set("online", null);
   history.replaceState(null, "", location.pathname);
   intro();
 }
-
 function hostRoom(code, saved) {
   mode = "host";
   room = code || String(Math.floor(10000 + Math.random() * 90000));
   render(`<div class="loading">عم بفتح الغرفة...</div>`);
   connect(() => {
     client.subscribe([topic("s"), topic("a")], { qos: 1 });
-    if (saved) { S = saved.S; SECRET = Object.assign(saved.SECRET || {}, { taken: new Set((saved.SECRET && saved.SECRET.taken) || []) }); if (S.phase === "q") arm(); }
+    if (saved && saved.S) unsnap(saved);
     else S = { room, host: me.id, phase: "lobby", teams: [{ pid: me.id, name: me.name || "الفريق الأول", score: 0, help: newHelp() }], cats: [], board: {}, turn: 0 };
     commit();
   });
@@ -636,23 +539,25 @@ function joinRoom(code) {
     send({ t: "join", name: me.name });
     setTimeout(() => {
       if (S) return;
-      render(`<h1>ما في رد من الغرفة ${esc(room)}</h1><p class="sub">تأكد من الكود، وإنه تلفون صاحب الغرفة مفتوح على اللعبة.</p><button class="big" id="again" type="button">جرّب كمان مرة</button><button class="big ghost" id="back" type="button">رجوع</button>`);
+      render(`<h1>ما في رد من الغرفة ${esc(room)}</h1><p class="sub">تأكد من الكود، وإنه تلفون صاحب الغرفة مفتوح على اللعبة.</p><button class="btn" id="again" type="button">جرّب كمان مرة</button><button class="btn alt" id="back" type="button">رجوع</button>`);
       bind({ again: () => send({ t: "join", name: me.name }), back: leave });
     }, 6000);
   });
 }
 function localGame(saved) {
   mode = "local"; room = null;
-  if (saved) { S = saved.S; SECRET = Object.assign(saved.SECRET || {}, { taken: new Set((saved.SECRET && saved.SECRET.taken) || []) }); if (S.phase === "q") arm(); return commit(); }
+  if (saved && saved.S) { unsnap(saved); return commit(); }
   localNames(store.get("nteams", 2));
 }
 function localNames(n) {
   const names = store.get("names", ["الفريق الأول", "الفريق الثاني", "الفريق الثالث"]);
-  render(`<h1>كم فريق؟</h1>
-    <div class="seg" style="grid-template-columns:1fr 1fr">${[2, 3].map((k) => `<button type="button" data-n="${k}" aria-pressed="${n === k}">${k} فرق</button>`).join("")}</div>
+  render(`<h1>على تلفون واحد</h1>
+    <h2>كم فريق؟</h2>
+    <div class="seg">${[2, 3].map((k) => `<button type="button" data-n="${k}" aria-pressed="${n === k}">${k} فرق</button>`).join("")}</div>
     <h2>أسماء الفرق</h2>
-    <div class="namesin">${Array.from({ length: n }, (_, i) => `<input id="n${i}" type="text" maxlength="16" value="${esc(names[i] || `الفريق ${i + 1}`)}" style="border-color:var(--t${i})">`).join("")}</div>
-    <button class="big" id="go" type="button">التالي</button><button class="big ghost" id="back" type="button">رجوع</button>`);
+    <div class="teamlist">${Array.from({ length: n }, (_, i) => `<div class="t${i}" style="padding:6px 10px"><i></i><input class="input" id="n${i}" type="text" maxlength="16" value="${esc(names[i] || `الفريق ${i + 1}`)}" style="border:0;background:none;padding:8px 4px"></div>`).join("")}</div>
+    <button class="btn" id="go" type="button">اختاروا الأقسام</button>
+    <button class="btn alt" id="back" type="button">رجوع</button>`);
   const keep = () => { const cur = store.get("names", ["الفريق الأول", "الفريق الثاني", "الفريق الثالث"]); for (let i = 0; i < n; i++) cur[i] = $("n" + i).value.trim() || cur[i]; store.set("names", cur); };
   document.querySelectorAll("[data-n]").forEach((b) => b.onclick = () => { keep(); store.set("nteams", +b.dataset.n); localNames(+b.dataset.n); });
   bind({
@@ -660,16 +565,16 @@ function localNames(n) {
     go: () => {
       keep();
       const all = store.get("names", []);
-      const ns = Array.from({ length: n }, (_, i) => all[i] || `الفريق ${i + 1}`);
-      S = { room: null, host: me.id, phase: "cats", catsN: n === 3 ? 3 : 4, teams: ns.map((name, i) => ({ pid: "local" + i, name, score: 0, help: newHelp() })), cats: [], board: {}, turn: 0 };
+      S = { room: null, host: me.id, phase: "cats", catsN: n === 3 ? 3 : 4,
+        teams: Array.from({ length: n }, (_, i) => ({ pid: "local" + i, name: all[i] || `الفريق ${i + 1}`, score: 0, help: newHelp() })), cats: [], board: {}, turn: 0 };
       commit();
     },
   });
 }
 
 // ---------- الواجهة ----------
-const myTeam = () => (mode === "local" ? (S.cur ? S.cur.team : S.turn) : S.teams.findIndex((t) => t.pid === me.id));
-const isMyTurn = () => mode === "local" || myTeam() === (S.phase === "q" ? S.cur.team : S.turn);
+const myTeam = () => (mode === "local" ? -2 : teamOf(me.id));
+const canAct = (team) => mode === "local" || myTeam() === team;
 
 function onState(st) {
   if (!st) return;
@@ -685,14 +590,16 @@ function onState(st) {
   if (f && f.id !== lastFx) { lastFx = f.id; if (Date.now() - (f.id - offset) < 20000) effects(f); }
   draw();
 }
-function full() { render(`<h1>الغرفة مليانة</h1><p class="sub">الغرفة مليانة أو اللعبة بلّشت.</p><button class="big ghost" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
+function full() { render(`<h1>الغرفة مليانة</h1><p class="sub">في 3 فرق جوّا، أو اللعبة بلّشت.</p><button class="btn alt" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
 
 function effects(f) {
   const mine = mode === "local" || f.team === myTeam();
   if (f.kind === "dbl") dblOverlay(f.team);
-  else if (f.kind === "good") setTimeout(() => fx(mine || mode === "local" ? "good" : "bad"), 60);
+  else if (f.kind === "good") setTimeout(() => (mine ? fx("good") : tone(330, 0, .2, "triangle", .1)), 60);
   else if (f.kind === "bad" && mine) setTimeout(() => fx("bad"), 60);
-  else if (f.kind === "steal") { tone(880, 0, .12, "square", .1); tone(1175, .14, .18, "square", .1); }
+  else if (f.kind === "none") tone(196, 0, .3, "sawtooth", .08);
+  else if (f.kind === "steal") { tone(880, 0, .1, "square", .1); tone(1175, .12, .16, "square", .1); haptic("success"); }
+  else if (f.kind === "buzz") { tone(1320, 0, .12, "square", .12); haptic("success"); }
   else if (f.kind === "win") setTimeout(() => fx("win"), 200);
 }
 function dblOverlay(team) {
@@ -700,7 +607,7 @@ function dblOverlay(team) {
   const mine = mode === "local" || myTeam() === team;
   const o = document.createElement("div");
   o.className = "dblover";
-  o.innerHTML = `<div><b>🔥 دبل! 🔥</b><small>${mine ? "طلعلكم السؤال الدبل! النقاط ضعف" : `فريق «${esc(t.name)}» طلعله السؤال الدبل!`}</small></div>`;
+  o.innerHTML = `<div><b>دبل 🔥</b><small>${mode === "local" ? `«${esc(t.name)}» فتحوا السؤال الدبل! نقاطه ضعف` : mine ? "فتحتوا السؤال الدبل! نقاطه ضعف" : `«${esc(t.name)}» فتحوا السؤال الدبل!`}</small></div>`;
   document.body.appendChild(o);
   [523, 659, 784, 1047, 1319].forEach((fq, k) => tone(fq, k * 0.08, 0.3, "triangle", 0.16));
   haptic("success");
@@ -708,16 +615,17 @@ function dblOverlay(team) {
   setTimeout(() => o.remove(), 2600);
 }
 
-function teamsBar() {
-  const active = S.phase === "q" ? S.cur.team : S.turn;
-  return `<div class="teams" style="--n:${nT()}">${S.teams.map((t, i) => `<div class="team t${i} ${nT() === 3 ? "small" : ""} ${["board", "q"].includes(S.phase) && active === i ? "on" : ""}">
-    <b>${esc(t.name)}${mode !== "local" && t.pid === me.id ? " (إنتو)" : ""}</b><span class="sc">${t.score}</span>
-    <small>${HELPS.map((h) => t.help && t.help[h.k] ? h.icon : `<i>${h.icon}</i>`).join(" ")}</small></div>`).join("")}</div>`;
+function scoreBar(active = -1) {
+  return `<div class="score" style="--n:${nT()}">${S.teams.map((t, i) => `<div class="pod t${i} ${active === i ? "on" : ""}">
+    <div class="nm"><i></i>${esc(t.name)}${mode !== "local" && t.pid === me.id ? " · إنتو" : ""}</div>
+    <div class="pts">${t.score}</div>
+    ${t.help ? `<div class="life">${HELPS.map((h) => `<span class="${t.help[h.k] ? "" : "off"}">${h.icon}</span>`).join("")}</div>` : ""}</div>`).join("")}</div>`;
 }
 
 function draw() {
   clearInterval(ticker);
   if (!S) return;
+  window.scrollTo(0, 0);
   if (S.phase === "lobby") return drawLobby();
   if (S.phase === "cats") return drawCats();
   if (S.phase === "board") return drawBoard();
@@ -728,20 +636,18 @@ function draw() {
 
 function drawLobby() {
   const link = location.origin + location.pathname + "?room=" + room;
-  render(`<h1>الغرفة ${esc(room)}</h1>
-    <p class="sub">ابعت الكود أو الرابط للفرق الثانية (فريق أو فريقين). لما يدخلوا، صاحب الغرفة بيكمّل.</p>
-    <div class="pass2" style="padding:18px"><span class="sub">كود الغرفة</span><span class="who" style="letter-spacing:6px;direction:ltr">${esc(room)}</span></div>
-    ${mode === "host" ? `<button class="big" id="share" type="button">ابعت رابط الغرفة</button>` : ""}
-    <h2>الفرق (${nT()} من ${MAX_TEAMS})</h2>
-    <div class="final">${S.teams.map((t, i) => `<div class="r t${i}"><b>${esc(t.name)}${t.pid === me.id ? " (إنتو)" : ""}</b><span style="font-size:18px">${i === 0 ? "صاحب الغرفة" : "✓"}</span></div>`).join("")}</div>
-    ${mode === "host" ? (nT() >= 2 ? `<button class="big green" id="begin" type="button">كمّل مع ${nT()} فرق ←</button>${nT() < MAX_TEAMS ? `<p class="waitnote">بتقدر تستنى فريق ثالث كمان</p>` : ""}` : `<p class="waitnote">⏳ عم نستنى الفريق الثاني...</p>`)
-      : `<p class="waitnote">⏳ صاحب الغرفة رح يبدأ لما الكل يدخل</p>`}
-    <button class="big ghost" id="out" type="button">${mode === "host" ? "إلغاء" : "اطلع"}</button>`);
+  render(`<p class="sub center">كود الغرفة</p>
+    <div class="code">${esc(room)}</div>
+    ${mode === "host" ? `<button class="btn alt" id="share" type="button">ابعت الرابط للفرق</button>` : ""}
+    <h2>الفرق</h2>
+    <div class="teamlist">${S.teams.map((t, i) => `<div class="t${i}"><i></i>${esc(t.name)}<small>${i === 0 ? "صاحب الغرفة" : t.pid === me.id ? "إنتو" : "دخل"}</small></div>`).join("")}
+      ${nT() < MAX_TEAMS ? `<div class="slot">${nT() < 2 ? "مستنيين الفريق الثاني..." : "في مكان لفريق ثالث"}</div>` : ""}</div>
+    ${mode === "host" ? `<button class="btn" id="begin" type="button" ${nT() < 2 ? "disabled" : ""}>${nT() < 2 ? "لازم فريق ثاني يدخل" : `يلا نبلّش بـ${nT()} فرق`}</button>` : `<p class="note">صاحب الغرفة بيبلّش لما الكل يدخل.</p>`}
+    <button class="linkish" id="out" type="button">${mode === "host" ? "سكّر الغرفة" : "اطلع"}</button>`);
   bind({
-    out: leave,
-    begin: () => send({ t: "begin" }),
+    out: leave, begin: () => send({ t: "begin" }),
     share: async () => {
-      const text = `تحدّى فريقنا بلعبة «جمع نقاط»! كود الغرفة ${room}`;
+      const text = `تعالوا نتحدّى بـ«جمع نقاط»! كود الغرفة ${room}`;
       try { if (navigator.share) { await navigator.share({ title: "جمع نقاط", text, url: link }); return; } } catch { return; }
       try { await navigator.clipboard.writeText(text + "\n" + link); $("share").textContent = "انسخ الرابط ✓"; } catch {}
     },
@@ -750,61 +656,55 @@ function drawLobby() {
 
 let picked = [];
 function drawCats() {
-  const canPick = mode === "local" || S.host === me.id;
-  if (!canPick) {
-    render(`${teamsBar()}<h1>صاحب الغرفة عم يختار الأقسام</h1><p class="sub">${catsN()} أقسام، وبكل قسم 8 أسئلة من السهل للصعب جداً.</p><div class="loading">⏳</div>
-      <button class="linkish" id="out" type="button" style="align-self:center">اطلع</button>`);
+  if (!(mode === "local" || S.host === me.id)) {
+    render(`${scoreBar()}<h1 class="center" style="margin-top:20px">صاحب الغرفة عم يختار الأقسام</h1><p class="note">ثواني وبتبلّش اللعبة.</p><div class="loading">⏳</div><button class="linkish" id="out" type="button">اطلع</button>`);
     return bind({ out: () => { if (confirm("أكيد بدك تطلع؟")) leave(); } });
   }
-  picked = picked.filter((c) => CAT.has(c)).slice(0, catsN());
   const N = catsN();
-  render(`${teamsBar()}<h1>اختاروا ${N} أقسام</h1>
-    <div class="seg" style="grid-template-columns:repeat(${catChoices(nT()).length},1fr)">${catChoices(nT()).map((k) => `<button type="button" data-cn="${k}" aria-pressed="${N === k}">${k} أقسام · ${k * 8 / nT()} سؤال لكل فريق</button>`).join("")}</div>
-    <p class="sub">بكل قسم 8 أسئلة: 2 سهل (100) و2 متوسط (200) و2 صعب (300) و2 صعب جداً (500). وفي سؤال واحد مخفي <b>دبل</b> 🔥</p>
-    <div class="catpick">${DATA.cats.map((c) => `<button type="button" data-c="${c.id}" aria-pressed="${picked.includes(c.id)}"><span>${c.icon}</span>${esc(c.name)}<small>${c.qs.length} سؤال${c.qs.some((q) => q[3]) ? " · صور" : ""}</small></button>`).join("")}</div>
-    <div class="row2"><button class="big ghost" id="rnd" type="button">🎲 عشوائي</button><button class="big green" id="go" type="button" ${picked.length === N ? "" : "disabled"}>يلا (${picked.length}/${N})</button></div>
-
-    <button class="linkish" id="out" type="button" style="align-self:center">اطلع</button>`);
-  document.querySelectorAll("[data-cn]").forEach((b) => b.onclick = () => send({ t: "catsn", n: +b.dataset.cn }));
+  picked = picked.filter((c) => CAT.has(c)).slice(0, N);
+  render(`<h1>اختاروا ${N} أقسام</h1>
+    <div class="seg">${catChoices(nT()).map((k) => `<button type="button" data-cn="${k}" aria-pressed="${N === k}">${k} أقسام</button>`).join("")}</div>
+    <p class="sub">${N * 8} سؤال، يعني ${(N * 8) / nT()} سؤال لكل فريق.</p>
+    <div class="cats">${DATA.cats.map((c) => { const k = picked.indexOf(c.id);
+      return `<button type="button" data-c="${c.id}" aria-pressed="${k >= 0}">${k >= 0 ? `<span class="ord">${k + 1}</span>` : ""}<span>${c.icon}</span>${esc(c.name)}${c.qs.some((q) => q[3]) ? "<small>بالصور</small>" : ""}</button>`; }).join("")}</div>
+    <div class="dock"><button class="rnd" id="rnd" type="button" aria-label="اختيار عشوائي">🎲</button>
+      <button class="btn" id="go" type="button" ${picked.length === N ? "" : "disabled"}>${picked.length === N ? "ابدأوا اللعبة" : `اختاروا ${N - picked.length} كمان`}</button></div>
+    <button class="linkish" id="out" type="button">${mode === "local" ? "رجوع" : "سكّر الغرفة"}</button>`);
+  document.querySelectorAll("[data-cn]").forEach((b) => b.onclick = () => send({ t: "catsn", n: +b.dataset.cn, team: 0 }));
   document.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => {
     const c = b.dataset.c;
     if (picked.includes(c)) picked = picked.filter((x) => x !== c);
     else if (picked.length < N) picked.push(c);
     else { picked.shift(); picked.push(c); }
-    drawCats();
+    const y = window.scrollY; drawCats(); window.scrollTo(0, y);
   });
   bind({
-    rnd: () => { picked = shuffle(DATA.cats.map((c) => c.id)).slice(0, N); drawCats(); },
-    go: () => { if (picked.length === N) send({ t: "cats", cats: picked.slice() }); },
-    out: () => { if (confirm("أكيد بدك تطلع؟")) leave(); },
+    rnd: () => { picked = shuffle(DATA.cats.map((c) => c.id)).slice(0, N); const y = window.scrollY; drawCats(); window.scrollTo(0, y); },
+    go: () => { if (picked.length === N) send({ t: "cats", cats: picked.slice(), team: 0 }); },
+    out: () => { if (mode === "local") { store.set("local", null); leave(); } else if (confirm("أكيد بدك تسكّر الغرفة؟")) leave(); },
   });
 }
 
 function drawBoard() {
   const t = S.teams[S.turn];
-  const mine = isMyTurn();
-  const left = S.cats.reduce((n, cid) => n + S.board[cid].filter((c) => c.w === null).length, 0);
-  render(`${teamsBar()}
-    <p class="turnline t${S.turn}">${mode === "local" ? `دور «${esc(t.name)}» يختار سؤال` : mine ? "دوركم! اختاروا سؤال 👇" : `دور «${esc(t.name)}» يختار...`}</p>
-    <div class="board ${mine ? "" : "wait"} ${S.cats.length >= 5 ? "c6" : ""}" style="--c:${S.cats.length}">
+  const mine = canAct(S.turn);
+  const wide = S.cats.length >= 5;
+  render(`${scoreBar(S.turn)}
+    <p class="turn t${S.turn}">${mode === "local" ? `دور «${esc(t.name)}» يختار` : mine ? "دوركم، اختاروا سؤال" : `«${esc(t.name)}» عم يختاروا...`}</p>
+    <div class="board ${mine ? "" : "wait"} ${wide ? "wide" : ""}" style="--c:${S.cats.length}">
       ${S.cats.map((cid) => { const c = CAT.get(cid); return `<div class="head"><span>${c.icon}</span><b>${esc(c.name)}</b></div>`; }).join("")}
       ${LAYOUT.map((_, row) => S.cats.map((cid) => { const cell = S.board[cid][row];
-        return `<button class="cell d${cell.d} ${cell.w !== null && cell.w >= 0 ? "w" + cell.w : ""}" type="button" data-cid="${cid}" data-i="${row}" ${cell.w !== null ? "disabled" : ""}>${cell.w === null ? LEVELS[cell.d].pts : cell.w === -1 ? "✗" : "✓"}</button>`;
+        if (cell.w !== null) return `<button class="cell done ${cell.w === -1 ? "miss" : "w" + cell.w}" type="button" disabled aria-label="خلص"></button>`;
+        return `<button class="cell" type="button" data-cid="${cid}" data-i="${row}"><span class="lv d${cell.d}"></span>${LEVELS[cell.d].pts}</button>`;
       }).join("")).join("")}
     </div>
-    <div class="legend"><span><i style="background:#12B76A"></i>سهل</span><span><i style="background:#0BA5EC"></i>متوسط</span><span><i style="background:#F79009"></i>صعب</span><span><i style="background:#F04438"></i>صعب جداً</span></div>
-    <p class="note" style="text-align:center">باقي ${left} سؤال · في سؤال دبل مخفي 🔥</p>
-    <button class="linkish" id="out" type="button" style="align-self:center">${mode === "local" ? "إنهاء اللعبة" : "اطلع من اللعبة"}</button>`);
-  if (mine) document.querySelectorAll(".cell:not([disabled])").forEach((b) => b.onclick = () => send({ t: "open", cid: b.dataset.cid, i: +b.dataset.i, team: S.turn }));
+    <div class="legend"><span style="--k:#34D399">سهل</span><span style="--k:#60A5FA">متوسط</span><span style="--k:#FBBF24">صعب</span><span style="--k:#F87171">صعب جداً</span></div>
+    <p class="note">في سؤال دبل مخفي باللوحة 🔥</p>
+    <button class="linkish" id="out" type="button">${mode === "local" ? "إنهاء اللعبة" : "اطلع من اللعبة"}</button>`);
+  if (mine) document.querySelectorAll(".cell:not(.done)").forEach((b) => b.onclick = () => send({ t: "open", cid: b.dataset.cid, i: +b.dataset.i, team: S.turn }));
   bind({ out: () => { if (confirm("أكيد؟ اللعبة رح تنتهي.")) { store.set("local", null); leave(); } } });
 }
 
-function qTop() {
-  const c = S.cur, cat = CAT.get(c.cid);
-  return `<div class="qhead"><span class="chip2">${cat.icon} ${esc(cat.name)}</span>
-    <span>${c.dbl ? `<span class="chip2 dbl">🔥 دبل ×2</span> ` : ""}<span class="chip2 d${c.d}">${LEVELS[c.d].name} · ${cellPoints(c)}</span></span></div>`;
-}
-// صور ويكيبيديا: بنطلبها عن طريق Commons مباشرة (روابط الـthumb بحجم غير قياسي ما بتشتغل)
 function imgUrl(u) {
   const m = String(u || "").match(/\/wikipedia\/(commons|en)\/thumb\/[^/]+\/[^/]+\/([^/?]+)\//);
   return m ? `https://${m[1] === "en" ? "en.wikipedia.org" : "commons.wikimedia.org"}/wiki/Special:FilePath/${m[2]}?width=640` : u;
@@ -814,36 +714,61 @@ function qImage(c) {
   const cls = c.img.includes("flagcdn") ? "flag" : c.img.includes("teamlogos") ? "crest" : "";
   return `<img class="qimg ${cls}" src="${esc(imgUrl(c.img))}" data-alt="${esc(c.img)}" alt="" referrerpolicy="no-referrer" onerror="if(this.dataset.alt&&this.src!==this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt='';}else{this.style.display='none'}">`;
 }
+function qHead(c, withClock) {
+  const cat = CAT.get(c.cid);
+  return `<div class="qmeta"><span class="cat">${cat.icon} ${esc(cat.name)} · ${LEVELS[c.d].name}</span>
+    ${c.dbl ? `<span class="chip dbl">×2 🔥</span>` : ""}<span class="chip">${cellPoints(c)}</span>${withClock ? `<span class="secs" id="secs"></span>` : ""}</div>
+    ${withClock ? `<div class="clock" id="clock"><i id="bar"></i></div>` : ""}`;
+}
+function optsHtml(c, enabled, reveal) {
+  return `<div class="opts ${reveal ? "locked" : ""}">${c.opts.map((o, k) => {
+    const cls = reveal ? (k === c.right ? "right" : c.wrong.includes(k) ? "wrong" : c.gone.includes(k) ? "gone" : "")
+      : c.gone.includes(k) ? "gone" : c.wrong.includes(k) ? "wrong" : "";
+    const off = !enabled || c.gone.includes(k) || c.wrong.includes(k);
+    return `<button class="opt ${cls}" type="button" data-k="${k}" ${off ? "disabled" : ""}><span class="k">${"أبجد"[k]}</span><span>${esc(o)}</span></button>`; }).join("")}</div>`;
+}
+
 function drawQ() {
-  const c = S.cur, t = S.teams[c.team];
-  const mine = isMyTurn();
-  const helpOk = mine && !c.steal;
-  render(`${teamsBar()}
-    ${c.steal ? `<div class="banner steal"><b>فرصة سرقة! 🦊</b><small>«${esc(S.teams[c.lastWrong != null ? c.lastWrong : c.team].name)}» ما جاوب صح. ${mode === "local" ? `«${esc(t.name)}»` : mine ? "إنتو" : `«${esc(t.name)}»`} بتقدروا تسرقوا نص النقاط (${Math.round(cellPoints(c) / 2)})</small></div>` : ""}
-    <div class="ptimer" id="pt"><i id="ptbar"></i><span id="ptsec"></span></div>
-    <div class="qcard">${qTop()}${qImage(c)}<div class="qt">${esc(c.text)}</div></div>
-    <div class="opts">${c.opts.map((o, k) => { const off = c.gone.includes(k) || c.wrong.includes(k);
-      return `<button class="opt ${c.gone.includes(k) ? "gone" : ""} ${c.wrong.includes(k) ? "wrong" : ""}" type="button" data-k="${k}" ${off || !mine ? "disabled" : ""}><span class="k">${"أبجد"[k]}</span>${esc(o)}</button>`; }).join("")}</div>
-    ${c.tries > 1 && !c.steal ? `<p class="note" style="text-align:center;font-weight:700">✌️ معكم محاولتين بهالسؤال</p>` : ""}
-    ${!c.steal ? `<div class="lifes">${HELPS.map((h) => `<button type="button" data-h="${h.k}" ${helpOk && t.help[h.k] ? "" : "disabled"}><span>${h.icon}</span>${h.name}</button>`).join("")}</div>` : ""}
-    <p class="waitnote">${mine ? (mode === "local" ? `دور «${esc(t.name)}» يجاوب` : "") : `⏳ «${esc(t.name)}» عم يجاوبوا...`}</p>`);
+  const c = S.cur;
+  const buzzing = c.steal === "buzz";
+  const t = c.team !== null && c.team !== undefined ? S.teams[c.team] : null;
+  const mine = !buzzing && canAct(c.team);
+  const iCanBuzz = buzzing && (mode === "local" || c.buzzers.includes(myTeam()));
+  let top = "";
+  if (buzzing) {
+    const who = mode === "local" ? c.buzzers : c.buzzers.filter((k) => k === myTeam());
+    top = `<div class="steal"><b>🦊 سرقة! الأسرع بياخذها</b><small>«${esc(S.teams[c.lastWrong].name)}» ما جابوها. ${mode === "local" ? "أول فريق بيكبس على اسمه بيجاوب" : iCanBuzz ? "اكبسوا أسرع من الفريق الثاني!" : "الفرق الثانية عم تتسابق..."} على نص النقاط (${Math.round(cellPoints(c) / 2)})</small>
+      ${who.length ? `<div class="buzz">${who.map((k) => `<button class="t${k}" type="button" data-buzz="${k}">${mode === "local" ? esc(S.teams[k].name) : "اسرق!"}</button>`).join("")}</div>` : ""}</div>`;
+  } else if (c.steal === "answer") {
+    top = `<div class="steal"><b>🦊 «${esc(t.name)}» بيسرقوا</b><small>${mine && mode !== "local" ? "جاوبوا صح وخذوا" : "إذا جاوبوا صح بياخذوا"} نص النقاط (${Math.round(cellPoints(c) / 2)})</small></div>`;
+  }
+  render(`${scoreBar(buzzing ? -1 : c.team)}
+    ${qHead(c, true)}
+    ${top}
+    ${qImage(c)}
+    <div class="qtext">${esc(c.text)}</div>
+    ${optsHtml(c, mine, false)}
+    ${c.tries > 1 && !c.steal ? `<p class="note">✌️ معكم محاولتين بهالسؤال</p>` : ""}
+    ${!c.steal ? `<div class="helps">${HELPS.map((h) => `<button type="button" data-h="${h.k}" ${mine && t.help[h.k] ? "" : "disabled"}><span>${h.icon}</span>${h.name}</button>`).join("")}</div>` : ""}
+    ${!mine && !buzzing ? `<p class="note">«${esc(t.name)}» عم يجاوبوا...</p>` : mode === "local" && !buzzing ? `<p class="turn t${c.team}">دور «${esc(t.name)}» يجاوب</p>` : ""}`);
   if (mine) {
-    document.querySelectorAll(".opt:not([disabled])").forEach((b) => b.onclick = () => { b.classList.add("mine"); send({ t: "ans", k: +b.dataset.k, team: c.team }); });
+    document.querySelectorAll(".opt:not([disabled])").forEach((b) => b.onclick = () => { document.querySelectorAll(".opt").forEach((x) => x.disabled = true); send({ t: "ans", k: +b.dataset.k, team: c.team }); });
     document.querySelectorAll("[data-h]:not([disabled])").forEach((b) => b.onclick = () => {
-      if (b.dataset.h === "swap" && !confirm("أكيد بدكم تبدّلوا السؤال؟ (مرة وحدة باللعبة)")) return;
+      if (b.dataset.h === "swap" && !confirm("بدكم سؤال ثاني بداله؟ (مرة وحدة باللعبة)")) return;
       send({ t: "help", h: b.dataset.h, team: c.team });
     });
   }
-  const total = c.steal ? STEAL_MS : Q_MS(c.d);
+  document.querySelectorAll("[data-buzz]").forEach((b) => b.onclick = () => { b.disabled = true; send({ t: "buzz", team: +b.dataset.buzz }); });
+  const total = buzzing ? BUZZ_MS : c.steal ? STEAL_MS : Q_MS(c.d);
   let lastBeep = -1;
   const tick = () => {
     const ms = Math.max(0, c.deadline - now()), s = Math.ceil(ms / 1000);
-    const bar = $("ptbar"), sec = $("ptsec"), pt = $("pt");
+    const bar = $("bar"), sec = $("secs");
     if (!bar) return clearInterval(ticker);
     bar.style.width = Math.min(100, (ms / total) * 100) + "%";
-    sec.textContent = s + " ثانية";
-    pt.classList.toggle("hot", s <= 5);
-    if (s <= 5 && s > 0 && s !== lastBeep && mine) { lastBeep = s; tone(660, 0, 0.08, "square", 0.06); }
+    sec.textContent = s;
+    const hot = s <= 5; $("clock").classList.toggle("hot", hot); sec.classList.toggle("hot", hot);
+    if (hot && s > 0 && s !== lastBeep && (mine || iCanBuzz)) { lastBeep = s; tone(660, 0, 0.07, "square", 0.05); }
   };
   tick(); ticker = setInterval(tick, 200);
 }
@@ -852,13 +777,22 @@ function drawRes() {
   const r = S.res, c = S.cur;
   const w = r.winner !== null ? S.teams[r.winner] : null;
   const mineWin = w && (mode === "local" || r.winner === myTeam());
-  render(`${teamsBar()}
-    ${w ? `<div class="banner good"><b>${mode === "local" ? `«${esc(w.name)}» +${r.pts} 🎉` : mineWin ? `صح! +${r.pts} 🎉` : `«${esc(w.name)}» جاوبوا صح +${r.pts}`}</b><small>${r.steal ? "سرقة ناجحة 🦊" : r.dbl ? "سؤال دبل 🔥" : ""}</small></div>`
-      : `<div class="banner bad"><b>ولا فريق جاوب صح</b><small>${r.dbl ? "راح السؤال الدبل 🔥 بلاش" : "النقاط ما راحت لحدا"}</small></div>`}
-    <div class="qcard">${qTop()}${qImage(c)}<div class="qt">${esc(c.text)}</div></div>
-    <div class="opts">${c.opts.map((o, k) => `<button class="opt ${k === r.right ? "right" : c.wrong.includes(k) || k === r.pick ? "wrong" : c.gone.includes(k) ? "gone" : ""}" type="button" disabled><span class="k">${"أبجد"[k]}</span>${esc(o)}</button>`).join("")}</div>
-    <button class="big" id="next" type="button">رجوع للوحة ←</button>`);
+  const head = w
+    ? `<div class="verdict good t${r.winner}"><div><b>${mode === "local" ? `«${esc(w.name)}» جابوها` : mineWin ? "صح عليكم!" : `«${esc(w.name)}» جابوها`}</b><small>${r.steal ? "سرقة ناجحة 🦊" : r.dbl ? "سؤال دبل 🔥" : "جواب صح"}</small></div><span class="plus">+${r.pts}</span></div>`
+    : `<div class="verdict none"><div><b>ولا فريق جابها</b><small>${r.dbl ? "راح السؤال الدبل بلاش 🔥" : "الجواب الصح باللون الأخضر"}</small></div></div>`;
+  render(`${scoreBar(r.winner === null ? -1 : r.winner)}
+    ${qHead(c, false)}
+    ${head}
+    ${qImage(c)}
+    <div class="qtext">${esc(c.text)}</div>
+    ${optsHtml(c, false, true)}
+    <button class="autonext" id="next" type="button"><i id="nbar"></i><span>${S.cats.some((cid) => S.board[cid].some((x) => x.w === null)) ? "راجعين للوحة..." : "النتيجة النهائية..."} (اكبس للتسريع)</span></button>`);
   bind({ next: () => send({ t: "next" }) });
+  const tick = () => {
+    const el = $("nbar"); if (!el) return clearInterval(ticker);
+    el.style.width = Math.min(100, (1 - Math.max(0, r.until - now()) / NEXT_MS) * 100) + "%";
+  };
+  tick(); ticker = setInterval(tick, 100);
 }
 
 function drawOver() {
@@ -866,40 +800,41 @@ function drawOver() {
   const top = S.teams[order[0]].score;
   const winners = order.filter((i) => S.teams[i].score === top);
   const tie = winners.length > 1;
-  const gap = tie ? 0 : top - S.teams[order[1]].score;
-  render(`<div class="banner good" style="padding:26px"><b style="font-size:38px">${tie ? "تعادل! 🤝" : `🏆 فاز «${esc(S.teams[order[0]].name)}»`}</b>
-    <small>${tie ? `${winners.map((i) => `«${esc(S.teams[i].name)}»`).join(" و")} بنفس النقاط` : `بفرق ${gap} نقطة عن اللي بعده`}</small></div>
-    <div class="final">${order.map((i, k) => `<div class="r t${i}"><b>${["🥇", "🥈", "🥉"][k] || ""} ${esc(S.teams[i].name)}</b><span>${S.teams[i].score}</span></div>`).join("")}</div>
-    ${mode === "local" || S.host === me.id ? `<button class="big green" id="again" type="button">لعبة جديدة (أقسام جديدة)</button>` : `<p class="waitnote">صاحب الغرفة بيقدر يبدأ لعبة جديدة.</p>`}
-    <button class="big ghost" id="out" type="button">خروج</button>`);
-  bind({ again: () => { picked = []; send({ t: "again" }); }, out: () => { store.set("local", null); leave(); } });
+  const max = Math.max(1, top);
+  // المنصة: الأول بالنص، الثاني يمين، الثالث شمال
+  const podOrder = order.length === 3 ? [order[1], order[0], order[2]] : [order[1], order[0]];
+  const rank = (i) => order.indexOf(i);
+  render(`<h1 class="center">${tie ? "تعادل! 🤝" : `فاز «${esc(S.teams[order[0]].name)}» 🏆`}</h1>
+    <p class="sub center">${tie ? `${winners.map((i) => `«${esc(S.teams[i].name)}»`).join(" و")} بنفس النقاط` : `بفرق ${top - S.teams[order[1]].score} نقطة عن اللي بعده`}</p>
+    <div class="podium">${podOrder.map((i) => { const t = S.teams[i], k = rank(i);
+      return `<div class="col t${i}"><span class="medal">${["🥇", "🥈", "🥉"][k]}</span><b>${esc(t.name)}</b><div class="blk" style="height:${70 + Math.round((Math.max(0, t.score) / max) * 110)}px">${t.score}</div></div>`; }).join("")}</div>
+    ${mode === "local" || S.host === me.id ? `<button class="btn" id="again" type="button">لعبة جديدة بأقسام جديدة</button>` : `<p class="note">صاحب الغرفة بيقدر يبدأ لعبة جديدة.</p>`}
+    <button class="btn alt" id="out" type="button">خروج</button>`);
+  bind({ again: () => { picked = []; send({ t: "again", team: 0 }); }, out: () => { store.set("local", null); leave(); } });
 }
 
 // ---------- البداية ----------
 function intro() {
   const local = store.get("local", null);
-  render(`<h1>جمع نقاط</h1>
-    <p class="sub">فريقين أو 3 فرق، وأسئلة من السهل للصعب جداً. مين بيجمع نقاط أكثر؟</p>
-    <div class="card" style="background:#FFF;border:2px solid var(--brand-soft);border-radius:26px;padding:16px;box-shadow:0 6px 0 var(--brand-soft)"><ul class="rules">
-      <li>صاحب الغرفة بيختار الأقسام من ${DATA.cats.length} قسم: مع فريقين <b>4 أقسام</b>، ومع 3 فرق <b>3 أقسام</b> (أو 6)، عشان كل فريق ياخذ نفس عدد الأسئلة.</li>
-      <li>بالدور، كل فريق بيختار سؤال من اللوحة: <b>سهل 100</b>، متوسط 200، صعب 300، <b>صعب جداً 500</b>.</li>
-      <li>كل سؤال إله 4 خيارات، و30 ثانية (الصعب جداً 40).</li>
-      <li>إذا جاوبتوا غلط أو خلص الوقت، الفريق اللي بعدكم بيقدر <b>يسرق</b> نص النقاط 🦊 (ومع 3 فرق، إذا غلط كمان بتروح للثالث)</li>
-      <li>في <b>سؤال دبل مخفي</b> 🔥 اللي بيفتحه نقاطه ضعف، والفرق الثانية بتعرف!</li>
-      <li>كل فريق معه 3 وسائل، كل وحدة مرة باللعبة: ✂️ حذف إجابتين، ✌️ جاوب مرتين، 🔄 بدّل السؤال.</li>
+  render(`<h1>مين بيجمع نقاط أكثر؟</h1>
+    <p class="sub">فريقين أو 3 فرق، لوحة أسئلة من السهل للصعب جداً، وسؤال دبل مخفي.</p>
+    <div class="panel"><ul class="rules">
+      <li>بالدور، كل فريق بيختار سؤال من اللوحة: <b>100</b> سهل، <b>200</b> متوسط، <b>300</b> صعب، <b>500</b> صعب جداً.</li>
+      <li>4 خيارات و<b>30 ثانية</b> لكل سؤال (الصعب جداً 40).</li>
+      <li>إذا غلطتوا، الفرق الثانية بتقدر <b>تسرق نص النقاط</b> 🦊 ومع 3 فرق الأسرع بالكبسة بياخذها.</li>
+      <li>واحد من الأسئلة <b>دبل</b> 🔥 نقاطه ضعف.</li>
+      <li>كل فريق معه مرة وحدة: ✂️ حذف ثنتين، ✌️ محاولتين، 🔄 سؤال ثاني.</li>
     </ul></div>
-    <h2>اسم فريقك</h2>
-    <input class="search" id="tname" type="text" maxlength="16" placeholder="مثلاً: النشامى" value="${esc(me.name)}" autocomplete="off">
-    <button class="big green" id="create" type="button">اعمل غرفة (كل فريق من تلفونه)</button>
-    <h2>أو ادخل غرفة فريق ثاني</h2>
-    <input class="search" id="code" type="text" inputmode="numeric" maxlength="5" placeholder="كود الغرفة (5 أرقام)" value="${esc(qs.get("room") || "")}" autocomplete="off" style="letter-spacing:4px;text-align:center;font-size:22px">
-    <p class="note" id="err" hidden></p>
-    <button class="big" id="join" type="button">ادخل</button>
-    ${local && local.S && local.S.phase !== "over" ? `<button class="big ghost" id="resume" type="button">كمّلوا اللعبة على تلفون واحد</button>` : ""}
-    <button class="big ghost" id="one" type="button">كل الفرق على تلفون واحد</button>`);
+    <input class="input" id="tname" type="text" maxlength="16" placeholder="اسم فريقك" value="${esc(me.name)}" autocomplete="off">
+    <button class="btn" id="create" type="button">اعملوا غرفة</button>
+    <div class="seg" style="gap:8px"><input class="input" id="code" type="text" inputmode="numeric" maxlength="5" placeholder="كود الغرفة" value="${esc(qs.get("room") || "")}" autocomplete="off" style="flex:1.4;letter-spacing:4px;text-align:center;font-size:20px">
+      <button type="button" id="join" style="flex:1;background:var(--on);color:var(--ink);border-color:var(--on)">ادخلوا</button></div>
+    <p class="err" id="err" hidden></p>
+    ${local && local.S && local.S.phase !== "over" && local.S.phase !== "cats" ? `<button class="btn alt" id="resume" type="button">كمّلوا اللعبة اللي على هالتلفون</button>` : ""}
+    <button class="btn alt" id="one" type="button">كل الفرق على تلفون واحد</button>`);
   const getName = () => {
     const n = $("tname").value.trim();
-    if (!n) { $("err").hidden = false; $("err").textContent = "اكتب اسم فريقك أول."; $("tname").focus(); return null; }
+    if (!n) { $("err").hidden = false; $("err").textContent = "اكتبوا اسم فريقكم أول."; $("tname").focus(); return null; }
     me.name = n; store.set("team", n); return n;
   };
   bind({
@@ -919,7 +854,7 @@ function boot() {
   if (qs.get("room")) return false;
   if (saved && saved.room && Date.now() - (saved.at || 0) < 6 * 3600e3) {
     render(`<h1>في لعبة مفتوحة</h1><p class="sub">الغرفة ${esc(saved.room)}${saved.host ? " (إنتو صاحبينها)" : ""}.</p>
-      <button class="big green" id="re" type="button">ارجع للعبة</button><button class="big ghost" id="no" type="button">لا، طلّعني</button>`);
+      <button class="btn" id="re" type="button">ارجعوا للعبة</button><button class="btn alt" id="no" type="button">لا، طلّعني</button>`);
     bind({ re: () => (saved.host ? hostRoom(saved.room, store.get("host-" + saved.room, null)) : joinRoom(saved.room)), no: () => { store.set("online", null); intro(); } });
     return true;
   }
@@ -929,10 +864,10 @@ function boot() {
 $("quit").onclick = () => { location.href = "./"; };
 fetch("points_q.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
   DATA = d; CAT = new Map(d.cats.map((c) => [c.id, c]));
-  if (!d.cats.length) { $("app").innerHTML = `<div class="loading">الأسئلة لسا بتتجهز. جرّب كمان شوي.</div>`; return; }
+  if (!d.cats.length) { $("app").innerHTML = `<div class="loading">الأسئلة لسا بتتجهز. جرّبوا كمان شوي.</div>`; return; }
   if (boot()) return;
   intro();
-}).catch(() => { $("app").innerHTML = `<div class="loading">ما قدرت أحمّل الأسئلة.</div>`; });
+}).catch(() => { $("app").innerHTML = `<div class="loading">ما قدرت أحمّل الأسئلة. تأكدوا من الإنترنت.</div>`; });
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
