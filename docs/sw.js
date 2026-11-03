@@ -1,6 +1,6 @@
 // أبو عودة: تشغيل كتطبيق، ويضل يفتح حتى لو النت ضعيف
-const VERSION = "abu-odeh-v5";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
+const VERSION = "abu-odeh-v6";
+const SHELL = ["./", "index.html", "theme.js", "shell.css", "shell.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

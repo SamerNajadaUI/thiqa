@@ -1,0 +1,82 @@
+/* واجهة التطبيق من برّا (الرئيسية وقائمة الألعاب): الألوان للوضعين، زر المظهر، وشبكة الألعاب.
+   بيتحمّل بعد ستايل الصفحة، فألوانه هي اللي بتمشي. */
+:root {
+  color-scheme: light;
+  --bg: #F5F5F9; --card: #FFFFFF; --soft: #F0F1F5; --soft2: #FAFAFC; --line: #E6E7ED;
+  --ink: #12131A; --muted: #6A707C; --faint: #A3A8B3;
+  --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
+  --shadow-sm: 0 1px 2px rgb(18 19 26 / .05);
+  --shadow: 0 1px 2px rgb(18 19 26 / .04), 0 12px 28px -10px rgb(30 28 60 / .16);
+  --shadow-press: 0 1px 2px rgb(18 19 26 / .06), 0 4px 12px -6px rgb(30 28 60 / .18);
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0E0F14; --card: #181A22; --soft: #21242E; --soft2: #1C1E27; --line: #2B2E3A;
+  --ink: #F2F3F7; --muted: #A3A9B6; --faint: #6E7482;
+  --brand: #8B74FF; --brand-dark: #5B3DF5; --brand-soft: #2A2452;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / .4);
+  --shadow: 0 1px 0 rgb(255 255 255 / .04) inset, 0 14px 30px -12px rgb(0 0 0 / .7);
+  --shadow-press: 0 1px 0 rgb(255 255 255 / .04) inset, 0 6px 14px -8px rgb(0 0 0 / .7);
+}
+html, body { background: var(--bg); color: var(--ink); }
+body { transition: background-color .25s, color .25s; }
+
+/* شريط فوق: الشعار + زر المظهر */
+.shellbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; }
+.shellbar .brand { display: flex; align-items: center; gap: 10px; min-width: 0; text-decoration: none; color: var(--ink); cursor: pointer; }
+.shellbar .brand img { width: 44px; height: 44px; border-radius: 14px; flex: none; box-shadow: var(--shadow-sm); }
+.shellbar .brand b { display: block; font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.05; white-space: nowrap; }
+.shellbar .brand small { display: block; color: var(--muted); font-size: 12px; line-height: 1.3; }
+/* بالشاشات الداخلية (لما يبين زر رجوع) بنخبي اسم التطبيق عشان ما يتزاحم */
+.shellbar:has(.back:not([hidden])) .brand > span { display: none; }
+.shellbar .end { display: flex; align-items: center; gap: 8px; }
+
+.theme-switch { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); flex: none; }
+.theme-switch button { width: 34px; height: 30px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: grid; place-items: center; padding: 0; cursor: pointer; transition: background .2s, color .2s; }
+.theme-switch button svg { width: 17px; height: 17px; }
+.theme-switch button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: var(--shadow-sm); }
+
+.shell-title { margin: 2px 0 0; font-family: var(--display); font-weight: 400; font-size: clamp(28px, 8vw, 36px); line-height: 1.15; }
+.shell-sub { margin: 2px 0 0; color: var(--muted); font-size: 13.5px; }
+
+/* شبكة الألعاب: عمودين، وبالشاشة بيبين صفين (4 ألعاب) والباقي بالسكرول */
+.games-grid { --card-h: clamp(212px, calc((100svh - 268px) / 2), 300px);
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.gcard { --g1: #7C5CFF; --g2: #5B3DF5;
+  position: relative; display: flex; flex-direction: column; height: var(--card-h); min-width: 0; overflow: hidden;
+  border: 1px solid var(--line); border-radius: 24px; background: var(--card); color: var(--ink); text-decoration: none; text-align: right;
+  box-shadow: var(--shadow); padding: 0; font: inherit; cursor: pointer; width: 100%;
+  transition: transform .18s cubic-bezier(.2,.8,.3,1), box-shadow .18s; -webkit-user-select: none; user-select: none; }
+.gcard:active { transform: scale(.97); box-shadow: var(--shadow-press); }
+@media (hover: hover) { .gcard:hover { transform: translateY(-2px); } }
+.gcard:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+.gcard .art { position: relative; flex: 1 1 auto; min-height: 0; display: grid; place-items: center; overflow: hidden;
+  background: radial-gradient(120% 90% at 85% 0%, rgb(255 255 255 / .28), transparent 55%), linear-gradient(150deg, var(--g1), var(--g2)); }
+.gcard .art::before, .gcard .art::after { content: ""; position: absolute; border-radius: 50%; background: rgb(255 255 255 / .12); }
+.gcard .art::before { width: 70%; aspect-ratio: 1; left: -18%; bottom: -30%; }
+.gcard .art::after { width: 34%; aspect-ratio: 1; right: 8%; top: 10%; background: rgb(255 255 255 / .09); }
+.gcard .art .ic { position: relative; z-index: 1; width: 64px; height: 64px; border-radius: 20px; display: grid; place-items: center; color: #FFFFFF;
+  background: rgb(255 255 255 / .18); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .25), 0 10px 24px -8px rgb(0 0 0 / .35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.gcard .art .ic svg { width: 34px; height: 34px; }
+.gcard .flag { position: absolute; z-index: 2; top: 10px; right: 10px; background: rgb(255 255 255 / .92); color: #1A1430; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+.gcard .body { flex: none; padding: 11px 12px 12px; display: flex; flex-direction: column; gap: 3px; }
+.gcard b { font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1.15; }
+.gcard small { color: var(--muted); font-size: 12px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.9em; }
+.gcard .tags { display: flex; gap: 4px; margin-top: 5px; flex-wrap: nowrap; overflow: hidden; }
+.gcard .tags span { flex: none; font-size: 10.5px; font-weight: 600; color: var(--muted); background: var(--soft); border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+.g-points { --g1: #FF8A3D; --g2: #F0433A; }
+.g-mafia { --g1: #4A3B78; --g2: #17122B; }
+.g-who { --g1: #8A6CFF; --g2: #4B2FE0; }
+.g-numbers { --g1: #2EC5FF; --g2: #0A7CE0; }
+.g-career { --g1: #FFC23D; --g2: #E8890C; }
+.g-barra { --g1: #2FD58E; --g2: #0B9A62; }
+:root[data-theme="dark"] .gcard .art { filter: saturate(.92) brightness(.92); }
+:root[data-theme="dark"] .gcard .flag { background: rgb(14 15 20 / .78); color: #FFFFFF; }
+@media (max-width: 350px) { .gcard b { font-size: 18px; } .gcard .art .ic { width: 54px; height: 54px; } }
+@media (prefers-reduced-motion: no-preference) {
+  .games-grid > * { animation: gin .45s cubic-bezier(.2,.9,.3,1.1) both; }
+  .games-grid > :nth-child(2) { animation-delay: .04s; } .games-grid > :nth-child(3) { animation-delay: .08s; }
+  .games-grid > :nth-child(4) { animation-delay: .12s; } .games-grid > :nth-child(n+5) { animation-delay: .16s; }
+  @keyframes gin { from { opacity: 0; transform: translateY(10px) scale(.98); } }
+}
+@media (prefers-reduced-motion: reduce) { .gcard, body { transition: none; } }

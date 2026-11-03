@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>ألعاب أبو عودة للمرح</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
@@ -16,18 +17,20 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: same chunky game-app skin as the main app. One screen at a time: games list -> mode -> level -> era -> player card, or challenges -> challenge. Light-only by design. */
+/* One screen at a time: games grid -> (احزر اللاعب) mode -> level -> era -> player card, or challenges -> challenge.
+   Base colours (light/dark) come from ../shell.css; this file only adds the level colours. */
 :root {
-  color-scheme: light;
-  --bg: #FFFFFF; --soft: #F4F5F7; --line: #ECEEF1; --ink: #111316; --muted: #6B7280; --faint: #A9AEB6;
-  --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
   --l1: #12B76A; --l1d: #0A8A4F; --l1s: #E6F8EF;
   --l2: #F79009; --l2d: #C26A00; --l2s: #FEF3E2;
   --l3: #F04438; --l3d: #B42318; --l3s: #FEECEA;
   --l4: #1D2939; --l4d: #000000; --l4s: #EAECF0;
-  --gold: #FDB022; --gold-dark: #DC6803;
+  --gold: #FDB022; --gold-dark: #DC6803; --gold-soft: #FEF0C7; --coral-soft: #FFECEC; --sky-soft: #E0F2FE;
   --font: "Readex Pro", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
   --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+}
+:root[data-theme="dark"] {
+  --l1s: #0F2A1E; --l2s: #2E2210; --l3s: #321818; --l4s: #262A33; --l4: #98A2B3; --l4d: #667085;
+  --gold-soft: #33280E; --coral-soft: #351B1D; --sky-soft: #0D2533;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -40,12 +43,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
 bdi { unicode-bidi: isolate; }
 
-.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .back { display: inline-flex; align-items: center; gap: 6px; border: 0; background: var(--soft); border-radius: 16px; padding: 10px 14px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); }
 .back svg { width: 18px; height: 18px; }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
-.brand img { width: 44px; height: 44px; border-radius: 14px; box-shadow: 0 4px 0 var(--brand-dark); }
-.brand b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1; }
 h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
 .sub { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
 h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px 0 0; }
@@ -53,7 +52,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 /* big chunky buttons/cards */
 .tile { --c: var(--brand); --cd: var(--brand-dark); --cs: var(--brand-soft);
   display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; text-align: right; width: 100%;
-  background: #FFFFFF; border: 2px solid var(--cs); border-radius: 28px; padding: 16px; box-shadow: 0 6px 0 var(--cs); transition: transform .1s; }
+  background: var(--card); border: 2px solid var(--cs); border-radius: 28px; padding: 16px; box-shadow: 0 6px 0 var(--cs); transition: transform .1s; }
 .tile:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--cs); }
 .tile .ic { width: 64px; height: 64px; border-radius: 20px; background: var(--c); box-shadow: 0 4px 0 var(--cd); display: grid; place-items: center; color: #FFFFFF; }
 .tile .ic svg { width: 34px; height: 34px; }
@@ -65,16 +64,16 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .tile.l2 { --c: var(--l2); --cd: var(--l2d); --cs: var(--l2s); }
 .tile.l3 { --c: var(--l3); --cd: var(--l3d); --cs: var(--l3s); }
 .tile.l4 { --c: var(--l4); --cd: var(--l4d); --cs: var(--l4s); }
-.tile.coral { --c: #FF5A5F; --cd: #D63B40; --cs: #FFECEC; text-decoration: none; color: var(--ink); }
-.tile.sky { --c: #0BA5EC; --cd: #0086C9; --cs: #E0F2FE; text-decoration: none; color: var(--ink); }
-.tile.gold { --c: var(--gold); --cd: var(--gold-dark); --cs: #FEF0C7; }
+.tile.coral { --c: #FF5A5F; --cd: #D63B40; --cs: var(--coral-soft); text-decoration: none; color: var(--ink); }
+.tile.sky { --c: #0BA5EC; --cd: #0086C9; --cs: var(--sky-soft); text-decoration: none; color: var(--ink); }
+.tile.gold { --c: var(--gold); --cd: var(--gold-dark); --cs: var(--gold-soft); }
 .tile .ic .lvnum { font-family: var(--display); font-size: 30px; line-height: 1; }
 .stack { display: flex; flex-direction: column; gap: 14px; }
 .soon { color: var(--faint); font-size: 13px; text-align: center; }
 
 .seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.seg button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 14px 8px; font-weight: 600; box-shadow: 0 4px 0 var(--line); }
-.seg button[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); box-shadow: 0 4px 0 #D9D1FF; }
+.seg button { border: 2px solid var(--line); background: var(--card); border-radius: 20px; padding: 14px 8px; font-weight: 600; box-shadow: 0 4px 0 var(--line); }
+.seg button[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); box-shadow: 0 4px 0 var(--brand-soft); }
 .big { border: 0; width: 100%; background: var(--brand); color: #FFFFFF; border-radius: 22px; padding: 16px; font-family: var(--display); font-size: 24px; box-shadow: 0 6px 0 var(--brand-dark); }
 .big:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--brand-dark); }
 .big.green { background: var(--l1); box-shadow: 0 6px 0 var(--l1d); }
@@ -83,10 +82,10 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 /* player card */
-.pcard { position: relative; border-radius: 32px; overflow: hidden; background: #FFFFFF; border: 2px solid var(--cs, var(--brand-soft)); box-shadow: 0 8px 0 var(--cs, var(--brand-soft)); }
+.pcard { position: relative; border-radius: 32px; overflow: hidden; background: var(--card); border: 2px solid var(--cs, var(--brand-soft)); box-shadow: 0 8px 0 var(--cs, var(--brand-soft)); }
 .pcard.l1 { --c: var(--l1); --cs: var(--l1s); } .pcard.l2 { --c: var(--l2); --cs: var(--l2s); }
 .pcard.l3 { --c: var(--l3); --cs: var(--l3s); } .pcard.l4 { --c: var(--l4); --cs: var(--l4s); }
-.photo { position: relative; aspect-ratio: 4 / 3.4; max-width: 100%; background: linear-gradient(180deg, var(--cs), #FFFFFF); display: grid; place-items: center; overflow: hidden; }
+.photo { position: relative; aspect-ratio: 4 / 3.4; max-width: 100%; background: linear-gradient(180deg, var(--cs), var(--card)); display: grid; place-items: center; overflow: hidden; }
 .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
 .photo .ini { font-family: var(--display); font-size: 72px; color: var(--c); }
 .badge { position: absolute; top: 14px; right: 14px; background: var(--c); color: #FFFFFF; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 999px; }
@@ -101,8 +100,8 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .clubs { padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 8px; }
 .clubs h3 { margin: 4px 0 0; font-size: 13px; color: var(--muted); font-weight: 600; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { background: var(--soft); border-radius: 14px; padding: 6px 10px; font-size: 13px; font-weight: 500; }
-.chip .yr { color: var(--muted); font-size: 11px; direction: ltr; display: inline-block; margin-inline-start: 6px; padding-inline-start: 6px; border-inline-start: 1px solid var(--line); }
+.chip { display: inline-flex; align-items: center; gap: 6px; background: var(--soft); border-radius: 14px; padding: 6px 10px; font-size: 13px; font-weight: 500; }
+.chip .yr { color: var(--muted); font-size: 11px; direction: ltr; unicode-bidi: isolate; padding-right: 6px; border-right: 1px solid var(--line); }
 .chip.nt { background: var(--brand-soft); color: var(--brand-dark); }
 .cover { position: absolute; inset: 0; background: var(--brand); color: #FFFFFF; display: grid; place-items: center; text-align: center; padding: 24px; z-index: 2; border: 0; width: 100%; }
 .cover b { font-family: var(--display); font-weight: 400; font-size: 34px; display: block; }
@@ -128,7 +127,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .timer { font-family: var(--display); font-size: 56px; text-align: center; line-height: 1; direction: ltr; margin-top: 10px; }
 .timer.low { color: var(--l3); }
 .answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.ans { display: flex; align-items: center; gap: 8px; border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 8px 10px; text-align: right; min-width: 0; font-size: 13px; font-weight: 600; }
+.ans { display: flex; align-items: center; gap: 8px; border: 2px solid var(--line); background: var(--card); border-radius: 18px; padding: 8px 10px; text-align: right; min-width: 0; font-size: 13px; font-weight: 600; }
 .ans img, .ans .mini { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
 .ans span { min-width: 0; overflow-wrap: anywhere; line-height: 1.35; }
 .ans.hidden span { filter: blur(6px); }
@@ -148,16 +147,21 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 /* no double-tap zoom */
 html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 </style>
+<link rel="stylesheet" href="../shell.css">
 </head>
 <body>
 <div class="wrap">
-  <div class="bar">
-    <a class="brand" href="../"><img src="../icons/icon.svg" alt=""><b>أبو عودة للمرح</b></a>
-    <button class="back" id="back" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>رجوع</button>
-  </div>
-  <main id="app" aria-live="polite"><div class="loading">بحمّل اللاعبين...</div></main>
+  <header class="shellbar">
+    <a class="brand" href="../"><img src="../icons/icon.svg" alt=""><span><b>أبو عودة للمرح</b><small>ألعاب مع صحابك</small></span></a>
+    <div class="end">
+      <button class="back" id="back" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>رجوع</button>
+      <span id="theme-slot"></span>
+    </div>
+  </header>
+  <main id="app" aria-live="polite"></main>
 </div>
 
+<script src="../shell.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -185,6 +189,8 @@ function show(render, push = true) {
   $("app").innerHTML = `<div class="screen">${render()}</div>`;
   window.scrollTo(0, 0);
   bind();
+  const who = document.querySelector('[data-game="who"]');
+  if (who) who.onclick = (e) => { e.preventDefault(); openWho(); };
 }
 $("back").addEventListener("click", () => { if (stack.length > 1) { stack.pop(); clearInterval(S.timer); show(stack[stack.length - 1], false); } });
 
@@ -195,17 +201,22 @@ const ACTS = {};
 
 // ---------- screens ----------
 function screenGames() {
-  on("g-who", () => show(screenWhoMenu));
-  return `<h1>الألعاب</h1><p class="sub">ألعاب كورة تلعبها مع صحابك على نفس التلفون.</p>
-    <div class="stack" style="margin-top:14px">
-      <button class="tile" id="g-who" type="button"><span class="ic">${ICON.who}</span><span><b>احزر اللاعب</b><small>إنت شايف اللاعب، وصاحبك بيسأل لحد ما يعرفه</small></span><span class="go">${ICON.go}</span></button>
-      <a class="tile coral" href="barra.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5M15 14.6c2.6-.4 5 1.3 6 5.4"/></svg></span><span><b>برا السالفة</b><small>كلمة وحدة الكل بيعرفها... إلا واحد! من 3 لـ20 لاعب</small></span><span class="go">${ICON.go}</span></a>
-      <a class="tile sky" href="numbers.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span><span><b>الرقم الأقرب</b><small>آلاف الأسئلة بـ8 أقسام، على تلفون واحد أو كل واحد من تلفونه</small></span><span class="go">${ICON.go}</span></a>
-      <a class="tile l3" href="points.html" style="text-decoration:none;color:var(--ink)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></span><span><b>جمع نقاط</b><small>فريقين، 4 أقسام و32 سؤال، سرقة وسؤال دبل مخفي 🔥</small></span><span class="go">${ICON.go}</span></a>
-      <a class="tile" href="mafia.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span><b>مافيا</b><small>مين المافيا بيناتنا؟ ليل ونهار وتصويت، من 4 لـ16 لاعب، كل واحد من تلفونه أو على تلفون واحد</small></span><span class="go">${ICON.go}</span></a>
-      <a class="tile gold" href="career.html"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span><b>مسيرة لاعب</b><small>شعارات الأندية اللي لعب فيها بتطلع وحدة وحدة، مين بيعرفه أول؟ كل واحد من تلفونه</small></span><span class="go">${ICON.go}</span></a>
-      <p class="soon">ألعاب ثانية جاية قريباً.</p>
-    </div>`;
+  return `<h1 class="shell-title">شو بدنا نلعب؟</h1><p class="shell-sub">اختاروا لعبة، وكل وحدة إلها طريقتها.</p>
+    <div style="margin-top:14px">${gamesGrid("")}</div>`;
+}
+
+// قاعدة اللاعبين كبيرة (حوالي 2.6MB)، فبنحمّلها بس لما حدا يفتح «احزر اللاعب»
+let dataReq = null;
+const loadPlayers = () => (dataReq ||= fetch("players.json?t=" + Math.floor(Date.now() / 3.6e6))
+  .then((r) => { if (!r.ok) throw 0; return r.json(); })
+  .then((d) => (DATA = d))
+  .catch((e) => { dataReq = null; throw e; }));
+function openWho() {
+  if (DATA) return show(screenWhoMenu);
+  $("app").innerHTML = `<div class="loading">بحمّل اللاعبين...</div>`;
+  loadPlayers().then(() => show(screenWhoMenu)).catch(() => {
+    $("app").innerHTML = `<div class="loading">ما قدرت أحمّل اللاعبين. تأكد من النت وجرّب كمان مرة.</div>`;
+  });
 }
 
 function screenWhoMenu() {
@@ -368,12 +379,9 @@ function tick() {
 }
 
 // ---------- boot ----------
-fetch("players.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => { if (!r.ok) throw 0; return r.json(); }).then((d) => {
-  DATA = d;
-  show(screenGames);
-}).catch(() => {
-  $("app").innerHTML = `<div class="loading">قاعدة اللاعبين لسا بتنبني. جرّب كمان شوي.</div>`;
-});
+$("theme-slot").outerHTML = themeSwitch();
+show(screenGames);
+if (location.hash === "#who") { history.replaceState(null, "", location.pathname); openWho(); }
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
 </script>
 </body>
