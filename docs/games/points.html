@@ -212,19 +212,21 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
   .answers { grid-template-columns: 1fr; }
 }
 /* جمع نقاط */
-:root { --t0: #5B3DF5; --t0d: #3F25C9; --t0s: #EEEAFF; --t1: #F79009; --t1d: #C26A00; --t1s: #FEF3E2; }
-.teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+:root { --t0: #5B3DF5; --t0d: #3F25C9; --t0s: #EEEAFF; --t1: #F79009; --t1d: #C26A00; --t1s: #FEF3E2; --t2: #12B76A; --t2d: #0A8A4F; --t2s: #E6F8EF; }
+.teams { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 8px; }
 .team { border-radius: 22px; padding: 10px 12px; background: var(--soft); text-align: center; min-width: 0; border: 3px solid transparent; transition: transform .2s; }
-.team.t0 { background: var(--t0s); } .team.t1 { background: var(--t1s); }
-.team.on.t0 { border-color: var(--t0); transform: scale(1.03); } .team.on.t1 { border-color: var(--t1); transform: scale(1.03); }
+.team.t0 { background: var(--t0s); } .team.t1 { background: var(--t1s); } .team.t2 { background: var(--t2s); }
+.team.on.t0 { border-color: var(--t0); transform: scale(1.03); } .team.on.t1 { border-color: var(--t1); transform: scale(1.03); } .team.on.t2 { border-color: var(--t2); transform: scale(1.03); }
 .team b { display: block; font-size: 14px; overflow-wrap: anywhere; line-height: 1.3; }
 .team .sc { font-family: var(--display); font-size: 34px; line-height: 1.1; direction: ltr; display: block; }
-.team.t0 .sc { color: var(--t0d); } .team.t1 .sc { color: var(--t1d); }
+.team.t0 .sc { color: var(--t0d); } .team.t1 .sc { color: var(--t1d); } .team.t2 .sc { color: var(--t2d); }
 .team small { font-size: 13px; letter-spacing: 2px; }
 .team small i { font-style: normal; opacity: .25; }
 .turnline { text-align: center; font-weight: 700; font-size: 15px; }
-.turnline.t0 { color: var(--t0); } .turnline.t1 { color: var(--t1d); }
-.board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.turnline.t0 { color: var(--t0); } .turnline.t1 { color: var(--t1d); } .turnline.t2 { color: var(--t2d); }
+.board { display: grid; grid-template-columns: repeat(var(--c, 4), minmax(0, 1fr)); gap: 8px; }
+.board.c6 { gap: 5px; } .board.c6 .cell { font-size: 17px; padding: 10px 0; } .board.c6 .head b { font-size: 10px; }
+.team.small b { font-size: 12px; } .team.small .sc { font-size: 26px; } .team.small small { font-size: 11px; letter-spacing: 0; }
 .board .head { text-align: center; background: var(--l4); color: #FFF; border-radius: 16px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
 .board .head span { font-size: 22px; line-height: 1.1; }
 .board .head b { font-size: 11.5px; line-height: 1.25; overflow-wrap: anywhere; }
@@ -232,7 +234,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .cell:active { transform: translateY(2px); }
 .cell.d1 { background: #12B76A; } .cell.d2 { background: #0BA5EC; } .cell.d3 { background: #F79009; } .cell.d4 { background: #F04438; }
 .cell[disabled] { background: var(--soft) !important; color: var(--faint); box-shadow: none; font-size: 15px; font-family: var(--font); font-weight: 700; cursor: default; }
-.cell[disabled].w0 { background: var(--t0s) !important; color: var(--t0); } .cell[disabled].w1 { background: var(--t1s) !important; color: var(--t1d); }
+.cell[disabled].w0 { background: var(--t0s) !important; color: var(--t0); } .cell[disabled].w1 { background: var(--t1s) !important; color: var(--t1d); } .cell[disabled].w2 { background: var(--t2s) !important; color: var(--t2d); }
 .board.wait .cell:not([disabled]) { opacity: .55; pointer-events: none; }
 .legend { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 4px; vertical-align: -1px; }
@@ -274,7 +276,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .final { display: flex; flex-direction: column; gap: 10px; }
 .final .r { display: grid; grid-template-columns: 1fr auto; align-items: center; border-radius: 20px; padding: 14px 16px; }
 .final .r b { font-size: 18px; } .final .r span { font-family: var(--display); font-size: 34px; direction: ltr; }
-.final .r.t0 { background: var(--t0s); color: var(--t0d); } .final .r.t1 { background: var(--t1s); color: var(--t1d); }
+.final .r.t0 { background: var(--t0s); color: var(--t0d); } .final .r.t1 { background: var(--t1s); color: var(--t1d); } .final .r.t2 { background: var(--t2s); color: var(--t2d); }
 .waitnote { text-align: center; color: var(--muted); font-size: 14px; }
 </style>
 </head>
@@ -297,7 +299,10 @@ function bind(map) { for (const [id, fn] of Object.entries(map)) { const el = $(
 // ---------- القواعد ----------
 const LEVELS = [null, { name: "سهل", pts: 100 }, { name: "متوسط", pts: 200 }, { name: "صعب", pts: 300 }, { name: "صعب جداً", pts: 500 }];
 const LAYOUT = [1, 1, 2, 2, 3, 3, 4, 4];          // 8 أسئلة بكل قسم
-const CATS_N = 4;
+const MAX_TEAMS = 3;
+const catChoices = (n) => (n === 3 ? [3, 6] : [2, 4, 6]);   // عشان كل فريق ياخذ نفس عدد الأسئلة
+const catsN = () => (S && S.catsN) || (S && S.teams.length === 3 ? 3 : 4);
+const nT = () => S.teams.length;
 const Q_MS = (d) => (d >= 4 ? 40000 : 30000);
 const STEAL_MS = 15000;
 const HELPS = [
@@ -451,13 +456,15 @@ function arm() {
 }
 function timeUp() {
   const c = S.cur;
-  if (!c.steal) startSteal(null);
+  if (!c.steal || (c.queue && c.queue.length)) startSteal(null);
   else finish(null, null);
 }
 function startSteal(wrongIdx) {
   const c = S.cur;
   if (wrongIdx !== null && !c.wrong.includes(wrongIdx)) c.wrong.push(wrongIdx);
-  c.steal = true; c.team = 1 - c.team;
+  if (!c.steal) { c.queue = []; for (let k = 1; k < nT(); k++) c.queue.push((c.team + k) % nT()); }   // الفرق الثانية بالدور
+  c.lastWrong = c.team;
+  c.steal = true; c.team = c.queue.shift();
   c.deadline = Date.now() + STEAL_MS;
   S.fxId = { id: Date.now(), kind: "steal", team: c.team };
   arm();
@@ -473,7 +480,7 @@ function finish(winner, pick) {
   S.cur.right = SECRET.right;
   S.phase = "res"; S.n++;
   S.fxId = { id: Date.now(), kind: winner === null ? "none" : "good", team: winner };
-  S.turn = 1 - S.turn;
+  S.turn = (S.turn + 1) % nT();
 }
 function answer(team, k) {
   const c = S.cur;
@@ -481,7 +488,7 @@ function answer(team, k) {
   if (k === SECRET.right) return finish(team, k);
   if (!c.steal && c.tries > 1) { c.tries--; c.wrong.push(k); S.fxId = { id: Date.now(), kind: "bad", team }; return; }
   S.fxId = { id: Date.now(), kind: "bad", team };
-  if (!c.steal) startSteal(k);
+  if (!c.steal || (c.queue && c.queue.length && c.wrong.length + c.gone.length < 2)) startSteal(k);
   else { c.wrong.push(k); finish(null, k); }
 }
 function useHelp(team, h) {
@@ -518,9 +525,16 @@ function act(a) {
   const team = mode === "local" ? a.team : teamOf(a.pid);
   switch (a.t) {
     case "join": return join(a);
+    case "begin":
+      if (mode !== "host" || a.pid !== S.host || S.phase !== "lobby" || nT() < 2) return;
+      S.phase = "cats"; S.catsN = nT() === 3 ? 3 : 4; break;
+    case "catsn":
+      if (S.phase !== "cats" || (mode !== "local" && a.pid !== S.host) || !catChoices(nT()).includes(a.n)) return;
+      S.catsN = a.n; break;
     case "cats":
       if (S.phase !== "cats" || (mode !== "local" && a.pid !== S.host)) return;
-      if (!Array.isArray(a.cats) || a.cats.length !== CATS_N || a.cats.some((c) => !CAT.has(c))) return;
+      if (!Array.isArray(a.cats) || !catChoices(nT()).includes(a.cats.length) || a.cats.some((c) => !CAT.has(c))) return;
+      S.catsN = a.cats.length;
       newGame(a.cats); break;
     case "open": if (!openCell(team, a.cid, a.i)) return; break;
     case "ans": answer(team, a.k); break;
@@ -530,7 +544,7 @@ function act(a) {
       if (S.phase !== "over") return;
       S.phase = "cats"; S.cats = []; S.board = {}; break;
     case "rename":
-      if (team === 0 || team === 1) S.teams[team].name = String(a.name || "").slice(0, 16) || S.teams[team].name;
+      if (team >= 0 && team < nT()) S.teams[team].name = String(a.name || "").slice(0, 16) || S.teams[team].name;
       break;
     default: return;
   }
@@ -541,9 +555,8 @@ function join(a) {
   if (mode !== "host") return;
   const i = teamOf(a.pid);
   if (i >= 0) { if (a.name) S.teams[i].name = String(a.name).slice(0, 16); return commit(); }
-  if (S.teams[1].pid) return commit();   // الغرفة مليانة
-  S.teams[1].pid = a.pid; S.teams[1].name = String(a.name || "الفريق الثاني").slice(0, 16);
-  if (S.phase === "lobby") S.phase = "cats";
+  if (S.phase !== "lobby" || nT() >= MAX_TEAMS) return commit();   // الغرفة مليانة أو اللعبة بلّشت
+  S.teams.push({ pid: a.pid, name: String(a.name || `الفريق ${nT() + 1}`).slice(0, 16), score: 0, help: newHelp() });
   commit();
 }
 
@@ -608,7 +621,7 @@ function hostRoom(code, saved) {
   connect(() => {
     client.subscribe([topic("s"), topic("a")], { qos: 1 });
     if (saved) { S = saved.S; SECRET = Object.assign(saved.SECRET || {}, { taken: new Set((saved.SECRET && saved.SECRET.taken) || []) }); if (S.phase === "q") arm(); }
-    else S = { room, host: me.id, phase: "lobby", teams: [{ pid: me.id, name: me.name || "الفريق الأول", score: 0, help: newHelp() }, { pid: null, name: "الفريق الثاني", score: 0, help: newHelp() }], cats: [], board: {}, turn: 0 };
+    else S = { room, host: me.id, phase: "lobby", teams: [{ pid: me.id, name: me.name || "الفريق الأول", score: 0, help: newHelp() }], cats: [], board: {}, turn: 0 };
     commit();
   });
 }
@@ -629,16 +642,24 @@ function joinRoom(code) {
 function localGame(saved) {
   mode = "local"; room = null;
   if (saved) { S = saved.S; SECRET = Object.assign(saved.SECRET || {}, { taken: new Set((saved.SECRET && saved.SECRET.taken) || []) }); if (S.phase === "q") arm(); return commit(); }
-  const names = store.get("names", ["الفريق الأول", "الفريق الثاني"]);
-  render(`<h1>أسماء الفريقين</h1>
-    <div class="namesin"><input id="n0" type="text" maxlength="16" value="${esc(names[0])}" style="border-color:var(--t0)"><input id="n1" type="text" maxlength="16" value="${esc(names[1])}" style="border-color:var(--t1)"></div>
+  localNames(store.get("nteams", 2));
+}
+function localNames(n) {
+  const names = store.get("names", ["الفريق الأول", "الفريق الثاني", "الفريق الثالث"]);
+  render(`<h1>كم فريق؟</h1>
+    <div class="seg" style="grid-template-columns:1fr 1fr">${[2, 3].map((k) => `<button type="button" data-n="${k}" aria-pressed="${n === k}">${k} فرق</button>`).join("")}</div>
+    <h2>أسماء الفرق</h2>
+    <div class="namesin">${Array.from({ length: n }, (_, i) => `<input id="n${i}" type="text" maxlength="16" value="${esc(names[i] || `الفريق ${i + 1}`)}" style="border-color:var(--t${i})">`).join("")}</div>
     <button class="big" id="go" type="button">التالي</button><button class="big ghost" id="back" type="button">رجوع</button>`);
+  const keep = () => { const cur = store.get("names", ["الفريق الأول", "الفريق الثاني", "الفريق الثالث"]); for (let i = 0; i < n; i++) cur[i] = $("n" + i).value.trim() || cur[i]; store.set("names", cur); };
+  document.querySelectorAll("[data-n]").forEach((b) => b.onclick = () => { keep(); store.set("nteams", +b.dataset.n); localNames(+b.dataset.n); });
   bind({
     back: () => { mode = null; intro(); },
     go: () => {
-      const n = [$("n0").value.trim() || "الفريق الأول", $("n1").value.trim() || "الفريق الثاني"];
-      store.set("names", n);
-      S = { room: null, host: me.id, phase: "cats", teams: n.map((name, i) => ({ pid: "local" + i, name, score: 0, help: newHelp() })), cats: [], board: {}, turn: 0 };
+      keep();
+      const all = store.get("names", []);
+      const ns = Array.from({ length: n }, (_, i) => all[i] || `الفريق ${i + 1}`);
+      S = { room: null, host: me.id, phase: "cats", catsN: n === 3 ? 3 : 4, teams: ns.map((name, i) => ({ pid: "local" + i, name, score: 0, help: newHelp() })), cats: [], board: {}, turn: 0 };
       commit();
     },
   });
@@ -653,7 +674,7 @@ function onState(st) {
   if (mode === "guest") {
     if (st.room !== room) return;
     if (S && st.v <= S.v && st.host === S.host) return;
-    if (!S && st.teams && st.teams[1].pid && st.teams[1].pid !== me.id && st.teams[0].pid !== me.id) { S = st; return full(); }
+    if (st.teams && !st.teams.some((t) => t.pid === me.id) && (st.phase !== "lobby" || st.teams.length >= MAX_TEAMS)) { S = st; return full(); }
   }
   S = st;
   offset = (st.now || Date.now()) - Date.now();
@@ -662,7 +683,7 @@ function onState(st) {
   if (f && f.id !== lastFx) { lastFx = f.id; if (Date.now() - (f.id - offset) < 20000) effects(f); }
   draw();
 }
-function full() { render(`<h1>الغرفة مليانة</h1><p class="sub">في فريقين جوا اللعبة.</p><button class="big ghost" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
+function full() { render(`<h1>الغرفة مليانة</h1><p class="sub">الغرفة مليانة أو اللعبة بلّشت.</p><button class="big ghost" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
 
 function effects(f) {
   const mine = mode === "local" || f.team === myTeam();
@@ -687,7 +708,7 @@ function dblOverlay(team) {
 
 function teamsBar() {
   const active = S.phase === "q" ? S.cur.team : S.turn;
-  return `<div class="teams">${S.teams.map((t, i) => `<div class="team t${i} ${["board", "q"].includes(S.phase) && active === i ? "on" : ""}">
+  return `<div class="teams" style="--n:${nT()}">${S.teams.map((t, i) => `<div class="team t${i} ${nT() === 3 ? "small" : ""} ${["board", "q"].includes(S.phase) && active === i ? "on" : ""}">
     <b>${esc(t.name)}${mode !== "local" && t.pid === me.id ? " (إنتو)" : ""}</b><span class="sc">${t.score}</span>
     <small>${HELPS.map((h) => t.help && t.help[h.k] ? h.icon : `<i>${h.icon}</i>`).join(" ")}</small></div>`).join("")}</div>`;
 }
@@ -706,13 +727,17 @@ function draw() {
 function drawLobby() {
   const link = location.origin + location.pathname + "?room=" + room;
   render(`<h1>الغرفة ${esc(room)}</h1>
-    <p class="sub">ابعت الكود أو الرابط للفريق الثاني. أول ما يدخل، بتختار الأقسام.</p>
+    <p class="sub">ابعت الكود أو الرابط للفرق الثانية (فريق أو فريقين). لما يدخلوا، صاحب الغرفة بيكمّل.</p>
     <div class="pass2" style="padding:18px"><span class="sub">كود الغرفة</span><span class="who" style="letter-spacing:6px;direction:ltr">${esc(room)}</span></div>
-    <button class="big" id="share" type="button">ابعت رابط الغرفة</button>
-    <p class="waitnote">⏳ عم نستنى الفريق الثاني...</p>
-    <button class="big ghost" id="out" type="button">إلغاء</button>`);
+    ${mode === "host" ? `<button class="big" id="share" type="button">ابعت رابط الغرفة</button>` : ""}
+    <h2>الفرق (${nT()} من ${MAX_TEAMS})</h2>
+    <div class="final">${S.teams.map((t, i) => `<div class="r t${i}"><b>${esc(t.name)}${t.pid === me.id ? " (إنتو)" : ""}</b><span style="font-size:18px">${i === 0 ? "صاحب الغرفة" : "✓"}</span></div>`).join("")}</div>
+    ${mode === "host" ? (nT() >= 2 ? `<button class="big green" id="begin" type="button">كمّل مع ${nT()} فرق ←</button>${nT() < MAX_TEAMS ? `<p class="waitnote">بتقدر تستنى فريق ثالث كمان</p>` : ""}` : `<p class="waitnote">⏳ عم نستنى الفريق الثاني...</p>`)
+      : `<p class="waitnote">⏳ صاحب الغرفة رح يبدأ لما الكل يدخل</p>`}
+    <button class="big ghost" id="out" type="button">${mode === "host" ? "إلغاء" : "اطلع"}</button>`);
   bind({
     out: leave,
+    begin: () => send({ t: "begin" }),
     share: async () => {
       const text = `تحدّى فريقنا بلعبة «جمع نقاط»! كود الغرفة ${room}`;
       try { if (navigator.share) { await navigator.share({ title: "جمع نقاط", text, url: link }); return; } } catch { return; }
@@ -725,27 +750,30 @@ let picked = [];
 function drawCats() {
   const canPick = mode === "local" || S.host === me.id;
   if (!canPick) {
-    render(`${teamsBar()}<h1>صاحب الغرفة عم يختار الأقسام</h1><p class="sub">${CATS_N} أقسام، وبكل قسم 8 أسئلة من السهل للصعب جداً.</p><div class="loading">⏳</div>
+    render(`${teamsBar()}<h1>صاحب الغرفة عم يختار الأقسام</h1><p class="sub">${catsN()} أقسام، وبكل قسم 8 أسئلة من السهل للصعب جداً.</p><div class="loading">⏳</div>
       <button class="linkish" id="out" type="button" style="align-self:center">اطلع</button>`);
     return bind({ out: () => { if (confirm("أكيد بدك تطلع؟")) leave(); } });
   }
-  picked = picked.filter((c) => CAT.has(c));
-  render(`${teamsBar()}<h1>اختاروا ${CATS_N} أقسام</h1>
+  picked = picked.filter((c) => CAT.has(c)).slice(0, catsN());
+  const N = catsN();
+  render(`${teamsBar()}<h1>اختاروا ${N} أقسام</h1>
+    <div class="seg" style="grid-template-columns:repeat(${catChoices(nT()).length},1fr)">${catChoices(nT()).map((k) => `<button type="button" data-cn="${k}" aria-pressed="${N === k}">${k} أقسام · ${k * 8 / nT()} سؤال لكل فريق</button>`).join("")}</div>
     <p class="sub">بكل قسم 8 أسئلة: 2 سهل (100) و2 متوسط (200) و2 صعب (300) و2 صعب جداً (500). وفي سؤال واحد مخفي <b>دبل</b> 🔥</p>
     <div class="catpick">${DATA.cats.map((c) => `<button type="button" data-c="${c.id}" aria-pressed="${picked.includes(c.id)}"><span>${c.icon}</span>${esc(c.name)}<small>${c.qs.length} سؤال${c.qs.some((q) => q[3]) ? " · صور" : ""}</small></button>`).join("")}</div>
-    <div class="row2"><button class="big ghost" id="rnd" type="button">🎲 عشوائي</button><button class="big green" id="go" type="button" ${picked.length === CATS_N ? "" : "disabled"}>يلا (${picked.length}/${CATS_N})</button></div>
-    ${mode === "local" ? "" : `<p class="note" style="text-align:center">الفريق الثاني: «${esc(S.teams[1].name)}»</p>`}
+    <div class="row2"><button class="big ghost" id="rnd" type="button">🎲 عشوائي</button><button class="big green" id="go" type="button" ${picked.length === N ? "" : "disabled"}>يلا (${picked.length}/${N})</button></div>
+
     <button class="linkish" id="out" type="button" style="align-self:center">اطلع</button>`);
+  document.querySelectorAll("[data-cn]").forEach((b) => b.onclick = () => send({ t: "catsn", n: +b.dataset.cn }));
   document.querySelectorAll("[data-c]").forEach((b) => b.onclick = () => {
     const c = b.dataset.c;
     if (picked.includes(c)) picked = picked.filter((x) => x !== c);
-    else if (picked.length < CATS_N) picked.push(c);
+    else if (picked.length < N) picked.push(c);
     else { picked.shift(); picked.push(c); }
     drawCats();
   });
   bind({
-    rnd: () => { picked = shuffle(DATA.cats.map((c) => c.id)).slice(0, CATS_N); drawCats(); },
-    go: () => { if (picked.length === CATS_N) send({ t: "cats", cats: picked.slice() }); },
+    rnd: () => { picked = shuffle(DATA.cats.map((c) => c.id)).slice(0, N); drawCats(); },
+    go: () => { if (picked.length === N) send({ t: "cats", cats: picked.slice() }); },
     out: () => { if (confirm("أكيد بدك تطلع؟")) leave(); },
   });
 }
@@ -756,7 +784,7 @@ function drawBoard() {
   const left = S.cats.reduce((n, cid) => n + S.board[cid].filter((c) => c.w === null).length, 0);
   render(`${teamsBar()}
     <p class="turnline t${S.turn}">${mode === "local" ? `دور «${esc(t.name)}» يختار سؤال` : mine ? "دوركم! اختاروا سؤال 👇" : `دور «${esc(t.name)}» يختار...`}</p>
-    <div class="board ${mine ? "" : "wait"}">
+    <div class="board ${mine ? "" : "wait"} ${S.cats.length >= 5 ? "c6" : ""}" style="--c:${S.cats.length}">
       ${S.cats.map((cid) => { const c = CAT.get(cid); return `<div class="head"><span>${c.icon}</span><b>${esc(c.name)}</b></div>`; }).join("")}
       ${LAYOUT.map((_, row) => S.cats.map((cid) => { const cell = S.board[cid][row];
         return `<button class="cell d${cell.d} ${cell.w !== null && cell.w >= 0 ? "w" + cell.w : ""}" type="button" data-cid="${cid}" data-i="${row}" ${cell.w !== null ? "disabled" : ""}>${cell.w === null ? LEVELS[cell.d].pts : cell.w === -1 ? "✗" : "✓"}</button>`;
@@ -789,7 +817,7 @@ function drawQ() {
   const mine = isMyTurn();
   const helpOk = mine && !c.steal;
   render(`${teamsBar()}
-    ${c.steal ? `<div class="banner steal"><b>فرصة سرقة! 🦊</b><small>«${esc(S.teams[1 - c.team].name)}» جاوب غلط. ${mode === "local" ? `«${esc(t.name)}»` : mine ? "إنتو" : `«${esc(t.name)}»`} بتقدروا تسرقوا نص النقاط (${Math.round(cellPoints(c) / 2)})</small></div>` : ""}
+    ${c.steal ? `<div class="banner steal"><b>فرصة سرقة! 🦊</b><small>«${esc(S.teams[c.lastWrong != null ? c.lastWrong : c.team].name)}» ما جاوب صح. ${mode === "local" ? `«${esc(t.name)}»` : mine ? "إنتو" : `«${esc(t.name)}»`} بتقدروا تسرقوا نص النقاط (${Math.round(cellPoints(c) / 2)})</small></div>` : ""}
     <div class="ptimer" id="pt"><i id="ptbar"></i><span id="ptsec"></span></div>
     <div class="qcard">${qTop()}${qImage(c)}<div class="qt">${esc(c.text)}</div></div>
     <div class="opts">${c.opts.map((o, k) => { const off = c.gone.includes(k) || c.wrong.includes(k);
@@ -832,12 +860,14 @@ function drawRes() {
 }
 
 function drawOver() {
-  const [a, b] = S.teams;
-  const tie = a.score === b.score, win = a.score > b.score ? 0 : 1;
-  const order = tie ? [0, 1] : [win, 1 - win];
-  render(`<div class="banner good" style="padding:26px"><b style="font-size:38px">${tie ? "تعادل! 🤝" : `🏆 فاز «${esc(S.teams[win].name)}»`}</b>
-    <small>${tie ? "نفس النقاط بالزبط" : `بفرق ${Math.abs(a.score - b.score)} نقطة`}</small></div>
-    <div class="final">${order.map((i) => `<div class="r t${i}"><b>${esc(S.teams[i].name)}</b><span>${S.teams[i].score}</span></div>`).join("")}</div>
+  const order = S.teams.map((_, i) => i).sort((x, y) => S.teams[y].score - S.teams[x].score);
+  const top = S.teams[order[0]].score;
+  const winners = order.filter((i) => S.teams[i].score === top);
+  const tie = winners.length > 1;
+  const gap = tie ? 0 : top - S.teams[order[1]].score;
+  render(`<div class="banner good" style="padding:26px"><b style="font-size:38px">${tie ? "تعادل! 🤝" : `🏆 فاز «${esc(S.teams[order[0]].name)}»`}</b>
+    <small>${tie ? `${winners.map((i) => `«${esc(S.teams[i].name)}»`).join(" و")} بنفس النقاط` : `بفرق ${gap} نقطة عن اللي بعده`}</small></div>
+    <div class="final">${order.map((i, k) => `<div class="r t${i}"><b>${["🥇", "🥈", "🥉"][k] || ""} ${esc(S.teams[i].name)}</b><span>${S.teams[i].score}</span></div>`).join("")}</div>
     ${mode === "local" || S.host === me.id ? `<button class="big green" id="again" type="button">لعبة جديدة (أقسام جديدة)</button>` : `<p class="waitnote">صاحب الغرفة بيقدر يبدأ لعبة جديدة.</p>`}
     <button class="big ghost" id="out" type="button">خروج</button>`);
   bind({ again: () => { picked = []; send({ t: "again" }); }, out: () => { store.set("local", null); leave(); } });
@@ -847,24 +877,24 @@ function drawOver() {
 function intro() {
   const local = store.get("local", null);
   render(`<h1>جمع نقاط</h1>
-    <p class="sub">فريقين، ${CATS_N} أقسام، و32 سؤال من السهل للصعب جداً. مين بيجمع نقاط أكثر؟</p>
+    <p class="sub">فريقين أو 3 فرق، وأسئلة من السهل للصعب جداً. مين بيجمع نقاط أكثر؟</p>
     <div class="card" style="background:#FFF;border:2px solid var(--brand-soft);border-radius:26px;padding:16px;box-shadow:0 6px 0 var(--brand-soft)"><ul class="rules">
-      <li>صاحب الغرفة بيختار <b>${CATS_N} أقسام</b> من ${DATA.cats.length} قسم.</li>
+      <li>صاحب الغرفة بيختار الأقسام من ${DATA.cats.length} قسم: مع فريقين <b>4 أقسام</b>، ومع 3 فرق <b>3 أقسام</b> (أو 6)، عشان كل فريق ياخذ نفس عدد الأسئلة.</li>
       <li>بالدور، كل فريق بيختار سؤال من اللوحة: <b>سهل 100</b>، متوسط 200، صعب 300، <b>صعب جداً 500</b>.</li>
       <li>كل سؤال إله 4 خيارات، و30 ثانية (الصعب جداً 40).</li>
-      <li>إذا جاوبتوا غلط أو خلص الوقت، الفريق الثاني بيقدر <b>يسرق</b> نص النقاط 🦊</li>
-      <li>في <b>سؤال دبل مخفي</b> 🔥 اللي بيفتحه نقاطه ضعف، والفريق الثاني بيعرف!</li>
+      <li>إذا جاوبتوا غلط أو خلص الوقت، الفريق اللي بعدكم بيقدر <b>يسرق</b> نص النقاط 🦊 (ومع 3 فرق، إذا غلط كمان بتروح للثالث)</li>
+      <li>في <b>سؤال دبل مخفي</b> 🔥 اللي بيفتحه نقاطه ضعف، والفرق الثانية بتعرف!</li>
       <li>كل فريق معه 3 وسائل، كل وحدة مرة باللعبة: ✂️ حذف إجابتين، ✌️ جاوب مرتين، 🔄 بدّل السؤال.</li>
     </ul></div>
     <h2>اسم فريقك</h2>
     <input class="search" id="tname" type="text" maxlength="16" placeholder="مثلاً: النشامى" value="${esc(me.name)}" autocomplete="off">
     <button class="big green" id="create" type="button">اعمل غرفة (كل فريق من تلفونه)</button>
-    <h2>أو ادخل غرفة الفريق الثاني</h2>
+    <h2>أو ادخل غرفة فريق ثاني</h2>
     <input class="search" id="code" type="text" inputmode="numeric" maxlength="5" placeholder="كود الغرفة (5 أرقام)" value="${esc(qs.get("room") || "")}" autocomplete="off" style="letter-spacing:4px;text-align:center;font-size:22px">
     <p class="note" id="err" hidden></p>
     <button class="big" id="join" type="button">ادخل</button>
     ${local && local.S && local.S.phase !== "over" ? `<button class="big ghost" id="resume" type="button">كمّلوا اللعبة على تلفون واحد</button>` : ""}
-    <button class="big ghost" id="one" type="button">الفريقين على تلفون واحد</button>`);
+    <button class="big ghost" id="one" type="button">كل الفرق على تلفون واحد</button>`);
   const getName = () => {
     const n = $("tname").value.trim();
     if (!n) { $("err").hidden = false; $("err").textContent = "اكتب اسم فريقك أول."; $("tname").focus(); return null; }

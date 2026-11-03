@@ -264,11 +264,20 @@ function crestImg(c) {
     : `<span class="fb">${esc(initials(c[0]))}</span>`;
 }
 const years = (c) => c[1] ? `${c[1]}–${c[2] && c[2] !== c[1] ? c[2] : c[2] ? "" : "الآن"}`.replace(/–$/, "") : "";
-function station(c, i, cls = "") {
-  return `<div class="st ${cls}"><span class="n">${i + 1}</span>${crestImg(c)}<b>${esc(c[0])}</b>${years(c) ? `<small>${esc(years(c))}</small>` : ""}</div>`;
+// المستويات: سهل = أشهر اللاعبين ومعها اسم النادي والسنين، متوسط = بدون السنين، صعب = لاعبين أقل شهرة والشعار بس
+const LEVELS = { easy: { name: "سهل", icon: "🟢", desc: "أشهر النجوم، والنادي مكتوب مع السنين" }, medium: { name: "متوسط", icon: "🟠", desc: "نجوم معروفين، والنادي مكتوب بدون سنين" }, hard: { name: "صعب", icon: "🔴", desc: "لاعبين أقل شهرة، والشعار بس بدون اسم النادي" } };
+const lvl = () => (S && LEVELS[S.level] ? S.level : "medium");
+const levelPicker = (cur, enabled = true) => `<div class="seg">${Object.entries(LEVELS).map(([k, L]) => `<button type="button" data-lv="${k}" aria-pressed="${cur === k}" ${enabled ? "" : "disabled"}>${L.icon} ${L.name}</button>`).join("")}</div>
+  <p class="note" style="text-align:center">${LEVELS[cur].desc}</p>`;
+function station(c, i, cls = "", full = true) {
+  const L = full ? "easy" : lvl();
+  const hasCrest = !!logoUrl(c[3]);
+  const name = L !== "hard" || !hasCrest;
+  return `<div class="st ${cls}"><span class="n">${i + 1}</span>${crestImg(c)}${name ? `<b>${esc(c[0])}</b>` : `<b style="color:var(--faint)">؟</b>`}${L === "easy" && years(c) ? `<small>${esc(years(c))}</small>` : ""}</div>`;
 }
 function pathView(p, shown, fresh = -1) {
-  return `<div class="path">${p.c.map((c, i) => i < shown ? station(c, i, i === fresh ? "new" : "") : `<div class="st hide"><span class="n">${i + 1}</span><span class="q">؟</span></div>`).join("")}</div>`;
+  const full = shown >= p.c.length && (!S || S.phase !== "play");
+  return `<div class="path">${p.c.map((c, i) => i < shown ? station(c, i, i === fresh ? "new" : "", full) : `<div class="st hide"><span class="n">${i + 1}</span><span class="q">؟</span></div>`).join("")}</div>`;
 }
 const photo = (p) => p.img ? `<img src="${esc(p.img)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'fb',textContent:'${esc(initials(p.n))}'}))">` : `<span class="fb">${esc(initials(p.n))}</span>`;
 
@@ -530,6 +539,7 @@ function intro() {
       <li>إذا ما عرفتوه، كل واحد بيكبس <b>«النادي الجاي»</b>، ولما الكل يكبس بيطلع النادي اللي بعده، لحد آخر نادي.</li>
       <li>أول واحد بيجاوب صح بياخذ النقاط: من أول شعار <b>5</b>، وبعدها 4، 3، 2، ومن الخامس وطالع <b>1</b>.</li>
       <li>الجواب الغلط بيقفل عليك لحد ما يطلع النادي الجاي.</li>
+      <li>3 مستويات: 🟢 <b>سهل</b> (أشهر النجوم مع اسم النادي والسنين)، 🟠 <b>متوسط</b> (بدون السنين)، 🔴 <b>صعب</b> (لاعبين أقل شهرة والشعار بس).</li>
       <li>اللاعبين من أعظم لاعبين بالتاريخ ونجوم آخر 15 سنة (${DATA.players.length} لاعب).</li>
     </ul></div>
     <button class="big green" id="online" type="button">كل واحد من تلفونه</button>
@@ -547,6 +557,8 @@ function localSetup(n = store.get("n", 2)) {
     <div class="seg">${[2, 3, 4].map((k) => `<button type="button" data-n="${k}" aria-pressed="${n === k}">${k}</button>`).join("")}</div>
     <h2>الأسماء</h2>
     <div class="namesin">${Array.from({ length: n }, (_, i) => `<input id="nm-${i}" type="text" maxlength="14" placeholder="لاعب ${i + 1}" value="${esc(names[i] || "")}" autocomplete="off">`).join("")}</div>
+    <h2>المستوى</h2>
+    ${levelPicker(store.get("level", "medium"))}
     <h2>كم لاعب نحزر؟</h2>
     <div class="seg" id="rs">${[5, 10, 15].map((k) => `<button type="button" data-r="${k}" aria-pressed="${store.get("rounds", 10) === k}">${k}</button>`).join("")}</div>
     <p class="note" id="err" hidden></p>
@@ -555,13 +567,14 @@ function localSetup(n = store.get("n", 2)) {
   const keep = () => store.set("names", Array.from({ length: n }, (_, i) => $("nm-" + i).value.trim()));
   document.querySelectorAll("[data-n]").forEach((b) => b.onclick = () => { keep(); localSetup(+b.dataset.n); });
   document.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => { store.set("rounds", +b.dataset.r); keep(); localSetup(n); });
+  document.querySelectorAll("[data-lv]").forEach((b) => b.onclick = () => { store.set("level", b.dataset.lv); keep(); localSetup(n); });
   bind({
     back: intro,
     go: () => {
       const ps = Array.from({ length: n }, (_, i) => $("nm-" + i).value.trim() || `لاعب ${i + 1}`);
       if (new Set(ps).size !== ps.length) { $("err").hidden = false; $("err").textContent = "في اسمين متشابهين."; return; }
       store.set("n", n); store.set("names", ps);
-      startLocal({ v: 0, room: null, host: me.id, phase: "lobby", rounds: store.get("rounds", 10), round: 0, players: ps.map((name, i) => ({ id: "l" + i, name, total: 0 })), used: store.get("localused", []) });
+      startLocal({ v: 0, room: null, host: me.id, phase: "lobby", rounds: store.get("rounds", 10), level: store.get("level", "medium"), round: 0, players: ps.map((name, i) => ({ id: "l" + i, name, total: 0 })), used: store.get("localused", []) });
       send({ t: "start" });
     },
   });
@@ -664,7 +677,7 @@ function hostRoom(code, restored) {
   loading("عم بفتح الغرفة...");
   connect(() => {
     client.subscribe([topic("s"), topic("a")], { qos: 1 });
-    S = restored || { v: 0, room, host: me.id, phase: "lobby", rounds: 10, round: 0, players: [{ id: me.id, name: me.name, total: 0 }], used: [] };
+    S = restored || { v: 0, room, host: me.id, phase: "lobby", rounds: 10, level: "medium", round: 0, players: [{ id: me.id, name: me.name, total: 0 }], used: [] };
     publish();
   });
 }
@@ -687,7 +700,11 @@ function pickTarget() {
   const pool = DATA.players.filter((p) => !used.has(p.id) && p.c.length >= 3);
   const list = pool.length ? pool : DATA.players.filter((p) => !used.has(p.id));
   const all = list.length ? list : DATA.players;
-  const top = all.slice(0, Math.max(40, Math.round(all.length * 0.6)));
+  // اللاعبين مرتبين حسب الشهرة: أول ثلث للسهل، الثلث الثاني للمتوسط، والباقي للصعب
+  const L = lvl(), n = all.length;
+  const cut = L === "easy" ? [0, 0.22] : L === "medium" ? [0.15, 0.55] : [0.45, 1];
+  let top = all.slice(Math.floor(n * cut[0]), Math.max(Math.floor(n * cut[0]) + 15, Math.ceil(n * cut[1])));
+  if (!top.length) top = all;
   const p = top[Math.floor(Math.random() * top.length)];
   S.used.push(p.id); if (S.used.length > 600) S.used = S.used.slice(-600);
   return p;
@@ -710,6 +727,9 @@ function onAction(a) {
     case "kick":
       if (a.pid !== S.host || S.phase !== "lobby") return;
       S.players = S.players.filter((p) => p.id !== a.who); return publish();
+    case "level":
+      if (a.pid !== S.host || S.phase !== "lobby" || !LEVELS[a.lv]) return;
+      S.level = a.lv; return publish();
     case "rounds":
       if (a.pid !== S.host || S.phase !== "lobby" || ![5, 10, 15].includes(a.n)) return;
       S.rounds = a.n; return publish();
@@ -797,7 +817,7 @@ function scoreBar() {
   return `<div class="status3">${S.players.map((p) => `<div class="${p.id === me.id || (LOCAL && p.id === who) ? "me" : ""}"><b>${esc(p.name)}${p.id === me.id ? " (إنت)" : ""}</b><span>${p.total}</span>
     ${S.phase === "play" ? `<small>${S.locked && S.locked[p.id] === S.k ? "❌ غلط" : LOCAL ? "" : S.ready.includes(p.id) ? "⏭ جاهز" : "بيفكر..."}</small>` : ""}</div>`).join("")}</div>`;
 }
-const header = () => `<div class="sub" style="text-align:center">${LOCAL ? "تلفون واحد" : `الغرفة <b style="letter-spacing:3px">${esc(room)}</b>`}${S.round ? ` · اللاعب ${S.round} من ${S.rounds}` : ""}</div>`;
+const header = () => `<div class="sub" style="text-align:center">${LOCAL ? "تلفون واحد" : `الغرفة <b style="letter-spacing:3px">${esc(room)}</b>`}${S.round ? ` · اللاعب ${S.round} من ${S.rounds} · ${LEVELS[lvl()].icon} ${LEVELS[lvl()].name}` : ""}</div>`;
 
 function draw() {
   if (S.phase === "lobby") return drawLobby();
@@ -811,6 +831,8 @@ function drawLobby() {
   render(`${header()}<h1>الغرفة ${esc(room)}</h1>
     <p class="sub">${isHost ? "ابعت الكود أو الرابط لصاحبك. لما يدخل، اضغط ابدأ." : "استنى صاحب الغرفة يبدأ اللعبة."}</p>
     ${isHost ? `<button class="big ghost" id="share" type="button">ابعت رابط الغرفة</button>` : ""}
+    <h2>المستوى</h2>
+    ${levelPicker(lvl(), isHost)}
     <h2>كم لاعب نحزر؟</h2>
     <div class="seg">${[5, 10, 15].map((n) => `<button type="button" data-r="${n}" aria-pressed="${S.rounds === n}" ${isHost ? "" : "disabled"}>${n}</button>`).join("")}</div>
     <h2>اللاعبين (${S.players.length} من ${MAX_PLAYERS})</h2>
@@ -827,6 +849,7 @@ function drawLobby() {
   });
   document.querySelectorAll("[data-kick]").forEach((b) => b.onclick = () => send({ t: "kick", who: b.dataset.kick }));
   if (isHost) document.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => send({ t: "rounds", n: +b.dataset.r }));
+  if (isHost) document.querySelectorAll("[data-lv]").forEach((b) => b.onclick = () => send({ t: "level", lv: b.dataset.lv }));
 }
 
 function drawPlay() {
