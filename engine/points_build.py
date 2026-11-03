@@ -138,6 +138,11 @@ def read_bank(cats: dict):
     return img_secs
 
 
+def commons(u):
+    m = re.search(r"/commons/thumb/[^/]+/[^/]+/([^/?]+)/", u or "")
+    return f"https://commons.wikimedia.org/wiki/Special:FilePath/{m.group(1)}?width=640" if m else u
+
+
 def image_sections(img_secs):
     titles = [t for _, _, items in img_secs for _, t, _ in items]
     imgs = wiki_images(titles)
@@ -148,7 +153,7 @@ def image_sections(img_secs):
             near = [a for dd, _, a in items if abs(dd - d) <= 1 and a != ans]
             wrong = pick3(ans, near) or pick3(ans, [a for _, _, a in items])
             if wrong:
-                cat.add(d, tmpl, [ans] + wrong, imgs[t])
+                cat.add(d, tmpl, [ans] + wrong, commons(imgs[t]))
 
 
 # ---------- أعلام وعواصم ----------

@@ -419,7 +419,7 @@ function newGame(cats) {
   preloadImages();
 }
 function preloadImages() {
-  for (const cid of S.cats) for (const q of SECRET.pre[cid]) if (q[3]) { const im = new Image(); im.referrerPolicy = "no-referrer"; im.src = q[3]; }
+  for (const cid of S.cats) for (const q of SECRET.pre[cid]) if (q[3]) { const im = new Image(); im.referrerPolicy = "no-referrer"; im.src = imgUrl(q[3]); }
 }
 
 function openCell(team, cid, i) {
@@ -774,10 +774,15 @@ function qTop() {
   return `<div class="qhead"><span class="chip2">${cat.icon} ${esc(cat.name)}</span>
     <span>${c.dbl ? `<span class="chip2 dbl">🔥 دبل ×2</span> ` : ""}<span class="chip2 d${c.d}">${LEVELS[c.d].name} · ${cellPoints(c)}</span></span></div>`;
 }
+// صور ويكيبيديا: بنطلبها عن طريق Commons مباشرة (روابط الـthumb بحجم غير قياسي ما بتشتغل)
+function imgUrl(u) {
+  const m = String(u || "").match(/\/commons\/thumb\/[^/]+\/[^/]+\/([^/?]+)\//);
+  return m ? `https://commons.wikimedia.org/wiki/Special:FilePath/${m[1]}?width=640` : u;
+}
 function qImage(c) {
   if (!c.img) return "";
   const cls = c.img.includes("flagcdn") ? "flag" : c.img.includes("teamlogos") ? "crest" : "";
-  return `<img class="qimg ${cls}" src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">`;
+  return `<img class="qimg ${cls}" src="${esc(imgUrl(c.img))}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'">`;
 }
 function drawQ() {
   const c = S.cur, t = S.teams[c.team];
