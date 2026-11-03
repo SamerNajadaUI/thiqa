@@ -31,8 +31,8 @@ ESPN_LEAGUES = ["eng.1", "eng.2", "esp.1", "esp.2", "ita.1", "ita.2", "ger.1", "
                 "sco.1", "bel.1", "tur.1", "gre.1", "rus.1", "aut.1", "sui.1", "den.1", "swe.1", "nor.1", "usa.1", "mex.1",
                 "bra.1", "arg.1", "ksa.1", "qat.1", "uae.1", "egy.1", "jpn.1", "chn.1", "uefa.champions", "uefa.europa"]
 # فرق الشباب والرديف والمنتخبات (بنشيلها من المسيرة)
-NOT_SENIOR = re.compile(r"(\b(II|III|B|C|U-?\d{2}|Under[- ]\d+|Sub[- ]\d+|Youth|Juniors?|Reserves?|Academy|Castilla|Atl[eè]tic|"
-                        r"Jong|Primavera|Next Gen|Amateure?|Juvenil|Promesas|Olympic|national|Mangualde)\b|youth|reserve)", re.I)
+NOT_SENIOR = re.compile(r"(\s(II|III|B|C)$|\b(U-?\d{2}|Under[- ]\d+|Sub[- ]\d+|Youth|Reserves?|Academy|Castilla|Atl[eè]tic|"
+                        r"Jong|Primavera|Next Gen|Amateure?|Juvenil|Promesas|Olympic|national)\b|youth|reserve)", re.I)
 
 
 def log(m: str) -> None:
