@@ -23,7 +23,7 @@
   --on: #F3F5FF; --dim: #AAB1EA; --faint: #6E76C2;
   --paper: #FFFFFF; --ink: #151A4A; --ink2: #5A6094;
   --good: #22C27A; --bad: #F2544B;
-  --t0: #A58BFF; --t1: #FF9F1C; --t2: #2FD58E;
+  --t0: #A58BFF; --t1: #FF9F1C; --t2: #2FD58E; --t3: #FF6FB5;
   --font: "Readex Pro", "Segoe UI", Tahoma, sans-serif;
   --display: "Lalezar", "Readex Pro", sans-serif;
 }
@@ -72,9 +72,10 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 .pod .life span.off { opacity: .18; filter: grayscale(1); }
 .pod.on { background: color-mix(in srgb, var(--c) 22%, transparent); box-shadow: inset 0 0 0 2px var(--c); }
 .pod.on .nm { color: var(--on); }
-.pod.t0 { --c: var(--t0); } .pod.t1 { --c: var(--t1); } .pod.t2 { --c: var(--t2); }
+.pod.t0 { --c: var(--t0); } .pod.t1 { --c: var(--t1); } .pod.t2 { --c: var(--t2); } .pod.t3 { --c: var(--t3); }
+.score.n4 { gap: 6px; } .score.n4 .pod { padding: 7px 7px 20px; } .score.n4 .pod .pts { font-size: 24px; } .score.n4 .pod .nm { font-size: 11.5px; gap: 4px; } .score.n4 .pod .life { font-size: 10px; left: 6px; bottom: 5px; gap: 2px; }
 .turn { text-align: center; font-weight: 700; font-size: 15px; color: var(--c, var(--on)); margin: -2px 0 0; }
-.turn.t0 { --c: var(--t0); } .turn.t1 { --c: var(--t1); } .turn.t2 { --c: var(--t2); }
+.turn.t0 { --c: var(--t0); } .turn.t1 { --c: var(--t1); } .turn.t2 { --c: var(--t2); } .turn.t3 { --c: var(--t3); }
 
 /* اللوحة */
 .board { display: grid; grid-template-columns: repeat(var(--c, 4), minmax(0, 1fr)); gap: 6px; }
@@ -90,7 +91,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 .cell.done { background: transparent; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .08); color: transparent; text-shadow: none; cursor: default; }
 .cell.done::after { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--w, rgb(255 255 255 / .12)); }
 .cell.done.miss::after { content: "✕"; width: auto; height: auto; background: none; color: rgb(255 255 255 / .22); font-family: var(--font); font-size: 15px; }
-.cell.w0 { --w: var(--t0); } .cell.w1 { --w: var(--t1); } .cell.w2 { --w: var(--t2); }
+.cell.w0 { --w: var(--t0); } .cell.w1 { --w: var(--t1); } .cell.w2 { --w: var(--t2); } .cell.w3 { --w: var(--t3); }
 .board.wait .cell:not(.done) { filter: saturate(.55) brightness(.8); pointer-events: none; }
 .board.wide { gap: 4px; } .board.wide .cell { font-size: 16px; border-radius: 9px; } .board.wide .head b { font-size: 9.5px; } .board.wide .head span { font-size: 19px; }
 .legend { display: flex; justify-content: center; gap: 12px; font-size: 12px; color: var(--faint); flex-wrap: wrap; }
@@ -136,14 +137,14 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 .steal small { color: var(--dim); }
 .buzz { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
 .buzz button { border: 0; border-radius: 18px; padding: 18px 10px; font-family: var(--display); font-size: 24px; color: #1A1300; background: var(--c); box-shadow: 0 5px 0 color-mix(in srgb, var(--c) 60%, #000); animation: buzz 1s ease-in-out infinite; }
-.buzz button.t0 { --c: var(--t0); } .buzz button.t1 { --c: var(--t1); } .buzz button.t2 { --c: var(--t2); }
+.buzz button.t0 { --c: var(--t0); } .buzz button.t1 { --c: var(--t1); } .buzz button.t2 { --c: var(--t2); } .buzz button.t3 { --c: var(--t3); }
 @keyframes buzz { 50% { transform: scale(1.04); } }
 
 /* النتيجة فوق السؤال */
 .verdict { position: relative; border-radius: 20px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; overflow: hidden; }
 .verdict.good { background: color-mix(in srgb, var(--c, var(--good)) 28%, #0B0F45); box-shadow: inset 0 0 0 2px var(--c, var(--good)); }
 .verdict.none { background: rgb(242 84 75 / .16); box-shadow: inset 0 0 0 2px rgb(242 84 75 / .5); }
-.verdict.t0 { --c: var(--t0); } .verdict.t1 { --c: var(--t1); } .verdict.t2 { --c: var(--t2); }
+.verdict.t0 { --c: var(--t0); } .verdict.t1 { --c: var(--t1); } .verdict.t2 { --c: var(--t2); } .verdict.t3 { --c: var(--t3); }
 .verdict b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.2; }
 .verdict small { display: block; color: var(--dim); font-size: 13px; }
 .verdict .plus { font-family: var(--display); font-size: 40px; line-height: 1; color: var(--gold); direction: ltr; animation: rise .6s cubic-bezier(.2,.9,.3,1.3) both; }
@@ -170,14 +171,15 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 .teamlist div { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 16px; background: rgb(255 255 255 / .06); font-weight: 600; }
 .teamlist i { width: 12px; height: 12px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); }
 .teamlist small { margin-inline-start: auto; color: var(--faint); font-weight: 500; }
-.teamlist .t0 { --c: var(--t0); } .teamlist .t1 { --c: var(--t1); } .teamlist .t2 { --c: var(--t2); }
+.teamlist .t0 { --c: var(--t0); } .teamlist .t1 { --c: var(--t1); } .teamlist .t2 { --c: var(--t2); } .teamlist .t3 { --c: var(--t3); }
 .teamlist .slot { border: 1px dashed rgb(255 255 255 / .16); background: none; color: var(--faint); justify-content: center; font-weight: 500; }
 
 /* النهاية */
 .podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; padding-top: 10px; }
 .podium .col { flex: 1; max-width: 150px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
 .podium .blk { width: 100%; border-radius: 14px 14px 6px 6px; background: color-mix(in srgb, var(--c) 35%, #10145A); box-shadow: inset 0 0 0 2px var(--c); display: grid; place-items: center; font-family: var(--display); font-size: 30px; direction: ltr; color: var(--on); }
-.podium .col.t0 { --c: var(--t0); } .podium .col.t1 { --c: var(--t1); } .podium .col.t2 { --c: var(--t2); }
+.podium .col.t0 { --c: var(--t0); } .podium .col.t1 { --c: var(--t1); } .podium .col.t2 { --c: var(--t2); } .podium .col.t3 { --c: var(--t3); }
+.podium.n4 { gap: 6px; } .podium.n4 .blk { font-size: 22px; } .podium.n4 b { font-size: 12px; }
 .podium b { font-size: 14px; overflow-wrap: anywhere; line-height: 1.3; }
 .podium .medal { font-size: 28px; line-height: 1; }
 
@@ -207,7 +209,7 @@ function bind(map) { for (const [id, fn] of Object.entries(map)) { const el = $(
 // ---------- القواعد ----------
 const LEVELS = [null, { name: "سهل", pts: 100 }, { name: "متوسط", pts: 200 }, { name: "صعب", pts: 300 }, { name: "صعب جداً", pts: 500 }];
 const LAYOUT = [1, 1, 2, 2, 3, 3, 4, 4];          // 8 أسئلة بكل قسم
-const MAX_TEAMS = 3;
+const MAX_TEAMS = 4;
 const catChoices = (n) => (n === 3 ? [3, 6] : [2, 4, 6]);   // عشان كل فريق ياخذ نفس عدد الأسئلة
 const Q_MS = (d) => (d >= 4 ? 40000 : 30000);
 const STEAL_MS = 15000, BUZZ_MS = 8000, NEXT_MS = 3800;
@@ -550,15 +552,15 @@ function localGame(saved) {
   localNames(store.get("nteams", 2));
 }
 function localNames(n) {
-  const names = store.get("names", ["الفريق الأول", "الفريق الثاني", "الفريق الثالث"]);
+  const names = store.get("names", ["الفريق الأول", "الفريق الثاني", "الفريق الثالث", "الفريق الرابع"]);
   render(`<h1>على تلفون واحد</h1>
     <h2>كم فريق؟</h2>
-    <div class="seg">${[2, 3].map((k) => `<button type="button" data-n="${k}" aria-pressed="${n === k}">${k} فرق</button>`).join("")}</div>
+    <div class="seg">${[2, 3, 4].map((k) => `<button type="button" data-n="${k}" aria-pressed="${n === k}">${k} فرق</button>`).join("")}</div>
     <h2>أسماء الفرق</h2>
     <div class="teamlist">${Array.from({ length: n }, (_, i) => `<div class="t${i}" style="padding:6px 10px"><i></i><input class="input" id="n${i}" type="text" maxlength="16" value="${esc(names[i] || `الفريق ${i + 1}`)}" style="border:0;background:none;padding:8px 4px"></div>`).join("")}</div>
     <button class="btn" id="go" type="button">اختاروا الأقسام</button>
     <button class="btn alt" id="back" type="button">رجوع</button>`);
-  const keep = () => { const cur = store.get("names", ["الفريق الأول", "الفريق الثاني", "الفريق الثالث"]); for (let i = 0; i < n; i++) cur[i] = $("n" + i).value.trim() || cur[i]; store.set("names", cur); };
+  const keep = () => { const cur = store.get("names", ["الفريق الأول", "الفريق الثاني", "الفريق الثالث", "الفريق الرابع"]); for (let i = 0; i < n; i++) cur[i] = $("n" + i).value.trim() || cur[i]; store.set("names", cur); };
   document.querySelectorAll("[data-n]").forEach((b) => b.onclick = () => { keep(); store.set("nteams", +b.dataset.n); localNames(+b.dataset.n); });
   bind({
     back: () => { mode = null; intro(); },
@@ -590,7 +592,7 @@ function onState(st) {
   if (f && f.id !== lastFx) { lastFx = f.id; if (Date.now() - (f.id - offset) < 20000) effects(f); }
   draw();
 }
-function full() { render(`<h1>الغرفة مليانة</h1><p class="sub">في 3 فرق جوّا، أو اللعبة بلّشت.</p><button class="btn alt" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
+function full() { render(`<h1>الغرفة مليانة</h1><p class="sub">في ${MAX_TEAMS} فرق جوّا، أو اللعبة بلّشت.</p><button class="btn alt" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
 
 function effects(f) {
   const mine = mode === "local" || f.team === myTeam();
@@ -616,7 +618,7 @@ function dblOverlay(team) {
 }
 
 function scoreBar(active = -1) {
-  return `<div class="score" style="--n:${nT()}">${S.teams.map((t, i) => `<div class="pod t${i} ${active === i ? "on" : ""}">
+  return `<div class="score ${nT() >= 4 ? "n4" : ""}" style="--n:${nT()}">${S.teams.map((t, i) => `<div class="pod t${i} ${active === i ? "on" : ""}">
     <div class="nm"><i></i>${esc(t.name)}${mode !== "local" && t.pid === me.id ? " · إنتو" : ""}</div>
     <div class="pts">${t.score}</div>
     ${t.help ? `<div class="life">${HELPS.map((h) => `<span class="${t.help[h.k] ? "" : "off"}">${h.icon}</span>`).join("")}</div>` : ""}</div>`).join("")}</div>`;
@@ -641,7 +643,7 @@ function drawLobby() {
     ${mode === "host" ? `<button class="btn alt" id="share" type="button">ابعت الرابط للفرق</button>` : ""}
     <h2>الفرق</h2>
     <div class="teamlist">${S.teams.map((t, i) => `<div class="t${i}"><i></i>${esc(t.name)}<small>${i === 0 ? "صاحب الغرفة" : t.pid === me.id ? "إنتو" : "دخل"}</small></div>`).join("")}
-      ${nT() < MAX_TEAMS ? `<div class="slot">${nT() < 2 ? "مستنيين الفريق الثاني..." : "في مكان لفريق ثالث"}</div>` : ""}</div>
+      ${nT() < MAX_TEAMS ? `<div class="slot">${nT() < 2 ? "مستنيين الفريق الثاني..." : `في مكان لـ${MAX_TEAMS - nT() === 1 ? "فريق كمان" : `${MAX_TEAMS - nT()} فرق كمان`}`}</div>` : ""}</div>
     ${mode === "host" ? `<button class="btn" id="begin" type="button" ${nT() < 2 ? "disabled" : ""}>${nT() < 2 ? "لازم فريق ثاني يدخل" : `يلا نبلّش بـ${nT()} فرق`}</button>` : `<p class="note">صاحب الغرفة بيبلّش لما الكل يدخل.</p>`}
     <button class="linkish" id="out" type="button">${mode === "host" ? "سكّر الغرفة" : "اطلع"}</button>`);
   bind({
@@ -737,7 +739,7 @@ function drawQ() {
   let top = "";
   if (buzzing) {
     const who = mode === "local" ? c.buzzers : c.buzzers.filter((k) => k === myTeam());
-    top = `<div class="steal"><b>🦊 سرقة! الأسرع بياخذها</b><small>«${esc(S.teams[c.lastWrong].name)}» ما جابوها. ${mode === "local" ? "أول فريق بيكبس على اسمه بيجاوب" : iCanBuzz ? "اكبسوا أسرع من الفريق الثاني!" : "الفرق الثانية عم تتسابق..."} على نص النقاط (${Math.round(cellPoints(c) / 2)})</small>
+    top = `<div class="steal"><b>🦊 سرقة! الأسرع بياخذها</b><small>«${esc(S.teams[c.lastWrong].name)}» ما جابوها. ${mode === "local" ? "أول فريق بيكبس على اسمه بيجاوب" : iCanBuzz ? "اكبسوا أسرع من الباقي!" : "الفرق الثانية عم تتسابق..."} على نص النقاط (${Math.round(cellPoints(c) / 2)})</small>
       ${who.length ? `<div class="buzz">${who.map((k) => `<button class="t${k}" type="button" data-buzz="${k}">${mode === "local" ? esc(S.teams[k].name) : "اسرق!"}</button>`).join("")}</div>` : ""}</div>`;
   } else if (c.steal === "answer") {
     top = `<div class="steal"><b>🦊 «${esc(t.name)}» بيسرقوا</b><small>${mine && mode !== "local" ? "جاوبوا صح وخذوا" : "إذا جاوبوا صح بياخذوا"} نص النقاط (${Math.round(cellPoints(c) / 2)})</small></div>`;
@@ -802,12 +804,12 @@ function drawOver() {
   const tie = winners.length > 1;
   const max = Math.max(1, top);
   // المنصة: الأول بالنص، الثاني يمين، الثالث شمال
-  const podOrder = order.length === 3 ? [order[1], order[0], order[2]] : [order[1], order[0]];
+  const podOrder = order.length >= 3 ? [order[1], order[0], ...order.slice(2)] : [order[1], order[0]];
   const rank = (i) => order.indexOf(i);
   render(`<h1 class="center">${tie ? "تعادل! 🤝" : `فاز «${esc(S.teams[order[0]].name)}» 🏆`}</h1>
     <p class="sub center">${tie ? `${winners.map((i) => `«${esc(S.teams[i].name)}»`).join(" و")} بنفس النقاط` : `بفرق ${top - S.teams[order[1]].score} نقطة عن اللي بعده`}</p>
-    <div class="podium">${podOrder.map((i) => { const t = S.teams[i], k = rank(i);
-      return `<div class="col t${i}"><span class="medal">${["🥇", "🥈", "🥉"][k]}</span><b>${esc(t.name)}</b><div class="blk" style="height:${70 + Math.round((Math.max(0, t.score) / max) * 110)}px">${t.score}</div></div>`; }).join("")}</div>
+    <div class="podium ${nT() >= 4 ? "n4" : ""}">${podOrder.map((i) => { const t = S.teams[i], k = rank(i);
+      return `<div class="col t${i}"><span class="medal">${["🥇", "🥈", "🥉"][k] || `<span style="font-family:var(--display);font-size:22px;color:var(--dim)">${k + 1}</span>`}</span><b>${esc(t.name)}</b><div class="blk" style="height:${70 + Math.round((Math.max(0, t.score) / max) * 110)}px">${t.score}</div></div>`; }).join("")}</div>
     ${mode === "local" || S.host === me.id ? `<button class="btn" id="again" type="button">لعبة جديدة بأقسام جديدة</button>` : `<p class="note">صاحب الغرفة بيقدر يبدأ لعبة جديدة.</p>`}
     <button class="btn alt" id="out" type="button">خروج</button>`);
   bind({ again: () => { picked = []; send({ t: "again", team: 0 }); }, out: () => { store.set("local", null); leave(); } });
@@ -817,11 +819,11 @@ function drawOver() {
 function intro() {
   const local = store.get("local", null);
   render(`<h1>مين بيجمع نقاط أكثر؟</h1>
-    <p class="sub">فريقين أو 3 فرق، لوحة أسئلة من السهل للصعب جداً، وسؤال دبل مخفي.</p>
+    <p class="sub">من فريقين لـ4 فرق، لوحة أسئلة من السهل للصعب جداً، وسؤال دبل مخفي.</p>
     <div class="panel"><ul class="rules">
       <li>بالدور، كل فريق بيختار سؤال من اللوحة: <b>100</b> سهل، <b>200</b> متوسط، <b>300</b> صعب، <b>500</b> صعب جداً.</li>
       <li>4 خيارات و<b>30 ثانية</b> لكل سؤال (الصعب جداً 40).</li>
-      <li>إذا غلطتوا، الفرق الثانية بتقدر <b>تسرق نص النقاط</b> 🦊 ومع 3 فرق الأسرع بالكبسة بياخذها.</li>
+      <li>إذا غلطتوا، الفرق الثانية بتقدر <b>تسرق نص النقاط</b> 🦊 ومع أكثر من فريقين الأسرع بالكبسة بياخذها.</li>
       <li>واحد من الأسئلة <b>دبل</b> 🔥 نقاطه ضعف.</li>
       <li>كل فريق معه مرة وحدة: ✂️ حذف ثنتين، ✌️ محاولتين، 🔄 سؤال ثاني.</li>
     </ul></div>
