@@ -150,7 +150,7 @@ def read_bank(cats: dict):
             parts = [p.strip() for p in line[3:].split("|")]
             cid, name, icon = parts[0], parts[1], parts[2]
             cur = cats.setdefault(cid, Cat(cid, name, icon))
-            cur_img = len(parts) > 3 and parts[3] in ("img", "logo", "audio", "audiom", "video")
+            cur_img = len(parts) > 3 and parts[3] in ("img", "logo", "audio", "audiom", "audiol", "video", "file")
             if cur_img:
                 img_secs.append((cur, parts[4], [], parts[3]))
             continue
@@ -189,7 +189,7 @@ def commons_media(terms, kind):
     audio: أصوات (بدون موسيقى وأغاني)، audiom: آلات موسيقية (مسموح موسيقى)، video: فيديو قصير.
     الصوت بناخذه mp3 (بيشتغل على الآيفون)، والفيديو بنفضّل mp4 وإلا webm صغير."""
     path = VIDEO_CACHE if kind == "video" else AUDIO_CACHE
-    pre = {"audio": "", "audiom": "m:", "video": ""}[kind]
+    pre = {"audio": "", "audiom": "m:", "audiol": "l:", "video": ""}[kind]
     cache = {}
     try:
         cache = json.loads(path.read_text(encoding="utf-8"))
@@ -205,14 +205,18 @@ def commons_media(terms, kind):
             continue
         try:
             ft = "video" if kind == "video" else "audio"
-            q = urllib.parse.urlencode({"action": "query", "format": "json", "list": "search", "srnamespace": 6, "srlimit": 12,
-                                        "srsearch": f"{term} filetype:{ft}"})
+            srch = f"intitle:{term}- spoken article filetype:audio" if kind == "audiol" else f"{term} filetype:{ft}"
+            q = urllib.parse.urlencode({"action": "query", "format": "json", "list": "search", "srnamespace": 6, "srlimit": 30,
+                                        "srsearch": srch})
             req = urllib.request.Request(f"{api}?{q}", headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=20) as r:
                 hits = [h["title"] for h in json.loads(r.read().decode("utf-8")).get("query", {}).get("search", [])]
             word = term.split()[0].lower()
+            if kind == "audiol":   # ويكيبيديا المنطوقة: ملف بيبلّش برمز اللغة (De-..., Fr-...) ومقالة كاملة
+                hits = [h for h in hits if h.startswith(f"File:{term}-") and re.search(r"(article|artikel|art[ií]culo|articolo|статья)", h, re.I)] or \
+                       [h for h in hits if h.startswith(f"File:{term}-") and len(h) > 25]
             # بدون ملفات النطق (De-Zebra.ogg، LL-Q...) والمقابلات والأخبار
-            hits = [h for h in hits if word in h.lower() and not bad_media(h, term)
+            hits = hits if kind == "audiol" else [h for h in hits if word in h.lower() and not bad_media(h, term)
                     and not re.match(r"^File:([A-Za-z]{2,3}(-[A-Za-z]{2,4})?-|IDWIKI|LL-Q|User\d)", h)
                     and not re.search(nomusic, h, re.I)]
             url = None
@@ -251,6 +255,43 @@ def commons_media(terms, kind):
     return out
 
 
+FILES_CACHE = GAMES / "points_files.json"
+
+
+def commons_files(names):
+    """ملفات Commons بأسمائها (زي خرائط الدول): بنتأكد إنها موجودة، وبنرجّع رابط بحجم 640."""
+    cache = {}
+    try:
+        cache = json.loads(FILES_CACHE.read_text(encoding="utf-8"))
+    except Exception:
+        pass
+    todo = [n for n in names if n not in cache]
+    for i in range(0, len(todo), 40):
+        chunk = todo[i:i + 40]
+        try:
+            q = urllib.parse.urlencode({"action": "query", "format": "json", "prop": "imageinfo", "iiprop": "url", "iiurlwidth": 640,
+                                        "titles": "|".join("File:" + n for n in chunk)})
+            req = urllib.request.Request(f"https://commons.wikimedia.org/w/api.php?{q}", headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                d = json.loads(r.read().decode("utf-8"))["query"]
+            norm = {x["to"]: x["from"] for x in d.get("normalized", [])}
+            for p in d.get("pages", {}).values():
+                info = (p.get("imageinfo") or [{}])[0]
+                name = norm.get(p.get("title"), p.get("title", ""))[5:]
+                if info.get("url"):
+                    cache[name] = "https://commons.wikimedia.org/wiki/Special:FilePath/" + urllib.parse.quote(name.replace(" ", "_")) + "?width=640"
+                else:
+                    log(f"  ملف مش موجود: {name}")
+        except Exception as e:
+            log(f"  ملفات Commons: {e}")
+        time.sleep(0.5)
+    try:
+        FILES_CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=0), encoding="utf-8")
+    except Exception:
+        pass
+    return cache
+
+
 def commons(u):
     m = re.search(r"/wikipedia/([a-z]+)/thumb/[^/]+/[^/]+/([^/?]+)/", u or "")
     host = "commons.wikimedia.org" if not m or m.group(1) == "commons" else f"{m.group(1)}.wikipedia.org"
@@ -258,13 +299,14 @@ def commons(u):
 
 
 def image_sections(img_secs):
-    MEDIA = ("audio", "audiom", "video")
-    titles = [it[1] for _, _, items, k in img_secs if k not in MEDIA for it in items]
+    MEDIA = ("audio", "audiom", "audiol", "video")
+    titles = [it[1] for _, _, items, k in img_secs if k not in MEDIA and k != "file" for it in items]
     logos = frozenset(it[1] for _, _, items, k in img_secs if k == "logo" for it in items)
     wiki = wiki_images(titles, logos)
     media = {k: commons_media([it[1] for _, _, items, kk in img_secs if kk == k for it in items], k) for k in MEDIA}
+    files = commons_files([it[1] for _, _, items, kk in img_secs if kk == "file" for it in items])
     for cat, tmpl, items, kind in img_secs:
-        imgs = media[kind] if kind in MEDIA else wiki
+        imgs = media[kind] if kind in MEDIA else files if kind == "file" else wiki
         lg = kind != "img"
         ok = [it for it in items if imgs.get(it[1])]
         for d, t, ans, g in items:
@@ -277,7 +319,7 @@ def image_sections(img_secs):
             if not wrong and not g:
                 wrong = pick3(ans, [x[2] for x in items if x[3] == g])
             if wrong:
-                media_src = ("audio:" + imgs[t]) if kind in ("audio", "audiom") else ("video:" + imgs[t]) if kind == "video" else commons(imgs[t])
+                media_src = ("audio:" + imgs[t]) if kind in ("audio", "audiom", "audiol") else ("video:" + imgs[t]) if kind == "video" else commons(imgs[t])
                 cat.add(d, tmpl, [ans] + wrong, media_src)
 
 
@@ -532,6 +574,71 @@ def estimate(cats):
     log(f"  قدّر الرقم: {dict(per)}")
 
 
+# ---------- لاعبين عرب بالصور ----------
+ARAB = {"الأردن", "السعودية", "مصر", "الإمارات", "قطر", "الكويت", "البحرين", "عُمان", "سلطنة عمان", "العراق", "سوريا", "لبنان", "فلسطين",
+        "المغرب", "الجزائر", "تونس", "ليبيا", "السودان", "اليمن", "موريتانيا"}
+
+
+def arab_players(cats):
+    try:
+        P = json.loads((GAMES / "players.json").read_text(encoding="utf-8"))
+    except Exception:
+        return
+    c = cats.setdefault("arabplayers", Cat("arabplayers", "لاعبين عرب بالصور", "🌍"))
+    ps = [p for p in P["players"] if p.get("img") and p.get("a") and set(p.get("nat") or []) & ARAB and main_nt(p)]
+    ps.sort(key=lambda p: (p.get("lv") or 9, p.get("r") or 0))
+    names = [p["a"] for p in ps]
+    for k, p in enumerate(ps[:80]):
+        d = 1 + min(3, k * 4 // max(1, min(80, len(ps))))
+        near = names[max(0, k - 15):k + 15]
+        w = pick3(p["a"], near) or pick3(p["a"], names)
+        if w:
+            c.add(d, "مين هاللاعب العربي؟", [p["a"]] + w, p["img"])
+    log(f"  لاعبين عرب: {len(ps)}")
+
+
+# ---------- حسبة سريعة ----------
+def quick_math(cats):
+    c = cats.setdefault("math", Cat("math", "حسبة سريعة", "🧮"))
+    rnd = R
+    def opts(a, spread):
+        s = set()
+        while len(s) < 3:
+            v = a + rnd.choice([-1, 1]) * rnd.randint(1, spread)
+            if v != a and v >= 0:
+                s.add(v)
+        return [str(a)] + [str(x) for x in s]
+    for _ in range(12):
+        x, y = rnd.randint(2, 9), rnd.randint(2, 9)
+        c.add(1, f"كم {x} × {y}؟", opts(x * y, 6))
+        a, b = rnd.randint(11, 60), rnd.randint(11, 40)
+        c.add(1, f"كم {a} + {b}؟", opts(a + b, 9))
+    for _ in range(12):
+        x, y = rnd.randint(11, 19), rnd.randint(3, 9)
+        c.add(2, f"كم {x} × {y}؟", opts(x * y, 12))
+        p, n = rnd.choice([10, 20, 25, 50]), rnd.choice([40, 80, 120, 200, 360])
+        c.add(2, f"كم {p}% من {n}؟", opts(n * p // 100, 15))
+        h = rnd.randint(2, 6)
+        c.add(2, f"كم دقيقة بـ{h} ساعات ونص؟", opts(h * 60 + 30, 30))
+    for _ in range(12):
+        q, pr = rnd.randint(3, 6), rnd.choice([2, 3, 4, 5])
+        n = q * rnd.randint(3, 6)
+        c.add(3, f"إذا {q} أقلام سعرهم {pr} دنانير، قديش سعر {n} قلم؟", opts(pr * n // q, 6))
+        a = rnd.randint(25, 99); b = rnd.randint(12, 49)
+        c.add(3, f"كم {a} × {b // 10 * 10 + 1}؟", opts(a * (b // 10 * 10 + 1), 40))
+        sp, t = rnd.choice([60, 80, 90, 100, 120]), rnd.choice([2, 3, 4])
+        c.add(3, f"سيارة ماشية {sp} كم بالساعة، قديش بتقطع بـ{t} ساعات؟", opts(sp * t, 40))
+    for _ in range(12):
+        n = rnd.choice([12, 15, 16, 18, 24, 25])
+        c.add(4, f"كم مجموع الأعداد من 1 لـ{n}؟", opts(n * (n + 1) // 2, 20))
+        a = rnd.randint(13, 29)
+        c.add(4, f"كم {a} تربيع؟", opts(a * a, 30))
+        p, n = rnd.choice([15, 35, 45, 65]), rnd.choice([60, 140, 220, 380])
+        c.add(4, f"كم {p}% من {n}؟", opts(round(n * p / 100), 20))
+        yrs = rnd.randint(3, 9)
+        c.add(4, f"كم يوم بـ{yrs} أسابيع ويومين؟", opts(yrs * 7 + 2, 6))
+
+
 def main():
     cats: dict[str, Cat] = {}
     img_secs = read_bank(cats)
@@ -543,7 +650,10 @@ def main():
     chronology(cats)
     zoom_blur(cats)
     estimate(cats)
-    order = ["sounds", "soundslife", "soundsbirds", "soundsinstr", "vidanimals", "vidnature", "vidsports", "zoom", "blur", "emoji",
+    arab_players(cats)
+    quick_math(cats)
+    order = ["globe", "languages", "vidcrafts", "arabplayers", "actors", "scientists", "cities", "castles", "mosques", "dinos", "sealife",
+             "insects", "fruits", "drinks", "costumes", "space", "translate", "nicknames", "whoami", "math", "sounds", "soundslife", "soundsbirds", "soundsinstr", "vidanimals", "vidnature", "vidsports", "zoom", "blur", "emoji",
              "lies", "estimate", "childhood", "carlogos", "airlines", "brands", "pets", "plants", "instruments", "currency", "singerspics", "football", "worldcup", "coaches", "crests", "stadiums", "nashama", "celebs", "flags", "capitals", "landmarks",
              "historic", "animals", "food", "jofood", "cars", "movies", "cartoons", "singers", "videogames", "tech", "general",
              "science", "history", "first", "islamic", "proverbs", "dialects", "riddles", "jordan", "jocities", "sports"]
