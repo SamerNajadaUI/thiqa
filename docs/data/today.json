@@ -1,7 +1,7 @@
 {
  "date": "2026-11-02",
  "generated_at": "2026-11-02T08:12:37Z",
- "updated_at": "2026-11-02T18:47:44Z",
+ "updated_at": "2026-11-03T01:45:23Z",
  "demo": false,
  "coupons": [
   {
@@ -24,8 +24,8 @@
      "sharp_prob": 0.8453,
      "prob": 0.8448,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "0-3",
      "movement": -0.0043,
      "crowd_prob": 0.8458,
      "crowd_volume": 17793,
@@ -113,9 +113,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/105.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "post",
+      "detail": "FT",
+      "score": "0-3"
      }
     },
     {
@@ -221,15 +221,15 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ny.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png",
      "live": {
-      "state": "pre",
-      "detail": "11/2 - 7:30 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "Halftime",
+      "score": "51-44"
      }
     }
    ],
    "prob": 0.6956,
    "fair_odds": 1.44,
-   "result": "pending"
+   "result": "lost"
   },
   {
    "kind": "medium",
@@ -251,8 +251,8 @@
      "sharp_prob": 0.7385,
      "prob": 0.7486,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "2-4",
      "movement": -0.0003,
      "crowd_prob": 0.7463,
      "crowd_volume": 25988,
@@ -338,9 +338,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3997.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
      "live": {
-      "state": "in",
-      "detail": "59'",
-      "score": "1-2"
+      "state": "post",
+      "detail": "FT",
+      "score": "2-4"
      }
     },
     {
@@ -360,8 +360,8 @@
      "sharp_prob": 0.7416,
      "prob": 0.7525,
      "books": 20,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "2-1",
      "movement": 0.0038,
      "crowd_prob": 0.7437,
      "crowd_volume": 2828,
@@ -449,9 +449,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "post",
+      "detail": "FT",
+      "score": "2-1"
      }
     },
     {
@@ -557,9 +557,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phi.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
      "live": {
-      "state": "pre",
-      "detail": "11/2 - 7:30 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "Halftime",
+      "score": "64-59"
      }
     },
     {
@@ -662,9 +662,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
      "live": {
-      "state": "pre",
-      "detail": "11/2 - 8:30 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "10:49 - 1st",
+      "score": "0-2"
      }
     }
    ],
@@ -698,8 +698,8 @@
    "sharp_prob": 0.8453,
    "prob": 0.8448,
    "books": 23,
-   "result": "pending",
-   "score": null,
+   "result": "miss",
+   "score": "0-3",
    "movement": -0.0043,
    "crowd_prob": 0.8458,
    "crowd_volume": 17793,
@@ -788,9 +788,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/105.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png",
    "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
+    "state": "post",
+    "detail": "FT",
+    "score": "0-3"
    }
   },
   {
@@ -894,9 +894,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
    "live": {
-    "state": "pre",
-    "detail": "11/2 - 8:30 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "10:49 - 1st",
+    "score": "0-2"
    }
   },
   {
@@ -1003,9 +1003,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ny.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png",
    "live": {
-    "state": "pre",
-    "detail": "11/2 - 7:30 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "Halftime",
+    "score": "51-44"
    }
   },
   {
@@ -1112,9 +1112,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phi.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
    "live": {
-    "state": "pre",
-    "detail": "11/2 - 7:30 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "Halftime",
+    "score": "64-59"
    }
   },
   {
@@ -1134,8 +1134,8 @@
    "sharp_prob": 0.7416,
    "prob": 0.7525,
    "books": 20,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "2-1",
    "movement": 0.0038,
    "crowd_prob": 0.7437,
    "crowd_volume": 2828,
@@ -1224,9 +1224,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
    "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
+    "state": "post",
+    "detail": "FT",
+    "score": "2-1"
    }
   },
   {
@@ -1246,8 +1246,8 @@
    "sharp_prob": 0.7385,
    "prob": 0.7486,
    "books": 23,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "2-4",
    "movement": -0.0003,
    "crowd_prob": 0.7463,
    "crowd_volume": 25988,
@@ -1334,9 +1334,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3997.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
    "live": {
-    "state": "in",
-    "detail": "59'",
-    "score": "1-2"
+    "state": "post",
+    "detail": "FT",
+    "score": "2-4"
    }
   },
   {
@@ -1443,9 +1443,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
    "live": {
-    "state": "pre",
-    "detail": "11/2 - 8:00 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "8:15 - 2nd",
+    "score": "31-28"
    }
   },
   {
@@ -1552,9 +1552,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png",
    "live": {
-    "state": "pre",
-    "detail": "11/2 - 8:00 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "8:28 - 2nd",
+    "score": "29-28"
    }
   },
   {
@@ -1574,8 +1574,8 @@
    "sharp_prob": 0.7315,
    "prob": 0.7278,
    "books": 24,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "0-1",
    "movement": 0.0008,
    "crowd_prob": 0.7291,
    "crowd_volume": 665899,
@@ -1663,9 +1663,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/361.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/368.png",
    "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
+    "state": "post",
+    "detail": "FT",
+    "score": "0-1"
    }
   }
  ],

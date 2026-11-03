@@ -1578,8 +1578,8 @@
     "sharp_prob": 0.7945,
     "prob": 0.7964,
     "books": 22,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "0-3",
     "model_prob": 0.8125,
     "support": 3,
     "signals": 3,
@@ -1652,6 +1652,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 80%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.799
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ita.1",
+     "id": "401874971",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "0-3"
     }
    },
    {
