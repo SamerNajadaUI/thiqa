@@ -8892,9 +8892,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/arg.png",
        "live": {
-        "state": "pre",
-        "detail": "11/3 - 5:00 AM EST",
-        "score": null
+        "state": "in",
+        "detail": "1st",
+        "score": "0-1"
        }
       },
       {
