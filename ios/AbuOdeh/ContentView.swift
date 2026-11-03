@@ -182,6 +182,7 @@ final class WebModel: NSObject, ObservableObject, WKNavigationDelegate, WKUIDele
         config.websiteDataStore = .default()
         config.applicationNameForUserAgent = "AbuOdehApp/1.0"
         config.allowsInlineMediaPlayback = true
+        config.allowsPictureInPictureMediaPlayback = false
         config.suppressesIncrementalRendering = false
         config.mediaTypesRequiringUserActionForPlayback = []
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])

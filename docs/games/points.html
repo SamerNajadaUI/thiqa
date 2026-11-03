@@ -165,7 +165,9 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 .qimg.fx-blur { animation-name: unblur; }
 @keyframes zoomout { from { transform: scale(5); } 85% { transform: scale(1.4); } to { transform: scale(1); } }
 @keyframes unblur { from { filter: blur(26px); } 85% { filter: blur(5px); } to { filter: blur(0); } }
-.qvid { display: block; width: 100%; max-height: 260px; border-radius: 18px; background: #000; }
+.vidbox { position: relative; border-radius: 18px; overflow: hidden; background: #000; }
+.vidbox::after { content: ""; position: absolute; inset: 0; }   /* طبقة فوق الفيديو: الكبس ما بيفتح شاشة كاملة */
+.qvid { display: block; width: 100%; max-height: 260px; background: #000; pointer-events: none; object-fit: contain; }
 
 /* الأسئلة الصوتية */
 .sound { width: 100%; border: 0; border-radius: 22px; padding: 22px 16px; background: linear-gradient(135deg, #FFC93C, #FF9F1C); color: #2A1E00;
@@ -857,8 +859,16 @@ function qImage(c) {
   if (!c.img) return "";
   if (c.img.startsWith("video:")) {
     const url = c.img.slice(6);
-    return `<video class="qvid" src="${esc(url)}" playsinline muted autoplay loop preload="auto" onerror="this.outerHTML='<p class=&quot;note&quot;>ما قدرت أشغّل الفيديو على هالجهاز.</p>'"></video>
-      <p class="note">🎥 الفيديو بيعيد لحاله، بدون صوت</p>`;
+    // داخل الصفحة وبدون شاشة كاملة: playsinline + muted، وبدون أزرار تحكم، والكبس عليه ما بيعمل إشي
+    setTimeout(() => {
+      const v = document.getElementById("qvid"); if (!v || v.dataset.ready) return;
+      v.dataset.ready = "1"; v.muted = true; v.defaultMuted = true; v.playsInline = true; v.controls = false;
+      v.setAttribute("playsinline", ""); v.setAttribute("webkit-playsinline", "");
+      v.onerror = () => { const n = document.getElementById("vidnote"); if (n) n.textContent = "ما قدرت أشغّل الفيديو على هالجهاز."; v.style.display = "none"; };
+      const p = v.play(); if (p && p.catch) p.catch(() => {});
+    }, 0);
+    return `<div class="vidbox"><video class="qvid" id="qvid" src="${esc(url)}" playsinline webkit-playsinline muted autoplay loop preload="auto" disablepictureinpicture disableremoteplayback></video></div>
+      <p class="note" id="vidnote">🎥 الفيديو بيعيد لحاله، بدون صوت</p>`;
   }
   if (c.img.startsWith("zoom:") || c.img.startsWith("blur:")) {
     const fx = c.img.slice(0, 4), url = imgUrl(c.img.slice(5));
