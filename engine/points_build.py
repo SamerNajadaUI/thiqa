@@ -70,9 +70,33 @@ def wiki_images(titles, logos=frozenset()):
     except Exception:
         pass
     bad = lambda u: not u or "logo" in u.lower() or ".svg" in u.lower()
+    is_logo = lambda u: bool(u) and bool(re.search(r"(logo|icon|wordmark)", u, re.I))
     for t in titles:
         lang, page = (t.split(":", 1) if t.startswith("ar:") else ("en", t))
-        if cache.get(t) and (t in logos or not bad(cache[t])):
+        if t in logos:   # شعارات التطبيقات: بدنا ملف الشعار نفسه، مش صورة شاشة
+            if is_logo(cache.get(t)):
+                continue
+            cache.pop(t, None)
+            try:
+                url = f"https://{lang}.wikipedia.org/api/rest_v1/page/media-list/" + urllib.parse.quote(page.replace(" ", "_"), safe="")
+                req = urllib.request.Request(url, headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=20) as r:
+                    items = json.loads(r.read().decode("utf-8")).get("items", [])
+                for it in items:
+                    srcs = it.get("srcset") or []
+                    src = srcs[0]["src"] if srcs else None
+                    title = it.get("title") or ""
+                    if it.get("type") == "image" and src and is_logo(title) and not re.search(r"(wordmark|text)", title, re.I):
+                        src = ("https:" + src) if src.startswith("//") else src
+                        cache[t] = re.sub(r"/(\d+)px-", "/640px-", src)
+                        break
+                if t not in cache:
+                    log(f"  بدون شعار: {t}")
+            except Exception as e:
+                log(f"  شعار {t}: {e}")
+            time.sleep(0.2)
+            continue
+        if cache.get(t) and not bad(cache[t]):
             continue
         if cache.get(t):   # الصورة الأساسية شعار: بنجيب أول صورة حقيقية من المقالة
             try:
