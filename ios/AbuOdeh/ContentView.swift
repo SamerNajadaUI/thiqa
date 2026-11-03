@@ -194,6 +194,17 @@ final class WebModel: NSObject, ObservableObject, WKNavigationDelegate, WKUIDele
         web.backgroundColor = .white
         web.scrollView.backgroundColor = .white
         web.scrollView.contentInsetAdjustmentBehavior = .never
+        // بدون زووم (لا بالكبستين ولا بالأصابع)
+        web.scrollView.minimumZoomScale = 1
+        web.scrollView.maximumZoomScale = 1
+        web.scrollView.bouncesZoom = false
+        web.scrollView.pinchGestureRecognizer?.isEnabled = false
+        let noZoom = WKUserScript(source: """
+          (function(){var m=document.querySelector('meta[name=viewport]');var c='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';
+          if(m){m.setAttribute('content',c);}else{m=document.createElement('meta');m.name='viewport';m.content=c;document.head.appendChild(m);}
+          var s=document.createElement('style');s.textContent='html,body,button,a,input{touch-action:manipulation}';document.head.appendChild(s);})();
+          """, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+        web.configuration.userContentController.addUserScript(noZoom)
         // رجوع بالسحب من طرف الشاشة اليسار (ولقدّام من اليمين)
         web.allowsBackForwardNavigationGestures = true
         web.semanticContentAttribute = .forceLeftToRight

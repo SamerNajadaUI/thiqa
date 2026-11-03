@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>ألعاب أبو عودة للمرح</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#FFFFFF">
@@ -145,6 +145,8 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .answers { grid-template-columns: 1fr; }
 }
+/* no double-tap zoom */
+html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 </style>
 </head>
 <body>

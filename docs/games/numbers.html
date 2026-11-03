@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>الرقم الأقرب</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#FFFFFF">
@@ -131,6 +131,8 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; 
   .screen { animation: in .32s cubic-bezier(.2,.9,.3,1.15) both; }
   @keyframes in { from { transform: translateY(12px) scale(.985); } to { transform: none; } }
 }
+/* no double-tap zoom */
+html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 </style>
 </head>
 <body>

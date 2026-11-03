@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>جمع نقاط</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#FFFFFF">
@@ -278,6 +278,8 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .final .r b { font-size: 18px; } .final .r span { font-family: var(--display); font-size: 34px; direction: ltr; }
 .final .r.t0 { background: var(--t0s); color: var(--t0d); } .final .r.t1 { background: var(--t1s); color: var(--t1d); } .final .r.t2 { background: var(--t2s); color: var(--t2d); }
 .waitnote { text-align: center; color: var(--muted); font-size: 14px; }
+/* no double-tap zoom */
+html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 </style>
 </head>
 <body>

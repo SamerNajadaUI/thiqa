@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>موقع أبو عودة للمرح</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="موقع أبو عودة للمرح: ألعاب كورة مع صحابك، و3 قسائم يومياً، وقسيمة للأسبوع وقسيمة للشهر (آمنة، شبه آمنة، خطيرة) وأعلى 10 توقعات احتمالاً بكرة القدم والسلة والتنس، مع سجل علني لكل النتائج.">
@@ -398,6 +398,8 @@ body:not(.on-home) #view-home { display: none; }
   .hud .chip b { font-size: 22px; }
   .appbar .brand b { font-size: 26px; }
 }
+/* no double-tap zoom */
+html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 </style>
 </head>
 <body>
