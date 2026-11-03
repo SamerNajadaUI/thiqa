@@ -776,8 +776,8 @@ function qTop() {
 }
 // صور ويكيبيديا: بنطلبها عن طريق Commons مباشرة (روابط الـthumb بحجم غير قياسي ما بتشتغل)
 function imgUrl(u) {
-  const m = String(u || "").match(/\/commons\/thumb\/[^/]+\/[^/]+\/([^/?]+)\//);
-  return m ? `https://commons.wikimedia.org/wiki/Special:FilePath/${m[1]}?width=640` : u;
+  const m = String(u || "").match(/\/wikipedia\/(commons|en)\/thumb\/[^/]+\/[^/]+\/([^/?]+)\//);
+  return m ? `https://${m[1] === "en" ? "en.wikipedia.org" : "commons.wikimedia.org"}/wiki/Special:FilePath/${m[2]}?width=640` : u;
 }
 function qImage(c) {
   if (!c.img) return "";

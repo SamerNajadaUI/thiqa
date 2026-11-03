@@ -139,8 +139,9 @@ def read_bank(cats: dict):
 
 
 def commons(u):
-    m = re.search(r"/commons/thumb/[^/]+/[^/]+/([^/?]+)/", u or "")
-    return f"https://commons.wikimedia.org/wiki/Special:FilePath/{m.group(1)}?width=640" if m else u
+    m = re.search(r"/wikipedia/(commons|en)/thumb/[^/]+/[^/]+/([^/?]+)/", u or "")
+    host = "en.wikipedia.org" if m and m.group(1) == "en" else "commons.wikimedia.org"
+    return f"https://{host}/wiki/Special:FilePath/{m.group(2)}?width=640" if m else u
 
 
 def image_sections(img_secs):
