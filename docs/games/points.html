@@ -158,6 +158,15 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 .autonext i { position: absolute; inset: 0 0 0 auto; background: rgb(255 201 60 / .16); width: 0; }
 .autonext span { position: relative; }
 
+/* الأسئلة الصوتية */
+.sound { width: 100%; border: 0; border-radius: 22px; padding: 22px 16px; background: linear-gradient(135deg, #FFC93C, #FF9F1C); color: #2A1E00;
+  font-family: var(--display); font-size: 26px; display: flex; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 5px 0 #C27A00; }
+.sound .wave { display: flex; gap: 4px; align-items: center; height: 30px; }
+.sound .wave i { width: 5px; height: 10px; border-radius: 3px; background: #2A1E00; }
+.sound.on .wave i { animation: eq .7s ease-in-out infinite; }
+.sound.on .wave i:nth-child(2) { animation-delay: .1s; } .sound.on .wave i:nth-child(3) { animation-delay: .2s; } .sound.on .wave i:nth-child(4) { animation-delay: .3s; } .sound.on .wave i:nth-child(5) { animation-delay: .4s; }
+@keyframes eq { 50% { height: 30px; } }
+
 /* اختيار الأقسام */
 .grp { margin: 6px 2px -4px; font-weight: 700; font-size: 14px; color: var(--dim); }
 .cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -689,7 +698,7 @@ let picked = [];
 const GROUPS = [
   ["⚽ كورة", ["football", "worldcup", "coaches", "commentators", "crests", "stadiums", "nashama", "sports"]],
   ["🇯🇴 عربي وأردني", ["jordan", "jocities", "jofood", "proverbs", "dialects", "singers", "islamic"]],
-  ["📸 بالصور", ["celebs", "wrestlers", "applogos", "historic", "flags", "landmarks", "animals", "food", "cars"]],
+  ["📸 صور وأصوات", ["sounds", "celebs", "wrestlers", "applogos", "historic", "flags", "landmarks", "animals", "food", "cars"]],
   ["🎯 منوّعات", ["general", "capitals", "science", "history", "first", "movies", "cartoons", "videogames", "tech", "riddles"]],
 ];
 function catGroups() {
@@ -710,7 +719,7 @@ function drawCats() {
     <div class="seg">${catChoices(nT()).map((k) => `<button type="button" data-cn="${k}" aria-pressed="${N === k}">${k} أقسام</button>`).join("")}</div>
     <p class="sub">${N * 8} سؤال، يعني ${(N * 8) / nT()} سؤال لكل فريق.</p>
     ${catGroups().map(([g, list]) => `<p class="grp">${g}</p><div class="cats">${list.map((c) => { const k = picked.indexOf(c.id);
-      return `<button type="button" data-c="${c.id}" aria-pressed="${k >= 0}">${k >= 0 ? `<span class="ord">${k + 1}</span>` : ""}<span>${c.icon}</span>${esc(c.name)}${c.qs.some((q) => q[3]) ? "<small>بالصور</small>" : ""}</button>`; }).join("")}</div>`).join("")}
+      return `<button type="button" data-c="${c.id}" aria-pressed="${k >= 0}">${k >= 0 ? `<span class="ord">${k + 1}</span>` : ""}<span>${c.icon}</span>${esc(c.name)}${c.qs.some((q) => q[3] && q[3].startsWith("audio:")) ? "<small>بالصوت</small>" : c.qs.some((q) => q[3]) ? "<small>بالصور</small>" : ""}</button>`; }).join("")}</div>`).join("")}
     <div class="dock"><button class="rnd" id="rnd" type="button" aria-label="اختيار عشوائي">🎲</button>
       <button class="btn" id="go" type="button" ${picked.length === N ? "" : "disabled"}>${picked.length === N ? "ابدأوا اللعبة" : `اختاروا ${N - picked.length} كمان`}</button></div>
     <button class="linkish" id="out" type="button">${mode === "local" ? "رجوع" : "سكّر الغرفة"}</button>`);
@@ -730,6 +739,7 @@ function drawCats() {
 }
 
 function drawBoard() {
+  if (SND) { try { SND.pause(); } catch {} }
   const t = S.teams[S.turn];
   const mine = canAct(S.turn);
   const wide = S.cats.length >= 5;
@@ -753,8 +763,24 @@ function imgUrl(u) {
   const m = String(u || "").match(/\/wikipedia\/([a-z]+)\/thumb\/[^/]+\/[^/]+\/([^/?]+)\//);
   return m ? `https://${m[1] === "commons" ? "commons.wikimedia.org" : m[1] + ".wikipedia.org"}/wiki/Special:FilePath/${m[2]}?width=640` : u;
 }
+// الأسئلة الصوتية: زر كبير بيشغّل الصوت (وبنحاول نشغّله لحاله أول ما يطلع السؤال)
+let SND = null, sndKey = "";
+function playSound(url, auto) {
+  try {
+    if (!SND || SND.dataset.src !== url) { if (SND) SND.pause(); SND = new Audio(url); SND.dataset.src = url; SND.preload = "auto"; }
+    SND.currentTime = 0;
+    const p = SND.play(); if (p && p.catch) p.catch(() => {});
+    const b = document.getElementById("sndbtn"); if (b) { b.classList.add("on"); SND.onended = () => b.classList.remove("on"); }
+  } catch {}
+}
 function qImage(c) {
   if (!c.img) return "";
+  if (c.img.startsWith("audio:")) {
+    const url = c.img.slice(6), k = c.cid + ":" + c.i + ":" + url;
+    if (k !== sndKey) { sndKey = k; setTimeout(() => playSound(url, true), 350); }
+    setTimeout(() => { const b = document.getElementById("sndbtn"); if (b) b.onclick = () => playSound(url); }, 0);
+    return `<button class="sound" id="sndbtn" type="button" aria-label="شغّل الصوت"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span>اسمع الصوت 🔊</button>`;
+  }
   const cls = c.img.includes("flagcdn") ? "flag" : c.img.includes("teamlogos") || /\.svg/i.test(c.img) ? "crest" : "";
   return `<img class="qimg ${cls}" src="${esc(imgUrl(c.img))}" data-alt="${esc(c.img)}" alt="" referrerpolicy="no-referrer" onerror="if(this.dataset.alt&&this.src!==this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt='';}else{this.style.display='none'}">`;
 }
@@ -826,6 +852,7 @@ function drawQ() {
 }
 
 function drawRes() {
+  if (SND && S.cur && !(S.cur.img || "").startsWith("audio:")) { try { SND.pause(); } catch {} }
   const r = S.res, c = S.cur;
   const w = r.winner !== null ? S.teams[r.winner] : null;
   const mineWin = w && (mode === "local" || r.winner === myTeam());

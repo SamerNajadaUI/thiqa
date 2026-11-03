@@ -150,19 +150,66 @@ def read_bank(cats: dict):
             parts = [p.strip() for p in line[3:].split("|")]
             cid, name, icon = parts[0], parts[1], parts[2]
             cur = cats.setdefault(cid, Cat(cid, name, icon))
-            cur_img = len(parts) > 3 and parts[3] in ("img", "logo")
+            cur_img = len(parts) > 3 and parts[3] in ("img", "logo", "audio")
             if cur_img:
-                img_secs.append((cur, parts[4], [], parts[3] == "logo"))
+                img_secs.append((cur, parts[4], [], parts[3]))
             continue
         f = [p.strip() for p in line.split("|")]
         if cur_img:
-            img_secs[-1][2].append((int(f[0]), f[1], f[2]))
+            img_secs[-1][2].append((int(f[0]), f[1], f[2], f[3] if len(f) > 3 else ""))   # الرابع: f = أنثى
         else:
             if len(f) != 6:
                 log(f"  سطر غلط: {line}")
                 continue
             cur.add(f[0], f[1], f[2:6])
     return img_secs
+
+
+AUDIO_CACHE = GAMES / "points_audio.json"
+
+
+def commons_audio(terms):
+    """أصوات من Wikimedia Commons: بندوّر على ملف صوت للحيوان، وبناخذ نسخة mp3 (بتشتغل على الآيفون)."""
+    cache = {}
+    try:
+        cache = json.loads(AUDIO_CACHE.read_text(encoding="utf-8"))
+    except Exception:
+        pass
+    api = "https://commons.wikimedia.org/w/api.php"
+    for term in terms:
+        if cache.get(term):
+            continue
+        try:
+            q = urllib.parse.urlencode({"action": "query", "format": "json", "list": "search", "srnamespace": 6, "srlimit": 8,
+                                        "srsearch": f"{term} filetype:audio"})
+            req = urllib.request.Request(f"{api}?{q}", headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=20) as r:
+                hits = [h["title"] for h in json.loads(r.read().decode("utf-8")).get("query", {}).get("search", [])]
+            word = term.split()[0].lower()
+            hits = [h for h in hits if word in h.lower() and not re.search(r"(pronunc|spoken|speech|wikipedia|-en-|ar-|music|song)", h, re.I)]
+            if not hits:
+                log(f"  بدون صوت: {term}")
+                continue
+            q = urllib.parse.urlencode({"action": "query", "format": "json", "prop": "videoinfo", "viprop": "url|derivatives", "titles": hits[0]})
+            req = urllib.request.Request(f"{api}?{q}", headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=20) as r:
+                pages = json.loads(r.read().decode("utf-8")).get("query", {}).get("pages", {})
+            info = (next(iter(pages.values()), {}).get("videoinfo") or [{}])[0]
+            mp3 = [d["src"] for d in info.get("derivatives", []) if "mp3" in (d.get("type", "") + d.get("src", "")).lower()]
+            url = mp3[0] if mp3 else (info.get("url") if re.search(r"\.(mp3|wav)$", info.get("url", ""), re.I) else None)
+            if url:
+                cache[term] = url
+                log(f"  صوت {term}: {hits[0]}")
+            else:
+                log(f"  بدون mp3: {term} ({hits[0]})")
+        except Exception as e:
+            log(f"  صوت {term}: {e}")
+        time.sleep(0.3)
+    try:
+        AUDIO_CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=0), encoding="utf-8")
+    except Exception:
+        pass
+    return cache
 
 
 def commons(u):
@@ -172,17 +219,24 @@ def commons(u):
 
 
 def image_sections(img_secs):
-    titles = [t for _, _, items, _ in img_secs for _, t, _ in items]
-    logos = frozenset(t for _, _, items, lg in img_secs if lg for _, t, _ in items)
+    titles = [it[1] for _, _, items, k in img_secs if k != "audio" for it in items]
+    logos = frozenset(it[1] for _, _, items, k in img_secs if k == "logo" for it in items)
     imgs = wiki_images(titles, logos)
-    for cat, tmpl, items, lg in img_secs:
-        for d, t, ans in items:
+    imgs.update(commons_audio([it[1] for _, _, items, k in img_secs if k == "audio" for it in items]))
+    for cat, tmpl, items, kind in img_secs:
+        lg = kind != "img"
+        ok = [it for it in items if imgs.get(it[1])]
+        for d, t, ans, g in items:
             if not imgs.get(t) or (not lg and ("logo" in imgs[t].lower() or ".svg" in imgs[t].lower())):
                 continue
-            near = [a for dd, _, a in items if abs(dd - d) <= 1 and a != ans]
-            wrong = pick3(ans, near) or pick3(ans, [a for _, _, a in items])
+            # الخيارات من نفس الجنس (صورة بنت = أسماء بنات) ومن صعوبة قريبة
+            same = [x for x in ok if x[3] == g and x[2] != ans]
+            near = [x[2] for x in same if abs(x[0] - d) <= 1]
+            wrong = pick3(ans, near) or pick3(ans, [x[2] for x in same])
+            if not wrong and not g:
+                wrong = pick3(ans, [x[2] for x in items if x[3] == g])
             if wrong:
-                cat.add(d, tmpl, [ans] + wrong, commons(imgs[t]))
+                cat.add(d, tmpl, [ans] + wrong, ("audio:" + imgs[t]) if kind == "audio" else commons(imgs[t]))
 
 
 # ---------- أعلام وعواصم ----------
@@ -376,7 +430,7 @@ def main():
     crests(cats)
     worldcup(cats)
     chronology(cats)
-    order = ["football", "worldcup", "coaches", "crests", "stadiums", "nashama", "celebs", "flags", "capitals", "landmarks",
+    order = ["sounds", "football", "worldcup", "coaches", "crests", "stadiums", "nashama", "celebs", "flags", "capitals", "landmarks",
              "historic", "animals", "food", "jofood", "cars", "movies", "cartoons", "singers", "videogames", "tech", "general",
              "science", "history", "first", "islamic", "proverbs", "dialects", "riddles", "jordan", "jocities", "sports"]
     out = []
