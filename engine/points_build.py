@@ -150,7 +150,7 @@ def read_bank(cats: dict):
             parts = [p.strip() for p in line[3:].split("|")]
             cid, name, icon = parts[0], parts[1], parts[2]
             cur = cats.setdefault(cid, Cat(cid, name, icon))
-            cur_img = len(parts) > 3 and parts[3] in ("img", "logo", "audio")
+            cur_img = len(parts) > 3 and parts[3] in ("img", "logo", "audio", "audiom", "video")
             if cur_img:
                 img_secs.append((cur, parts[4], [], parts[3]))
             continue
@@ -168,51 +168,74 @@ def read_bank(cats: dict):
 AUDIO_CACHE = GAMES / "points_audio.json"
 
 
-def commons_audio(terms):
-    """أصوات من Wikimedia Commons: بندوّر على ملف صوت للحيوان، وبناخذ نسخة mp3 (بتشتغل على الآيفون)."""
+VIDEO_CACHE = GAMES / "points_video.json"
+
+
+def commons_media(terms, kind):
+    """أصوات وفيديوهات من Wikimedia Commons.
+    audio: أصوات (بدون موسيقى وأغاني)، audiom: آلات موسيقية (مسموح موسيقى)، video: فيديو قصير.
+    الصوت بناخذه mp3 (بيشتغل على الآيفون)، والفيديو بنفضّل mp4 وإلا webm صغير."""
+    path = VIDEO_CACHE if kind == "video" else AUDIO_CACHE
+    pre = {"audio": "", "audiom": "m:", "video": ""}[kind]
     cache = {}
     try:
-        cache = json.loads(AUDIO_CACHE.read_text(encoding="utf-8"))
+        cache = json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         pass
     api = "https://commons.wikimedia.org/w/api.php"
+    out = {}
+    nomusic = r"(pronunc|spoken|speech|wikipedia|interview|navy|lecture|article|podcast|anthem|hymn|news|trailer|ad\b|commercial" + (r"|music|song)" if kind == "audio" else ")")
     for term in terms:
-        if cache.get(term):
+        key = pre + term
+        if cache.get(key):
+            out[term] = cache[key]
             continue
         try:
-            q = urllib.parse.urlencode({"action": "query", "format": "json", "list": "search", "srnamespace": 6, "srlimit": 8,
-                                        "srsearch": f"{term} filetype:audio"})
+            ft = "video" if kind == "video" else "audio"
+            q = urllib.parse.urlencode({"action": "query", "format": "json", "list": "search", "srnamespace": 6, "srlimit": 12,
+                                        "srsearch": f"{term} filetype:{ft}"})
             req = urllib.request.Request(f"{api}?{q}", headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=20) as r:
                 hits = [h["title"] for h in json.loads(r.read().decode("utf-8")).get("query", {}).get("search", [])]
             word = term.split()[0].lower()
-            # بدون ملفات النطق (De-Zebra.ogg، LL-Q...) والمقابلات والأغاني
+            # بدون ملفات النطق (De-Zebra.ogg، LL-Q...) والمقابلات والأخبار
             hits = [h for h in hits if word in h.lower()
                     and not re.match(r"^File:([A-Za-z]{2,3}(-[A-Za-z]{2,4})?-|IDWIKI|LL-Q|User\d)", h)
-                    and not re.search(r"(pronunc|spoken|speech|wikipedia|interview|navy|lecture|music|song|article|podcast)", h, re.I)]
-            if not hits:
-                log(f"  بدون صوت: {term}")
-                continue
-            q = urllib.parse.urlencode({"action": "query", "format": "json", "prop": "videoinfo", "viprop": "url|derivatives", "titles": hits[0]})
-            req = urllib.request.Request(f"{api}?{q}", headers={"User-Agent": UA})
-            with urllib.request.urlopen(req, timeout=20) as r:
-                pages = json.loads(r.read().decode("utf-8")).get("query", {}).get("pages", {})
-            info = (next(iter(pages.values()), {}).get("videoinfo") or [{}])[0]
-            mp3 = [d["src"] for d in info.get("derivatives", []) if "mp3" in (d.get("type", "") + d.get("src", "")).lower()]
-            url = mp3[0] if mp3 else (info.get("url") if re.search(r"\.(mp3|wav)$", info.get("url", ""), re.I) else None)
+                    and not re.search(nomusic, h, re.I)]
+            url = None
+            for h in hits[:4]:
+                q = urllib.parse.urlencode({"action": "query", "format": "json", "prop": "videoinfo", "viprop": "url|derivatives|size", "titles": h})
+                req = urllib.request.Request(f"{api}?{q}", headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=20) as r:
+                    pages = json.loads(r.read().decode("utf-8")).get("query", {}).get("pages", {})
+                info = (next(iter(pages.values()), {}).get("videoinfo") or [{}])[0]
+                ders = info.get("derivatives", [])
+                if kind == "video":
+                    dur = float(info.get("duration") or 0)
+                    if dur and dur > 240:   # فيديو طويل كثير: بنتجاهله
+                        continue
+                    mp4 = [d["src"] for d in ders if "mp4" in (d.get("type", "") + d.get("src", "")).lower()]
+                    webm = sorted([d for d in ders if "webm" in d.get("src", "") and d.get("height")], key=lambda d: abs(int(d["height"]) - 480))
+                    url = mp4[0] if mp4 else (webm[0]["src"] if webm else (info.get("url") if re.search(r"\.(mp4|webm)$", info.get("url", ""), re.I) else None))
+                else:
+                    mp3 = [d["src"] for d in ders if "mp3" in (d.get("type", "") + d.get("src", "")).lower()]
+                    url = mp3[0] if mp3 else (info.get("url") if re.search(r"\.(mp3|wav)$", info.get("url", ""), re.I) else None)
+                if url:
+                    log(f"  {kind} {term}: {h}")
+                    break
             if url:
-                cache[term] = url
-                log(f"  صوت {term}: {hits[0]}")
+                cache[key] = url
+                out[term] = url
             else:
-                log(f"  بدون mp3: {term} ({hits[0]})")
+                log(f"  بدون {kind}: {term}")
         except Exception as e:
-            log(f"  صوت {term}: {e}")
+            log(f"  {kind} {term}: {e}")
         time.sleep(0.3)
     try:
-        AUDIO_CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=0), encoding="utf-8")
+        path.write_text(json.dumps(cache, ensure_ascii=False, indent=0), encoding="utf-8")
     except Exception:
         pass
-    return cache
+    return out
 
 
 def commons(u):
@@ -222,11 +245,13 @@ def commons(u):
 
 
 def image_sections(img_secs):
-    titles = [it[1] for _, _, items, k in img_secs if k != "audio" for it in items]
+    MEDIA = ("audio", "audiom", "video")
+    titles = [it[1] for _, _, items, k in img_secs if k not in MEDIA for it in items]
     logos = frozenset(it[1] for _, _, items, k in img_secs if k == "logo" for it in items)
-    imgs = wiki_images(titles, logos)
-    imgs.update(commons_audio([it[1] for _, _, items, k in img_secs if k == "audio" for it in items]))
+    wiki = wiki_images(titles, logos)
+    media = {k: commons_media([it[1] for _, _, items, kk in img_secs if kk == k for it in items], k) for k in MEDIA}
     for cat, tmpl, items, kind in img_secs:
+        imgs = media[kind] if kind in MEDIA else wiki
         lg = kind != "img"
         ok = [it for it in items if imgs.get(it[1])]
         for d, t, ans, g in items:
@@ -239,7 +264,8 @@ def image_sections(img_secs):
             if not wrong and not g:
                 wrong = pick3(ans, [x[2] for x in items if x[3] == g])
             if wrong:
-                cat.add(d, tmpl, [ans] + wrong, ("audio:" + imgs[t]) if kind == "audio" else commons(imgs[t]))
+                media_src = ("audio:" + imgs[t]) if kind in ("audio", "audiom") else ("video:" + imgs[t]) if kind == "video" else commons(imgs[t])
+                cat.add(d, tmpl, [ans] + wrong, media_src)
 
 
 # ---------- أعلام وعواصم ----------
@@ -424,6 +450,75 @@ def worldcup(cats):
                 c.add(min(4, d + 1), f"مين هداف كأس العالم {y}؟", [top[0]] + w)
 
 
+# ---------- زووم ومموّهة: نفس صور الأقسام الثانية بس بتأثير ----------
+def zoom_blur(cats):
+    def pool(ids):
+        out = []
+        for cid in ids:
+            c = cats.get(cid)
+            if c:
+                out += [q for q in c.qs if len(q) > 3 and q[3] and not q[3].startswith(("audio:", "video:"))]
+        return out
+    for cid, name, icon, pref, ids in (("zoom", "زووم", "🔍", "zoom:", ["celebs", "landmarks", "applogos", "brands", "carlogos", "football", "animals"]),
+                                       ("blur", "صورة مموّهة", "🌫️", "blur:", ["animals", "food", "cars", "landmarks", "celebs", "plants", "pets"])):
+        c = cats.setdefault(cid, Cat(cid, name, icon))
+        qs = pool(ids)
+        R.shuffle(qs)
+        per = Counter()
+        for q in qs:
+            d = q[0]
+            if per[d] >= 14:
+                continue
+            if c.add(d, q[1].replace("؟", "") + " (" + ("مقرّبة" if pref == "zoom:" else "مموّهة") + ")؟", q[2], pref + q[3]):
+                per[d] += 1
+
+
+# ---------- قدّر الرقم: من أسئلة الرقم الأقرب، بخيارات ----------
+def estimate(cats):
+    c = cats.setdefault("estimate", Cat("estimate", "قدّر الرقم", "📊"))
+    rows = []
+    # الأسئلة المكتوبة باليد بلعبة الرقم الأقرب (معروفة ومسلّية)، مش المولّدة من Wikidata
+    try:
+        html = (GAMES / "numbers.html").read_text(encoding="utf-8")
+        line = next(l for l in html.splitlines() if l.startswith("const QUESTIONS = "))
+        for cat, qs in json.loads(line[len("const QUESTIONS = "):].rstrip().rstrip(";")).items():
+            rows += [(cat, q) for q in qs]
+    except Exception as e:
+        log(f"  الأرقام: {e}")
+    R.shuffle(rows)
+
+    def fmt(x, year=False):
+        return str(x) if year else (f"{x:,}" if isinstance(x, int) else f"{x:g}")
+
+    per = Counter()
+    for cat, (q, a, unit, note) in rows:
+        if all(per[d] >= 40 for d in (1, 2, 3, 4)):
+            break
+        if not isinstance(a, (int, float)) or a <= 0:
+            continue
+        year = isinstance(a, int) and 1000 <= a <= 2100 and "سنة" in q
+        if year:
+            offs = R.sample([-40, -25, -15, -8, 8, 15, 25, 40], 3)
+            wrong = [a + o for o in offs if a + o <= 2026]
+            d = 2 if a >= 1950 else 3 if a >= 1800 else 4
+        else:
+            f = R.choice([(0.5, 2, 3), (0.25, 0.5, 2), (2, 3, 0.5), (0.1, 10, 3)])
+            wrong = []
+            for k in f:
+                v = a * k
+                v = int(round(v, -int(len(str(int(v))) - 2))) if v >= 100 else (round(v, 1) if v < 10 else int(round(v)))
+                wrong.append(v)
+            d = 1 if f[0] == 0.1 else 2 if 0.25 in f else 3
+        if len({a, *wrong}) < 4 or len(wrong) < 3:
+            continue
+        if per[d] >= 40:
+            continue
+        u = f" ({unit})" if unit and unit not in q else ""
+        if c.add(d, q + u, [fmt(a, year)] + [fmt(w, year) for w in wrong[:3]]):
+            per[d] += 1
+    log(f"  قدّر الرقم: {dict(per)}")
+
+
 def main():
     cats: dict[str, Cat] = {}
     img_secs = read_bank(cats)
@@ -433,7 +528,10 @@ def main():
     crests(cats)
     worldcup(cats)
     chronology(cats)
-    order = ["sounds", "football", "worldcup", "coaches", "crests", "stadiums", "nashama", "celebs", "flags", "capitals", "landmarks",
+    zoom_blur(cats)
+    estimate(cats)
+    order = ["sounds", "soundslife", "soundsbirds", "soundsinstr", "vidanimals", "vidnature", "vidsports", "zoom", "blur", "emoji",
+             "lies", "estimate", "childhood", "carlogos", "airlines", "brands", "pets", "plants", "instruments", "currency", "singerspics", "football", "worldcup", "coaches", "crests", "stadiums", "nashama", "celebs", "flags", "capitals", "landmarks",
              "historic", "animals", "food", "jofood", "cars", "movies", "cartoons", "singers", "videogames", "tech", "general",
              "science", "history", "first", "islamic", "proverbs", "dialects", "riddles", "jordan", "jocities", "sports"]
     out = []
