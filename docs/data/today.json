@@ -1,7 +1,7 @@
 {
  "date": "2026-11-03",
  "generated_at": "2026-11-03T09:58:19Z",
- "updated_at": "2026-11-03T09:58:19Z",
+ "updated_at": "2026-11-03T18:00:18Z",
  "demo": false,
  "coupons": [
   {
@@ -336,9 +336,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
      "live": {
-      "state": "pre",
-      "detail": "11/3 - 9:30 AM EST",
-      "score": null
+      "state": "in",
+      "detail": "3rd",
+      "score": "1-2"
      }
     },
     {
@@ -584,8 +584,8 @@
      "sharp_prob": 0.693,
      "prob": 0.6509,
      "books": 22,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "1-2",
      "crowd_prob": 0.695,
      "crowd_volume": 5117,
      "model_prob": null,
@@ -670,9 +670,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/arg.png",
      "live": {
-      "state": "pre",
-      "detail": "11/3 - 5:00 AM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "1-2"
      }
     },
     {
@@ -779,9 +779,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/493.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2250.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "in",
+      "detail": "14'",
+      "score": "0-0"
      }
     },
     {
@@ -1003,7 +1003,7 @@
    ],
    "prob": 0.2424,
    "fair_odds": 4.12,
-   "result": "pending"
+   "result": "lost"
   }
  ],
  "top": [
@@ -1551,9 +1551,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/432.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/134.png",
    "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
+    "state": "in",
+    "detail": "12'",
+    "score": "1-0"
    }
   },
   {
@@ -1991,9 +1991,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/493.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2250.png",
    "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
+    "state": "in",
+    "detail": "14'",
+    "score": "0-0"
    }
   },
   {
@@ -2099,9 +2099,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
    "live": {
-    "state": "pre",
-    "detail": "11/3 - 9:30 AM EST",
-    "score": null
+    "state": "in",
+    "detail": "3rd",
+    "score": "1-2"
    }
   }
  ],
