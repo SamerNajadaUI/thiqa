@@ -29,7 +29,7 @@ ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer"
 UA = "AbuOdehGame/1.0 (https://github.com/SamerNajadaUI/thiqa)"
 ESPN_LEAGUES = ["eng.1", "eng.2", "esp.1", "esp.2", "ita.1", "ita.2", "ger.1", "ger.2", "fra.1", "fra.2", "ned.1", "por.1",
                 "sco.1", "bel.1", "tur.1", "gre.1", "rus.1", "aut.1", "sui.1", "den.1", "swe.1", "nor.1", "usa.1", "mex.1",
-                "bra.1", "arg.1", "ksa.1", "qat.1", "uae.1", "egy.1", "jpn.1", "chn.1", "uefa.champions", "uefa.europa"]
+                "bra.1", "bra.2", "arg.1", "ksa.1", "eng.3", "eng.4", "sco.2", "por.2", "ned.2", "usa.2", "chi.1", "col.1", "uru.1", "qat.1", "uae.1", "egy.1", "jpn.1", "chn.1", "uefa.champions", "uefa.europa"]
 # فرق الشباب والرديف والمنتخبات (بنشيلها من المسيرة)
 NOT_SENIOR = re.compile(r"(\s(II|III|B|C)$|\b(U-?\d{2}|Under[- ]\d+|Sub[- ]\d+|Youth|Reserves?|Academy|Castilla|Atl[eè]tic|"
                         r"Jong|Primavera|Next Gen|Amateure?|Juvenil|Promesas|Olympic|national)\b|youth|reserve)", re.I)
@@ -164,6 +164,21 @@ def fetch(ids: list[str]) -> dict:
     return P
 
 
+def espn_find(espn: dict, en: str) -> str | None:
+    """الاسم كامل، أو اسم ESPN كله موجود جوّا اسم Wikidata (S.L. Benfica ← Benfica) إذا في تطابق واحد بس."""
+    k = plain(en)
+    if not k:
+        return None
+    if k in espn:
+        return espn[k]
+    toks = set(w for w in k.split() if len(w) > 1)
+    hits = {tid for name, tid in espn.items() if len(name) >= 4 and set(name.split()) <= toks}
+    if len(hits) == 1:
+        return hits.pop()
+    k2 = " ".join(w for w in k.split() if len(w) > 1)
+    return espn.get(k2)
+
+
 def career(p: dict, espn: dict, party_logos: dict) -> list:
     spells = []
     for s in p["teams"].values():
@@ -185,9 +200,9 @@ def career(p: dict, espn: dict, party_logos: dict) -> list:
         if party_logos.get(name):
             lg = "e:" + party_logos[name]
         else:
-            k = plain(s["en"] or "")
-            if k and espn.get(k):
-                lg = "e:" + espn[k]
+            k = espn_find(espn, s["en"] or "")
+            if k:
+                lg = "e:" + k
             elif s.get("logo"):
                 lg = "c:" + s["logo"]
         out.append({"t": s["t"], "n": name, "en": s["en"] or "", "s": s["s"], "e": s["e"], "lg": lg})

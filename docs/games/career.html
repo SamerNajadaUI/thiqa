@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مسيرة لاعب</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="أبو عودة للمرح">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: same chunky game-app skin as the main app. One screen at a time: games list -> mode -> level -> era -> player card, or challenges -> challenge. Light-only by design. */
+:root {
+  color-scheme: light;
+  --bg: #FFFFFF; --soft: #F4F5F7; --line: #ECEEF1; --ink: #111316; --muted: #6B7280; --faint: #A9AEB6;
+  --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
+  --l1: #12B76A; --l1d: #0A8A4F; --l1s: #E6F8EF;
+  --l2: #F79009; --l2d: #C26A00; --l2s: #FEF3E2;
+  --l3: #F04438; --l3d: #B42318; --l3s: #FEECEA;
+  --l4: #1D2939; --l4d: #000000; --l4s: #EAECF0;
+  --gold: #FDB022; --gold-dark: #DC6803;
+  --font: "Readex Pro", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+  --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); }
+body { margin: 0; color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+.wrap { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: calc(12px + env(safe-area-inset-top, 0px)) calc(32px + env(safe-area-inset-bottom, 0px)); }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+bdi { unicode-bidi: isolate; }
+
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.back { display: inline-flex; align-items: center; gap: 6px; border: 0; background: var(--soft); border-radius: 16px; padding: 10px 14px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); }
+.back svg { width: 18px; height: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand img { width: 44px; height: 44px; border-radius: 14px; box-shadow: 0 4px 0 var(--brand-dark); }
+.brand b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px 0 0; }
+
+/* big chunky buttons/cards */
+.tile { --c: var(--brand); --cd: var(--brand-dark); --cs: var(--brand-soft);
+  display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; text-align: right; width: 100%;
+  background: #FFFFFF; border: 2px solid var(--cs); border-radius: 28px; padding: 16px; box-shadow: 0 6px 0 var(--cs); transition: transform .1s; }
+.tile:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--cs); }
+.tile .ic { width: 64px; height: 64px; border-radius: 20px; background: var(--c); box-shadow: 0 4px 0 var(--cd); display: grid; place-items: center; color: #FFFFFF; }
+.tile .ic svg { width: 34px; height: 34px; }
+.tile b { display: block; font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.2; }
+.tile small { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.tile .go { width: 36px; height: 36px; border-radius: 50%; background: var(--cs); color: var(--c); display: grid; place-items: center; }
+.tile .go svg { width: 18px; height: 18px; }
+.tile.l1 { --c: var(--l1); --cd: var(--l1d); --cs: var(--l1s); }
+.tile.l2 { --c: var(--l2); --cd: var(--l2d); --cs: var(--l2s); }
+.tile.l3 { --c: var(--l3); --cd: var(--l3d); --cs: var(--l3s); }
+.tile.l4 { --c: var(--l4); --cd: var(--l4d); --cs: var(--l4s); }
+.tile.coral { --c: #FF5A5F; --cd: #D63B40; --cs: #FFECEC; text-decoration: none; color: var(--ink); }
+.tile.sky { --c: #0BA5EC; --cd: #0086C9; --cs: #E0F2FE; text-decoration: none; color: var(--ink); }
+.tile.gold { --c: var(--gold); --cd: var(--gold-dark); --cs: #FEF0C7; }
+.tile .ic .lvnum { font-family: var(--display); font-size: 30px; line-height: 1; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.soon { color: var(--faint); font-size: 13px; text-align: center; }
+
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.seg button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 14px 8px; font-weight: 600; box-shadow: 0 4px 0 var(--line); }
+.seg button[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); box-shadow: 0 4px 0 #D9D1FF; }
+.big { border: 0; width: 100%; background: var(--brand); color: #FFFFFF; border-radius: 22px; padding: 16px; font-family: var(--display); font-size: 24px; box-shadow: 0 6px 0 var(--brand-dark); }
+.big:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--brand-dark); }
+.big.green { background: var(--l1); box-shadow: 0 6px 0 var(--l1d); }
+.big.red { background: var(--l3); box-shadow: 0 6px 0 var(--l3d); }
+.big.ghost { background: var(--soft); color: var(--ink); box-shadow: 0 6px 0 var(--line); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* player card */
+.pcard { position: relative; border-radius: 32px; overflow: hidden; background: #FFFFFF; border: 2px solid var(--cs, var(--brand-soft)); box-shadow: 0 8px 0 var(--cs, var(--brand-soft)); }
+.pcard.l1 { --c: var(--l1); --cs: var(--l1s); } .pcard.l2 { --c: var(--l2); --cs: var(--l2s); }
+.pcard.l3 { --c: var(--l3); --cs: var(--l3s); } .pcard.l4 { --c: var(--l4); --cs: var(--l4s); }
+.photo { position: relative; aspect-ratio: 4 / 3.4; max-width: 100%; background: linear-gradient(180deg, var(--cs), #FFFFFF); display: grid; place-items: center; overflow: hidden; }
+.photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+.photo .ini { font-family: var(--display); font-size: 72px; color: var(--c); }
+.badge { position: absolute; top: 14px; right: 14px; background: var(--c); color: #FFFFFF; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 999px; }
+.badge.era { right: auto; left: 14px; background: rgb(17 19 22 / .72); }
+.pname { padding: 16px 18px 4px; }
+.pname b { display: block; font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.15; }
+.pname span { color: var(--muted); font-size: 14px; direction: ltr; display: block; text-align: right; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px 16px; }
+.fact { background: var(--soft); border-radius: 18px; padding: 10px 8px; text-align: center; min-width: 0; }
+.fact small { display: block; color: var(--muted); font-size: 11px; }
+.fact b { display: block; font-weight: 600; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.clubs { padding: 4px 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.clubs h3 { margin: 4px 0 0; font-size: 13px; color: var(--muted); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--soft); border-radius: 14px; padding: 6px 10px; font-size: 13px; font-weight: 500; }
+.chip .yr { color: var(--muted); font-size: 11px; direction: ltr; display: inline-block; margin-inline-start: 6px; padding-inline-start: 6px; border-inline-start: 1px solid var(--line); }
+.chip.nt { background: var(--brand-soft); color: var(--brand-dark); }
+.cover { position: absolute; inset: 0; background: var(--brand); color: #FFFFFF; display: grid; place-items: center; text-align: center; padding: 24px; z-index: 2; border: 0; width: 100%; }
+.cover b { font-family: var(--display); font-weight: 400; font-size: 34px; display: block; }
+.cover small { opacity: .85; font-size: 14px; }
+.credit { color: var(--faint); font-size: 11px; text-align: center; }
+
+.hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.hud div { background: var(--soft); border-radius: 20px; padding: 10px; text-align: center; }
+.hud b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.1; direction: ltr; }
+.hud small { color: var(--muted); font-size: 11px; }
+.qbtn { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+.qbtn .big { font-size: 20px; }
+.minus { border: 0; background: var(--soft); border-radius: 22px; width: 64px; font-size: 24px; box-shadow: 0 6px 0 var(--line); }
+
+.result { text-align: center; background: var(--l1s); border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
+.result.lose { background: var(--l3s); }
+.result b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
+
+/* challenges */
+.prompt { background: var(--brand); color: #FFFFFF; border-radius: 28px; padding: 22px; box-shadow: 0 8px 0 var(--brand-dark); }
+.prompt small { opacity: .85; }
+.prompt b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.3; margin-top: 4px; }
+.timer { font-family: var(--display); font-size: 56px; text-align: center; line-height: 1; direction: ltr; margin-top: 10px; }
+.timer.low { color: var(--l3); }
+.answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ans { display: flex; align-items: center; gap: 8px; border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 8px 10px; text-align: right; min-width: 0; font-size: 13px; font-weight: 600; }
+.ans img, .ans .mini { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
+.ans span { min-width: 0; overflow-wrap: anywhere; line-height: 1.35; }
+.ans.hidden span { filter: blur(6px); }
+.ans.hidden img { filter: blur(6px); }
+.ans.got { border-color: var(--l1); background: var(--l1s); }
+.note { color: var(--muted); font-size: 13px; line-height: 1.7; margin: 0; }
+.loading { text-align: center; color: var(--muted); padding: 40px 0; }
+
+.pass2 { text-align: center; padding: 28px 18px; border-radius: 30px; background: var(--brand-soft); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.pass2 .who { font-family: var(--display); font-size: 46px; line-height: 1.1; color: var(--brand); overflow-wrap: anywhere; }
+.namesin { display: flex; flex-direction: column; gap: 8px; }
+.namesin input, .search { width: 100%; border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; background: #FFFFFF; font-size: 16px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pickbtn { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 12px; text-align: right; box-shadow: 0 4px 0 var(--line); min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pickbtn b { font-size: 15px; overflow-wrap: anywhere; line-height: 1.35; }
+.pickbtn small { color: var(--muted); font-size: 12px; }
+.prow { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; }
+.prow img, .prow .mini2 { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--soft); display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+.crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; color: var(--muted); font-size: 13px; }
+.crumbs button { border: 0; background: var(--soft); border-radius: 999px; padding: 4px 12px; font-weight: 600; }
+.status3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(62px, 1fr)); gap: 6px; }
+.status3 div { background: var(--soft); border-radius: 18px; padding: 8px; text-align: center; min-width: 0; }
+.status3 div.me { background: var(--brand-soft); box-shadow: inset 0 0 0 2px var(--brand); }
+.status3 b { display: block; font-size: 13px; overflow-wrap: anywhere; }
+.status3 span { font-family: var(--display); font-size: 22px; direction: ltr; display: block; line-height: 1.2; }
+.status3 small { color: var(--muted); font-size: 11px; }
+.hearts { color: var(--l3); letter-spacing: 2px; font-size: 14px; }
+.hints { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.hints li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 10px 12px; }
+.hints li span { width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; display: grid; place-items: center; font-family: var(--display); font-size: 16px; color: var(--muted); }
+.hints li.new { background: var(--gold); color: #1D2939; box-shadow: 0 4px 0 var(--gold-dark); }
+.hints li.new span { color: var(--gold-dark); }
+.hints li b { font-weight: 600; font-size: 15px; line-height: 1.5; }
+.ptsnow { text-align: center; color: var(--muted); font-size: 13px; }
+.ptsnow b { color: var(--ink); }
+.helpers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.helpers button { border: 2px solid var(--gold); background: #FEF0C7; border-radius: 18px; padding: 10px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 0 #FEDF89; }
+.helpers button[disabled] { opacity: .4; }
+.helpers button.armed { background: var(--gold); color: #1D2939; }
+.opt20 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.opt20 button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 18px; padding: 10px; font-weight: 600; font-size: 14px; text-align: right; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; align-items: center; min-width: 0; }
+.opt20 img, .opt20 .mini2 { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: var(--soft); display: grid; place-items: center; font-size: 11px; color: var(--muted); }
+.opt20 button span { overflow-wrap: anywhere; line-height: 1.35; }
+.mic { width: 100%; border: 2px solid var(--brand-soft); background: #FFFFFF; border-radius: 18px; padding: 14px 10px; font-weight: 700; font-size: 15px; color: var(--brand); box-shadow: 0 4px 0 var(--brand-soft); display: flex; align-items: center; justify-content: center; gap: 6px; }
+.mic .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--l3); display: none; }
+.mic.on { background: #FEE4E2; border-color: #F97066; color: #B42318; box-shadow: 0 4px 0 #FDA29B; animation: micpulse 1s ease-in-out infinite; }
+.mic.on .dot { display: inline-block; }
+@keyframes micpulse { 50% { transform: scale(1.03); } }
+.ptimer { position: relative; height: 34px; border-radius: 999px; background: var(--soft); overflow: hidden; display: grid; place-items: center; }
+.ptimer i { position: absolute; inset: 0 auto 0 0; width: 100%; background: linear-gradient(90deg, #12B76A, #32D583); transition: width .2s linear; }
+.ptimer.hot i { background: linear-gradient(90deg, #F04438, #F97066); }
+.ptimer span { position: relative; font-weight: 800; font-size: 15px; color: #0B1B10; }
+.ptimer.hot span { color: #FFFFFF; animation: micpulse .6s ease-in-out infinite; }
+.askbox { background: #FEF0C7; border: 2px solid var(--gold); border-radius: 22px; padding: 14px; display: flex; flex-direction: column; gap: 8px; text-align: center; }
+.askbox > b { font-size: 20px; }
+.linkish { border: 0; background: none; color: var(--muted); font-weight: 700; text-decoration: underline; padding: 4px; }
+.wave { display: flex; gap: 4px; align-items: center; justify-content: center; height: 34px; }
+.wave i { width: 5px; border-radius: 3px; background: #F04438; height: 6px; transition: height .08s; }
+.clubbtn { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
+.crest { object-fit: contain; flex: none; }
+.crest-fb { display: grid; place-items: center; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 800; font-size: 16px; }
+.clubhead { display: flex; align-items: center; gap: 12px; }
+.clubhead h1 { margin: 0; }
+.flash { text-align: center; border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.flash.good { background: var(--l1s); } .flash.badf { background: var(--l3s); }
+.flash b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
+.board { display: flex; flex-direction: column; gap: 8px; }
+.board .r { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 12px 14px; }
+.board .r:first-child { background: #FEF0C7; }
+.board .r .pos { font-family: var(--display); font-size: 20px; text-align: center; }
+.board .r .t { font-family: var(--display); font-size: 26px; direction: ltr; }
+.board .r small { grid-column: 2 / -1; color: var(--muted); font-size: 12px; }
+.rules { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.7; }
+.confirm { background: var(--l3s); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+@media (prefers-reduced-motion: no-preference) {
+  .screen { animation: in .35s cubic-bezier(.2,.9,.3,1.15) both; }
+  @keyframes in { from { transform: translateY(12px) scale(.985); } to { transform: none; } }
+}
+@media (max-width: 380px) {
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .answers { grid-template-columns: 1fr; }
+}
+/* مسيرة لاعب */
+.path { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; counter-reset: st; }
+.st { position: relative; background: #FFFFFF; border: 2px solid var(--line); border-radius: 22px; padding: 12px 6px 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-width: 0; box-shadow: 0 4px 0 var(--line); }
+.st .n { position: absolute; top: 6px; right: 8px; font-family: var(--display); font-size: 14px; color: var(--faint); }
+.st img, .st .fb { width: 64px; height: 64px; object-fit: contain; }
+.st .fb { display: grid; place-items: center; border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 800; font-size: 18px; }
+.st b { font-size: 12.5px; line-height: 1.35; overflow-wrap: anywhere; }
+.st small { color: var(--muted); font-size: 11px; direction: ltr; }
+.st.hide { background: var(--soft); border-style: dashed; box-shadow: none; justify-content: center; min-height: 128px; }
+.st.hide .q { font-family: var(--display); font-size: 40px; color: var(--faint); line-height: 1; }
+.st.new { border-color: var(--gold); box-shadow: 0 4px 0 var(--gold-dark); animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+.ansrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.ansrow .big { width: auto; padding: 12px 18px; font-size: 20px; }
+.readyline { text-align: center; color: var(--muted); font-size: 13px; }
+.who2 { display: flex; align-items: center; gap: 12px; }
+.who2 img, .who2 .fb { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; object-position: 50% 20%; background: var(--soft); display: grid; place-items: center; font-family: var(--display); font-size: 26px; color: var(--brand); flex: none; }
+.who2 b { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.15; display: block; }
+.who2 span { color: var(--muted); font-size: 13px; direction: ltr; display: block; text-align: right; }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.choices button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 16px; padding: 10px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <a class="brand" href="./"><img src="../icons/icon.svg" alt=""><b>مسيرة لاعب</b></a>
+    <button class="back" id="quit" type="button">خروج</button>
+  </div>
+  <main id="app" aria-live="polite"><div class="loading">بحمّل اللاعبين...</div></main>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const initials = (n) => { const w = String(n || "").replace(/^(نادي|النادي)\s+/, "").split(/\s+/).map((x) => x.replace(/^ال(?=..)/, "").replace(/[^\p{L}]/gu, "")).filter(Boolean); return ((w[0]?.[0] || "") + (w.length > 1 ? w[1][0] : "")).toUpperCase(); };
+const store = { get(k, d) { try { const v = localStorage.getItem("career-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("career-" + k, JSON.stringify(v)); } catch {} } };
+function render(html) { $("app").innerHTML = `<div class="screen">${html}</div>`; window.scrollTo(0, 0); }
+function bind(map) { for (const [id, fn] of Object.entries(map)) { const el = $(id); if (el) el.onclick = fn; } }
+
+// النقاط حسب كم نادي انكشف: من أول شعار 5، وبعدين 4، 3، 2، ومن الخامس وطالع 1
+const pointsFor = (k) => Math.max(1, 6 - k);
+const MAX_PLAYERS = 4;
+let DATA, byId;
+
+const logoUrl = (lg, size = 128) => !lg ? "" : lg.startsWith("e:") ? `https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/${lg.slice(2)}.png&h=${size}&w=${size}`
+  : lg.startsWith("c:") ? `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(lg.slice(2))}?width=${size}` : "";
+function crestImg(c) {
+  const u = logoUrl(c[3]);
+  return u ? `<img src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'fb',textContent:'${esc(initials(c[0]))}'}))">`
+    : `<span class="fb">${esc(initials(c[0]))}</span>`;
+}
+const years = (c) => c[1] ? `${c[1]}–${c[2] && c[2] !== c[1] ? c[2] : c[2] ? "" : "الآن"}`.replace(/–$/, "") : "";
+function station(c, i, cls = "") {
+  return `<div class="st ${cls}"><span class="n">${i + 1}</span>${crestImg(c)}<b>${esc(c[0])}</b>${years(c) ? `<small>${esc(years(c))}</small>` : ""}</div>`;
+}
+function pathView(p, shown, fresh = -1) {
+  return `<div class="path">${p.c.map((c, i) => i < shown ? station(c, i, i === fresh ? "new" : "") : `<div class="st hide"><span class="n">${i + 1}</span><span class="q">؟</span></div>`).join("")}</div>`;
+}
+const photo = (p) => p.img ? `<img src="${esc(p.img)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'fb',textContent:'${esc(initials(p.n))}'}))">` : `<span class="fb">${esc(initials(p.n))}</span>`;
+
+const COMMON_FIRST = new Set(["محمد", "احمد", "علي", "عبد", "عبدالله", "عبدالرحمن", "خالد", "عمر", "مصطفي", "ابراهيم", "يوسف", "حسن", "حسين", "سعد", "فهد",
+  "mohamed", "mohammed", "muhammad", "ahmed", "ali", "abdullah", "abdul", "omar", "ibrahim", "youssef", "hassan"]);
+function normName(x) {
+  return String(x || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[ً-ٰٟـ]/g, "").replace(/[\u200B-\u200F\u202A-\u202E]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه").replace(/[ىیې]/g, "ي").replace(/ک/g, "ك").replace(/[ہھ]/g, "ه").replace(/ڤ/g, "ف").replace(/گ/g, "ك").replace(/چ/g, "ج").replace(/پ/g, "ب")
+    .replace(/ؤ/g, "و").replace(/ئ/g, "ي").replace(/ß/g, "ss").replace(/ø/g, "o").replace(/ł/g, "l").replace(/ı/g, "i")
+    .replace(/[^a-z0-9ء-ي\s-]/g, "").replace(/-/g, " ").replace(/\s+/g, " ").trim();
+}
+const stripAl = (t) => (t.length > 4 && t.startsWith("ال") ? t.slice(2) : t);
+function lev(a, b) {
+  if (a === b) return 0;
+  const m = a.length, n = b.length; if (!m || !n) return m || n;
+  let prev = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    const cur = [i];
+    for (let j = 1; j <= n; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = cur;
+  }
+  return prev[n];
+}
+const ratio = (a, b) => 1 - lev(a, b) / Math.max(a.length, b.length, 1);
+// هيكل الحروف: الحروف الساكنة بس، بنفس الرموز للعربي والإنجليزي
+function skeleton(x) {
+  let t = normName(x).replace(/\s/g, "");
+  t = t.replace(/sh/g, "s").replace(/ch/g, "k").replace(/ck/g, "k").replace(/ph/g, "f").replace(/th/g, "t").replace(/x/g, "ks");
+  const map = { b: "b", p: "b", v: "f", f: "f", t: "t", d: "d", s: "s", z: "z", c: "k", k: "k", q: "k", g: "g", j: "g", l: "l", m: "m", n: "n", r: "r",
+    "ب": "b", "پ": "b", "ت": "t", "ط": "t", "ث": "t", "د": "d", "ض": "d", "ذ": "d", "س": "s", "ص": "s", "ش": "s", "ز": "z", "ظ": "z",
+    "ك": "k", "ق": "k", "ج": "g", "غ": "g", "ف": "f", "ل": "l", "م": "m", "ن": "n", "ر": "r" };
+  return [...t].map((ch) => map[ch] || "").join("").replace(/(.)\1+/g, "$1");
+}
+// ---------- الحكم على الجواب ----------
+// الجواب صح إذا كان أقرب لاسم لاعبك من أي لاعب ثاني بالقاعدة، وكان قريب كفاية.
+// وبنفهم الجملة كاملة ("اعتقد انه هاد دوناروما يا زلمة")، واللفظ الأردني (ق=ء=g، ث=ت، ذ=د...)،
+// والألقاب (البرغوث، الدون، CR7...)، وبنتعلم من التصحيحات. وإذا في لاعبين قريبين بنسأل "قصدك مين؟".
+
+// كلمات الحشو اللي الناس بتحكيها مع الاسم
+const FILLERS = new Set(("هاد هذا هذه هاي هو هي هوه انه إنه انو انها اكيد أكيد يمكن ممكن بعتقد اعتقد بظن اظن أظن والله ولله يا زلمه زلمة زلمه " +
+  "اللاعب لاعب لاعبي الكابتن كابتن اسمه اسمو اسم بس لا اه آه ايوه اه طيب يعني شو هالمره خلص هلا هلأ اول مره احكي بقول بقولك قول " +
+  "is it the player i think its maybe sure name his he guess ok okay yes no um uh").split(/\s+/).map((w) => normName(w)).filter(Boolean));
+// المفتاح الصوتي باللهجة الأردنية: الحروف اللي بتنلفظ زي بعض بتصير حرف واحد، والحركات بتنشال
+function phon(x) {
+  const t = normName(x).replace(/\s/g, "");
+  const map = { "ق": "ك", "گ": "ك", "ك": "ك", "ج": "ج", "غ": "ج", "ث": "ت", "ت": "ت", "ط": "ت", "ذ": "د", "د": "د", "ض": "د", "ظ": "ز", "ز": "ز",
+    "ص": "س", "س": "س", "ش": "ش", "ح": "ه", "ه": "ه", "خ": "ه", "ب": "ب", "ف": "ف", "ل": "ل", "م": "م", "ن": "ن", "ر": "ر" };
+  return [...t].map((c) => map[c] || "").join("").replace(/(.)\1+/g, "$1");
+}
+// ألقاب مشهورة بالعربي (بنربطها باللاعب عن طريق اسمه الإنجليزي)
+const NICKS = {
+  "البرغوث": "Lionel Messi", "ليو": "Lionel Messi", "ليونيل": "Lionel Messi",
+  "الدون": "Cristiano Ronaldo", "cr7": "Cristiano Ronaldo", "سي ار سفن": "Cristiano Ronaldo", "كريس": "Cristiano Ronaldo",
+  "الظاهره": "Ronaldo", "ار تسعه": "Ronaldo", "r9": "Ronaldo", "رونالدو البرازيلي": "Ronaldo",
+  "الفرعون": "Mohamed Salah", "مو صلاح": "Mohamed Salah", "مو": "Mohamed Salah", "مو صلا": "Mohamed Salah",
+  "زيزو": "Zinedine Zidane", "ابرا": "Zlatan Ibrahimović", "ايبرا": "Zlatan Ibrahimović", "كي دي بي": "Kevin De Bruyne", "kdb": "Kevin De Bruyne",
+  "فيني": "Vinícius Júnior", "فينيسيوس": "Vinícius Júnior", "نيمار جونيور": "Neymar", "بيكهام": "David Beckham", "القيصر": "Franz Beckenbauer",
+  "جيجي": "Gianluigi Buffon", "رونالدينهو": "Ronaldinho", "الساحر": "Ronaldinho", "كاكا": "Kaká", "تشافي": "Xavi", "شافي": "Xavi",
+  "انيستا": "Andrés Iniesta", "الرسام": "Andrés Iniesta", "بنزيما": "Karim Benzema", "البنز": "Karim Benzema", "ليفا": "Robert Lewandowski",
+  "ليفاندوفسكي": "Robert Lewandowski", "ابو تريكه": "Mohamed Aboutrika", "الماجيكو": "Mohamed Aboutrika", "مودريتش": "Luka Modrić",
+};
+let NICK_IDS = null;
+function nickIds() {
+  if (NICK_IDS) return NICK_IDS;
+  NICK_IDS = new Map();
+  const byN = new Map(DATA.players.map((p) => [normName(p.n), p.id]));
+  for (const [k, n] of Object.entries(NICKS)) { const id = byN.get(normName(n)); if (id) NICK_IDS.set(normName(k).replace(/\s/g, ""), id); }
+  return NICK_IDS;
+}
+// اللي اتعلمناه من التصحيحات على هالتلفون: كلمة سمعناها → لاعب
+const learned = () => store.get("learn", {});
+function learn(heard, id) {
+  const k = normName(heard).replace(/\s/g, "");
+  if (k.length < 2 || !id) return;
+  const m = learned(); m[k] = id;
+  const keys = Object.keys(m); if (keys.length > 400) delete m[keys[0]];
+  store.set("learn", m);
+}
+
+function nameKeys(p) {
+  if (p._keys) return p._keys;
+  const keys = new Set(), skel = { ar: new Set(), la: new Set() }, ph = new Set();
+  for (const nm of [p.a, p.n, ...(p.al || [])].filter(Boolean).map(normName)) {
+    if (!nm) continue;
+    const bucket = /[ء-ي]/.test(nm) ? skel.ar : skel.la;
+    const words = nm.split(" ").filter(Boolean);
+    keys.add(nm.replace(/\s/g, ""));
+    words.forEach((w, k) => {
+      if (w.length >= 3 && (k === words.length - 1 || (w.length >= 4 && !COMMON_FIRST.has(w)))) { keys.add(w); keys.add(stripAl(w)); }
+    });
+    if (words.length >= 3) keys.add(words.slice(-2).join(""));
+    const add = (x) => { if (x.length >= 3) bucket.add(x); };
+    add(skeleton(nm)); add(skeleton(words[words.length - 1] || ""));
+    words.filter((w) => w.length >= 4 && !COMMON_FIRST.has(w)).forEach((w) => add(skeleton(w)));
+    if (bucket === skel.ar) {
+      [nm, words[words.length - 1] || "", ...words.filter((w) => w.length >= 4 && !COMMON_FIRST.has(w))].forEach((w) => { const k2 = phon(w); if (k2.length >= 3) ph.add(k2); });
+    }
+  }
+  p._keys = { keys: [...keys].filter(Boolean), skel: { ar: [...skel.ar], la: [...skel.la] }, ph: [...ph] };
+  return p._keys;
+}
+// المقاطع اللي ممكن تكون هي الاسم: كل كلمة، وكل كلمتين وثلاث ورا بعض، بعد ما نشيل الحشو
+function phrasesOf(input) {
+  const words = normName(input).split(" ").filter((w) => w && !FILLERS.has(w) && !FILLERS.has(stripAl(w)));
+  const out = new Set();
+  if (!words.length) return [];
+  out.add(words.join(""));
+  for (let n = 1; n <= 3; n++) for (let i = 0; i + n <= words.length; i++) out.add(words.slice(i, i + n).join(""));
+  return [...out].filter((x) => x.length >= 2).map((q) => ({ q, qs: skeleton(q), qp: phon(q), ar: /[ء-ي]/.test(q), words }));
+}
+// قديش المقطع قريب من اسم اللاعب (0 لـ 1)
+function phraseScore(p, ph) {
+  const { keys, skel, ph: pk } = nameKeys(p);
+  const { q, qs, qp } = ph;
+  let best = 0;
+  for (const k of keys) {
+    if (k === q) return 1;
+    const L = Math.max(q.length, k.length);
+    if (1 - Math.abs(q.length - k.length) / L < 0.5 && !(k.length >= 4 && ph.words.includes(k))) continue;   // فرق الطول كبير
+    if (k.length >= 4 && ph.words.includes(k)) best = Math.max(best, 0.97);
+    const d = lev(q, k);
+    let r = 1 - d / L;
+    if (L >= 6 && d <= 2) r = Math.max(r, 0.85);
+    else if (L >= 4 && d <= 1) r = Math.max(r, 0.82);
+    if (r > best) best = r;
+  }
+  if (ph.ar && qp.length >= 3) for (const k of pk) { const r = ratio(qp, k); best = Math.max(best, r === 1 ? 0.95 : r * 0.9); }   // اللفظ الأردني
+  const other = ph.ar ? skel.la : skel.ar;   // عربي مقابل إنجليزي
+  // الهيكل القصير (3 حروف ساكنة) ممكن يطابق بالصدفة، فوزنه أقل
+  if (qs.length >= 3) for (const k of other) { const r = ratio(qs, k); best = Math.max(best, r === 1 ? (qs.length >= 4 ? 0.99 : 0.9) : r * (qs.length >= 4 ? 0.94 : 0.85)); }
+  return best;
+}
+function scoreFor(p, phrases, nick, learnt) {
+  let best = 0;
+  for (const ph of phrases) {
+    if (nick.get(ph.q) === p.id || learnt[ph.q] === p.id) return 1;
+    const sc = phraseScore(p, ph);
+    if (sc > best) best = sc;
+    if (best === 1) break;
+  }
+  return best;
+}
+// التحليل الكامل: قديش الجواب قريب من لاعبك، ومين أقرب اللاعبين الثانيين
+function analyzeAnswer(target, input) {
+  const phrases = phrasesOf(input);
+  if (!phrases.length) return { st: 0, top: [] };
+  const nick = nickIds(), learnt = learned();
+  const st = scoreFor(target, phrases, nick, learnt);
+  const top = [];   // أقرب 4 لاعبين غير لاعبك
+  for (const p of DATA.players) {
+    if (p.id === target.id) continue;
+    const sc = scoreFor(p, phrases, nick, learnt);
+    if (sc < 0.55 || (top.length >= 4 && sc <= top[top.length - 1].sc)) continue;
+    top.push({ id: p.id, sc }); top.sort((x, y) => y.sc - x.sc); if (top.length > 4) top.pop();
+  }
+  return { st, top };
+}
+// النتيجة: yes = صح، no = غلط، close = قريب بس مش أكيد (جرّب كمان مرة)، ask = في كذا لاعب قريبين (قصدك مين؟)
+function judgeName(target, input) {
+  const { st, top } = analyzeAnswer(target, input);
+  const other = top.length ? top[0].sc : 0;
+  if (st >= 0.72 && other <= st + 0.08) return { v: "yes" };
+  // كذا لاعب قريبين من اللي انحكى؟ بنسأل بدون ما نكشف مين لاعبك (الأسماء حسب اللي انحكى بس)
+  const all = [{ id: target.id, sc: st }, ...top].filter((x) => x.sc >= 0.6).sort((x, y) => y.sc - x.sc);
+  const head = all.length ? all[0].sc : 0;
+  const near = all.filter((x) => x.sc >= head - 0.1 && x.sc >= 0.6).slice(0, 4);
+  // إذا في اسم واحد بس مطابق تماماً للي انحكى والباقي بعاد، ما في داعي نسأل
+  const exact = all.filter((x) => x.sc >= 0.97);
+  const clearWinner = exact.length === 1 && (all[1] ? all[1].sc < head - 0.1 : true);
+  if (near.length >= 2 && !clearWinner) return { v: "ask", choices: shuffle(near.map((x) => x.id)) };
+  if (other >= 0.72) return { v: "no" };
+  if (Math.max(st, other) >= 0.5) return { v: "close" };
+  return { v: "no" };
+}
+
+let AC = null;
+function audio() {
+  try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); } catch { AC = null; }
+  return AC;
+}
+document.addEventListener("pointerdown", () => audio(), { once: true });
+function tone(freq, start, dur, type = "sine", vol = 0.18) {
+  const ac = audio(); if (!ac) return;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, ac.currentTime + start);
+  g.gain.setValueAtTime(0.0001, ac.currentTime + start);
+  g.gain.exponentialRampToValueAtTime(vol, ac.currentTime + start + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + start + dur);
+  o.connect(g).connect(ac.destination); o.start(ac.currentTime + start); o.stop(ac.currentTime + start + dur + 0.05);
+}
+function haptic(kind) {
+  try { window.webkit?.messageHandlers?.haptic?.postMessage(kind); } catch {}
+  try { navigator.vibrate && navigator.vibrate(kind === "error" ? [80, 60, 120] : [40]); } catch {}
+}
+function confettiBurst(big = false) {
+  const cv = document.createElement("canvas");
+  cv.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999";
+  document.body.appendChild(cv);
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+  const c = cv.getContext("2d"); c.scale(dpr, dpr);
+  const colors = ["#6C47FF", "#FDB022", "#12B76A", "#F04438", "#0BA5EC", "#EE46BC", "#FFFFFF"];
+  const N = big ? 260 : 160, parts = [];
+  for (let i = 0; i < N; i++) {
+    const fromLeft = i % 2 === 0;
+    parts.push({
+      x: fromLeft ? -10 : innerWidth + 10, y: innerHeight * (0.55 + Math.random() * 0.3),
+      vx: (fromLeft ? 1 : -1) * (6 + Math.random() * 9), vy: -(10 + Math.random() * 12),
+      w: 6 + Math.random() * 7, h: 8 + Math.random() * 10, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4,
+      col: colors[i % colors.length], shape: Math.random() < 0.3 ? "c" : "r",
+    });
+  }
+  const t0 = performance.now();
+  (function frame(t) {
+    const el = (t - t0) / 1000;
+    c.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of parts) {
+      p.vy += 0.38; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      c.save(); c.translate(p.x, p.y); c.rotate(p.r); c.globalAlpha = Math.max(0, 1 - Math.max(0, el - 1.8) / 0.8);
+      c.fillStyle = p.col;
+      if (p.shape === "c") { c.beginPath(); c.arc(0, 0, p.w / 2, 0, 7); c.fill(); }
+      else c.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r * 2)) + 2);
+      c.restore();
+    }
+    if (el < 2.6) requestAnimationFrame(frame); else cv.remove();
+  })(t0);
+}
+function redFlash() {
+  const o = document.createElement("div");
+  o.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:9998;background:radial-gradient(circle at 50% 45%,rgba(240,68,56,.25),rgba(217,45,32,.75));opacity:0;transition:opacity .12s";
+  document.body.appendChild(o);
+  requestAnimationFrame(() => { o.style.opacity = "1"; });
+  setTimeout(() => { o.style.transition = "opacity .6s"; o.style.opacity = "0"; }, 380);
+  setTimeout(() => o.remove(), 1100);
+  const app = document.querySelector(".wrap") || document.body;
+  app.animate([{ transform: "translateX(0)" }, { transform: "translateX(-14px)" }, { transform: "translateX(12px)" },
+    { transform: "translateX(-9px)" }, { transform: "translateX(6px)" }, { transform: "translateX(0)" }], { duration: 480, easing: "ease-out" });
+}
+function fx(kind) {
+  if (kind === "good" || kind === "win") {
+    confettiBurst(kind === "win");
+    [523, 659, 784, 1047].forEach((f, k) => tone(f, k * 0.09, 0.28, "triangle", 0.16));
+    haptic("success");
+  } else if (kind === "bad") {
+    redFlash();
+    tone(196, 0, 0.22, "sawtooth", 0.12); tone(147, 0.18, 0.35, "sawtooth", 0.12);
+    haptic("error");
+  }
+}
+
+
+
+function intro() {
+  render(`<h1>مسيرة لاعب</h1>
+    <p class="sub">بتطلع شعارات الأندية اللي لعب فيها لاعب، واحد ورا الثاني. مين بيعرفه أول؟</p>
+    <div class="card" style="background:#FFF;border:2px solid var(--brand-soft);border-radius:26px;padding:16px;box-shadow:0 6px 0 var(--brand-soft)"><ul class="rules">
+      <li>لاعبين (أو لحد ${MAX_PLAYERS})، <b>كل واحد من تلفونه</b>.</li>
+      <li>بيطلع أول نادي لعب فيه اللاعب. إذا عرفته، <b>اكتب اسمه</b> (عربي أو إنجليزي، واسم العيلة بيكفي).</li>
+      <li>إذا ما عرفتوه، كل واحد بيكبس <b>«النادي الجاي»</b>، ولما الكل يكبس بيطلع النادي اللي بعده، لحد آخر نادي.</li>
+      <li>أول واحد بيجاوب صح بياخذ النقاط: من أول شعار <b>5</b>، وبعدها 4، 3، 2، ومن الخامس وطالع <b>1</b>.</li>
+      <li>الجواب الغلط بيقفل عليك لحد ما يطلع النادي الجاي.</li>
+      <li>اللاعبين من أعظم لاعبين بالتاريخ ونجوم آخر 15 سنة (${DATA.players.length} لاعب).</li>
+    </ul></div>
+    <button class="big green" id="online" type="button">يلا نلعب</button>`);
+  bind({ online: () => onlineMenu() });
+}
+
+// ---------- أونلاين: نفس فكرة تحدي الأصحاب (المضيف هو اللي بيمسك اللعبة) ----------
+const BROKERS = ["wss://broker.emqx.io:8084/mqtt", "wss://broker.hivemq.com:8884/mqtt", "wss://test.mosquitto.org:8081/mqtt"];
+const qs = new URLSearchParams(location.search);
+const ROOT = "abuodeh-career-v1";
+let client = null, room = null, isHost = false, S = null, lastFx = null, lastShown = 0, lastKey = "";
+let local = { locked: null, msg: "", ask: null, draft: "" };
+const me = { id: store.get("pid", null), name: store.get("myname", "") };
+if (!me.id) { me.id = Math.random().toString(36).slice(2, 10); store.set("pid", me.id); }
+const topic = (k) => `${ROOT}/${room}/${k}`;
+const myIndex = () => (S ? S.players.findIndex((p) => p.id === me.id) : -1);
+const target = () => (S && S.target ? byId.get(S.target) : null);
+
+function connect(onReady, k = 0) {
+  if (typeof mqtt === "undefined") { fail("ما قدرت أحمّل مكتبة الاتصال. تأكد من الإنترنت وجرّب كمان مرة."); return; }
+  const url = qs.get("broker") || BROKERS[k % BROKERS.length];
+  let ready = false;
+  const c = mqtt.connect(url, { clientId: "ac_" + me.id + "_" + Math.random().toString(36).slice(2, 6), reconnectPeriod: 2000, connectTimeout: 8000, clean: true });
+  const giveUp = setTimeout(() => { if (!ready) { c.end(true); if (k + 1 < BROKERS.length && !qs.get("broker")) connect(onReady, k + 1); else fail("ما قدرت أتصل. جرّب كمان شوي."); } }, 9000);
+  c.on("connect", () => {
+    if (!ready) { ready = true; clearTimeout(giveUp); client = c; onReady(); return; }
+    if (!room) return;
+    c.subscribe(topic("s"), { qos: 1 });
+    if (isHost) { c.subscribe(topic("a"), { qos: 1 }); publish(); } else send({ t: "join", name: me.name });
+  });
+  c.on("message", (t, buf) => {
+    let m; try { m = JSON.parse(buf.toString()); } catch { return; }
+    if (t === topic("s")) onState(m);
+    else if (t === topic("a") && isHost) onAction(m);
+  });
+}
+function fail(msg) { render(`<h1>مشكلة بالاتصال</h1><p class="sub">${esc(msg)}</p><button class="big" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
+function loading(msg) { render(`<div class="loading">${esc(msg)}</div>`); }
+
+function onlineMenu(prefill = qs.get("room") || "") {
+  render(`<h1>كل واحد من تلفونه</h1>
+    <p class="sub">واحد بيعمل غرفة وبيبعت الكود لصاحبه، والثاني بيدخل بالكود. تلفون صاحب الغرفة لازم يضل مفتوح لآخر اللعبة.</p>
+    <h2>اسمك</h2>
+    <input class="search" id="myname" type="text" maxlength="14" placeholder="اسمك" value="${esc(me.name)}" autocomplete="off">
+    <button class="big" id="create" type="button">اعمل غرفة جديدة</button>
+    <h2>أو ادخل غرفة صاحبك</h2>
+    <input class="search" id="code" type="text" inputmode="numeric" maxlength="5" placeholder="كود الغرفة (5 أرقام)" value="${esc(prefill)}" autocomplete="off" style="letter-spacing:4px;text-align:center;font-size:22px">
+    <p class="note" id="err" hidden></p>
+    <button class="big green" id="join" type="button">ادخل</button>
+    <button class="big ghost" id="back" type="button">رجوع</button>`);
+  const getName = () => {
+    const n = $("myname").value.trim();
+    if (!n) { $("err").hidden = false; $("err").textContent = "اكتب اسمك أول."; return null; }
+    me.name = n; store.set("myname", n); return n;
+  };
+  bind({
+    create: () => { if (getName()) hostRoom(); },
+    join: () => {
+      if (!getName()) return;
+      const code = $("code").value.replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/\D/g, "");
+      if (code.length !== 5) { $("err").hidden = false; $("err").textContent = "الكود 5 أرقام."; return; }
+      joinRoom(code);
+    },
+    back: () => { history.replaceState(null, "", location.pathname); intro(); },
+  });
+}
+
+function boot() {
+  const saved = store.get("online", null);
+  if (qs.get("room")) { onlineMenu(qs.get("room")); return true; }
+  if (saved && saved.room && Date.now() - (saved.at || 0) < 6 * 3600e3) {
+    render(`<h1>في لعبة مفتوحة</h1><p class="sub">الغرفة ${esc(saved.room)}${saved.host ? " (إنت صاحبها)" : ""}.</p>
+      <button class="big green" id="re" type="button">ارجع للعبة</button><button class="big ghost" id="no" type="button">لا، طلّعني</button>`);
+    bind({ re: () => (saved.host ? hostRoom(saved.room, store.get("hoststate-" + saved.room, null)) : joinRoom(saved.room)), no: () => { store.set("online", null); intro(); } });
+    return true;
+  }
+  return false;
+}
+
+function leave() {
+  try { if (client && isHost && room) client.publish(topic("s"), "", { qos: 1, retain: true }); } catch {}
+  const c = client; setTimeout(() => { try { c && c.end(true); } catch {} }, 300);
+  client = null; room = null; S = null; isHost = false;
+  store.set("online", null);
+  history.replaceState(null, "", location.pathname);
+  intro();
+}
+
+// ---------- المضيف ----------
+function hostRoom(code, restored) {
+  isHost = true;
+  room = code || String(Math.floor(10000 + Math.random() * 90000));
+  store.set("online", { room, host: true, at: Date.now() });
+  loading("عم بفتح الغرفة...");
+  connect(() => {
+    client.subscribe([topic("s"), topic("a")], { qos: 1 });
+    S = restored || { v: 0, room, host: me.id, phase: "lobby", rounds: 10, round: 0, players: [{ id: me.id, name: me.name, total: 0 }], used: [] };
+    publish();
+  });
+}
+function publish() {
+  S.v++; S.now = Date.now();
+  store.set("hoststate-" + room, S);
+  store.set("online", { room, host: true, at: Date.now() });
+  client.publish(topic("s"), JSON.stringify(S), { qos: 1, retain: true });
+  onState(S);
+}
+function uniqueName(n) {
+  let name = String(n || "لاعب").slice(0, 14), k = 2;
+  while (S.players.some((p) => p.name === name)) name = `${String(n).slice(0, 12)} ${k++}`;
+  return name;
+}
+function pickTarget() {
+  const used = new Set(S.used);
+  // أغلب الوقت لاعب مشهور كثير ومسيرته 3 أندية أو أكثر
+  const pool = DATA.players.filter((p) => !used.has(p.id) && p.c.length >= 3);
+  const list = pool.length ? pool : DATA.players.filter((p) => !used.has(p.id));
+  const all = list.length ? list : DATA.players;
+  const top = all.slice(0, Math.max(40, Math.round(all.length * 0.6)));
+  const p = top[Math.floor(Math.random() * top.length)];
+  S.used.push(p.id); if (S.used.length > 600) S.used = S.used.slice(-600);
+  return p;
+}
+function nextRound() {
+  S.round++;
+  const p = pickTarget();
+  S.target = p.id; S.n = p.c.length; S.k = 1; S.ready = []; S.locked = {}; S.phase = "play"; S.result = null; S.key = S.round + ":" + p.id;
+  publish();
+}
+function onAction(a) {
+  if (!S || !a || !a.pid) return;
+  const i = S.players.findIndex((p) => p.id === a.pid);
+  switch (a.t) {
+    case "join":
+      if (i >= 0) { if (a.name && S.players[i].name !== a.name) S.players[i].name = a.name; return publish(); }
+      if (S.phase !== "lobby" || S.players.length >= MAX_PLAYERS) return publish();
+      S.players.push({ id: a.pid, name: uniqueName(a.name), total: 0 });
+      return publish();
+    case "kick":
+      if (a.pid !== S.host || S.phase !== "lobby") return;
+      S.players = S.players.filter((p) => p.id !== a.who); return publish();
+    case "rounds":
+      if (a.pid !== S.host || S.phase !== "lobby" || ![5, 10, 15].includes(a.n)) return;
+      S.rounds = a.n; return publish();
+    case "start":
+      if (a.pid !== S.host || S.phase !== "lobby" || S.players.length < 2) return;
+      S.players.forEach((p) => { p.total = 0; }); S.round = 0;
+      return nextRound();
+    case "next":   // جاهز للنادي الجاي
+      if (S.phase !== "play" || i < 0 || S.key !== a.key) return;
+      if (!S.ready.includes(a.pid)) S.ready.push(a.pid);
+      if (S.ready.length >= S.players.length) {
+        if (S.k < S.n) { S.k++; S.ready = []; S.locked = {}; S.flash = null; }
+        else { S.phase = "reveal"; S.result = { who: null }; }
+      }
+      return publish();
+    case "guess":
+      if (S.phase !== "play" || i < 0 || S.key !== a.key) return;
+      if (S.locked[a.pid] === S.k) return;
+      if (a.ok) {
+        const pts = pointsFor(S.k);
+        S.players[i].total += pts;
+        S.phase = "reveal"; S.result = { who: a.pid, pts, k: S.k, text: String(a.text || "").slice(0, 40) };
+        S.flash = { id: Date.now(), good: true };
+      } else {
+        S.locked[a.pid] = S.k;
+        S.flash = { id: Date.now(), bad: true, who: a.pid, text: String(a.text || "").slice(0, 40) };
+      }
+      return publish();
+    case "cont":
+      if (a.pid !== S.host || S.phase !== "reveal") return;
+      if (S.round >= S.rounds) { S.phase = "over"; return publish(); }
+      return nextRound();
+    case "again":
+      if (a.pid !== S.host || S.phase !== "over") return;
+      S.players.forEach((p) => { p.total = 0; }); S.round = 0;
+      return nextRound();
+  }
+}
+
+// ---------- اللاعبين ----------
+function joinRoom(code) {
+  isHost = false; room = code;
+  store.set("online", { room, host: false, at: Date.now() });
+  loading("عم بدخل الغرفة...");
+  connect(() => {
+    client.subscribe(topic("s"), { qos: 1 });
+    send({ t: "join", name: me.name });
+    setTimeout(() => {
+      if (S) return;
+      render(`<h1>ما في رد من الغرفة ${esc(room)}</h1><p class="sub">تأكد من الكود، وإنه تلفون صاحب الغرفة مفتوح على اللعبة.</p><button class="big" id="again" type="button">جرّب كمان مرة</button><button class="big ghost" id="back" type="button">رجوع</button>`);
+      bind({ again: () => send({ t: "join", name: me.name }), back: leave });
+    }, 6000);
+  });
+}
+function send(a) {
+  a.pid = me.id;
+  if (isHost) { onAction(a); return; }
+  if (client) client.publish(topic("a"), JSON.stringify(a), { qos: 1 });
+}
+
+function onState(st) {
+  if (!st || st.room !== room) return;
+  if (S && st !== S && st.host === S.host && st.v <= S.v) return;
+  const prev = S;
+  S = st;
+  const fid = S.flash && S.flash.id;
+  if (fid && fid !== lastFx && Date.now() - fid < 15000) {
+    const mine = S.flash.who === me.id;
+    if (S.flash.good) setTimeout(() => fx(S.result && S.result.who === me.id ? "good" : ""), 60);
+    else if (S.flash.bad && mine) setTimeout(() => fx("bad"), 60);
+  }
+  lastFx = fid || lastFx;
+  if (S.phase === "over" && prev && prev.phase !== "over") setTimeout(() => fx("win"), 120);
+  if (!isHost && myIndex() < 0 && S.phase !== "lobby") { render(`<h1>اللعبة بلّشت</h1><p class="sub">ما لحقت تدخل هالمرة.</p><button class="big ghost" id="back" type="button">رجوع</button>`); bind({ back: leave }); return; }
+  // ما نقطع على اللي عم يكتب إذا ما تغير إشي مهم
+  const typing = document.activeElement && document.activeElement.id === "ans";
+  if (typing) local.draft = document.activeElement.value;
+  if (S.key !== lastKey) { local = { locked: null, msg: "", ask: null, draft: "" }; lastShown = 0; lastKey = S.key; }
+  draw();
+  if (typing && $("ans")) { const el = $("ans"); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+}
+
+function scoreBar() {
+  return `<div class="status3">${S.players.map((p) => `<div class="${p.id === me.id ? "me" : ""}"><b>${esc(p.name)}${p.id === me.id ? " (إنت)" : ""}</b><span>${p.total}</span>
+    ${S.phase === "play" ? `<small>${S.locked && S.locked[p.id] === S.k ? "❌ غلط" : S.ready.includes(p.id) ? "⏭ جاهز" : "بيفكر..."}</small>` : ""}</div>`).join("")}</div>`;
+}
+const header = () => `<div class="sub" style="text-align:center">الغرفة <b style="letter-spacing:3px">${esc(room)}</b>${S.round ? ` · اللاعب ${S.round} من ${S.rounds}` : ""}</div>`;
+
+function draw() {
+  if (S.phase === "lobby") return drawLobby();
+  if (S.phase === "play") return drawPlay();
+  if (S.phase === "reveal") return drawReveal();
+  return drawOver();
+}
+
+function drawLobby() {
+  const link = location.origin + location.pathname + "?room=" + room;
+  render(`${header()}<h1>الغرفة ${esc(room)}</h1>
+    <p class="sub">${isHost ? "ابعت الكود أو الرابط لصاحبك. لما يدخل، اضغط ابدأ." : "استنى صاحب الغرفة يبدأ اللعبة."}</p>
+    ${isHost ? `<button class="big ghost" id="share" type="button">ابعت رابط الغرفة</button>` : ""}
+    <h2>كم لاعب نحزر؟</h2>
+    <div class="seg">${[5, 10, 15].map((n) => `<button type="button" data-r="${n}" aria-pressed="${S.rounds === n}" ${isHost ? "" : "disabled"}>${n}</button>`).join("")}</div>
+    <h2>اللاعبين (${S.players.length} من ${MAX_PLAYERS})</h2>
+    <div class="stack" style="gap:8px">${S.players.map((p) => `<div class="pickbtn prow" style="grid-template-columns:1fr auto"><b>${esc(p.name)}${p.id === S.host ? " · صاحب الغرفة" : ""}${p.id === me.id ? " (إنت)" : ""}</b>${isHost && p.id !== me.id ? `<button type="button" class="back" data-kick="${p.id}">شيل</button>` : ""}</div>`).join("")}</div>
+    ${isHost ? `<button class="big green" id="start" type="button" ${S.players.length < 2 ? "disabled" : ""}>${S.players.length < 2 ? "استنى صاحبك يدخل..." : "ابدأ اللعبة"}</button>` : ""}
+    <button class="big ghost" id="out" type="button">اطلع من الغرفة</button>`);
+  bind({
+    start: () => send({ t: "start" }), out: leave,
+    share: async () => {
+      const text = `تعال العب معي "مسيرة لاعب"، كود الغرفة ${room}`;
+      try { if (navigator.share) { await navigator.share({ title: "مسيرة لاعب", text, url: link }); return; } } catch { return; }
+      try { await navigator.clipboard.writeText(text + "\n" + link); $("share").textContent = "انسخت الرابط ✓"; } catch {}
+    },
+  });
+  document.querySelectorAll("[data-kick]").forEach((b) => b.onclick = () => send({ t: "kick", who: b.dataset.kick }));
+  if (isHost) document.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => send({ t: "rounds", n: +b.dataset.r }));
+}
+
+function drawPlay() {
+  const p = target(); if (!p) return;
+  const fresh = S.k > lastShown && lastShown > 0 ? S.k - 1 : -1;
+  if (S.k > lastShown && lastShown > 0) { try { navigator.vibrate && navigator.vibrate(30); } catch {} }
+  lastShown = S.k;
+  const locked = S.locked && S.locked[me.id] === S.k;
+  const ready = S.ready.includes(me.id);
+  const last = S.k >= S.n;
+  const wrongOther = S.flash && S.flash.bad && S.flash.who !== me.id && S.locked[S.flash.who] === S.k ? S.players.find((x) => x.id === S.flash.who) : null;
+  render(`${header()}${scoreBar()}
+    <h2 style="text-align:center">مين هاللاعب؟</h2>
+    <p class="ptsnow">النادي <b>${S.k}</b> من <b>${S.n}</b> · الجواب الصح هلأ بـ<b>${pointsFor(S.k)}</b> ${pointsFor(S.k) === 1 ? "نقطة" : "نقاط"}</p>
+    ${pathView(p, S.k, fresh)}
+    ${wrongOther ? `<p class="note" style="text-align:center">${esc(wrongOther.name)} جاوب غلط ❌</p>` : ""}
+    ${local.ask ? `<div class="askbox"><b>قصدك مين؟</b><div class="choices">${local.ask.map((id) => `<button type="button" data-ch="${id}">${esc(byId.get(id).a)}</button>`).join("")}</div>
+      <button class="linkish" id="noask" type="button">ولا واحد منهم</button></div>`
+    : locked ? `<div class="flash badf"><b>غلط ❌</b><small>استنى النادي الجاي عشان تجاوب كمان مرة.</small></div>`
+    : `<div class="ansrow"><input class="search" id="ans" type="text" placeholder="اكتب اسم اللاعب" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(local.draft)}" enterkeyhint="send">
+      <button class="big green" id="go" type="button">جاوب</button></div>`}
+    ${local.msg ? `<p class="note" style="text-align:center;color:var(--l2d);font-weight:700">${esc(local.msg)}</p>` : ""}
+    <button class="big ${ready ? "ghost" : ""}" id="nx" type="button" ${ready ? "disabled" : ""}>${ready ? "⏳ استنى صاحبك..." : last ? "ما عرفته، اكشفه" : "النادي الجاي ⏭"}</button>
+    <p class="readyline">${S.ready.length ? `${S.ready.length} من ${S.players.length} جاهزين` : "لما الكل يكبس بيطلع النادي اللي بعده"}</p>
+    <button class="linkish" id="out" type="button" style="align-self:center">اطلع من اللعبة</button>`);
+  const submit = () => {
+    const text = ($("ans") ? $("ans").value : "").trim();
+    if (!text) return;
+    local.draft = "";
+    const r = judgeName(p, text);
+    if (r.v === "yes") { send({ t: "guess", ok: true, text, key: S.key }); return; }
+    if (r.v === "close") { local.msg = "قريب! بس مش متأكد، اكتبه أوضح 🤏"; local.draft = text; return draw(); }
+    if (r.v === "ask") { local.ask = r.choices; local.msg = ""; return draw(); }
+    local.msg = ""; send({ t: "guess", ok: false, text, key: S.key });
+  };
+  bind({
+    go: submit, out: () => { if (confirm("أكيد بدك تطلع من اللعبة؟")) leave(); },
+    nx: () => send({ t: "next", key: S.key }),
+    noask: () => { local.ask = null; draw(); },
+  });
+  if ($("ans")) $("ans").onkeydown = (e) => { if (e.key === "Enter") submit(); };
+  document.querySelectorAll("[data-ch]").forEach((b) => b.onclick = () => {
+    const id = b.dataset.ch; local.ask = null;
+    send({ t: "guess", ok: id === p.id, text: byId.get(id).a, key: S.key });
+  });
+}
+
+function drawReveal() {
+  const p = target(); if (!p) return;
+  const r = S.result || {};
+  const w = r.who ? S.players.find((x) => x.id === r.who) : null;
+  render(`${header()}
+    ${w ? `<div class="flash good"><b>${w.id === me.id ? "صح عليك! 🎉" : `${esc(w.name)} عرفه!`}</b><small>من النادي رقم ${r.k} · +${r.pts}</small></div>`
+      : `<div class="flash badf"><b>ولا حدا عرفه 😅</b></div>`}
+    <div class="who2">${photo(p)}<div><b>${esc(p.a)}</b><span>${esc(p.n)}</span></div></div>
+    ${pathView(p, p.c.length)}
+    ${scoreBar()}
+    ${isHost ? `<button class="big" id="cont" type="button">${S.round >= S.rounds ? "النتيجة النهائية" : "اللاعب الجاي"}</button>` : `<p class="note" style="text-align:center">استنى صاحب الغرفة يكمّل...</p>`}
+    <button class="linkish" id="out" type="button" style="align-self:center">اطلع من اللعبة</button>`);
+  bind({ cont: () => send({ t: "cont" }), out: () => { if (confirm("أكيد بدك تطلع؟")) leave(); } });
+}
+
+function drawOver() {
+  const board = S.players.slice().sort((a, b) => b.total - a.total);
+  const tie = board.length > 1 && board[0].total === board[1].total;
+  render(`${header()}
+    <div class="flash good"><b>${tie ? "تعادل! 🤝" : `${esc(board[0].name)} فاز! 🏆`}</b></div>
+    <div class="board">${board.map((p, k) => `<div class="r"><span class="pos">${k + 1}</span><b>${esc(p.name)}${p.id === me.id ? " (إنت)" : ""}</b><span class="t">${p.total}</span></div>`).join("")}</div>
+    ${isHost ? `<button class="big green" id="again" type="button">لعبة جديدة</button>` : `<p class="note" style="text-align:center">صاحب الغرفة بيقدر يبدأ لعبة جديدة.</p>`}
+    <button class="big ghost" id="out" type="button">اطلع</button>`);
+  bind({ again: () => send({ t: "again" }), out: leave });
+}
+
+$("quit").onclick = () => { location.href = "./"; };
+
+fetch("career.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
+  for (const p of d.players) {
+    if (typeof p.img === "string" && p.img.startsWith("c:")) p.img = "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(p.img.slice(2)) + "?width=240";
+    if (!p.n) p.n = p.a;
+    p.al = p.al || [];
+  }
+  DATA = d; byId = new Map(d.players.map((p) => [p.id, p]));
+  if (!d.players.length) { $("app").innerHTML = `<div class="loading">اللاعبين لسا بيتجهزوا. جرّب كمان شوي.</div>`; return; }
+  if (boot()) return;
+  intro();
+}).catch(() => { $("app").innerHTML = `<div class="loading">ما قدرت أحمّل اللاعبين.</div>`; });
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+</body>
+</html>
