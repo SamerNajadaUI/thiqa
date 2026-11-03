@@ -169,6 +169,19 @@ AUDIO_CACHE = GAMES / "points_audio.json"
 
 
 VIDEO_CACHE = GAMES / "points_video.json"
+# ملفات طلعت غلط (مش الشي المطلوب، أو مش مناسبة): بنتجاهلها وبناخذ اللي بعدها
+BAD_MEDIA = ["Sounds-of-Mars", "Life on the Ocean Wave", "Todd Rokita", "Hammer and sickle", "Kettle whistle.ogg|Whistle", "Rain and wind in London|Wind",
+             "Airplane Chime", "Creepy footsteps", "Rep. Bob Ney", "Sitar and tabla", "Thunder Dolphin", "Mating", "Interesting Facts", "Rainbow trout",
+             "Kamala Harris", "Simpleshow", "Ocean Today", "Essentials", "Nexter", "Blue British Shorthair cat snoring"]
+
+
+def bad_media(title, term):
+    for b in BAD_MEDIA:
+        name, _, only = b.partition("|")
+        if name.lower() in title.lower() and (not only or only == term):
+            return True
+    return False
+
 
 
 def commons_media(terms, kind):
@@ -187,7 +200,7 @@ def commons_media(terms, kind):
     nomusic = r"(pronunc|spoken|speech|wikipedia|interview|navy|lecture|article|podcast|anthem|hymn|news|trailer|ad\b|commercial" + (r"|music|song)" if kind == "audio" else ")")
     for term in terms:
         key = pre + term
-        if cache.get(key):
+        if cache.get(key) and not bad_media(urllib.parse.unquote(cache[key]).replace("_", " "), term):
             out[term] = cache[key]
             continue
         try:
@@ -199,7 +212,7 @@ def commons_media(terms, kind):
                 hits = [h["title"] for h in json.loads(r.read().decode("utf-8")).get("query", {}).get("search", [])]
             word = term.split()[0].lower()
             # بدون ملفات النطق (De-Zebra.ogg، LL-Q...) والمقابلات والأخبار
-            hits = [h for h in hits if word in h.lower()
+            hits = [h for h in hits if word in h.lower() and not bad_media(h, term)
                     and not re.match(r"^File:([A-Za-z]{2,3}(-[A-Za-z]{2,4})?-|IDWIKI|LL-Q|User\d)", h)
                     and not re.search(nomusic, h, re.I)]
             url = None

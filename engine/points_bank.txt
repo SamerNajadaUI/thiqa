@@ -501,7 +501,6 @@
 4|Saint Basil's Cathedral|كاتدرائية القديس باسيل
 
 ## animals | حيوانات | 🐾 | img | شو اسم هالحيوان؟
-1|Lion|أسد
 1|Giraffe|زرافة
 1|Elephant|فيل
 1|Zebra|حمار وحشي
@@ -1883,7 +1882,6 @@
 1|Penguin|بطريق
 1|Dolphin|دلفين
 1|Giraffe|زرافة
-1|Lion|أسد
 1|Horse|حصان
 2|Chameleon|حرباية
 2|Octopus|أخطبوط
