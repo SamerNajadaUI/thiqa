@@ -755,7 +755,7 @@ function drawBoard() {
     <div class="legend"><span style="--k:#34D399">سهل</span><span style="--k:#60A5FA">متوسط</span><span style="--k:#FBBF24">صعب</span><span style="--k:#F87171">صعب جداً</span></div>
     <p class="note">في سؤال دبل مخفي باللوحة 🔥</p>
     <button class="linkish" id="out" type="button">${mode === "local" ? "إنهاء اللعبة" : "اطلع من اللعبة"}</button>`);
-  if (mine) document.querySelectorAll(".cell:not(.done)").forEach((b) => b.onclick = () => send({ t: "open", cid: b.dataset.cid, i: +b.dataset.i, team: S.turn }));
+  if (mine) document.querySelectorAll(".cell:not(.done)").forEach((b) => b.onclick = () => { unlockAudio(); send({ t: "open", cid: b.dataset.cid, i: +b.dataset.i, team: S.turn }); });
   bind({ out: () => { if (confirm("أكيد؟ اللعبة رح تنتهي.")) { store.set("local", null); leave(); } } });
 }
 
@@ -764,22 +764,41 @@ function imgUrl(u) {
   return m ? `https://${m[1] === "commons" ? "commons.wikimedia.org" : m[1] + ".wikipedia.org"}/wiki/Special:FilePath/${m[2]}?width=640` : u;
 }
 // الأسئلة الصوتية: زر كبير بيشغّل الصوت (وبنحاول نشغّله لحاله أول ما يطلع السؤال)
-let SND = null, sndKey = "";
-function playSound(url, auto) {
+// الآيفون ما بيشغّل صوت إلا من عنصر صوت "انفتح" بكبسة. فبنعمل عنصر واحد مع أول كبسة ونضل نستعمله لكل الأصوات
+let SND = null, sndKey = "", sndUrl = "", sndAlt = false;
+function sndEl() {
+  if (!SND) {
+    SND = new Audio(); SND.preload = "auto"; SND.setAttribute("playsinline", "");
+    SND.onerror = () => {
+      const alt = altAudio(sndUrl);
+      if (alt && !sndAlt && SND.src) { sndAlt = true; SND.src = alt; SND.play().catch(() => {}); return; }
+      const note = document.getElementById("sndnote"); if (note && SND.src) note.textContent = "ما قدرت أشغّل الصوت. تأكد إنك متصل بالنت وجرّب كمان مرة.";
+    };
+    SND.onended = () => { const b = document.getElementById("sndbtn"); if (b) b.classList.remove("on"); };
+  }
+  return SND;
+}
+function unlockAudio() { try { const a = sndEl(); if (!a.src) { a.muted = true; a.play().catch(() => {}); a.muted = false; } } catch {} }
+document.addEventListener("pointerdown", unlockAudio, { once: true });
+const altAudio = (u) => { const m = String(u).match(/\/transcoded\/([^/]+\/[^/]+)\/([^/]+)\/[^/]+$/); return m ? u.replace(m[0], `/${m[1]}/${m[2]}`) : null; };
+function playSound(url) {
+  const a = sndEl(), b = document.getElementById("sndbtn"), note = document.getElementById("sndnote");
   try {
-    if (!SND || SND.dataset.src !== url) { if (SND) SND.pause(); SND = new Audio(url); SND.dataset.src = url; SND.preload = "auto"; }
-    SND.currentTime = 0;
-    const p = SND.play(); if (p && p.catch) p.catch(() => {});
-    const b = document.getElementById("sndbtn"); if (b) { b.classList.add("on"); SND.onended = () => b.classList.remove("on"); }
+    if (sndUrl !== url) { sndUrl = url; sndAlt = false; a.src = url; }
+    a.muted = false; a.currentTime = 0;
+    const p = a.play();
+    if (b) b.classList.add("on");
+    if (p && p.catch) p.catch(() => { if (b) b.classList.remove("on"); if (note) note.textContent = "اكبس على الزر عشان تسمع الصوت 👆"; });
   } catch {}
 }
 function qImage(c) {
   if (!c.img) return "";
   if (c.img.startsWith("audio:")) {
     const url = c.img.slice(6), k = c.cid + ":" + c.i + ":" + url;
-    if (k !== sndKey) { sndKey = k; setTimeout(() => playSound(url, true), 350); }
+    if (k !== sndKey) { sndKey = k; setTimeout(() => playSound(url), 300); }
     setTimeout(() => { const b = document.getElementById("sndbtn"); if (b) b.onclick = () => playSound(url); }, 0);
-    return `<button class="sound" id="sndbtn" type="button" aria-label="شغّل الصوت"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span>اسمع الصوت 🔊</button>`;
+    return `<button class="sound" id="sndbtn" type="button" aria-label="شغّل الصوت"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span>اسمع الصوت 🔊</button>
+      <p class="note" id="sndnote">إذا ما سمعت إشي: اكبس الزر، وتأكد إن صوت التلفون مفتوح ومش على الصامت 🔕</p>`;
   }
   const cls = c.img.includes("flagcdn") ? "flag" : c.img.includes("teamlogos") || /\.svg/i.test(c.img) ? "crest" : "";
   return `<img class="qimg ${cls}" src="${esc(imgUrl(c.img))}" data-alt="${esc(c.img)}" alt="" referrerpolicy="no-referrer" onerror="if(this.dataset.alt&&this.src!==this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt='';}else{this.style.display='none'}">`;

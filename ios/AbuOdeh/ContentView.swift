@@ -1,5 +1,6 @@
 import SwiftUI
 import WebKit
+import AVFoundation
 
 let siteURL = URL(string: "https://samernajadaui.github.io/thiqa/?source=ios")!
 
@@ -183,6 +184,8 @@ final class WebModel: NSObject, ObservableObject, WKNavigationDelegate, WKUIDele
         config.allowsInlineMediaPlayback = true
         config.suppressesIncrementalRendering = false
         config.mediaTypesRequiringUserActionForPlayback = []
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+        try? AVAudioSession.sharedInstance().setActive(true)
         let handler = WeakHandler(bridge)
         config.userContentController.add(handler, name: "haptic")
         config.userContentController.add(handler, name: "speech")

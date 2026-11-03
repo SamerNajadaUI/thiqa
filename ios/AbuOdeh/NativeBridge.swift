@@ -178,7 +178,7 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         engine.inputNode.removeTap(onBus: 0)
         for lane in lanes { lane.task?.cancel() }
         lanes = []
-        try? AVAudioSession.sharedInstance().setCategory(.ambient)
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])   // أصوات اللعبة بتطلع حتى على الصامت
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         if emitEnd && wasRunning { emit(["type": "end"]) }
     }
