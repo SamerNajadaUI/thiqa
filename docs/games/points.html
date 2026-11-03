@@ -68,12 +68,12 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 .pod .nm { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pod .nm i { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); }
 .pod .pts { font-family: var(--display); font-size: 30px; line-height: 1.05; direction: ltr; text-align: right; color: var(--on); }
-.pod .life { position: absolute; left: 9px; bottom: 9px; display: flex; gap: 3px; font-size: 12px; }
+.pod .life { display: flex; flex-wrap: wrap; gap: 2px 4px; font-size: 11.5px; line-height: 1.3; margin-top: 2px; direction: ltr; justify-content: flex-end; }
 .pod .life span.off { opacity: .18; filter: grayscale(1); }
 .pod.on { background: color-mix(in srgb, var(--c) 22%, transparent); box-shadow: inset 0 0 0 2px var(--c); }
 .pod.on .nm { color: var(--on); }
 .pod.t0 { --c: var(--t0); } .pod.t1 { --c: var(--t1); } .pod.t2 { --c: var(--t2); } .pod.t3 { --c: var(--t3); }
-.score.n4 { gap: 6px; } .score.n4 .pod { padding: 7px 7px 20px; } .score.n4 .pod .pts { font-size: 24px; } .score.n4 .pod .nm { font-size: 11.5px; gap: 4px; } .score.n4 .pod .life { font-size: 10px; left: 6px; bottom: 5px; gap: 2px; }
+.score.n4 { gap: 6px; } .score.n4 .pod { padding: 7px; } .score.n4 .pod .pts { font-size: 24px; } .score.n4 .pod .nm { font-size: 11.5px; gap: 4px; } .score.n4 .pod .life { font-size: 9.5px; gap: 1px 2px; }
 .turn { text-align: center; font-weight: 700; font-size: 15px; color: var(--c, var(--on)); margin: -2px 0 0; }
 .turn.t0 { --c: var(--t0); } .turn.t1 { --c: var(--t1); } .turn.t2 { --c: var(--t2); } .turn.t3 { --c: var(--t3); }
 
@@ -137,6 +137,9 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 .steal small { color: var(--dim); }
 .buzz { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
 .buzz button { border: 0; border-radius: 18px; padding: 18px 10px; font-family: var(--display); font-size: 24px; color: #1A1300; background: var(--c); box-shadow: 0 5px 0 color-mix(in srgb, var(--c) 60%, #000); animation: buzz 1s ease-in-out infinite; }
+.buzz button small.cnt { display: block; font-family: var(--font); font-size: 12.5px; font-weight: 700; color: #241900; opacity: .8; margin-top: 2px; }
+.steal small b { font-family: var(--font); font-weight: 800; font-size: 15px; color: var(--gold); }
+.buzz button[disabled] { animation: none; opacity: .6; }
 .buzz button.t0 { --c: var(--t0); } .buzz button.t1 { --c: var(--t1); } .buzz button.t2 { --c: var(--t2); } .buzz button.t3 { --c: var(--t3); }
 @keyframes buzz { 50% { transform: scale(1.04); } }
 
@@ -154,6 +157,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 .autonext span { position: relative; }
 
 /* اختيار الأقسام */
+.grp { margin: 6px 2px -4px; font-weight: 700; font-size: 14px; color: var(--dim); }
 .cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .cats button { position: relative; border: 1px solid rgb(255 255 255 / .12); background: rgb(255 255 255 / .05); border-radius: 16px; padding: 12px 4px 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--on); min-width: 0; }
 .cats button span { font-size: 28px; line-height: 1.1; }
@@ -190,6 +194,11 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 @keyframes dblin { from { transform: scale(.5); opacity: 0; } }
 .loading { text-align: center; color: var(--dim); padding: 48px 0; }
 .linkish { border: 0; background: none; color: var(--faint); font-size: 13px; text-decoration: underline; align-self: center; padding: 6px; }
+.qtext.enter { animation: qin .45s cubic-bezier(.2,.9,.3,1.2) both; }
+.enteropts .opt { animation: oin .35s cubic-bezier(.2,.9,.3,1.2) both; }
+.enteropts .opt:nth-child(2) { animation-delay: .07s; } .enteropts .opt:nth-child(3) { animation-delay: .14s; } .enteropts .opt:nth-child(4) { animation-delay: .21s; }
+@keyframes qin { from { opacity: 0; transform: scale(.92); } }
+@keyframes oin { from { opacity: 0; transform: translateY(10px); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -212,7 +221,7 @@ const LAYOUT = [1, 1, 2, 2, 3, 3, 4, 4];          // 8 أسئلة بكل قسم
 const MAX_TEAMS = 4;
 const catChoices = (n) => (n === 3 ? [3, 6] : [2, 4, 6]);   // عشان كل فريق ياخذ نفس عدد الأسئلة
 const Q_MS = (d) => (d >= 4 ? 40000 : 30000);
-const STEAL_MS = 15000, BUZZ_MS = 8000, NEXT_MS = 3800;
+const STEAL_MS = 15000, OFFER_MS = 7000, NEXT_MS = 4200;
 const HELPS = [
   { k: "cut", icon: "✂️", name: "حذف ثنتين" },
   { k: "two", icon: "✌️", name: "محاولتين" },
@@ -324,7 +333,7 @@ function newGame(cats) {
   }
   const flat = cats.flatMap((cid) => S.board[cid].map((_, i) => `${cid}:${i}`));
   SECRET.dbl = flat[Math.floor(Math.random() * flat.length)];
-  S.teams.forEach((t) => { t.score = 0; t.help = newHelp(); });
+  S.teams.forEach((t) => { t.score = 0; t.help = newHelp(); t.cards = CARDS; });
   S.turn = Math.floor(Math.random() * nT());
   S.phase = "board"; S.cur = null; S.res = null;
   for (const cid of cats) for (const q of SECRET.pre[cid]) if (q[3]) { const im = new Image(); im.referrerPolicy = "no-referrer"; im.src = imgUrl(q[3]); }
@@ -354,36 +363,53 @@ function arm() {
 }
 const leftOpts = (c) => [0, 1, 2, 3].filter((k) => !c.gone.includes(k) && !c.wrong.includes(k)).length;
 // غلط أو خلص الوقت: الفرق الثانية بتقدر تسرق. مع فريقين بيجاوب الثاني على طول، ومع 3 فرق الأسرع بالكبسة بياخذها
+// كرت السرقة: كل فريق معه 3 كروت باللعبة. بعد الغلط، بيطلع للفرق الثانية سؤال سريع: بدكم تسرقوا؟
+// الأسرع اللي بيكبس بياخذها. إذا جاوب صح بياخذ كامل النقاط، وإذا غلط بينخصم منه نصّها.
+const CARDS = 3;
 function openSteal() {
   const c = S.cur;
-  if (leftOpts(c) < 2) return finish(null, null);
-  const others = S.teams.map((_, k) => k).filter((k) => k !== c.picker);
   c.lastWrong = c.picker;
-  if (others.length === 1) { c.steal = "answer"; c.team = others[0]; c.deadline = Date.now() + STEAL_MS; }
-  else { c.steal = "buzz"; c.buzzers = others; c.team = null; c.deadline = Date.now() + BUZZ_MS; }
+  const able = S.teams.map((_, k) => k).filter((k) => k !== c.picker && (S.teams[k].cards ?? CARDS) > 0);
+  if (leftOpts(c) < 2 || !able.length) return finish(null, null);
+  c.steal = "offer"; c.offer = able; c.declined = []; c.team = null; c.deadline = Date.now() + OFFER_MS;
   S.fxId = { id: Date.now(), kind: "steal" };
   arm();
 }
 function timeUp() {
   const c = S.cur;
-  if (!c.steal) openSteal(); else finish(null, null);
+  if (!c.steal) openSteal();
+  else if (c.steal === "offer") finish(null, null);
+  else finish(null, null, c.team);    // السارق خلص وقته: بينخصم منه
 }
-function buzz(team) {
+function useCard(team) {
   const c = S.cur;
-  if (S.phase !== "q" || c.steal !== "buzz" || !c.buzzers.includes(team)) return false;
+  if (S.phase !== "q" || c.steal !== "offer" || !c.offer.includes(team) || c.declined.includes(team)) return false;
+  const t = S.teams[team];
+  if ((t.cards ?? CARDS) <= 0) return false;
+  t.cards = (t.cards ?? CARDS) - 1;
   c.steal = "answer"; c.team = team; c.deadline = Date.now() + STEAL_MS;
   S.fxId = { id: Date.now(), kind: "buzz", team };
   arm();
   return true;
 }
+function decline(team) {
+  const c = S.cur;
+  if (S.phase !== "q" || c.steal !== "offer") return false;
+  if (team === "all") return finish(null, null), true;
+  if (!c.offer.includes(team) || c.declined.includes(team)) return false;
+  c.declined.push(team);
+  if (c.offer.every((k) => c.declined.includes(k))) finish(null, null);
+  return true;
+}
 const cellPoints = (c) => LEVELS[c.d].pts * (c.dbl ? 2 : 1);
-function finish(winner, pick) {
+function finish(winner, pick, thief = null) {
   clearTimeout(timer);
   const c = S.cur;
-  let pts = 0;
-  if (winner !== null) { pts = c.steal ? Math.round(cellPoints(c) / 2) : cellPoints(c); S.teams[winner].score += pts; }
+  let pts = 0, minus = 0;
+  if (winner !== null) { pts = cellPoints(c); S.teams[winner].score += pts; }
+  else if (thief !== null) { minus = Math.round(cellPoints(c) / 2); S.teams[thief].score -= minus; }
   S.board[c.cid][c.i].w = winner === null ? -1 : winner;
-  S.res = { winner, pts, right: SECRET.right, pick, steal: !!c.steal, dbl: c.dbl, until: Date.now() + NEXT_MS };
+  S.res = { winner, pts, minus, thief, right: SECRET.right, pick, steal: c.steal === "answer", dbl: c.dbl, until: Date.now() + NEXT_MS };
   c.right = SECRET.right; c.team = winner;
   S.phase = "res";
   S.fxId = { id: Date.now(), kind: winner === null ? "none" : "good", team: winner };
@@ -398,12 +424,12 @@ function armNext() {
 }
 function answer(team, k) {
   const c = S.cur;
-  if (S.phase !== "q" || c.steal === "buzz" || team !== c.team || c.gone.includes(k) || c.wrong.includes(k)) return;
+  if (S.phase !== "q" || c.steal === "offer" || team !== c.team || c.gone.includes(k) || c.wrong.includes(k)) return;
   if (k === SECRET.right) return finish(team, k);
   S.fxId = { id: Date.now(), kind: "bad", team };
   c.wrong.push(k);
   if (!c.steal && c.tries > 1) { c.tries--; return; }
-  if (!c.steal) openSteal(); else finish(null, k);
+  if (!c.steal) openSteal(); else finish(null, k, team);
 }
 function useHelp(team, h) {
   const c = S.cur, t = S.teams[team];
@@ -448,7 +474,8 @@ function act(a) {
       S.catsN = a.cats.length; newGame(a.cats); break;
     case "open": if (!openCell(team, a.cid, a.i)) return; break;
     case "ans": answer(team, a.k); break;
-    case "buzz": if (!buzz(team)) return; break;
+    case "card": if (!useCard(team)) return; break;
+    case "decline": if (!decline(a.all ? "all" : team)) return; break;
     case "help": useHelp(team, a.h); break;
     case "next": backToBoard(); break;
     case "again":
@@ -621,7 +648,7 @@ function scoreBar(active = -1) {
   return `<div class="score ${nT() >= 4 ? "n4" : ""}" style="--n:${nT()}">${S.teams.map((t, i) => `<div class="pod t${i} ${active === i ? "on" : ""}">
     <div class="nm"><i></i>${esc(t.name)}${mode !== "local" && t.pid === me.id ? " · إنتو" : ""}</div>
     <div class="pts">${t.score}</div>
-    ${t.help ? `<div class="life">${HELPS.map((h) => `<span class="${t.help[h.k] ? "" : "off"}">${h.icon}</span>`).join("")}</div>` : ""}</div>`).join("")}</div>`;
+    ${t.help ? `<div class="life">${HELPS.map((h) => `<span class="${t.help[h.k] ? "" : "off"}">${h.icon}</span>`).join("")}<span class="${(t.cards ?? CARDS) > 0 ? "" : "off"}">🦊${t.cards ?? CARDS}</span></div>` : ""}</div>`).join("")}</div>`;
 }
 
 function draw() {
@@ -657,6 +684,19 @@ function drawLobby() {
 }
 
 let picked = [];
+const GROUPS = [
+  ["⚽ كورة", ["football", "worldcup", "coaches", "crests", "stadiums", "nashama", "sports"]],
+  ["🇯🇴 عربي وأردني", ["jordan", "jocities", "jofood", "proverbs", "dialects", "singers", "islamic"]],
+  ["📸 بالصور", ["celebs", "historic", "flags", "landmarks", "animals", "food", "cars"]],
+  ["🎯 منوّعات", ["general", "capitals", "science", "history", "first", "movies", "cartoons", "videogames", "tech", "riddles"]],
+];
+function catGroups() {
+  const seen = new Set(), out = [];
+  for (const [g, ids] of GROUPS) { const list = ids.map((id) => CAT.get(id)).filter(Boolean); list.forEach((c) => seen.add(c.id)); if (list.length) out.push([g, list]); }
+  const rest = DATA.cats.filter((c) => !seen.has(c.id));
+  if (rest.length) out.push(["➕ غيرها", rest]);
+  return out;
+}
 function drawCats() {
   if (!(mode === "local" || S.host === me.id)) {
     render(`${scoreBar()}<h1 class="center" style="margin-top:20px">صاحب الغرفة عم يختار الأقسام</h1><p class="note">ثواني وبتبلّش اللعبة.</p><div class="loading">⏳</div><button class="linkish" id="out" type="button">اطلع</button>`);
@@ -667,8 +707,8 @@ function drawCats() {
   render(`<h1>اختاروا ${N} أقسام</h1>
     <div class="seg">${catChoices(nT()).map((k) => `<button type="button" data-cn="${k}" aria-pressed="${N === k}">${k} أقسام</button>`).join("")}</div>
     <p class="sub">${N * 8} سؤال، يعني ${(N * 8) / nT()} سؤال لكل فريق.</p>
-    <div class="cats">${DATA.cats.map((c) => { const k = picked.indexOf(c.id);
-      return `<button type="button" data-c="${c.id}" aria-pressed="${k >= 0}">${k >= 0 ? `<span class="ord">${k + 1}</span>` : ""}<span>${c.icon}</span>${esc(c.name)}${c.qs.some((q) => q[3]) ? "<small>بالصور</small>" : ""}</button>`; }).join("")}</div>
+    ${catGroups().map(([g, list]) => `<p class="grp">${g}</p><div class="cats">${list.map((c) => { const k = picked.indexOf(c.id);
+      return `<button type="button" data-c="${c.id}" aria-pressed="${k >= 0}">${k >= 0 ? `<span class="ord">${k + 1}</span>` : ""}<span>${c.icon}</span>${esc(c.name)}${c.qs.some((q) => q[3]) ? "<small>بالصور</small>" : ""}</button>`; }).join("")}</div>`).join("")}
     <div class="dock"><button class="rnd" id="rnd" type="button" aria-label="اختيار عشوائي">🎲</button>
       <button class="btn" id="go" type="button" ${picked.length === N ? "" : "disabled"}>${picked.length === N ? "ابدأوا اللعبة" : `اختاروا ${N - picked.length} كمان`}</button></div>
     <button class="linkish" id="out" type="button">${mode === "local" ? "رجوع" : "سكّر الغرفة"}</button>`);
@@ -730,26 +770,33 @@ function optsHtml(c, enabled, reveal) {
     return `<button class="opt ${cls}" type="button" data-k="${k}" ${off ? "disabled" : ""}><span class="k">${"أبجد"[k]}</span><span>${esc(o)}</span></button>`; }).join("")}</div>`;
 }
 
+let lastQKey = "";
 function drawQ() {
   const c = S.cur;
-  const buzzing = c.steal === "buzz";
+  const qk = c.cid + ":" + c.i + ":" + c.text + ":" + (c.img || "");
+  const enter = qk !== lastQKey; lastQKey = qk;
+  const buzzing = c.steal === "offer";
   const t = c.team !== null && c.team !== undefined ? S.teams[c.team] : null;
   const mine = !buzzing && canAct(c.team);
-  const iCanBuzz = buzzing && (mode === "local" || c.buzzers.includes(myTeam()));
+  const myT = myTeam();
+  const iCanBuzz = buzzing && (mode === "local" || (c.offer.includes(myT) && !c.declined.includes(myT)));
+  const full = cellPoints(c), half = Math.round(full / 2);
   let top = "";
   if (buzzing) {
-    const who = mode === "local" ? c.buzzers : c.buzzers.filter((k) => k === myTeam());
-    top = `<div class="steal"><b>🦊 سرقة! الأسرع بياخذها</b><small>«${esc(S.teams[c.lastWrong].name)}» ما جابوها. ${mode === "local" ? "أول فريق بيكبس على اسمه بيجاوب" : iCanBuzz ? "اكبسوا أسرع من الباقي!" : "الفرق الثانية عم تتسابق..."} على نص النقاط (${Math.round(cellPoints(c) / 2)})</small>
-      ${who.length ? `<div class="buzz">${who.map((k) => `<button class="t${k}" type="button" data-buzz="${k}">${mode === "local" ? esc(S.teams[k].name) : "اسرق!"}</button>`).join("")}</div>` : ""}</div>`;
+    const who = mode === "local" ? c.offer : iCanBuzz ? [myT] : [];
+    top = `<div class="steal"><b>🦊 بدكم تستخدموا كرت سرقة؟</b>
+      <small>«${esc(S.teams[c.lastWrong].name)}» ما جابوها. الصح بياخذ <b>+${full}</b>، والغلط بينخصم <b>−${half}</b>. ${mode === "local" ? "أول فريق بيكبس بيسرق" : iCanBuzz ? "الأسرع بياخذها!" : "الفرق الثانية عم تقرر..."}</small>
+      ${who.length ? `<div class="buzz">${who.map((k) => `<button class="t${k}" type="button" data-card="${k}">${mode === "local" ? `${esc(S.teams[k].name)}<small class="cnt">🦊 ${S.teams[k].cards ?? CARDS}</small>` : `اسرق!<small class="cnt">باقي معكم ${S.teams[k].cards ?? CARDS} كروت</small>`}</button>`).join("")}</div>
+        <button class="linkish" id="nosteal" type="button" style="color:var(--dim)">${mode === "local" ? "ما حدا بدّه يسرق" : "لا، مش هالمرة"}</button>` : ""}</div>`;
   } else if (c.steal === "answer") {
-    top = `<div class="steal"><b>🦊 «${esc(t.name)}» بيسرقوا</b><small>${mine && mode !== "local" ? "جاوبوا صح وخذوا" : "إذا جاوبوا صح بياخذوا"} نص النقاط (${Math.round(cellPoints(c) / 2)})</small></div>`;
+    top = `<div class="steal"><b>🦊 «${esc(t.name)}» استخدموا كرت سرقة</b><small>صح = <b>+${full}</b> · غلط = <b>−${half}</b></small></div>`;
   }
   render(`${scoreBar(buzzing ? -1 : c.team)}
     ${qHead(c, true)}
     ${top}
     ${qImage(c)}
-    <div class="qtext">${esc(c.text)}</div>
-    ${optsHtml(c, mine, false)}
+    <div class="qtext ${enter ? "enter" : ""}">${esc(c.text)}</div>
+    <div class="${enter ? "enteropts" : ""}">${optsHtml(c, mine, false)}</div>
     ${c.tries > 1 && !c.steal ? `<p class="note">✌️ معكم محاولتين بهالسؤال</p>` : ""}
     ${!c.steal ? `<div class="helps">${HELPS.map((h) => `<button type="button" data-h="${h.k}" ${mine && t.help[h.k] ? "" : "disabled"}><span>${h.icon}</span>${h.name}</button>`).join("")}</div>` : ""}
     ${!mine && !buzzing ? `<p class="note">«${esc(t.name)}» عم يجاوبوا...</p>` : mode === "local" && !buzzing ? `<p class="turn t${c.team}">دور «${esc(t.name)}» يجاوب</p>` : ""}`);
@@ -760,8 +807,9 @@ function drawQ() {
       send({ t: "help", h: b.dataset.h, team: c.team });
     });
   }
-  document.querySelectorAll("[data-buzz]").forEach((b) => b.onclick = () => { b.disabled = true; send({ t: "buzz", team: +b.dataset.buzz }); });
-  const total = buzzing ? BUZZ_MS : c.steal ? STEAL_MS : Q_MS(c.d);
+  document.querySelectorAll("[data-card]").forEach((b) => b.onclick = () => { document.querySelectorAll("[data-card]").forEach((x) => x.disabled = true); send({ t: "card", team: +b.dataset.card }); });
+  bind({ nosteal: () => send(mode === "local" ? { t: "decline", all: true } : { t: "decline", team: myT }) });
+  const total = buzzing ? OFFER_MS : c.steal ? STEAL_MS : Q_MS(c.d);
   let lastBeep = -1;
   const tick = () => {
     const ms = Math.max(0, c.deadline - now()), s = Math.ceil(ms / 1000);
@@ -780,7 +828,9 @@ function drawRes() {
   const w = r.winner !== null ? S.teams[r.winner] : null;
   const mineWin = w && (mode === "local" || r.winner === myTeam());
   const head = w
-    ? `<div class="verdict good t${r.winner}"><div><b>${mode === "local" ? `«${esc(w.name)}» جابوها` : mineWin ? "صح عليكم!" : `«${esc(w.name)}» جابوها`}</b><small>${r.steal ? "سرقة ناجحة 🦊" : r.dbl ? "سؤال دبل 🔥" : "جواب صح"}</small></div><span class="plus">+${r.pts}</span></div>`
+    ? `<div class="verdict good t${r.winner}"><div><b>${mode === "local" ? `«${esc(w.name)}» جابوها` : mineWin ? "صح عليكم!" : `«${esc(w.name)}» جابوها`}</b><small>${r.steal ? "سرقة ناجحة بالكرت 🦊" : r.dbl ? "سؤال دبل 🔥" : "جواب صح"}</small></div><span class="plus">+${r.pts}</span></div>`
+    : r.thief !== null && r.thief !== undefined
+    ? `<div class="verdict none t${r.thief}"><div><b>«${esc(S.teams[r.thief].name)}» سرقوا وغلطوا</b><small>راح عليهم نص نقاط السؤال 🦊</small></div><span class="plus" style="color:#FF8A80">−${r.minus}</span></div>`
     : `<div class="verdict none"><div><b>ولا فريق جابها</b><small>${r.dbl ? "راح السؤال الدبل بلاش 🔥" : "الجواب الصح باللون الأخضر"}</small></div></div>`;
   render(`${scoreBar(r.winner === null ? -1 : r.winner)}
     ${qHead(c, false)}
@@ -823,7 +873,7 @@ function intro() {
     <div class="panel"><ul class="rules">
       <li>بالدور، كل فريق بيختار سؤال من اللوحة: <b>100</b> سهل، <b>200</b> متوسط، <b>300</b> صعب، <b>500</b> صعب جداً.</li>
       <li>4 خيارات و<b>30 ثانية</b> لكل سؤال (الصعب جداً 40).</li>
-      <li>إذا غلطتوا، الفرق الثانية بتقدر <b>تسرق نص النقاط</b> 🦊 ومع أكثر من فريقين الأسرع بالكبسة بياخذها.</li>
+      <li>كل فريق معه <b>3 كروت سرقة</b> 🦊 إذا فريق غلط، الباقي بيقدروا يستخدموا كرت والأسرع بياخذها: الصح <b>بكامل النقاط</b>، والغلط <b>بينخصم نصّها</b>.</li>
       <li>واحد من الأسئلة <b>دبل</b> 🔥 نقاطه ضعف.</li>
       <li>كل فريق معه مرة وحدة: ✂️ حذف ثنتين، ✌️ محاولتين، 🔄 سؤال ثاني.</li>
     </ul></div>

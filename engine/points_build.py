@@ -22,6 +22,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 HERE = Path(__file__).resolve().parent
 GAMES = ROOT / "docs" / "games"
 OUT = GAMES / "points_q.json"
@@ -42,9 +43,10 @@ class Cat:
 
     def add(self, d, q, opts, img=None):
         opts = [str(o).strip() for o in opts]
-        if len(opts) != 4 or len(set(opts)) != 4 or not all(opts) or (q, img) in self.seen:
+        key = (q, img, tuple(sorted(opts)) if not img else "")
+        if len(opts) != 4 or len(set(opts)) != 4 or not all(opts) or key in self.seen:
             return False
-        self.seen.add((q, img))
+        self.seen.add(key)
         self.qs.append([int(d), q, opts] + ([img] if img else []))
         return True
 
@@ -272,6 +274,73 @@ def crests(cats):
     log(f"  شعارات: {n} نادي")
 
 
+
+# ---------- مين صار أول؟ (أحداث واختراعات بسنينها) ----------
+EVENTS = [
+    ("اختراع الطباعة (غوتنبرغ)", 1440), ("اكتشاف أمريكا (كولومبوس)", 1492), ("اختراع التلفون", 1876), ("اختراع المصباح الكهربائي", 1879),
+    ("أول طيارة (الأخوين رايت)", 1903), ("أول كأس عالم", 1930), ("الحرب العالمية الأولى", 1914), ("الحرب العالمية الثانية", 1939),
+    ("استقلال الأردن", 1946), ("تأسيس إمارة شرق الأردن", 1921), ("الثورة العربية الكبرى", 1916), ("معركة الكرامة", 1968),
+    ("أول إنسان على القمر", 1969), ("أول إنسان بالفضاء", 1961), ("سقوط جدار برلين", 1989), ("انطلاق فيسبوك", 2004),
+    ("انطلاق يوتيوب", 2005), ("أول آيفون", 2007), ("انطلاق واتساب", 2009), ("انطلاق إنستغرام", 2010), ("انطلاق تيك توك", 2016),
+    ("أول بلايستيشن", 1994), ("أول جهاز ويندوز 95", 1995), ("تأسيس جوجل", 1998), ("تأسيس مايكروسوفت", 1975), ("تأسيس آبل", 1976),
+    ("اكتشاف البنسلين", 1928), ("اختراع التلفزيون", 1927), ("اختراع الراديو", 1895), ("غرق تايتانيك", 1912), ("افتتاح قناة السويس", 1869),
+    ("بناء برج إيفل", 1889), ("افتتاح برج خليفة", 2010), ("كأس العالم بقطر", 2022), ("فوز إسبانيا بكأس العالم", 2010),
+    ("فوز فرنسا بأول كأس عالم", 1998), ("أول دوري أبطال أوروبا", 1956), ("أول أولمبياد حديثة", 1896), ("فتح القسطنطينية", 1453),
+    ("معركة حطين", 1187), ("معركة اليرموك", 636), ("الهجرة النبوية", 622), ("سقوط غرناطة", 1492), ("بناء قبة الصخرة", 691),
+    ("تأسيس بغداد", 762), ("الثورة الفرنسية", 1789), ("استقلال أمريكا", 1776), ("اختراع السيارة (بنز)", 1886), ("أول قمر صناعي (سبوتنيك)", 1957),
+    ("اختراع الإنترنت (الويب)", 1989), ("أول رسالة SMS", 1992), ("انطلاق جيميل", 2004), ("انطلاق نتفليكس للبث", 2007), ("انطلاق ChatGPT", 2022),
+    ("انتشار كورونا", 2020), ("تأهل الأردن لكأس العالم", 2025), ("نهائي الأردن بكأس آسيا", 2024), ("ميسي يفوز بكأس العالم", 2022),
+    ("رونالدو ينتقل للنصر", 2023), ("ميسي ينتقل لإنتر ميامي", 2023), ("أول ماينكرافت", 2011), ("أول سوبر ماريو", 1985),
+]
+
+
+def chronology(cats):
+    c = cats.setdefault("first", Cat("first", "مين صار أول؟", "🕰️"))
+    seen = 0
+    per = Counter()
+    for _ in range(60000):
+        if all(per[d] >= 40 for d in (1, 2, 3, 4)):
+            break
+        picks = R.sample(EVENTS, 4)
+        ys = sorted(y for _, y in picks)
+        if len(set(ys)) < 4:
+            continue
+        gap = ys[1] - ys[0]
+        d = 1 if gap >= 60 else 2 if gap >= 20 else 3 if gap >= 6 else 4
+        if per[d] >= 40:
+            continue
+        first = min(picks, key=lambda e: e[1])
+        others = [e[0] for e in picks if e is not first]
+        if c.add(d, "مين صار أول؟", [first[0]] + others):
+            per[d] += 1
+        seen += 1
+
+
+def worldcup(cats):
+    try:
+        import football_q as fq
+    except Exception as e:
+        log(f"  كأس العالم: {e}")
+        return
+    c = cats.setdefault("worldcup", Cat("worldcup", "كأس العالم", "🏆"))
+    champs = sorted({w for _, _, w, *_ in fq.WC})
+    hosts = sorted({h for _, h, *_ in fq.WC})
+    scorers = sorted({v[0] for v in fq.WC_TOP.values()})
+    for y, host, win, *_ in fq.WC:
+        d = 1 if y >= 2006 else 2 if y >= 1982 else 3 if y >= 1954 else 4
+        w = pick3(win, champs)
+        if w:
+            c.add(d, f"مين فاز بكأس العالم {y}؟", [win] + w)
+        w = pick3(host, hosts)
+        if w and host != win:
+            c.add(min(4, d + 1), f"وين انقامت كأس العالم {y}؟", [host] + w)
+        top = fq.WC_TOP.get(y)
+        if top:
+            w = pick3(top[0], scorers)
+            if w:
+                c.add(min(4, d + 1), f"مين هداف كأس العالم {y}؟", [top[0]] + w)
+
+
 def main():
     cats: dict[str, Cat] = {}
     img_secs = read_bank(cats)
@@ -279,8 +348,11 @@ def main():
     countries(cats)
     football(cats)
     crests(cats)
-    order = ["football", "crests", "flags", "capitals", "landmarks", "animals", "food", "movies", "general", "science",
-             "history", "islamic", "riddles", "jordan", "sports"]
+    worldcup(cats)
+    chronology(cats)
+    order = ["football", "worldcup", "coaches", "crests", "stadiums", "nashama", "celebs", "flags", "capitals", "landmarks",
+             "historic", "animals", "food", "jofood", "cars", "movies", "cartoons", "singers", "videogames", "tech", "general",
+             "science", "history", "first", "islamic", "proverbs", "dialects", "riddles", "jordan", "jocities", "sports"]
     out = []
     for cid in order + [c for c in cats if c not in order]:
         c = cats.get(cid)
