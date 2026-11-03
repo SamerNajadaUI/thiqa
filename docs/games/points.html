@@ -687,9 +687,9 @@ function drawLobby() {
 
 let picked = [];
 const GROUPS = [
-  ["⚽ كورة", ["football", "worldcup", "coaches", "crests", "stadiums", "nashama", "sports"]],
+  ["⚽ كورة", ["football", "worldcup", "coaches", "commentators", "crests", "stadiums", "nashama", "sports"]],
   ["🇯🇴 عربي وأردني", ["jordan", "jocities", "jofood", "proverbs", "dialects", "singers", "islamic"]],
-  ["📸 بالصور", ["celebs", "historic", "flags", "landmarks", "animals", "food", "cars"]],
+  ["📸 بالصور", ["celebs", "wrestlers", "applogos", "historic", "flags", "landmarks", "animals", "food", "cars"]],
   ["🎯 منوّعات", ["general", "capitals", "science", "history", "first", "movies", "cartoons", "videogames", "tech", "riddles"]],
 ];
 function catGroups() {
@@ -750,12 +750,12 @@ function drawBoard() {
 }
 
 function imgUrl(u) {
-  const m = String(u || "").match(/\/wikipedia\/(commons|en)\/thumb\/[^/]+\/[^/]+\/([^/?]+)\//);
-  return m ? `https://${m[1] === "en" ? "en.wikipedia.org" : "commons.wikimedia.org"}/wiki/Special:FilePath/${m[2]}?width=640` : u;
+  const m = String(u || "").match(/\/wikipedia\/([a-z]+)\/thumb\/[^/]+\/[^/]+\/([^/?]+)\//);
+  return m ? `https://${m[1] === "commons" ? "commons.wikimedia.org" : m[1] + ".wikipedia.org"}/wiki/Special:FilePath/${m[2]}?width=640` : u;
 }
 function qImage(c) {
   if (!c.img) return "";
-  const cls = c.img.includes("flagcdn") ? "flag" : c.img.includes("teamlogos") ? "crest" : "";
+  const cls = c.img.includes("flagcdn") ? "flag" : c.img.includes("teamlogos") || /\.svg/i.test(c.img) ? "crest" : "";
   return `<img class="qimg ${cls}" src="${esc(imgUrl(c.img))}" data-alt="${esc(c.img)}" alt="" referrerpolicy="no-referrer" onerror="if(this.dataset.alt&&this.src!==this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt='';}else{this.style.display='none'}">`;
 }
 function qHead(c, withClock) {

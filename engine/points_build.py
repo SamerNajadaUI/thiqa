@@ -63,7 +63,7 @@ def pick3(correct, pool, key=None):
 
 
 # ---------- صور ويكيبيديا ----------
-def wiki_images(titles):
+def wiki_images(titles, logos=frozenset()):
     cache = {}
     try:
         cache = json.loads(IMG_CACHE.read_text(encoding="utf-8"))
@@ -71,11 +71,12 @@ def wiki_images(titles):
         pass
     bad = lambda u: not u or "logo" in u.lower() or ".svg" in u.lower()
     for t in titles:
-        if cache.get(t) and not bad(cache[t]):
+        lang, page = (t.split(":", 1) if t.startswith("ar:") else ("en", t))
+        if cache.get(t) and (t in logos or not bad(cache[t])):
             continue
         if cache.get(t):   # الصورة الأساسية شعار: بنجيب أول صورة حقيقية من المقالة
             try:
-                url = "https://en.wikipedia.org/api/rest_v1/page/media-list/" + urllib.parse.quote(t.replace(" ", "_"), safe="")
+                url = f"https://{lang}.wikipedia.org/api/rest_v1/page/media-list/" + urllib.parse.quote(page.replace(" ", "_"), safe="")
                 req = urllib.request.Request(url, headers={"User-Agent": UA})
                 with urllib.request.urlopen(req, timeout=20) as r:
                     items = json.loads(r.read().decode("utf-8")).get("items", [])
@@ -93,7 +94,7 @@ def wiki_images(titles):
                 cache.pop(t, None)
             time.sleep(0.2)
             continue
-        url = "https://en.wikipedia.org/api/rest_v1/page/summary/" + urllib.parse.quote(t.replace(" ", "_"), safe="")
+        url = f"https://{lang}.wikipedia.org/api/rest_v1/page/summary/" + urllib.parse.quote(page.replace(" ", "_"), safe="")
         try:
             req = urllib.request.Request(url, headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=20) as r:
@@ -116,7 +117,7 @@ def wiki_images(titles):
 
 # ---------- البنك المكتوب ----------
 def read_bank(cats: dict):
-    cur, img_secs = None, []
+    cur, img_secs, cur_img = None, [], False
     for raw in (HERE / "points_bank.txt").read_text(encoding="utf-8").splitlines():
         line = raw.strip()
         if not line or (line.startswith("#") and not line.startswith("## ")):
@@ -125,12 +126,12 @@ def read_bank(cats: dict):
             parts = [p.strip() for p in line[3:].split("|")]
             cid, name, icon = parts[0], parts[1], parts[2]
             cur = cats.setdefault(cid, Cat(cid, name, icon))
-            cur_img = len(parts) > 3 and parts[3] == "img"
+            cur_img = len(parts) > 3 and parts[3] in ("img", "logo")
             if cur_img:
-                img_secs.append((cur, parts[4], []))
+                img_secs.append((cur, parts[4], [], parts[3] == "logo"))
             continue
         f = [p.strip() for p in line.split("|")]
-        if img_secs and img_secs[-1][0] is cur:
+        if cur_img:
             img_secs[-1][2].append((int(f[0]), f[1], f[2]))
         else:
             if len(f) != 6:
@@ -141,17 +142,18 @@ def read_bank(cats: dict):
 
 
 def commons(u):
-    m = re.search(r"/wikipedia/(commons|en)/thumb/[^/]+/[^/]+/([^/?]+)/", u or "")
-    host = "en.wikipedia.org" if m and m.group(1) == "en" else "commons.wikimedia.org"
+    m = re.search(r"/wikipedia/([a-z]+)/thumb/[^/]+/[^/]+/([^/?]+)/", u or "")
+    host = "commons.wikimedia.org" if not m or m.group(1) == "commons" else f"{m.group(1)}.wikipedia.org"
     return f"https://{host}/wiki/Special:FilePath/{m.group(2)}?width=640" if m else u
 
 
 def image_sections(img_secs):
-    titles = [t for _, _, items in img_secs for _, t, _ in items]
-    imgs = wiki_images(titles)
-    for cat, tmpl, items in img_secs:
+    titles = [t for _, _, items, _ in img_secs for _, t, _ in items]
+    logos = frozenset(t for _, _, items, lg in img_secs if lg for _, t, _ in items)
+    imgs = wiki_images(titles, logos)
+    for cat, tmpl, items, lg in img_secs:
         for d, t, ans in items:
-            if not imgs.get(t) or "logo" in imgs[t].lower() or ".svg" in imgs[t].lower():
+            if not imgs.get(t) or (not lg and ("logo" in imgs[t].lower() or ".svg" in imgs[t].lower())):
                 continue
             near = [a for dd, _, a in items if abs(dd - d) <= 1 and a != ans]
             wrong = pick3(ans, near) or pick3(ans, [a for _, _, a in items])
