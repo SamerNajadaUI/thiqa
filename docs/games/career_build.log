@@ -1,14 +1,16 @@
-عناوين: 379
-  ما لقيت: Fabinho (footballer, born October 1993)
-  ما لقيت: Jorginho (footballer, born 1991)
+عناوين: 377
 لاعبين بـWikidata: 376
+  محاولة 1: https://site.api.espn.com/apis/site/v2/sports/soccer/por.2/teams HTTP Error 404: Not Found
+  محاولة 2: https://site.api.espn.com/apis/site/v2/sports/soccer/por.2/teams HTTP Error 404: Not Found
+  محاولة 1: https://site.api.espn.com/apis/site/v2/sports/soccer/usa.2/teams HTTP Error 404: Not Found
+  محاولة 2: https://site.api.espn.com/apis/site/v2/sports/soccer/usa.2/teams HTTP Error 404: Not Found
   محاولة 1: https://site.api.espn.com/apis/site/v2/sports/soccer/qat.1/teams HTTP Error 404: Not Found
   محاولة 2: https://site.api.espn.com/apis/site/v2/sports/soccer/qat.1/teams HTTP Error 404: Not Found
   محاولة 1: https://site.api.espn.com/apis/site/v2/sports/soccer/uae.1/teams HTTP Error 404: Not Found
   محاولة 2: https://site.api.espn.com/apis/site/v2/sports/soccer/uae.1/teams HTTP Error 404: Not Found
   محاولة 1: https://site.api.espn.com/apis/site/v2/sports/soccer/egy.1/teams HTTP Error 404: Not Found
   محاولة 2: https://site.api.espn.com/apis/site/v2/sports/soccer/egy.1/teams HTTP Error 404: Not Found
-  ESPN: 723 اسم فريق
+  ESPN: 933 اسم فريق
   40/376
   80/376
   120/376
@@ -34,4 +36,4 @@
   أقل من ناديين: Jack Charlton (1)
   أقل من ناديين: Nat Lofthouse (1)
   أقل من ناديين: Phil Foden (1)
-career.json: 360 لاعب، 2186 نادي، بدون شعار: 508
+career.json: 360 لاعب، 2186 نادي، بدون شعار: 345
