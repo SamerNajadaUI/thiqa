@@ -544,7 +544,6 @@
 4|Aye-aye|آي آي
 4|Quokka|كوكا
 4|Proboscis monkey|القرد أبو خرطوم
-4|Blobfish|سمكة بلوب
 4|Shoebill|أبو مركوب
 4|Saiga antelope|ظبي السايغا
 4|Tarsier|الترسير
@@ -596,5 +595,4 @@
 4|Borscht|بورش
 4|Feijoada|فيجوادا
 4|Tagine|طاجين
-4|Mandi (food)|مندي
 4|Harees|هريس

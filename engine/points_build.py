@@ -67,8 +67,29 @@ def wiki_images(titles):
         cache = json.loads(IMG_CACHE.read_text(encoding="utf-8"))
     except Exception:
         pass
+    bad = lambda u: not u or "logo" in u.lower() or ".svg" in u.lower()
     for t in titles:
-        if cache.get(t):
+        if cache.get(t) and not bad(cache[t]):
+            continue
+        if cache.get(t):   # الصورة الأساسية شعار: بنجيب أول صورة حقيقية من المقالة
+            try:
+                url = "https://en.wikipedia.org/api/rest_v1/page/media-list/" + urllib.parse.quote(t.replace(" ", "_"), safe="")
+                req = urllib.request.Request(url, headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=20) as r:
+                    items = json.loads(r.read().decode("utf-8")).get("items", [])
+                for it in items:
+                    srcs = it.get("srcset") or []
+                    src = srcs[0]["src"] if srcs else None
+                    if it.get("type") == "image" and src and not bad(src) and not re.search(r"(map|flag|coat|seal|icon)", src, re.I):
+                        src = ("https:" + src) if src.startswith("//") else src
+                        cache[t] = re.sub(r"/(\d+)px-", "/640px-", src)
+                        break
+                else:
+                    cache.pop(t, None)
+            except Exception as e:
+                log(f"  media-list {t}: {e}")
+                cache.pop(t, None)
+            time.sleep(0.2)
             continue
         url = "https://en.wikipedia.org/api/rest_v1/page/summary/" + urllib.parse.quote(t.replace(" ", "_"), safe="")
         try:
@@ -122,7 +143,7 @@ def image_sections(img_secs):
     imgs = wiki_images(titles)
     for cat, tmpl, items in img_secs:
         for d, t, ans in items:
-            if not imgs.get(t):
+            if not imgs.get(t) or "logo" in imgs[t].lower() or ".svg" in imgs[t].lower():
                 continue
             near = [a for dd, _, a in items if abs(dd - d) <= 1 and a != ans]
             wrong = pick3(ans, near) or pick3(ans, [a for _, _, a in items])
