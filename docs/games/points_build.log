@@ -56,6 +56,18 @@
   بدون صورة: Lebanese pound
   بدون صورة: Syrian pound
   بدون صورة: Algerian dinar
+  ما زبطت الصورة: Masmak fortress (HTTP Error 404: Not Found)
+  بدون صورة: Sunfish
+  بدون صورة: Prickly pear
+  بدون صورة: Mint tea
+  ما زبطت الصورة: Karak (tea) (HTTP Error 404: Not Found)
+  بدون صورة: Sobia
+  بدون صورة: Sherbet
+  بدون صورة: Agal
+  ما زبطت الصورة: Thobe (Palestinian) (HTTP Error 404: Not Found)
+  بدون صورة: Mohamed Ramadan
+  بدون صورة: Bassem Yakhour
+  بدون صورة: Sulafa Memar
   بدون audio: Mosquito flying
   بدون audio: Camelus dromedarius
   بدون audio: Gorilla gorilla
@@ -64,11 +76,9 @@
   بدون audio: Hippo grunting
   بدون audio: Equus quagga
   بدون audio: Panthera pardus
-  audio Helicopter: File:Helicopter-helicopter-parakofer-parakofer.ogg
   بدون audio: Camera shutter
   بدون audio: Footsteps
-  بدون audio: Motorcycle
-  audio Hammer: File:Hammer on guitalin.ogg
+  audio Motorcycle: File:WWS MotorcycleTOMOSD7.ogg
   بدون audio: Zipper
   بدون audio: Bubble wrap
   بدون audio: Elevator bell
@@ -77,19 +87,78 @@
   بدون audio: Streptopelia senegalensis
   بدون audiom: Bagpipes
   بدون audiom: Ney
+  audiol En: File:En-Lusitanians-article.oga
+  audiol Fr: File:Fr-Niuafo'ou - article audio.ogg
+  audiol De: File:De-Bleistift-article.ogg
+  audiol Es: File:Es-Adriana Hoffmann-article.flac
+  audiol It: File:It-Nonciclopedia-article.ogg
+  audiol Ru: File:Ru-Южно-Сахалинск (intro).ogg
+  audiol Pt: File:Pt-Buenos Aires-article.ogg
+  audiol Nl: File:Nl-Vla-article.ogg
+  audiol Pl: File:Pl-Deflegmator-article.ogg
+  audiol Sv: File:Sv-Paleolitikum-article.ogg
+  بدون audiol: Ja
+  audiol Zh: File:Zh-cn-spoken-wikipedia-Bubbling Well Road (Shanghai) paragraph 1-3.ogg
+  بدون audiol: He
+  audiol Fa: File:Fa-Divan Shams Tabrizi-Wikiquote.ogg
+  audiol Tr: File:Tr-Koronavirüs-article.ogg
+  audiol Cs: File:Cs-tycho-brahe-article.ogg
   بدون video: Pangolin
-  video Narwhal: File:Upside-down-swimming-behaviour-of-free-ranging-narwhals-1472-6785-7-14-S1.ogv
   بدون video: Sandstorm
-  video Wildfire: File:Wildfire Near Monserrate.ogv
   بدون video: Waterspout
   بدون video: Ball lightning
   بدون video: Equestrian
   بدون video: Hurling
+  video Pottery wheel: File:PotteryShaping.ogv
+  بدون video: Bread baking
+  video Blacksmith: File:Blacksmith Scene.ogv
+  video Haircut: File:A narrative video on Men’s haircutting.ogg
+  video Painting: File:A Kenyan girl painting on a canvas outdoors.webm
+  video Cooking: File:The process of cooking "Sumanak".webm
+  بدون video: Glassblowing
+  video Weaving: File:Weaving Carpet at Lachen.webm
+  video Welding: File:Welding a water supply pipe.webm
+  video Knitting: File:Knitting demo of two stitches.webm
+  video Calligraphy: File:Calligraphy Alphabet Tutorial - Fraktur Upper Case Letters for Beginners.webm
+  video Sewing machine: File:Sewing with a 1894 Singer sewing machine.webm
+  video Woodcarving: File:Davol Budaj, Erzyan woodcarving.webm
+  video Beekeeping: File:Urban beekeeping.webm
+  video Shoemaker: File:Shoemaker-Levy 9 fragments collide with Jupiter — train of fragments view.webm
+  بدون video: Bricklaying
+  بدون video: Cheesemaking
+  video Milking: File:Automatic cow milking system at work in Bronów.webm
+  بدون video: Glass mosaic
+  video Coppersmith: File:Coppersmith Barbet Hammering Copper.webm
+  video Basket weaving: File:The Art of Basket Weaving.webm
+  بدون video: Sandal making
+  video Pottery firing: File:Pottery 01.webm
+  video Rope making: File:Neuthal Rope Making with Slow Motion segment.webm
   كرة قدم مولّدة: {('img', 1): 90, ('nt', 1): 25, ('club', 1): 25, ('img', 2): 90, ('nt', 2): 25, ('club', 2): 25, ('img', 4): 90, ('nt', 4): 25, ('club', 4): 25}
   شعارات: 200 نادي
-  قدّر الرقم: {2: 40, 3: 40, 1: 40, 4: 21}
+  قدّر الرقم: {1: 40, 3: 40, 4: 21, 2: 40}
+  لاعبين عرب: 40
+  🗺️ وين هالدولة؟: 40 سؤال {1: 10, 2: 10, 3: 10, 4: 10}
+  🗣️ بأي لغة هاد؟: 14 سؤال {1: 4, 2: 4, 3: 3, 4: 3}
+  🛠️ حرف ومهن بالفيديو: 18 سؤال {1: 5, 2: 5, 3: 4, 4: 4}
+  🌍 لاعبين عرب بالصور: 40 سؤال {1: 10, 2: 10, 3: 10, 4: 10}
+  🎬 ممثلين: 23 سؤال {1: 6, 2: 5, 3: 5, 4: 7}
+  🧑‍🔬 علماء ومخترعين: 26 سؤال {1: 6, 2: 6, 3: 6, 4: 8}
+  🏙️ مدن العالم: 22 سؤال {1: 6, 2: 6, 3: 4, 4: 6}
+  🏰 قلاع وقصور: 23 سؤال {1: 6, 2: 6, 3: 6, 4: 5}
+  🕌 مساجد مشهورة: 24 سؤال {1: 6, 2: 6, 3: 6, 4: 6}
+  🦖 ديناصورات: 24 سؤال {1: 6, 2: 6, 3: 6, 4: 6}
+  🐠 حيوانات بحرية: 23 سؤال {1: 6, 2: 6, 3: 6, 4: 5}
+  🦋 حشرات: 24 سؤال {1: 6, 2: 6, 3: 6, 4: 6}
+  🍉 فواكه وخضار: 23 سؤال {1: 6, 2: 6, 3: 5, 4: 6}
+  ☕ مشروبات: 20 سؤال {1: 5, 2: 5, 3: 6, 4: 4}
+  🧥 أزياء تقليدية: 22 سؤال {1: 6, 2: 6, 3: 5, 4: 5}
+  🪐 الفضاء: 24 سؤال {1: 6, 2: 6, 3: 6, 4: 6}
+  🔤 ترجمها: 40 سؤال {1: 10, 2: 10, 3: 10, 4: 10}
+  🏷️ ألقاب: 40 سؤال {1: 10, 2: 10, 3: 10, 4: 10}
+  ❓ مين أنا؟: 40 سؤال {1: 10, 2: 10, 3: 10, 4: 10}
+  🧮 حسبة سريعة: 144 سؤال {1: 24, 2: 36, 3: 36, 4: 48}
   🔊 أصوات حيوانات: 40 سؤال {1: 12, 2: 11, 3: 10, 4: 7}
-  🌩️ أصوات من حياتنا: 37 سؤال {1: 12, 2: 9, 3: 10, 4: 6}
+  🌩️ أصوات من حياتنا: 38 سؤال {1: 12, 2: 10, 3: 10, 4: 6}
   🐦 أصوات طيور: 22 سؤال {1: 6, 2: 4, 3: 6, 4: 6}
   🎻 آلات موسيقية بالصوت: 22 سؤال {1: 6, 2: 6, 3: 4, 4: 6}
   🎥 حيوانات بالفيديو: 30 سؤال {1: 7, 2: 8, 3: 8, 4: 7}
@@ -143,4 +212,4 @@
   📲 شعارات تطبيقات: 41 سؤال {1: 12, 2: 8, 3: 11, 4: 10}
   🤼 مصارعين: 51 سؤال {1: 11, 2: 12, 3: 14, 4: 14}
   🎙️ معلقين عرب: 28 سؤال {1: 8, 2: 7, 3: 8, 4: 5}
-points_q.json: 3324 سؤال بـ55 قسم
+points_q.json: 3979 سؤال بـ75 قسم
