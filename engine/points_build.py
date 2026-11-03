@@ -172,7 +172,7 @@ VIDEO_CACHE = GAMES / "points_video.json"
 # ملفات طلعت غلط (مش الشي المطلوب، أو مش مناسبة): بنتجاهلها وبناخذ اللي بعدها
 BAD_MEDIA = ["Sounds-of-Mars", "Life on the Ocean Wave", "Todd Rokita", "Hammer and sickle", "Kettle whistle.ogg|Whistle", "Rain and wind in London|Wind",
              "Airplane Chime", "Creepy footsteps", "Rep. Bob Ney", "Sitar and tabla", "Thunder Dolphin", "Mating", "Interesting Facts", "Rainbow trout",
-             "Kamala Harris", "Simpleshow", "Ocean Today", "Essentials", "Nexter", "Blue British Shorthair cat snoring"]
+             "Kamala Harris", "Kobe Bryant", "Hammer style", "Narwhal and the Pearls", "COVID", "crash", "Simpleshow", "Ocean Today", "Essentials", "Nexter", "Blue British Shorthair cat snoring"]
 
 
 def bad_media(title, term):
