@@ -1414,15 +1414,15 @@
 
 # ---------- أصوات: الصعوبة|كلمة البحث بـCommons|الجواب ----------
 ## sounds | أصوات حيوانات | 🔊 | audio | شو هالحيوان؟ 🔊
-1|Lion roar|أسد
+1|Panthera leo|أسد
 1|Dog barking|كلب
 1|Cat meow|قطة
 1|Cow moo|بقرة
 1|Rooster crowing|ديك
 1|Sheep bleat|خروف
 1|Donkey braying|حمار
-1|Horse neigh|حصان
-1|Duck quack|بطة
+1|Horse whinny|حصان
+1|Anas platyrhynchos|بطة
 1|Goat bleating|ماعز (معزة)
 1|Elephant trumpeting|فيل
 1|Pig grunt|خنزير
@@ -1431,22 +1431,22 @@
 2|Owl hooting|بومة
 2|Crow cawing|غراب
 2|Chicken clucking|دجاجة
-2|Pigeon cooing|حمامة
+2|Columba livia|حمامة
 2|Turkey gobble|ديك رومي
 2|Bee buzzing|نحلة
-2|Mosquito buzzing|بعوضة (ناموسة)
+2|Mosquito flying|بعوضة (ناموسة)
 2|Cricket chirping|صرصور الليل
-2|Seagull|نورس
-2|Goose honking|إوزة
-3|Hyena|ضبع
-3|Peacock call|طاووس
-3|Camel|جمل
+2|Larus argentatus|نورس
+2|Anser anser|إوزة
+3|Crocuta crocuta|ضبع
+3|Pavo cristatus|طاووس
+3|Camelus dromedarius|جمل
 3|Chimpanzee|شمبانزي
 3|Parrot|ببغاء
 3|Cuckoo|طائر الوقواق
 3|Tiger growl|نمر
 3|Bear growl|دب
-3|Gorilla|غوريلا
+3|Gorilla gorilla|غوريلا
 3|Monkey|قرد
 3|Woodpecker|نقار الخشب
 3|Sparrow|عصفور
@@ -1454,11 +1454,11 @@
 4|Humpback whale|حوت
 4|Rattlesnake|أفعى الجرسية
 4|Kookaburra|كوكابورا (الطائر الضاحك)
-4|Seal|فقمة
-4|Walrus|فظ
-4|Hippopotamus|فرس النهر
-4|Zebra|حمار وحشي
+4|Phoca vitulina|فقمة
+4|Odobenus rosmarus|فظ
+4|Hippopotamus amphibius|فرس النهر
+4|Equus quagga|حمار وحشي
 4|Flamingo|فلامنغو
 4|Penguin|بطريق
 4|Bat echolocation|خفاش
-4|Leopard|نمر أرقط
+4|Panthera pardus|نمر أرقط

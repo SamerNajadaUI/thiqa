@@ -186,7 +186,10 @@ def commons_audio(terms):
             with urllib.request.urlopen(req, timeout=20) as r:
                 hits = [h["title"] for h in json.loads(r.read().decode("utf-8")).get("query", {}).get("search", [])]
             word = term.split()[0].lower()
-            hits = [h for h in hits if word in h.lower() and not re.search(r"(pronunc|spoken|speech|wikipedia|-en-|ar-|music|song)", h, re.I)]
+            # بدون ملفات النطق (De-Zebra.ogg، LL-Q...) والمقابلات والأغاني
+            hits = [h for h in hits if word in h.lower()
+                    and not re.match(r"^File:([A-Za-z]{2,3}(-[A-Za-z]{2,4})?-|IDWIKI|LL-Q|User\d)", h)
+                    and not re.search(r"(pronunc|spoken|speech|wikipedia|interview|navy|lecture|music|song|article|podcast)", h, re.I)]
             if not hits:
                 log(f"  بدون صوت: {term}")
                 continue
