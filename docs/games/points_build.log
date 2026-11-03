@@ -72,7 +72,7 @@
   بدون audio: Motorcycle
   audio Heartbeat: File:Heartbeat speedsup.wav
   audio Hammer: File:Hammer style.ogg
-  audio Wind: File:Wind in Swedish pine forest at 25 mps.ogg
+  audio Wind: File:20221229 - Abisko Turiststation at night - Wind and snow.wav
   audio Airplane: File:428086 inspectorj airplane-boeing-flyby-right-to-left-a.wav
   audio Whistle: File:218318 splicesound referee-whistle-blow-gymnasium.wav
   بدون audio: Zipper
@@ -99,7 +99,7 @@
   بدون video: Hurling
   كرة قدم مولّدة: {('img', 1): 90, ('nt', 1): 25, ('club', 1): 25, ('img', 2): 90, ('nt', 2): 25, ('club', 2): 25, ('img', 4): 90, ('nt', 4): 25, ('club', 4): 25}
   شعارات: 200 نادي
-  قدّر الرقم: {3: 40, 2: 40, 1: 40, 4: 21}
+  قدّر الرقم: {2: 40, 3: 40, 1: 40, 4: 21}
   🔊 أصوات حيوانات: 40 سؤال {1: 12, 2: 11, 3: 10, 4: 7}
   🌩️ أصوات من حياتنا: 37 سؤال {1: 12, 2: 9, 3: 10, 4: 6}
   🐦 أصوات طيور: 22 سؤال {1: 6, 2: 4, 3: 6, 4: 6}
@@ -155,4 +155,4 @@
   📲 شعارات تطبيقات: 41 سؤال {1: 12, 2: 8, 3: 11, 4: 10}
   🤼 مصارعين: 51 سؤال {1: 11, 2: 12, 3: 14, 4: 14}
   🎙️ معلقين عرب: 28 سؤال {1: 8, 2: 7, 3: 8, 4: 5}
-points_q.json: 3323 سؤال بـ55 قسم
+points_q.json: 3324 سؤال بـ55 قسم
