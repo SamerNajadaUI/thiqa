@@ -119,23 +119,7 @@
   بدون video: Cheesemaking
   بدون video: Glass mosaic
   بدون video: Sandal making
-  video Eagle: File:Eagle (Lk Tapps) 1785.ogg
-  video Pavo cristatus: File:Indian peafowl (Pavo cristatus) displaying.webm
-  video Parrot: File:Pet Parrot (02).ogv
-  video Pelican: File:Captive Dalmatian Pelican. Pelecanus crispus video.webm
-  video Swan: File:Black Swan Looking for Food Underwater 2.webm
-  video Ostrich: File:Common Ostriches (Struthio camelus).webm
-  video Woodpecker: File:Kerala Goldenbacked Woodpecker eating papaya fruit,Nileshwar 2022.webm
-  video Kingfisher: File:Kingfisher catching fish, eating, defecating and flying in Kõrvemaa, Estonia (October 2022).webm
-  video Puffin: File:Atlantic puffins (Fratercula arctica) in Iceland.webm
   بدون video: Stork
-  video Toucan: File:Regulation-of-Heat-Exchange-across-the-Hornbill-Beak-Functional-Similarities-with-Toucans-pone.0154768.s006.ogv
-  video Vulture: File:20240424 turkey vultures black vulture south meadows wm.webm
-  video Heron: File:Heron swimming and standing up.webm
-  video Shoebill: File:Shoebill (Balaeniceps rex).webm
-  video Hoopoe: File:Hoopoe (Upupa epops) in Slovakia (short).webm
-  video Bowerbird: File:Regent Bowerbird OR.ogv
-  video Roadrunner: File:Greater Roadrunner at Shoshone California.webm
   بدون video: Bulldozer
   بدون video: Forklift
   كرة قدم مولّدة: {('img', 1): 90, ('nt', 1): 25, ('club', 1): 25, ('img', 2): 90, ('nt', 2): 25, ('club', 2): 25, ('img', 4): 90, ('nt', 4): 25, ('club', 4): 25}
@@ -194,7 +178,7 @@
   🌍 عواصم ودول: 213 سؤال {1: 25, 2: 66, 3: 33, 4: 89}
   🏛️ معالم حول العالم: 48 سؤال {1: 12, 2: 12, 3: 12, 4: 12}
   👑 شخصيات تاريخية بالصور: 56 سؤال {1: 13, 2: 14, 3: 15, 4: 14}
-  🐾 حيوانات: 47 سؤال {1: 12, 2: 12, 3: 12, 4: 11}
+  🐾 حيوانات: 46 سؤال {1: 12, 2: 12, 3: 11, 4: 11}
   🍽️ أكلات من العالم: 46 سؤال {1: 12, 2: 12, 3: 11, 4: 11}
   🍲 المطبخ الأردني والعربي: 40 سؤال {1: 10, 2: 10, 3: 10, 4: 10}
   🚗 سيارات: 48 سؤال {1: 12, 2: 12, 3: 12, 4: 12}
@@ -229,7 +213,7 @@
   🦎 زواحف وبرمائيات: 17 سؤال {1: 4, 2: 4, 3: 4, 4: 5}
   🍰 حلويات من العالم: 18 سؤال {1: 4, 2: 5, 3: 4, 4: 5}
   💎 أحجار كريمة ومعادن: 16 سؤال {1: 3, 2: 4, 3: 4, 4: 5}
-  🔧 أدوات وعدّة: 16 سؤال {1: 4, 2: 4, 3: 4, 4: 4}
+  🔧 أدوات وعدّة: 15 سؤال {1: 4, 2: 3, 3: 4, 4: 4}
   🏓 أدوات رياضية: 15 سؤال {1: 4, 2: 3, 3: 4, 4: 4}
   🛩️ طيارات ومركبات طايرة: 16 سؤال {1: 4, 2: 4, 3: 4, 4: 4}
   🥇 أبطال رياضة عالميين: 21 سؤال {1: 5, 2: 5, 3: 5, 4: 6}
@@ -240,11 +224,11 @@
   💻 شعارات شركات تقنية: 12 سؤال {1: 2, 2: 4, 3: 3, 4: 3}
   🌐 شعارات منظمات وبطولات: 13 سؤال {1: 2, 2: 4, 3: 3, 4: 4}
   🏠 أصوات البيت: 15 سؤال {1: 4, 2: 3, 3: 3, 4: 5}
-  🦅 طيور بالفيديو: 19 سؤال {1: 5, 2: 5, 3: 4, 4: 5}
+  🦅 طيور بالفيديو: 18 سؤال {1: 5, 2: 5, 3: 3, 4: 5}
   🚂 أصوات مركبات وآلات: 18 سؤال {1: 4, 2: 5, 3: 4, 4: 5}
   🧍 أصوات الإنسان: 12 سؤال {1: 4, 2: 4, 3: 2, 4: 2}
   🌊 عالم البحار بالفيديو: 20 سؤال {1: 5, 2: 5, 3: 5, 4: 5}
   🚀 الفضاء بالفيديو: 15 سؤال {1: 2, 2: 5, 3: 4, 4: 4}
   🚜 آلات ومركبات بالفيديو: 16 سؤال {1: 3, 2: 3, 3: 5, 4: 5}
   🐝 حشرات بالفيديو: 15 سؤال {1: 3, 2: 4, 3: 4, 4: 4}
-points_q.json: 4478 سؤال بـ105 قسم
+points_q.json: 4476 سؤال بـ105 قسم
