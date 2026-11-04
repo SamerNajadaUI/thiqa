@@ -534,7 +534,6 @@
 3|Axolotl|أكسولوتل
 3|Mandrill|ميمون (ماندريل)
 3|Walrus|فظ (حصان البحر)
-3|Toucan|طوقان
 3|Seahorse|فرس البحر
 3|Fennec fox|ثعلب الفنك
 4|Okapi|أوكابي
@@ -3054,7 +3053,6 @@
 2|Kingfisher|صياد السمك (الرفراف)
 3|Puffin|البفن
 3|Stork|لقلق
-3|Toucan|طوقان
 3|Vulture|نسر (رخمة)
 3|Heron|بلشون (مالك الحزين)
 4|Lyrebird|الطائر المقلّد (القيثاري)
