@@ -123,9 +123,10 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 4px
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><a class="logo" href="./">لا <span>تطمع</span> 💣</a><div class="end"><span id="theme-slot"></span><button class="ghost" id="quit" type="button">الألعاب</button></div></div>
+  <header class="gbar" data-game="tamaa"></header>
   <main id="app"></main>
 </div>
+<script src="../shell.js"></script>
 <script>
 "use strict";
 const $ = (id) => document.getElementById(id);
@@ -353,8 +354,6 @@ function localSetup() {
   };
   draw2();
 }
-$("theme-slot").outerHTML = themeSwitch();
-$("quit").onclick = () => { location.href = "./"; };
 intro();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
 </script>

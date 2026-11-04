@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="stage">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
 <style>
 /* جمع نقاط: شكل استوديو برنامج مسابقات. خلفية زرقا ملكية، لوحة بخانات زرقا وأرقام ذهبية، وكل فريق إله ضو بلونه. */
 :root {
@@ -257,9 +258,10 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 6px
 </head>
 <body>
 <div class="wrap">
-  <div class="bar"><a class="logo" href="./">جمع نقاط</a><button class="ghostbtn" id="quit" type="button">الألعاب</button></div>
+  <header class="gbar" data-game="points" data-theme-fixed></header>
   <main id="app" aria-live="polite"><div class="loading">بحمّل الأسئلة...</div></main>
 </div>
+<script src="../shell.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -1004,20 +1006,21 @@ function intro() {
   const local = store.get("local", null);
   render(`<h1>مين بيجمع نقاط أكثر؟</h1>
     <p class="sub">من فريقين لـ5 فرق، لوحة أسئلة من السهل للصعب جداً، وسؤال دبل مخفي.</p>
-    <div class="panel"><ul class="rules">
+    
+    <input class="input" id="tname" type="text" maxlength="16" placeholder="اسم فريقك" value="${esc(me.name)}" autocomplete="off">
+    <button class="btn" id="create" type="button">اعملوا غرفة</button>
+    <div class="seg" style="gap:8px"><input class="input" id="code" type="text" inputmode="numeric" maxlength="5" placeholder="كود الغرفة" value="${esc(qs.get("room") || "")}" autocomplete="off" style="flex:1.4;letter-spacing:4px;text-align:center;font-size:20px">
+      <button type="button" id="join" style="flex:1;background:var(--tile);color:var(--on);border-color:var(--edge)">ادخلوا</button></div>
+    <p class="err" id="err" hidden></p>
+    ${local && local.S && local.S.phase !== "over" && local.S.phase !== "cats" ? `<button class="btn alt" id="resume" type="button">كمّلوا اللعبة اللي على هالتلفون</button>` : ""}
+    <button class="btn alt" id="one" type="button">كل الفرق على تلفون واحد</button>
+    ${howto("points", `<ul class="rules">
       <li>بالدور، كل فريق بيختار سؤال من اللوحة: <b>100</b> سهل، <b>200</b> متوسط، <b>300</b> صعب، <b>500</b> صعب جداً.</li>
       <li>4 خيارات و<b>30 ثانية</b> لكل سؤال (الصعب جداً 40).</li>
       <li>كل فريق معه <b>3 كروت سرقة</b> 🦊 إذا فريق غلط، الباقي بيقدروا يستخدموا كرت والأسرع بياخذها: الصح <b>بكامل النقاط</b>، والغلط <b>بينخصم نصّها</b>.</li>
       <li>واحد من الأسئلة <b>دبل</b> 🔥 نقاطه ضعف.</li>
       <li>كل فريق معه مرة وحدة: ✂️ حذف ثنتين، ✌️ محاولتين، 🔄 سؤال ثاني.</li>
-    </ul></div>
-    <input class="input" id="tname" type="text" maxlength="16" placeholder="اسم فريقك" value="${esc(me.name)}" autocomplete="off">
-    <button class="btn" id="create" type="button">اعملوا غرفة</button>
-    <div class="seg" style="gap:8px"><input class="input" id="code" type="text" inputmode="numeric" maxlength="5" placeholder="كود الغرفة" value="${esc(qs.get("room") || "")}" autocomplete="off" style="flex:1.4;letter-spacing:4px;text-align:center;font-size:20px">
-      <button type="button" id="join" style="flex:1;background:var(--on);color:var(--ink);border-color:var(--on)">ادخلوا</button></div>
-    <p class="err" id="err" hidden></p>
-    ${local && local.S && local.S.phase !== "over" && local.S.phase !== "cats" ? `<button class="btn alt" id="resume" type="button">كمّلوا اللعبة اللي على هالتلفون</button>` : ""}
-    <button class="btn alt" id="one" type="button">كل الفرق على تلفون واحد</button>`);
+    </ul>`)}`);
   const getName = () => {
     const n = $("tname").value.trim();
     if (!n) { $("err").hidden = false; $("err").textContent = "اكتبوا اسم فريقكم أول."; $("tname").focus(); return null; }
@@ -1047,7 +1050,6 @@ function boot() {
   return false;
 }
 
-$("quit").onclick = () => { location.href = "./"; };
 fetch("points_q.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
   DATA = d; CAT = new Map(d.cats.map((c) => [c.id, c]));
   if (!d.cats.length) { $("app").innerHTML = `<div class="loading">الأسئلة لسا بتتجهز. جرّبوا كمان شوي.</div>`; return; }

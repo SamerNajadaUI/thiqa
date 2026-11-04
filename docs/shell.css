@@ -32,7 +32,7 @@ body { transition: background-color .25s, color .25s; }
 .shellbar .end { display: flex; align-items: center; gap: 8px; }
 
 .theme-switch { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); flex: none; }
-.theme-switch button { width: 34px; height: 30px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: grid; place-items: center; padding: 0; cursor: pointer; transition: background .2s, color .2s; }
+.theme-switch button { width: 36px; height: 34px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: grid; place-items: center; padding: 0; cursor: pointer; transition: background .2s, color .2s; }
 .theme-switch button svg { width: 17px; height: 17px; }
 .theme-switch button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: var(--shadow-sm); }
 
@@ -82,3 +82,48 @@ body { transition: background-color .25s, color .25s; }
   @keyframes gin { from { opacity: 0; transform: translateY(10px) scale(.98); } }
 }
 @media (prefers-reduced-motion: reduce) { .gcard, body { transition: none; } }
+
+/* ===== شريط اللعبة الموحّد (كل صفحات الألعاب) ===== */
+.gbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 50px; }
+.gbar .gt { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--ink); text-decoration: none; }
+.gbar .gt .chip { flex: none; width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; color: #FFF;
+  background: radial-gradient(120% 90% at 85% 0%, rgb(255 255 255 / .3), transparent 55%), linear-gradient(150deg, var(--g1, #7C5CFF), var(--g2, #5B3DF5)); box-shadow: 0 6px 14px -6px var(--g2, #5B3DF5); }
+.gbar .gt .chip svg { width: 22px; height: 22px; }
+.gbar .gt b { font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gbar .gs { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.theme-toggle { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); display: grid; place-items: center; padding: 0; cursor: pointer; box-shadow: var(--shadow-sm); }
+.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle:active { transform: scale(.94); }
+.gbar .gback { display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  font: 600 13px/1 var(--font); text-decoration: none; box-shadow: var(--shadow-sm); cursor: pointer; }
+.gbar .gback svg { width: 19px; height: 19px; }
+.gbar .gback:active { transform: scale(.96); }
+@media (max-width: 360px) { .gbar .gt b { font-size: 20px; } .gbar .gt .chip { width: 34px; height: 34px; } }
+
+/* «طريقة اللعب» بتنطوى: مفتوحة أول مرة، وبعدين بتضل مسكّرة */
+details.howto { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow-sm); overflow: hidden; }
+details.howto > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 13px 16px; font-weight: 700; font-size: 14.5px; color: var(--ink); }
+details.howto > summary::-webkit-details-marker { display: none; }
+details.howto > summary::after { content: ""; width: 9px; height: 9px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); transition: transform .2s; margin-inline-start: auto; }
+details.howto[open] > summary::after { transform: rotate(-135deg); }
+details.howto > .howto-body { padding: 0 16px 14px; }
+details.howto > .howto-body > :first-child { margin-top: 0; }
+
+/* لمسات عامة لكل الصفحات */
+button, [role="button"], .gcard, .gback { -webkit-user-select: none; user-select: none; }
+input, textarea { -webkit-user-select: text; user-select: text; }
+:where(button, a, input, summary):focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+::selection { background: var(--brand-soft); }
+
+/* ألوان فاتحة (tints) بتستعملها الألعاب، وإلها نسخة غامقة */
+:root { --t-gold: #FEF0C7; --t-gold2: #FEDF89; --t-red: #FEECEA; --t-red2: #FFD3D4; --t-green: #E6F8EF; --t-sky: #E0F2FE; --t-sky2: #B9E6FE; --t-orange: #FEF3E2; --t-gray: #EAECF0; }
+:root[data-theme="dark"] { --t-gold: #382B0C; --t-gold2: #5A4512; --t-red: #3A1A1A; --t-red2: #552424; --t-green: #0F2E20; --t-sky: #0C2738; --t-sky2: #123B55; --t-orange: #35230C; --t-gray: #262A33; }
+
+/* ألعاب إلها جو غامق ثابت (جمع نقاط، مافيا): ألوانها من الصفحة نفسها، وهاي بس للي ما عرّفته */
+:root.stage { color-scheme: dark; --card: rgb(255 255 255 / .07); --soft: rgb(255 255 255 / .08); --line: rgb(255 255 255 / .14); --muted: #B4B8CC; --brand-soft: rgb(255 255 255 / .1); --shadow-sm: none; --shadow: none; }
+.stage .gbar, .stage details.howto { --ink: #F3F5FF; }
+
+.ui-toast { position: fixed; z-index: 99; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translate(-50%, 12px); opacity: 0; pointer-events: none;
+  background: var(--ink); color: var(--bg); font: 600 13.5px/1 var(--font); padding: 11px 16px; border-radius: 999px; box-shadow: 0 10px 30px -10px rgb(0 0 0 / .45); transition: opacity .2s, transform .2s; }
+.ui-toast.on { opacity: 1; transform: translate(-50%, 0); }
+.stage .ui-toast { background: #F3F5FF; color: #151A4A; }

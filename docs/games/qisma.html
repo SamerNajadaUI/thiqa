@@ -145,9 +145,10 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 2px
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><a class="logo" href="./">قسمة <span>ونصيب</span></a><div class="end"><span id="theme-slot"></span><button class="ghost" id="quit" type="button">الألعاب</button></div></div>
+  <header class="gbar" data-game="qisma"></header>
   <main id="app"><div class="loading">...</div></main>
 </div>
+<script src="../shell.js"></script>
 <script>
 "use strict";
 const $ = (id) => document.getElementById(id);
@@ -645,12 +646,7 @@ function intro() {
   const saved = store.get("save", null);
   const lvl = store.get("level", "medium"), bots = store.get("bots", 1);
   render(`<div><h1>إنت بتقسم... وهم بيختاروا</h1><p class="sub">بس إنت الوحيد اللي شايف الورق! اكشف شوي، خبّي شوي، واضحك عليهم 😏</p></div>
-    <div class="panel"><ul class="rules">
-      <li><b>✂️ القاسم</b> بيشوف كل الورق، وبيقسمه حصص (حصة لكل لاعب)، وبيكشف بس ورقتين (أو قد عدد اللاعبين).</li>
-      <li><b>👀 الباقين</b> بيختاروا حصة واحد ورا الثاني، والقاسم بياخذ اللي بتضل.</li>
-      <li><b>🔍 بصّة</b>: معك بصّتين باللعبة، بتشوف فيهن ورقة مخفية قبل ما تختار.</li>
-      <li><b>🔥 الجولة الأخيرة</b> نقاطها ×2، واللي متأخر هو اللي بيقسم. فرصة ترجع!</li>
-    </ul></div>
+    
     <div class="legend">${[{ k: "n", v: 7 }, { k: "b", v: -4 }, { k: "x", v: 0 }, { k: "g", v: 10 }, { k: "f", v: 0 }].map((c) => cardHtml(c)).join("")}</div>
     ${saved && saved.G && saved.G.phase !== "over" ? `<button class="btn gold" id="resume" type="button">كمّل اللعبة اللي وقفت</button>` : ""}
     <h2>🤖 ضد الكمبيوتر</h2>
@@ -665,7 +661,13 @@ function intro() {
     <button class="btn alt" id="create" type="button">اعمل غرفة (كل واحد من تلفونه)</button>
     <div class="row"><input class="input" id="code" type="text" inputmode="numeric" maxlength="5" placeholder="كود الغرفة" value="${esc(qs.get("room") || "")}" style="flex:1.4;letter-spacing:4px;text-align:center">
       <button class="btn alt" id="join" type="button" style="flex:1">ادخل</button></div>
-    <p class="err" id="err" hidden></p>`);
+    <p class="err" id="err" hidden></p>
+    ${howto("qisma", `<ul class="rules">
+      <li><b>✂️ القاسم</b> بيشوف كل الورق، وبيقسمه حصص (حصة لكل لاعب)، وبيكشف بس ورقتين (أو قد عدد اللاعبين).</li>
+      <li><b>👀 الباقين</b> بيختاروا حصة واحد ورا الثاني، والقاسم بياخذ اللي بتضل.</li>
+      <li><b>🔍 بصّة</b>: معك بصّتين باللعبة، بتشوف فيهن ورقة مخفية قبل ما تختار.</li>
+      <li><b>🔥 الجولة الأخيرة</b> نقاطها ×2، واللي متأخر هو اللي بيقسم. فرصة ترجع!</li>
+    </ul>`)}`);
   document.querySelectorAll("[data-lvl]").forEach((b) => b.onclick = () => { store.set("level", b.dataset.lvl); intro(); });
   document.querySelectorAll("[data-bots]").forEach((b) => b.onclick = () => { store.set("bots", +b.dataset.bots); intro(); });
   const getName = () => { const n = $("name").value.trim(); if (!n) { $("err").hidden = false; $("err").textContent = "اكتب اسمك أول."; $("name").focus(); return null; } me.name = n; store.set("name", n); return n; };
@@ -706,8 +708,6 @@ function localSetup() {
   };
   draw();
 }
-$("theme-slot").outerHTML = themeSwitch();
-$("quit").onclick = () => { location.href = "./"; };
 intro();
 if (qs.get("room")) $("code")?.focus();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});

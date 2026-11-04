@@ -27,3 +27,34 @@ function gamesGrid(base = "") {
     <span class="body"><b>${g.name}</b><small>${g.desc}</small><span class="tags">${g.tags.map((t) => `<span>${t}</span>`).join("")}</span></span>
   </a>`).join("")}</div>`;
 }
+
+// شريط اللعبة الموحّد: <header class="gbar" data-game="points"></header>
+// data-theme-fixed: للألعاب اللي إلها جو ثابت (غامق دايماً) وما بدها زر المظهر.
+const GAME_EXTRA = { party: { name: "تحدي الأصحاب", icon: "who" } };
+const BACK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+function mountGameBar() {
+  document.querySelectorAll(".gbar[data-game]").forEach((bar) => {
+    const id = bar.dataset.game, g = GAMES.find((x) => x.id === id) || GAME_EXTRA[id] || { name: document.title };
+    const icon = GAME_ICON[g.icon || id] || "";
+    const themed = !bar.hasAttribute("data-theme-fixed") && typeof themeToggle === "function";
+    // RTL: زر الرجوع بالبداية (يمين)، بعده اسم اللعبة، وزر المظهر بالآخر
+    bar.innerHTML = `<span class="gs"><a class="gback" href="./" id="gback" aria-label="رجوع للألعاب" title="الألعاب">${BACK_ICON}</a>
+      <a class="gt" href="./"><span class="chip g-${g.icon || id}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${icon}</svg></span><b>${g.name}</b></a></span>
+      ${themed ? themeToggle() : ""}`;
+    // إذا في لعبة شغّالة وما بتنحفظ، الصفحة بتعرّف leaveGuard() وبنسأل قبل ما نطلع
+    bar.querySelectorAll('a[href="./"]').forEach((a) => a.addEventListener("click", (e) => {
+      const msg = typeof window.leaveGuard === "function" && window.leaveGuard();
+      if (msg && !confirm(msg)) e.preventDefault();
+    }));
+  });
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mountGameBar); else mountGameBar();
+// «طريقة اللعب»: مفتوحة لأول زيارة بس
+document.addEventListener("toggle", (e) => {
+  const d = e.target; if (!(d instanceof HTMLDetailsElement) || !d.classList.contains("howto") || !d.dataset.key) return;
+  try { localStorage.setItem("howto-" + d.dataset.key, d.open ? "open" : "closed"); } catch {}
+}, true);
+function howto(key, inner, title = "📖 طريقة اللعب") {
+  let st = null; try { st = localStorage.getItem("howto-" + key); } catch {}
+  return `<details class="howto" data-key="${key}" ${st === "closed" ? "" : "open"}><summary>${title}</summary><div class="howto-body">${inner}</div></details>`;
+}

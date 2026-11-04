@@ -14,6 +14,7 @@
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = dark ? "#0E0F14" : "#F5F5F9";
     document.querySelectorAll("[data-theme-set]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeSet === pref)));
+    document.querySelectorAll("[data-theme-cycle]").forEach((b) => { if (!window.themeToggle) return; b.innerHTML = iconFor(pref); b.setAttribute("aria-label", labelFor(pref)); b.title = labelFor(pref); });
   }
 
   const OPTIONS = [
@@ -25,11 +26,25 @@
   window.themeSwitch = () => `<div class="theme-switch" role="group" aria-label="المظهر">${OPTIONS.map(([k, label, path]) =>
     `<button type="button" data-theme-set="${k}" aria-label="${label}" title="${label}" aria-pressed="${read() === k}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg></button>`).join("")}</div>`;
 
+  // نسخة مصغّرة لشريط الألعاب: زر واحد بيلف بين الخيارات الثلاثة
+  const iconFor = (k) => { const o = OPTIONS.find((x) => x[0] === k) || OPTIONS[1]; return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${o[2]}</svg>`; };
+  const labelFor = (k) => "المظهر: " + (OPTIONS.find((x) => x[0] === k) || OPTIONS[1])[1];
+  window.themeToggle = () => `<button type="button" class="theme-toggle" data-theme-cycle aria-label="${labelFor(read())}" title="${labelFor(read())}">${iconFor(read())}</button>`;
+
+  // رسالة صغيرة تحت بتوضّح شو صار
+  let toastTimer = null;
+  function toast(text) {
+    let t = document.getElementById("ui-toast");
+    if (!t) { t = document.createElement("div"); t.id = "ui-toast"; t.className = "ui-toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+    t.textContent = text; t.classList.add("on"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 1400);
+  }
+  window.uiToast = toast;
+  const save = (k) => { try { localStorage.setItem(KEY, k); } catch {} apply(); };
   document.addEventListener("click", (e) => {
     const b = e.target.closest("[data-theme-set]");
-    if (!b) return;
-    try { localStorage.setItem(KEY, b.dataset.themeSet); } catch {}
-    apply();
+    if (b) return save(b.dataset.themeSet);
+    const c = e.target.closest("[data-theme-cycle]");
+    if (c) { const order = ["system", "light", "dark"]; const next = order[(order.indexOf(read()) + 1) % 3]; save(next); toast(labelFor(next)); }
   });
   mq.addEventListener ? mq.addEventListener("change", apply) : mq.addListener(apply);
   window.addEventListener("storage", (e) => { if (e.key === KEY) apply(); });

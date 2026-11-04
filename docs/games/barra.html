@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>برا السالفة</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
@@ -15,14 +16,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: one screen per step of a pass-the-phone party game. Same chunky game skin as the rest of the app; coral is this game's colour. Light-only by design. */
+/* Layout: one screen per step of a pass-the-phone party game. Same chunky game skin as the rest of the app; coral is this game's colour. Light/dark colours come from ../shell.css (loaded after this block). */
 :root {
-  color-scheme: light;
   --bg: #FFFFFF; --soft: #F4F5F7; --line: #ECEEF1; --ink: #111316; --muted: #6B7280; --faint: #A9AEB6;
-  --c: #FF5A5F; --cd: #D63B40; --cs: #FFECEC;
+  --c: #FF5A5F; --cd: #D63B40; --cs: var(--t-red);
   --brand: #5B3DF5; --brand-dark: #3F25C9; --brand-soft: #EEEAFF;
-  --ok: #12B76A; --okd: #0A8A4F; --oks: #E6F8EF;
-  --bad: #F04438; --bads: #FEECEA;
+  --ok: #12B76A; --okd: #0A8A4F; --oks: var(--t-green);
+  --bad: #F04438; --bads: var(--t-red);
   --font: "Readex Pro", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
   --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
 }
@@ -46,7 +46,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
 h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; }
 .sub { color: var(--muted); margin: 0; font-size: 14px; }
-.card { background: #FFFFFF; border: 2px solid var(--cs); border-radius: 28px; box-shadow: 0 6px 0 var(--cs); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--card); border: 2px solid var(--cs); border-radius: 28px; box-shadow: 0 6px 0 var(--cs); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
 .steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: s; }
 .steps li { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start; counter-increment: s; }
 .steps li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; background: var(--c); color: #FFFFFF; display: grid; place-items: center; font-family: var(--display); font-size: 18px; }
@@ -59,28 +59,28 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; 
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .row2 .big { font-size: 19px; }
 .stepper { display: grid; grid-template-columns: 64px 1fr 64px; gap: 10px; align-items: center; }
-.stepper button { border: 0; height: 64px; border-radius: 20px; background: var(--cs); color: var(--cd); font-size: 32px; box-shadow: 0 4px 0 #FFD3D4; }
+.stepper button { border: 0; height: 64px; border-radius: 20px; background: var(--cs); color: var(--cd); font-size: 32px; box-shadow: 0 4px 0 var(--t-red2); }
 .stepper b { text-align: center; font-family: var(--display); font-size: 56px; line-height: 1; }
 .names { display: flex; flex-direction: column; gap: 8px; }
 .names label { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
 .names span { width: 34px; height: 34px; border-radius: 50%; background: var(--soft); display: grid; place-items: center; font-weight: 600; color: var(--muted); }
-.names input { width: 100%; border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; background: #FFFFFF; font-size: 16px; }
+.names input { width: 100%; border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; background: var(--card); font-size: 16px; }
 .cats { display: flex; flex-wrap: wrap; gap: 8px; }
-.cats button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 600; }
+.cats button { border: 2px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 600; }
 .cats button[aria-pressed="true"] { border-color: var(--c); background: var(--cs); color: var(--cd); }
 .toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; }
 .toggle input { width: 22px; height: 22px; accent-color: var(--c); }
 .pass { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 26px 18px; }
 .pass .who { font-family: var(--display); font-size: 48px; line-height: 1.1; color: var(--c); overflow-wrap: anywhere; }
-.hintq { border: 2px dashed var(--brand); background: #FFFFFF; color: var(--brand); border-radius: 20px; padding: 12px; font-weight: 700; font-size: 15px; }
+.hintq { border: 2px dashed var(--brand); background: var(--card); color: var(--brand); border-radius: 20px; padding: 12px; font-weight: 700; font-size: 15px; }
 .hintq small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; }
-.suggbox { background: #FEF0C7; border: 2px solid #FDB022; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 10px; text-align: center; }
+.suggbox { background: var(--t-gold); border: 2px solid #FDB022; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 10px; text-align: center; }
 .suggbox b { font-size: 22px; line-height: 1.5; }
-.suggbox button { border: 0; border-radius: 14px; padding: 10px; font-weight: 700; background: #FFFFFF; }
+.suggbox button { border: 0; border-radius: 14px; padding: 10px; font-weight: 700; background: var(--card); }
 .cats button.adult[aria-pressed="true"] { background: #F04438; border-color: #F04438; color: #FFFFFF; }
 .secret { text-align: center; padding: 28px 18px; border-radius: 32px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
 .secret.in { background: var(--oks); }
-.secret.out { background: var(--ink); color: #FFFFFF; }
+.secret.out { background: var(--ink); color: var(--bg); }
 .secret small { font-size: 14px; opacity: .8; }
 .secret b { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 13vw, 64px); line-height: 1.15; overflow-wrap: anywhere; }
 .turn { text-align: center; padding: 30px 18px; border-radius: 32px; background: var(--brand-soft); display: flex; flex-direction: column; gap: 6px; }
@@ -91,16 +91,16 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; 
 .progress i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
 .progress i.on { background: var(--brand); }
 .votes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.votes button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 22px; padding: 16px 10px; font-weight: 700; font-size: 17px; box-shadow: 0 4px 0 var(--line); overflow-wrap: anywhere; }
+.votes button { border: 2px solid var(--line); background: var(--card); border-radius: 22px; padding: 16px 10px; font-weight: 700; font-size: 17px; box-shadow: 0 4px 0 var(--line); overflow-wrap: anywhere; }
 .votes button:active { transform: translateY(2px); }
 .tally { display: flex; flex-direction: column; gap: 8px; }
 .tally .r { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 10px 14px; }
 .tally .r.hot { background: var(--cs); }
-.tally .bar2 { grid-column: 1 / -1; height: 8px; border-radius: 8px; background: #FFFFFF; overflow: hidden; }
+.tally .bar2 { grid-column: 1 / -1; height: 8px; border-radius: 8px; background: var(--card); overflow: hidden; }
 .tally .bar2 i { display: block; height: 100%; background: var(--c); }
 .score { display: flex; flex-direction: column; gap: 8px; }
 .score .r { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; background: var(--soft); border-radius: 18px; padding: 10px 14px; }
-.score .r:first-child { background: #FEF0C7; }
+.score .r:first-child { background: var(--t-gold); }
 .score .pos { font-family: var(--display); font-size: 20px; text-align: center; }
 .score .nm { font-weight: 600; overflow-wrap: anywhere; }
 .score .d { font-weight: 700; direction: ltr; font-size: 14px; padding: 2px 8px; border-radius: 999px; }
@@ -110,7 +110,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; 
 .verdict.good { background: var(--oks); } .verdict.badv { background: var(--bads); }
 .verdict b { font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.2; }
 .opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.opts button { border: 2px solid var(--line); background: #FFFFFF; border-radius: 20px; padding: 14px 10px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 0 var(--line); }
+.opts button { border: 2px solid var(--line); background: var(--card); border-radius: 20px; padding: 14px 10px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 0 var(--line); }
 .note { color: var(--muted); font-size: 13px; line-height: 1.7; margin: 0; }
 .confirm { background: var(--bads); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
 @media (prefers-reduced-motion: no-preference) {
@@ -119,17 +119,17 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; 
 }
 /* no double-tap zoom */
 html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
+:root[data-theme="dark"] { --l4: #98A2B3; --l4d: #667085; }
 </style>
+<link rel="stylesheet" href="../shell.css">
 </head>
 <body>
 <div class="wrap">
-  <div class="bar">
-    <div class="title"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5M15 14.6c2.6-.4 5 1.3 6 5.4"/><path d="M20 3.5l-2 2M21.5 6.5h-2"/></svg></span><b>برا السالفة</b></div>
-    <a class="back" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>الألعاب</a>
-  </div>
+  <header class="gbar" data-game="barra"></header>
   <main id="app" aria-live="polite"></main>
 </div>
 
+<script src="../shell.js"></script>
 <script>
 const WORDS = {"أكل": ["منسف", "مقلوبة", "كبسة", "فلافل", "حمص", "شاورما", "مسخن", "ملوخية", "كبة", "ورق عنب", "محشي", "فتة", "شوربة عدس", "بيتزا", "برغر", "مندي", "فول", "مجدرة", "سمك", "معكرونة", "سلطة", "كفتة", "فريكة", "زرب", "مسقعة"], "حلويات": ["كنافة", "قطايف", "بقلاوة", "هريسة", "مهلبية", "عوامة", "معمول", "كيك", "بوظة", "شوكولاتة", "دونات", "كريب", "وافل", "تيراميسو", "أم علي", "غريبة", "بسبوسة", "مشبك", "حلاوة", "سحلب", "بان كيك", "تشيز كيك", "كرواسون", "كعك", "قرص عيد"], "مشروبات": ["قهوة", "شاي", "عصير برتقال", "ليمون ونعنع", "سحلب", "يانسون", "مشروب غازي", "مي", "حليب", "قهوة سادة", "كابتشينو", "موهيتو", "عصير جزر", "تمر هندي", "عرق سوس", "كركديه", "ميلك شيك", "سموذي", "قمر الدين", "زهورات", "نسكافيه", "شاي أخضر", "لبن عيران", "عصير رمان", "كوكتيل"], "فواكه وخضار": ["بندورة", "خيار", "بطيخ", "شمام", "تفاح", "موز", "برتقال", "مانجا", "فراولة", "عنب", "تين", "رمان", "ليمون", "بطاطا", "بصل", "ثوم", "جزر", "باذنجان", "كوسا", "فلفل", "خس", "ملفوف", "زهرة", "أفوكادو", "كيوي"], "حيوانات": ["قطة", "كلب", "أسد", "نمر", "فيل", "زرافة", "جمل", "حصان", "حمار", "بقرة", "خروف", "معزة", "دجاجة", "بطة", "حمامة", "نسر", "تمساح", "أفعى", "سلحفاة", "دب", "قرد", "غزال", "ثعلب", "أرنب", "دلفين"], "مهن": ["دكتور", "مهندس", "أستاذ", "محامي", "شرطي", "طيار", "مضيف طيران", "نجار", "حداد", "سباك", "كهربائي", "طباخ", "حلاق", "خياط", "سواق تكسي", "صيدلاني", "ممرض", "مزارع", "صحفي", "مصور", "مبرمج", "محاسب", "بائع خضرة", "رجل إطفاء", "دهّان"], "أماكن": ["مطار", "مستشفى", "مدرسة", "جامعة", "مول", "مطعم", "كافيه", "سينما", "ملعب", "بحر", "صحرا", "جبل", "سوق", "بنك", "محطة بنزين", "مسجد", "حديقة", "فندق", "مكتبة", "صالون حلاقة", "جيم", "مسبح", "مخبز", "سجن", "حديقة حيوانات"], "ملابس": ["كلسون", "معطف", "جاكيت", "بنطلون", "جينز", "قميص", "تيشيرت", "كندرة", "شبشب", "جرابات", "شماغ", "كوفية", "طاقية", "كاب", "فستان", "تنورة", "بيجاما", "كرافات", "حزام", "قفازات", "سكارف", "بدلة", "هودي", "شورت", "جلابية"], "أغراض البيت": ["كنباية", "تلفزيون", "ثلاجة", "غسالة", "مكيف", "صوبة", "مخدة", "حرام", "سجادة", "ستارة", "مراية", "ساعة حيط", "مكنسة", "لمبة", "خزانة", "تخت", "طاولة", "كرسي", "مروحة", "فرن", "مايكرويف", "دوش", "فرشاة أسنان", "منشفة", "شماعة"], "أدوات المطبخ": ["طنجرة", "مقلاية", "سكينة", "شوكة", "معلقة", "صحن", "كاسة", "إبريق", "دلة", "فنجان", "مصفاية", "خلاط", "فرامة", "ميزان", "لوح تقطيع", "ملقط", "مغرفة", "كبّاية", "ترمس", "قدرة", "صينية", "مضرب بيض", "مبشرة", "فتاحة", "طنجرة ضغط"], "مواصلات": ["سيارة", "باص", "تكسي", "طيارة", "قطار", "مترو", "سفينة", "قارب", "موتور", "بسكليت", "سكوتر", "تريلا", "إسعاف", "سيارة إطفاء", "هليكوبتر", "صاروخ", "تلفريك", "غواصة", "جيب", "تكتك", "عربانة", "يخت", "منطاد", "سيارة شرطة", "باص مدرسة"], "تكنولوجيا": ["موبايل", "لابتوب", "شاحن", "سماعات", "تابلت", "ساعة ذكية", "بلايستيشن", "ريموت", "كاميرا", "طابعة", "راوتر", "فلاشة", "ماوس", "كيبورد", "شاشة", "سيلفي ستك", "باور بانك", "بروجكتور", "درون", "واي فاي", "بلوتوث", "سماعة بلوتوث", "نظارة VR", "إيربودز", "كمبيوتر"], "رياضة": ["كرة قدم", "كرة سلة", "تنس", "سباحة", "ملاكمة", "كاراتيه", "جري", "ركوب خيل", "تزلج", "جمباز", "كرة طائرة", "بلياردو", "بولينغ", "شطرنج", "غولف", "فورمولا 1", "دراجات", "رفع أثقال", "مصارعة", "بيسبول", "هوكي", "سهام", "ركبي", "تايكوندو", "تنس طاولة"], "أندية كرة قدم": ["ريال مدريد", "برشلونة", "مانشستر يونايتد", "مانشستر سيتي", "ليفربول", "تشيلسي", "أرسنال", "بايرن ميونخ", "يوفنتوس", "ميلان", "إنتر", "باريس سان جيرمان", "الهلال", "النصر", "الأهلي المصري", "الزمالك", "الفيصلي", "الوحدات", "الرجاء", "الوداد", "الترجي", "أتلتيكو مدريد", "دورتموند", "نابولي", "روما"], "لاعبين": ["ميسي", "رونالدو", "محمد صلاح", "نيمار", "مبابي", "هالاند", "بنزيما", "مودريتش", "رياض محرز", "حكيم زياش", "زيدان", "رونالدينيو", "مارادونا", "بيليه", "بيكهام", "إبراهيموفيتش", "سواريز", "ليفاندوفسكي", "فينيسيوس", "بيلينغهام", "ياسين بونو", "أشرف حكيمي", "سالم الدوسري", "موسى التعمري", "كاكا"], "مدن العالم": ["عمّان", "العقبة", "إربد", "دبي", "الرياض", "القاهرة", "بيروت", "إسطنبول", "باريس", "لندن", "روما", "مدريد", "برشلونة", "نيويورك", "طوكيو", "موسكو", "الدوحة", "مكة", "مراكش", "تونس", "بغداد", "دمشق", "القدس", "الكويت", "مسقط"], "أماكن بالأردن": ["البتراء", "وادي رم", "البحر الميت", "جرش", "عجلون", "الرينبو", "البلد", "العبدلي", "الصويفية", "جبل عمّان", "قلعة عمّان", "المدرج الروماني", "ضانا", "ماعين", "مادبا", "الكرك", "السلط", "أم قيس", "الأزرق", "عين غزال", "تاج مول", "سيتي مول", "الشميساني", "دابوق", "طلوع نيفين"], "أشياء بالمدرسة": ["دفتر", "قلم رصاص", "محاية", "براية", "مسطرة", "شنطة", "سبورة", "طبشورة", "مقلمة", "كتاب", "امتحان", "علامة", "فرصة", "مقصف", "طابور", "مدير", "آذن", "واجب", "حصة رياضة", "مختبر", "مكتبة المدرسة", "زي مدرسي", "شهادة", "رحلة مدرسية", "جرس"], "أشياء بالعرس": ["عريس", "عروس", "زفة", "دبكة", "طبل", "كوشة", "كيك العرس", "فستان أبيض", "بدلة", "خاتم", "شبكة", "مهر", "حنة", "سهرة", "صالة أفراح", "مصور", "دي جي", "زغرودة", "منسف العرس", "كنافة العرس", "سيارة العرس", "بطاقة دعوة", "ليلة الحنة", "عزومة", "شهر العسل"], "ألعاب وتسلية": ["شدة", "طاولة زهر", "دومينو", "بلايستيشن", "فيفا", "ببجي", "فورتنايت", "ماينكرافت", "كرة", "طيارة ورق", "أرجوحة", "زحليقة", "استغماية", "ليجو", "روبيك", "بالون", "مونوبولي", "جنجا", "تاكي", "أونو", "لعبة سيارات", "دمية", "يويو", "بلياردو", "حبل نط"], "مشاعر وحالات": ["فرحان", "زعلان", "معصب", "خايف", "مستحي", "طفشان", "نعسان", "جوعان", "عطشان", "مبسوط", "متوتر", "مستغرب", "غيران", "مشتاق", "مصدوم", "فخور", "مرتاح", "تعبان", "محتار", "متحمس", "ندمان", "ملول", "مكسوف", "مكسور خاطره", "متفائل"]};
 const $ = (id) => document.getElementById(id);
@@ -204,19 +204,21 @@ const players = () => G.names.slice(0, G.count);
 function intro() {
   const resume = G.scores && Object.keys(G.scores).length;
   render(`<h1>كلمة وحدة الكل بيعرفها... إلا واحد!</h1>
-    <div class="card"><ol class="steps">
+    <p class="sub">من 3 لـ20 لاعب على تلفون واحد. اسألوا، شكّوا، وصوّتوا مين برا السالفة.</p>
+    
+    
+    ${resume ? `<button class="big" id="resume" type="button">كمّلوا اللعبة (${Object.keys(G.scores).length} لاعبين)</button>` : ""}
+    <button class="big ${resume ? "ghost" : ""}" id="new" type="button">${resume ? "لعبة جديدة" : "يلا نلعب"}</button>
+    ${howto("barra", `<ol class="steps">
       <li><span>حددوا كم واحد بيلعب، وكل واحد بيكتب اسمه.</span></li>
       <li><span>مرّروا التلفون: كل واحد بيشوف الكلمة، إلا واحد بيطلعله «إنت برا السالفة».</span></li>
       <li><span>التطبيق بيحكيلكم مين بيسأل مين. اسألوا عن الكلمة بدون ما تحكوها.</span></li>
       <li><span>بعد جولتين (أو أكثر إذا بدكم) بتصوّتوا: مين برا السالفة؟</span></li>
-    </ol></div>
-    <div class="card"><h2>النقاط</h2>
+    </ol><h2>النقاط</h2>
       <p class="note">اللي صوّت صح على اللي برا السالفة: <b>+1</b>. اللي صوّت غلط: <b>−1</b>.<br>
       إذا اللي برا السالفة ما انكشف: هو <b>+1</b>.<br>
       إذا انكشف، لازم يحزر الكلمة: إذا حزرها هو <b>+1</b> والباقي صفر، وإذا ما حزرها <b>−1</b>.<br>
-      النقاط بتضل تتجمع لحد ما تكبسوا «خروج من اللعبة».</p></div>
-    ${resume ? `<button class="big" id="resume" type="button">كمّلوا اللعبة (${Object.keys(G.scores).length} لاعبين)</button>` : ""}
-    <button class="big ${resume ? "ghost" : ""}" id="new" type="button">${resume ? "لعبة جديدة" : "يلا نلعب"}</button>`);
+      النقاط بتضل تتجمع لحد ما تكبسوا «خروج من اللعبة».</p>`)}`);
   bind({ resume: () => setupRound(), new: () => { G.scores = null; store.set("scores", null); setupPlayers(); } });
 }
 
