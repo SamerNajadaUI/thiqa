@@ -69,6 +69,7 @@ body { transition: background-color .25s, color .25s; }
 .g-who { --g1: #8A6CFF; --g2: #4B2FE0; }
 .g-numbers { --g1: #2EC5FF; --g2: #0A7CE0; }
 .g-career { --g1: #FFC23D; --g2: #E8890C; }
+.g-qisma { --g1: #FF5FA2; --g2: #8B3DFF; }
 .g-barra { --g1: #2FD58E; --g2: #0B9A62; }
 :root[data-theme="dark"] .gcard .art { filter: saturate(.92) brightness(.92); }
 :root[data-theme="dark"] .gcard .flag { background: rgb(14 15 20 / .78); color: #FFFFFF; }

@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>قسمة ونصيب</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<style>
+/* قسمة ونصيب: ألوان التطبيق (فاتح/غامق من shell.css) + لون لكل حصة. */
+:root {
+  --font: "Readex Pro", "Segoe UI", Tahoma, sans-serif; --display: "Lalezar", "Readex Pro", sans-serif;
+  --b0: #6E4BFF; --b1: #FF7A1A; --b2: #12B76A; --b3: #0BA5EC; --b4: #EE46BC;
+  --num: #1D2939; --bomb: #F04438; --dbl: #7A5AF8; --gem: #06AED4; --fox: #F38744;
+}
+:root[data-theme="dark"] { --num: #E6E8EE; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; min-height: 100vh; font-family: var(--font); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+html, body, button, input { touch-action: manipulation; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;
+  padding: calc(8px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+#app { display: flex; flex-direction: column; gap: 14px; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 8.5vw, 40px); line-height: 1.15; margin: 0; }
+h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 2px 0 0; line-height: 1.2; }
+.sub { color: var(--muted); margin: 0; font-size: 14px; }
+.center { text-align: center; }
+.note { color: var(--muted); font-size: 13px; margin: 0; text-align: center; }
+.err { color: var(--bomb); font-size: 13px; margin: 0; text-align: center; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 16px; box-shadow: var(--shadow); }
+.btn { border: 0; width: 100%; border-radius: 18px; padding: 15px; font-family: var(--display); font-size: 22px; line-height: 1.1; background: var(--brand); color: #FFF; box-shadow: 0 8px 20px -8px var(--brand); transition: transform .12s; }
+.btn:active { transform: scale(.97); }
+.btn.alt { background: var(--card); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+.btn.gold { background: linear-gradient(135deg, #FFC23D, #F08A0C); box-shadow: 0 8px 20px -8px #F08A0C; }
+.btn[disabled] { opacity: .45; transform: none; }
+.linkish { border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; align-self: center; padding: 6px; }
+.row { display: flex; gap: 8px; align-items: center; }
+.input { width: 100%; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 14px; padding: 12px 14px; font-size: 16px; font-family: var(--font); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 16px; background: var(--soft); border: 1px solid var(--line); }
+.seg button { border: 0; background: none; border-radius: 12px; padding: 9px 4px; font-weight: 600; font-size: 14px; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: var(--shadow-sm); }
+.label { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0 0 -6px; }
+
+/* شريط اللعبة */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 46px; }
+.top .logo { font-family: var(--display); font-size: 25px; color: var(--ink); text-decoration: none; line-height: 1; }
+.top .logo span { color: var(--b1); }
+.top .end { display: flex; gap: 8px; align-items: center; }
+.ghost { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 7px 13px; font-size: 13px; font-weight: 600; color: var(--muted); }
+
+/* النقاط */
+.scores { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px; }
+.scores::-webkit-scrollbar { display: none; }
+.pod { flex: 1 0 auto; min-width: 84px; display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow-sm); position: relative; }
+.pod.turn { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-soft); }
+.pod .av { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #FFF; font-weight: 700; font-size: 13px; flex: none; background: hsl(var(--h) 60% 50%); }
+.pod b { display: block; font-family: var(--display); font-weight: 400; font-size: 20px; line-height: 1; direction: ltr; text-align: right; }
+.pod small { display: block; font-size: 11px; color: var(--muted); max-width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pod .crown { position: absolute; top: -9px; left: 6px; font-size: 15px; }
+.pod .delta { position: absolute; top: -10px; right: 8px; font-size: 12px; font-weight: 800; padding: 1px 6px; border-radius: 999px; background: var(--b2); color: #FFF; animation: up 1.6s ease-out both; }
+.pod .delta.neg { background: var(--bomb); }
+@keyframes up { 0% { opacity: 0; transform: translateY(6px); } 15% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-8px); } }
+.roundbar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); font-weight: 600; }
+.roundbar .hot { color: #F08A0C; }
+
+/* الورق */
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.card { --bc: var(--line); position: relative; aspect-ratio: 1 / 1.05; border-radius: 16px; border: 2px solid var(--bc); background: var(--card); box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 6px; transition: transform .15s, border-color .15s; user-select: none; -webkit-user-select: none; }
+.card .v { font-family: var(--display); font-size: clamp(28px, 8.5vw, 40px); line-height: 1; direction: ltr; }
+.card .t { font-size: 11px; color: var(--muted); font-weight: 600; text-align: center; line-height: 1.3; }
+.card.k-n .v { color: var(--num); } .card.k-b .v { color: var(--bomb); } .card.k-x .v { color: var(--dbl); } .card.k-g .v { color: var(--gem); } .card.k-f .v { color: var(--fox); }
+.card.back { background: repeating-linear-gradient(45deg, var(--soft) 0 8px, var(--soft2) 8px 16px); }
+.card.back .v { color: var(--faint); }
+.card .tag { position: absolute; top: 6px; right: 6px; min-width: 22px; height: 22px; border-radius: 8px; display: grid; place-items: center; color: #FFF; font-weight: 800; font-size: 12px; background: var(--bc); }
+.card .eye { position: absolute; bottom: 5px; left: 5px; width: 30px; height: 30px; border-radius: 10px; border: 1px solid var(--line); background: var(--soft); display: grid; place-items: center; font-size: 15px; padding: 0; filter: grayscale(1); opacity: .65; }
+.card .eye[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); filter: none; opacity: 1; }
+.card.shown::after { content: "👁"; position: absolute; top: 6px; left: 7px; font-size: 12px; }
+.card.peek { box-shadow: 0 0 0 3px var(--gem); }
+.card.mini { aspect-ratio: 3 / 4; border-radius: 12px; padding: 3px; }
+.card.mini .v { font-size: clamp(20px, 6vw, 28px); }
+.card.mini .t { font-size: 9.5px; }
+.b0 { --bc: var(--b0); } .b1 { --bc: var(--b1); } .b2 { --bc: var(--b2); } .b3 { --bc: var(--b3); } .b4 { --bc: var(--b4); }
+@media (prefers-reduced-motion: no-preference) { .card.flip { animation: flip .45s cubic-bezier(.2,.9,.3,1.2) both; } @keyframes flip { from { transform: rotateY(90deg); } } }
+
+/* الحصص */
+.bundles { display: flex; flex-direction: column; gap: 10px; }
+.bundle { --bc: var(--b0); text-align: right; width: 100%; border: 2px solid color-mix(in srgb, var(--bc) 35%, var(--line)); background: var(--card); border-radius: 20px; padding: 10px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px; }
+.bundle.sel { border-color: var(--bc); box-shadow: 0 0 0 3px color-mix(in srgb, var(--bc) 30%, transparent), var(--shadow); }
+.bundle[disabled] { opacity: .55; }
+.bundle .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.bundle .name { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.bundle .name i { font-style: normal; width: 24px; height: 24px; border-radius: 8px; background: var(--bc); color: #FFF; display: grid; place-items: center; font-size: 13px; }
+.bundle .info { font-size: 12px; color: var(--muted); font-weight: 600; }
+.bundle .row-cards { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.bundle .owner { font-size: 13px; font-weight: 700; color: var(--bc); }
+.bundle .total { font-family: var(--display); font-size: 26px; line-height: 1; direction: ltr; color: var(--bc); }
+.sumchips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.sumchips span { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; color: #FFF; background: var(--bc); }
+.sumchips span.empty { background: var(--soft); color: var(--muted); }
+
+.banner { border-radius: 22px; padding: 14px 16px; text-align: center; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 4px; }
+.banner b { font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.2; }
+.banner.gold { background: linear-gradient(135deg, color-mix(in srgb, #FFC23D 22%, var(--card)), var(--card)); border-color: color-mix(in srgb, #F08A0C 40%, var(--line)); }
+.pass { text-align: center; border-radius: 26px; padding: 30px 18px; background: var(--card); border: 1px dashed var(--line); display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow); }
+.pass b { font-family: var(--display); font-weight: 400; font-size: 40px; color: var(--brand); line-height: 1.15; }
+.thinking { display: flex; gap: 6px; justify-content: center; padding: 6px; }
+.thinking i { width: 9px; height: 9px; border-radius: 50%; background: var(--brand); animation: dot 1s infinite ease-in-out; }
+.thinking i:nth-child(2) { animation-delay: .15s; } .thinking i:nth-child(3) { animation-delay: .3s; }
+@keyframes dot { 50% { transform: translateY(-6px); opacity: .5; } }
+.legend { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.legend .card { aspect-ratio: auto; padding: 8px 4px; }
+.legend .card .v { font-size: 24px; }
+.rules { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 7px; font-size: 14px; color: var(--muted); }
+.rules b { color: var(--ink); }
+.plist { display: flex; flex-direction: column; gap: 8px; }
+.plist .item { display: flex; gap: 8px; align-items: center; }
+.plist .item .input { flex: 1; }
+.plist .bot { flex: none; width: 46px; height: 46px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); font-size: 20px; }
+.plist .bot[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); }
+.final { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.final li { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+.final li:first-child { border-color: #F5B13D; background: linear-gradient(135deg, color-mix(in srgb, #FFC23D 20%, var(--card)), var(--card)); }
+.final li b { font-family: var(--display); font-weight: 400; font-size: 24px; margin-inline-start: auto; direction: ltr; }
+.final .medal { font-size: 22px; width: 28px; text-align: center; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.stats div { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 10px; text-align: center; }
+.stats small { display: block; color: var(--muted); font-size: 11.5px; }
+.stats b { display: block; font-weight: 700; font-size: 14px; }
+.code { font-family: var(--display); font-size: 52px; letter-spacing: 8px; direction: ltr; text-align: center; color: var(--brand); line-height: 1.1; }
+.loading { text-align: center; color: var(--muted); padding: 48px 0; }
+@media (max-width: 360px) { .cards { gap: 7px; } .legend { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="logo" href="./">قسمة <span>ونصيب</span></a><div class="end"><span id="theme-slot"></span><button class="ghost" id="quit" type="button">الألعاب</button></div></div>
+  <main id="app"><div class="loading">...</div></main>
+</div>
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const store = { get(k, d) { try { const v = localStorage.getItem("qisma-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("qisma-" + k, JSON.stringify(v)); } catch {} } };
+const hue = (s) => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+function render(html) { $("app").innerHTML = html; }
+function bind(map) { for (const [id, fn] of Object.entries(map)) { const el = $(id); if (el) el.onclick = fn; } }
+
+// ================= القوانين =================
+// الورق: أرقام 1–8، قنبلة −4، دبل (بيضاعف حصته)، جوهرة +10، ثعلب (بيسرق 5 من المتصدّر).
+const KIND = {
+  n: { t: "رقم" },
+  b: { t: "قنبلة", show: "💣", sub: "−4" },
+  x: { t: "دبل الحصة", show: "×2" },
+  g: { t: "جوهرة", show: "💎", sub: "+10" },
+  f: { t: "ثعلب", show: "🦊", sub: "بيسرق 5" },
+};
+const RULES = { bomb: -4, gem: 10, fox: 5, foxSelf: 2, peeks: 2, finalMult: 2 };
+const BUNDLE = ["أ", "ب", "ج", "د", "هـ"];
+function makeDeck(copies) {
+  const one = [];
+  for (let v = 1; v <= 8; v++) one.push({ k: "n", v }, { k: "n", v });
+  for (let i = 0; i < 4; i++) one.push({ k: "b", v: RULES.bomb });
+  one.push({ k: "x", v: 0 }, { k: "x", v: 0 }, { k: "g", v: RULES.gem }, { k: "f", v: 0 }, { k: "f", v: 0 });
+  const out = [];
+  for (let c = 0; c < copies; c++) out.push(...one.map((x) => ({ ...x })));
+  return out;
+}
+const roundsFor = (n) => ({ 2: 8, 3: 9, 4: 8, 5: 10 }[n]);
+const cardsFor = (n) => n * 3;
+// قيمة الحصة: مجموع الأرقام والقنابل والجواهر، مضروب ×2 لكل ورقة دبل (أقصى إشي ×4)، والثعالب لحال
+function bundleValue(cards) {
+  const base = cards.reduce((s, c) => s + (c.k === "n" || c.k === "b" || c.k === "g" ? c.v : 0), 0);
+  const dbl = cards.filter((c) => c.k === "x").length;
+  return { base: base * Math.min(4, 2 ** dbl), fox: cards.filter((c) => c.k === "f").length, dbl };
+}
+
+// ================= المحرك =================
+// G فيها كل إشي (عند صاحب الغرفة أو التلفون)، وكل لاعب بيشوف «view» فيها بس اللي مسموحله يشوفه.
+let G = null;
+function newGame(players, cfg = {}) {
+  const n = players.length;
+  G = {
+    v: 0, phase: "split", round: 0, rounds: roundsFor(n), n,
+    players: players.map((p) => ({ id: p.id, name: p.name, bot: p.bot || null, score: 0, peeks: RULES.peeks, stats: { gain: 0, best: 0, fooled: 0 } })),
+    first: Math.floor(Math.random() * n), cfg, log: [],
+  };
+  startRound();
+  return G;
+}
+const P = (id) => G.players.find((p) => p.id === id);
+const idx = (id) => G.players.findIndex((p) => p.id === id);
+const isFinal = () => G.round === G.rounds - 1;
+function leaderExcept(id) {
+  const others = G.players.filter((p) => p.id !== id);
+  const top = Math.max(...others.map((p) => p.score));
+  return others.filter((p) => p.score === top);
+}
+function startRound() {
+  const n = G.n;
+  // الجولة الأخيرة: المتأخر (أقل نقاط) هو اللي بيقسم، والنقاط دبل
+  let d = (G.first + G.round) % n;
+  if (isFinal()) { const low = Math.min(...G.players.map((p) => p.score)); const lows = G.players.map((p, i) => [p, i]).filter(([p]) => p.score === low); d = lows[Math.floor(Math.random() * lows.length)][1]; }
+  const deck = shuffle(makeDeck(n >= 4 ? 2 : 1));
+  G.cards = deck.slice(0, cardsFor(n)).map((c, i) => ({ ...c, id: i }));
+  G.divider = G.players[d].id;
+  G.order = Array.from({ length: n - 1 }, (_, k) => G.players[(d + 1 + k) % n].id);
+  G.assign = null; G.shown = []; G.turn = 0; G.owner = {}; G.peeked = {}; G.res = null;
+  G.mult = isFinal() ? RULES.finalMult : 1;
+  G.phase = "split";
+}
+function validSplit(assign, shown) {
+  const n = G.n;
+  if (!Array.isArray(assign) || assign.length !== G.cards.length || !assign.every((b) => Number.isInteger(b) && b >= 0 && b < n)) return "في ورقة بدون حصة";
+  for (let b = 0; b < n; b++) if (!assign.includes(b)) return `حصة ${BUNDLE[b]} فاضية`;
+  if (!Array.isArray(shown) || new Set(shown).size !== n || !shown.every((i) => i >= 0 && i < G.cards.length)) return `لازم تكشف ${n} ورقات بالضبط`;
+  return null;
+}
+function doSplit(pid, assign, shown) {
+  if (G.phase !== "split" || pid !== G.divider || validSplit(assign, shown)) return false;
+  G.assign = assign.slice(); G.shown = shown.slice(); G.phase = "choose";
+  return true;
+}
+const chooser = () => G.order[G.turn];
+function doPeek(pid, card) {
+  const p = P(pid);
+  if (G.phase !== "choose" || pid !== chooser() || !p || p.peeks <= 0) return false;
+  if (G.shown.includes(card) || !(card >= 0 && card < G.cards.length) || (G.peeked[pid] || []).includes(card)) return false;
+  const b = G.assign[card]; if (G.owner[b] !== undefined) return false;
+  p.peeks--; (G.peeked[pid] ||= []).push(card);
+  return true;
+}
+function doPick(pid, b) {
+  if (G.phase !== "choose" || pid !== chooser() || !(b >= 0 && b < G.n) || G.owner[b] !== undefined) return false;
+  G.owner[b] = pid; G.turn++;
+  if (G.turn >= G.order.length) { const rest = [...Array(G.n).keys()].find((k) => G.owner[k] === undefined); G.owner[rest] = G.divider; resolve(); }
+  return true;
+}
+function resolve() {
+  const before = Object.fromEntries(G.players.map((p) => [p.id, p.score]));
+  const bundles = [];
+  for (let b = 0; b < G.n; b++) {
+    const cards = G.cards.filter((c) => G.assign[c.id] === b);
+    const val = bundleValue(cards), pid = G.owner[b];
+    P(pid).score += val.base * G.mult;
+    bundles.push({ b, pid, val: val.base * G.mult, fox: val.fox, dbl: val.dbl });
+  }
+  const fx = [];
+  for (const x of bundles) for (let k = 0; k < x.fox; k++) {
+    const lead = leaderExcept(x.pid);
+    const me = P(x.pid);
+    if (lead[0].score > me.score) { const t = lead[Math.floor(Math.random() * lead.length)]; t.score -= RULES.fox; me.score += RULES.fox; fx.push([x.pid, t.id]); }
+    else { me.score += RULES.foxSelf; fx.push([x.pid, null]); }
+  }
+  // إحصائيات للنهاية: كم ربح القاسم أكثر من غيره، وأحسن حصة
+  const dv = bundles.find((x) => x.pid === G.divider).val;
+  const others = bundles.filter((x) => x.pid !== G.divider).map((x) => x.val);
+  const edge = dv - Math.max(...others);
+  const D = P(G.divider).stats; D.gain += Math.max(0, edge); if (edge > D.fooled) D.fooled = edge;
+  for (const x of bundles) { const s = P(x.pid).stats; if (x.val > s.best) s.best = x.val; }
+  const delta = Object.fromEntries(G.players.map((p) => [p.id, p.score - before[p.id]]));
+  G.res = { bundles, fx, delta, edge };
+  G.log.push({ round: G.round + 1, divider: G.divider, delta });
+  G.phase = "reveal";
+}
+function doNext() {
+  if (G.phase !== "reveal") return false;
+  G.round++;
+  if (G.round >= G.rounds) G.phase = "over"; else startRound();
+  return true;
+}
+// شو بيشوف كل لاعب: الورق المخفي بيصير null إلا للقاسم، أو اللي بصّ عليه، أو بعد الكشف
+function viewFor(pid) {
+  const open = G.phase === "reveal" || G.phase === "over";
+  const peeked = G.peeked[pid] || [];
+  const cards = G.cards.map((c) => (open || pid === G.divider || G.shown.includes(c.id) || peeked.includes(c.id)) ? c : { id: c.id, k: null });
+  return { ...G, cards, peeked: { [pid]: peeked } };
+}
+
+// ================= الكمبيوتر =================
+// بيقدّر قيمة الحصة من الورق اللي شايفه، ويعتبر الورق المخفي عشوائي من باقي الدّك.
+function poolWithout(seen) {
+  const deck = makeDeck(G.n >= 4 ? 2 : 1);
+  for (const c of seen) { const i = deck.findIndex((d) => d.k === c.k && d.v === c.v); if (i >= 0) deck.splice(i, 1); }
+  return deck;
+}
+function estimate(seenCards, hidden, pool, samples) {
+  if (!hidden) { const v = bundleValue(seenCards); return v.base + v.fox * 3; }
+  let tot = 0;
+  for (let s = 0; s < samples; s++) {
+    const pick = []; const used = new Set();
+    while (pick.length < hidden) { const i = Math.floor(Math.random() * pool.length); if (!used.has(i)) { used.add(i); pick.push(pool[i]); } }
+    const v = bundleValue(seenCards.concat(pick)); tot += v.base + v.fox * 3;
+  }
+  return tot / samples;
+}
+const LEVEL = {
+  easy: { noise: 7, configs: 25, suspicion: 0, samples: 16 },
+  medium: { noise: 3, configs: 140, suspicion: 0.15, samples: 24 },
+  hard: { noise: 1.2, configs: 420, suspicion: 0.35, samples: 32 },
+};
+const gauss = () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+function chooserEstimates(view, pid, lvl) {
+  const L = LEVEL[lvl], seen = view.cards.filter((c) => c.k), pool = poolWithout(seen);
+  return [...Array(view.n).keys()].map((b) => {
+    if (view.owner[b] !== undefined) return -Infinity;
+    const cs = view.cards.filter((c) => view.assign[c.id] === b);
+    const vis = cs.filter((c) => c.k), hid = cs.length - vis.length;
+    let e = estimate(vis, hid, pool, L.samples);
+    // الذكي بيشك بالحصة اللي مكشوف فيها ورق حلو كثير (ممكن تكون طُعم)
+    const bait = vis.filter((c) => view.shown.includes(c.id) && (c.k === "g" || (c.k === "n" && c.v >= 6))).reduce((s, c) => s + c.v, 0);
+    e -= L.suspicion * bait;
+    return e + gauss() * L.noise;
+  });
+}
+function botChoose(pid, lvl) {
+  const view = viewFor(pid);
+  let est = chooserEstimates(view, pid, lvl);
+  const me = P(pid);
+  // الصعب بيبصّ على ورقة لما تكون الحصص متقاربة
+  if (lvl !== "easy" && me.peeks > 0) {
+    const sorted = est.filter(Number.isFinite).sort((a, b) => b - a);
+    if (sorted.length > 1 && sorted[0] - sorted[1] < (lvl === "hard" ? 4 : 2) && Math.random() < 0.7) {
+      const top = est.indexOf(sorted[0]);
+      const hidden = view.cards.filter((c) => !c.k && view.assign[c.id] === top);
+      if (hidden.length) { const c = hidden[Math.floor(Math.random() * hidden.length)]; doPeek(pid, c.id); est = chooserEstimates(viewFor(pid), pid, lvl); }
+    }
+  }
+  return est.indexOf(Math.max(...est));
+}
+function botSplit(pid, lvl) {
+  const L = LEVEL[lvl], n = G.n, m = G.cards.length;
+  let best = null;
+  for (let t = 0; t < L.configs; t++) {
+    const assign = Array.from({ length: m }, () => Math.floor(Math.random() * n));
+    for (let b = 0; b < n; b++) if (!assign.includes(b)) assign[Math.floor(Math.random() * m)] = b;
+    if (validSplit(assign, [...Array(n).keys()])) { t--; continue; }
+    const shown = shuffle([...Array(m).keys()]).slice(0, n);
+    if (lvl === "easy") { best = { assign, shown }; break; }
+    // توقّع اختيار الباقي: كل واحد بياخذ الحصة اللي شكلها أحسن
+    const pool = poolWithout(G.cards.filter((c) => shown.includes(c.id)));
+    const looks = [...Array(n).keys()].map((b) => {
+      const cs = G.cards.filter((c) => assign[c.id] === b), vis = cs.filter((c) => shown.includes(c.id));
+      return estimate(vis, cs.length - vis.length, pool, 8);
+    });
+    const real = [...Array(n).keys()].map((b) => { const v = bundleValue(G.cards.filter((c) => assign[c.id] === b)); return v.base + v.fox * 3; });
+    const order = [...Array(n).keys()].sort((a, b) => looks[b] - looks[a]);
+    const mine = order[n - 1];
+    const others = order.slice(0, n - 1).map((b) => real[b]);
+    const score = real[mine] - (n === 2 ? others[0] : others.reduce((s, x) => s + x, 0) / others.length);
+    if (!best || score > best.score) best = { assign, shown, score };
+  }
+  return best;
+}
+
+// ================= الأصوات =================
+let AC = null;
+function tone(f, t0, dur, type = "sine", vol = .1) {
+  try { AC ||= new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume();
+    const o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(.0001, AC.currentTime + t0); g.gain.exponentialRampToValueAtTime(vol, AC.currentTime + t0 + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + t0 + dur); o.connect(g).connect(AC.destination); o.start(AC.currentTime + t0); o.stop(AC.currentTime + t0 + dur + .05); } catch {}
+}
+const sfx = {
+  tap: () => tone(660, 0, .06, "triangle", .06),
+  flip: () => [520, 700].forEach((f, k) => tone(f, k * .07, .12, "triangle", .08)),
+  good: () => [523, 659, 784].forEach((f, k) => tone(f, k * .09, .22, "triangle", .1)),
+  bad: () => [220, 165].forEach((f, k) => tone(f, k * .12, .3, "sawtooth", .07)),
+  win: () => [523, 659, 784, 1047].forEach((f, k) => tone(f, k * .12, .35, "triangle", .12)),
+};
+const haptic = (k) => { try { window.webkit?.messageHandlers?.haptic?.postMessage(k); } catch {} try { navigator.vibrate?.(k === "error" ? [60, 40, 90] : 25); } catch {} };
+
+// ================= الأوضاع =================
+// mode: "solo" (ضد الكمبيوتر) | "local" (تلفون واحد) | "host" | "guest"
+let mode = null, me = { id: store.get("pid", null), name: store.get("name", "") }, VIEW = null, botTimer = null, lastV = -1;
+if (!me.id) { me.id = Math.random().toString(36).slice(2, 10); store.set("pid", me.id); }
+let LOCAL = { gate: null };   // تلفون واحد: لمين التلفون هلأ
+
+function act(a) {
+  if (!G) return;
+  let ok = false;
+  if (a.t === "split") ok = doSplit(a.pid, a.assign, a.shown);
+  else if (a.t === "peek") ok = doPeek(a.pid, a.card);
+  else if (a.t === "pick") ok = doPick(a.pid, a.b);
+  else if (a.t === "next") ok = (mode !== "host" || a.pid === me.id) && doNext();
+  else if (a.t === "again") { if (G.phase === "over" && (mode !== "host" || a.pid === me.id)) { newGame(G.players.map((p) => ({ id: p.id, name: p.name, bot: p.bot }))); ok = true; } }
+  if (!ok) return;
+  commit();
+}
+function commit() {
+  G.v++;
+  if (mode === "solo" || mode === "local") store.set("save", { mode, G });
+  if (mode === "host") { publishAll(); store.set("host-" + room, G); }
+  driveBots();
+  show();
+}
+// الكمبيوتر بيلعب دوره بعد شوي، عشان يبين إنه عم يفكّر
+function driveBots() {
+  clearTimeout(botTimer);
+  if (!G || (G.phase !== "split" && G.phase !== "choose")) return;
+  const actor = P(G.phase === "split" ? G.divider : chooser());
+  if (!actor || !actor.bot) return;
+  botTimer = setTimeout(() => {
+    if (G.phase === "split") { const s = botSplit(actor.id, actor.bot); doSplit(actor.id, s.assign, s.shown); }
+    else doPick(actor.id, botChoose(actor.id, actor.bot));
+    commit();
+  }, 900 + Math.random() * 900);
+}
+
+// ================= الواجهة =================
+const nameOf = (id) => esc(P(id)?.name ?? "؟");
+const avatar = (p) => `<span class="av" style="--h:${hue(p.name)}">${p.bot ? "🤖" : esc([...p.name][0] || "؟")}</span>`;
+function cardHtml(c, opts = {}) {
+  const cls = ["card", opts.mini ? "mini" : "", opts.b !== undefined ? "b" + opts.b : "", opts.flip ? "flip" : "", opts.shown ? "shown" : "", opts.peek ? "peek" : ""].join(" ");
+  if (!c.k) return `<div class="${cls} back"><span class="v">؟</span></div>`;
+  const K = KIND[c.k];
+  const big = c.k === "n" ? c.v : K.show;
+  const sub = c.k === "n" ? "" : (K.sub || "");
+  return `<div class="${cls} k-${c.k}" ${opts.attrs || ""}>${opts.tag !== undefined ? `<span class="tag">${BUNDLE[opts.tag]}</span>` : ""}<span class="v">${big}</span>${!opts.mini || sub ? `<span class="t">${sub || (c.k === "n" ? "" : K.t)}</span>` : ""}${opts.eye || ""}</div>`;
+}
+function scoresHtml(v) {
+  const top = Math.max(...v.players.map((p) => p.score));
+  const turnId = v.phase === "split" ? v.divider : v.phase === "choose" ? v.order[v.turn] : null;
+  return `<div class="scores">${v.players.map((p) => {
+    const d = v.phase === "reveal" && v.res ? v.res.delta[p.id] : 0;
+    return `<div class="pod ${p.id === turnId ? "turn" : ""}">${p.score === top && top > 0 ? `<span class="crown">👑</span>` : ""}${d ? `<span class="delta ${d < 0 ? "neg" : ""}">${d > 0 ? "+" : ""}${d}</span>` : ""}${avatar(p)}<span><b>${p.score}</b><small>${esc(p.name)}${p.id === v.divider ? " ✂️" : ""}</small></span></div>`;
+  }).join("")}</div>
+  <div class="roundbar"><span>الجولة ${Math.min(v.round + 1, v.rounds)} من ${v.rounds}</span>${v.mult > 1 ? `<span class="hot">🔥 الجولة الأخيرة: النقاط ×${v.mult}، والمتأخر هو اللي بيقسم</span>` : `<span>✂️ القاسم: ${nameOf(v.divider)}</span>`}</div>`;
+}
+// مين اللي ماسك الشاشة هلأ
+function viewerId() {
+  if (mode === "host" || mode === "guest") return me.id;
+  if (mode === "solo") return G.players.find((p) => !p.bot).id;
+  if (G.phase === "split") return G.divider;
+  if (G.phase === "choose") return chooser();
+  return null;
+}
+function show() {
+  if (!G && mode !== "guest") return;
+  const v = mode === "guest" ? VIEW : viewFor(viewerId() ?? "_");
+  if (!v) return;
+  if (v.phase === "over") return drawOver(v);
+  if (mode === "local" && (v.phase === "split" || v.phase === "choose")) {
+    const actor = P(v.phase === "split" ? v.divider : v.order[v.turn]);
+    const gateKey = [v.round, v.phase, v.turn, actor.id].join(":");
+    if (!actor.bot && LOCAL.gate !== gateKey) return passScreen(v, actor, gateKey);
+  }
+  if (v.phase === "split") return drawSplit(v);
+  if (v.phase === "choose") return drawChoose(v);
+  if (v.phase === "reveal") return drawReveal(v);
+}
+function passScreen(v, actor, key) {
+  const what = v.phase === "split" ? "إنت القاسم ✂️ لا تخلّي حدا يشوف الورق" : "دورك تختار حصة";
+  render(`${scoresHtml(v)}<div class="pass"><span class="sub">مرّروا التلفون لـ</span><b>${esc(actor.name)}</b><span class="sub">${what}</span></div><button class="btn" id="me" type="button">أنا ${esc(actor.name)}</button>`);
+  bind({ me: () => { LOCAL.gate = key; sfx.tap(); show(); } });
+}
+// ---------- شاشة القاسم ----------
+let draft = null;
+function drawSplit(v) {
+  const meId = viewerId(), mine = v.divider === meId && !P(meId)?.bot;
+  if (!mine) {
+    render(`${scoresHtml(v)}<div class="banner"><b>${nameOf(v.divider)} عم يقسم ✂️</b><span class="sub">شايف كل الورق، وبيختار شو يكشفلكم... انتبهوا من الخدعة!</span><div class="thinking"><i></i><i></i><i></i></div></div>
+      <div class="cards">${v.cards.map(() => cardHtml({ k: null })).join("")}</div>`);
+    return;
+  }
+  const n = v.n;
+  if (!draft || draft.key !== v.round + ":" + v.divider) draft = { key: v.round + ":" + v.divider, assign: v.cards.map((_, i) => i % n), shown: [] };
+  const sums = [...Array(n).keys()].map((b) => { const cs = v.cards.filter((c) => draft.assign[c.id] === b); return { cs, val: bundleValue(cs) }; });
+  const err = validSplit(draft.assign, draft.shown);
+  render(`${scoresHtml(v)}
+    <div class="banner"><b>إنت القاسم ✂️</b><span class="sub">اكبس على الورقة عشان تغيّر حصتها، واكبس 👁 عشان تكشفها. الباقين بيشوفوا بس الورق المكشوف، وبيختاروا قبلك. إنت بتاخذ الحصة اللي بتضل.</span></div>
+    <div class="sumchips">${sums.map((s, b) => `<span class="b${b}" style="--bc:var(--b${b})">حصة ${BUNDLE[b]}: ${s.cs.length} ورق · ${s.val.base}${s.val.fox ? ` + 🦊${s.val.fox}` : ""}</span>`).join("")}</div>
+    <div class="cards">${v.cards.map((c) => cardHtml(c, { b: draft.assign[c.id], tag: draft.assign[c.id], shown: draft.shown.includes(c.id),
+      attrs: `data-card="${c.id}" role="button" tabindex="0" aria-label="ورقة، حصة ${BUNDLE[draft.assign[c.id]]}"`,
+      eye: `<button class="eye" type="button" data-eye="${c.id}" aria-pressed="${draft.shown.includes(c.id)}" aria-label="اكشفها">👁</button>` })).join("")}</div>
+    <p class="note">مكشوف ${draft.shown.length} من ${n}</p>
+    <button class="btn" id="go" type="button" ${err ? "disabled" : ""}>${err ? esc(err) : "وزّع الحصص ✂️"}</button>`);
+  document.querySelectorAll("[data-card]").forEach((el) => el.onclick = (e) => {
+    if (e.target.closest("[data-eye]")) return;
+    const i = +el.dataset.card; draft.assign[i] = (draft.assign[i] + 1) % n; sfx.tap(); drawSplit(v);
+  });
+  document.querySelectorAll("[data-eye]").forEach((el) => el.onclick = () => {
+    const i = +el.dataset.eye, s = draft.shown;
+    if (s.includes(i)) s.splice(s.indexOf(i), 1); else { if (s.length >= n) s.shift(); s.push(i); }
+    sfx.tap(); drawSplit(v);
+  });
+  bind({ go: () => { if (validSplit(draft.assign, draft.shown)) return; haptic("success"); send({ t: "split", assign: draft.assign, shown: draft.shown }); } });
+}
+// ---------- شاشة الاختيار ----------
+let selB = null, peekMode = false;
+function bundlesHtml(v, opts) {
+  return `<div class="bundles">${[...Array(v.n).keys()].map((b) => {
+    const cs = v.cards.filter((c) => v.assign[c.id] === b);
+    const owner = v.owner[b];
+    const vis = cs.filter((c) => c.k).length;
+    const res = opts.res && opts.res.bundles.find((x) => x.b === b);
+    return `<button type="button" class="bundle ${selB === b && !opts.res ? "sel" : ""}" style="--bc:var(--b${b})" data-b="${b}" ${owner !== undefined || opts.res || !opts.can ? "disabled" : ""}>
+      <span class="head"><span class="name"><i>${BUNDLE[b]}</i>حصة ${BUNDLE[b]}</span>${res ? `<span class="owner">${nameOf(res.pid)}${res.pid === v.divider ? " ✂️" : ""}</span><span class="total">${res.val > 0 ? "+" : ""}${res.val}</span>` : owner !== undefined ? `<span class="owner">أخذها ${nameOf(owner)}</span>` : `<span class="info">${cs.length} ورق · مكشوف ${vis}</span>`}</span>
+      <span class="row-cards">${cs.map((c) => cardHtml(c, { mini: true, flip: !!opts.res, peek: (v.peeked[viewerId()] || []).includes(c.id) && !opts.res,
+        attrs: peekMode && !c.k && owner === undefined ? `data-peek="${c.id}"` : "" })).join("")}</span>
+    </button>`;
+  }).join("")}</div>`;
+}
+function drawChoose(v) {
+  const meId = viewerId(), cur = v.order[v.turn], mine = cur === meId && !P(meId)?.bot;
+  if (selB !== null && (v.owner[selB] !== undefined || !mine)) selB = null;
+  const meP = P(meId) || v.players.find((p) => p.id === meId);
+  const peeks = meP ? meP.peeks : 0;
+  render(`${scoresHtml(v)}
+    <div class="banner">${mine ? `<b>دورك تختار 👇</b><span class="sub">${nameOf(v.divider)} قسم وشايف كل إشي. شو بتختار؟</span>` : `<b>${nameOf(cur)} عم يختار</b><div class="thinking"><i></i><i></i><i></i></div>`}</div>
+    ${bundlesHtml(v, { can: mine && !peekMode })}
+    ${mine ? `${peekMode ? `<p class="note">اكبس على ورقة مخفية عشان تشوفها (بس إنت)</p><button class="btn alt" id="cancel" type="button">إلغاء</button>`
+      : `<div class="row"><button class="btn alt" id="peek" type="button" style="flex:1" ${peeks ? "" : "disabled"}>🔍 بصّة (${peeks})</button><button class="btn" id="pick" type="button" style="flex:1.6" ${selB === null ? "disabled" : ""}>${selB === null ? "اختار حصة" : `خذ حصة ${BUNDLE[selB]}`}</button></div>`}` : ""}`);
+  if (!mine) return;
+  document.querySelectorAll("[data-b]:not([disabled])").forEach((el) => el.onclick = () => { selB = +el.dataset.b; sfx.tap(); drawChoose(v); });
+  document.querySelectorAll("[data-peek]").forEach((el) => el.onclick = (e) => { e.stopPropagation(); peekMode = false; sfx.flip(); send({ t: "peek", card: +el.dataset.peek }); });
+  bind({ peek: () => { peekMode = true; drawChoose(v); }, cancel: () => { peekMode = false; drawChoose(v); },
+    pick: () => { if (selB === null) return; const b = selB; selB = null; haptic("success"); send({ t: "pick", b }); } });
+}
+// ---------- الكشف ----------
+let revealed = -1;
+function drawReveal(v) {
+  const R = v.res, meId = viewerId() ?? me.id;
+  const myD = R.delta[mode === "local" ? "_" : meId];
+  if (revealed !== v.v) { revealed = v.v; sfx.flip(); setTimeout(() => (myD < 0 ? sfx.bad() : sfx.good()), 350); }
+  const dv = P(v.divider);
+  const msg = R.edge > 4 ? `✂️ ${nameOf(v.divider)} ضحك عليكم! أخذ أحسن حصة` : R.edge < -4 ? `😅 ${nameOf(v.divider)} انقلبت عليه القسمة` : `⚖️ قسمة عادلة تقريباً`;
+  const fox = R.fx.map(([a, t]) => t ? `🦊 ${nameOf(a)} سرق ${RULES.fox} من ${nameOf(t)}` : `🦊 ${nameOf(a)} +${RULES.foxSelf}`).join(" · ");
+  const canNext = mode !== "guest";
+  render(`${scoresHtml(v)}
+    <div class="banner ${R.edge > 4 ? "gold" : ""}"><b>${msg}</b>${fox ? `<span class="sub">${fox}</span>` : ""}${v.mult > 1 ? `<span class="sub">🔥 كل النقاط ×${v.mult}</span>` : ""}</div>
+    ${bundlesHtml(v, { res: R })}
+    ${canNext ? `<button class="btn" id="next" type="button">${v.round + 1 >= v.rounds ? "النتيجة النهائية 🏆" : v.round + 2 === v.rounds ? "🔥 الجولة الأخيرة" : "الجولة الجاية"}</button>` : `<p class="note">صاحب الغرفة بيكمّل</p>`}`);
+  bind({ next: () => send({ t: "next" }) });
+}
+// ---------- النهاية ----------
+function drawOver(v) {
+  const ranked = v.players.slice().sort((a, b) => b.score - a.score);
+  const champ = ranked[0], tie = ranked[1] && ranked[1].score === champ.score;
+  const medals = ["🥇", "🥈", "🥉", "4", "5"];
+  const sly = v.players.slice().sort((a, b) => b.stats.gain - a.stats.gain)[0];
+  const best = v.players.slice().sort((a, b) => b.stats.best - a.stats.best)[0];
+  if (revealed !== "over" + v.v) { revealed = "over" + v.v; sfx.win(); }
+  const humanWon = mode === "solo" && !champ.bot && !tie;
+  render(`<div class="banner gold"><span style="font-size:52px;line-height:1">${tie ? "🤝" : "🏆"}</span><b>${tie ? "تعادل!" : mode === "solo" ? (humanWon ? "فزت على الكمبيوتر!" : "الكمبيوتر فاز هالمرة") : `${esc(champ.name)} فاز!`}</b>
+    <span class="sub">${tie ? "ولا حدا قدر يغلب الثاني" : `بـ${champ.score} نقطة`}</span></div>
+    <ol class="final">${ranked.map((p, i) => `<li><span class="medal">${medals[i]}</span>${avatar(p)}<span>${esc(p.name)}</span><b>${p.score}</b></li>`).join("")}</ol>
+    <div class="stats"><div><small>✂️ أشطر قاسم</small><b>${esc(sly.name)} (+${sly.stats.gain})</b></div><div><small>💰 أكبر حصة</small><b>${esc(best.name)} (${best.stats.best})</b></div></div>
+    ${mode !== "guest" ? `<button class="btn" id="again" type="button">العب مرة ثانية</button>` : `<p class="note">صاحب الغرفة بيقدر يبلّش لعبة جديدة</p>`}
+    <button class="btn alt" id="out" type="button">خروج</button>`);
+  bind({ again: () => send({ t: "again" }), out: leave });
+}
+
+// ================= الاتصال (كل واحد من تلفونه) =================
+const BROKERS = ["wss://broker.emqx.io:8084/mqtt", "wss://broker.hivemq.com:8884/mqtt", "wss://test.mosquitto.org:8081/mqtt"];
+const qs = new URLSearchParams(location.search), ROOT = "abuodeh-qisma-v1";
+let client = null, room = null, LOBBY = null;
+const topic = (k) => `${ROOT}/${room}/${k}`;
+function send(a) {
+  a.pid = mode === "local" ? viewerId() : mode === "solo" ? G.players.find((p) => !p.bot).id : me.id;
+  if (mode === "guest") { client?.publish(topic("a"), JSON.stringify(a), { qos: 1 }); return; }
+  act(a);
+}
+function publishAll() {
+  if (!client) return;
+  if (!G) { client.publish(topic("lobby"), JSON.stringify(LOBBY), { qos: 1, retain: true }); return; }
+  client.publish(topic("lobby"), JSON.stringify({ ...LOBBY, started: true }), { qos: 1, retain: true });
+  for (const p of G.players) if (p.id !== me.id) client.publish(topic("v/" + p.id), JSON.stringify(viewFor(p.id)), { qos: 1, retain: true });
+}
+function connect(onReady, k = 0) {
+  if (typeof mqtt === "undefined") return fail("ما قدرت أحمّل الاتصال. تأكد من النت.");
+  const url = qs.get("broker") || BROKERS[k % BROKERS.length];
+  let ready = false;
+  const c = mqtt.connect(url, { clientId: "qs_" + me.id + "_" + Math.random().toString(36).slice(2, 6), reconnectPeriod: 2000, connectTimeout: 8000, clean: true });
+  const giveUp = setTimeout(() => { if (ready) return; c.end(true); if (k + 1 < BROKERS.length && !qs.get("broker")) connect(onReady, k + 1); else fail("ما قدرت أتصل. جرّب كمان شوي."); }, 9000);
+  c.on("connect", () => { if (!ready) { ready = true; clearTimeout(giveUp); client = c; onReady(); } else if (mode === "host") publishAll(); else if (mode === "guest") c.publish(topic("a"), JSON.stringify({ t: "join", pid: me.id, name: me.name }), { qos: 1 }); });
+  c.on("message", (t, buf) => {
+    let m; try { m = JSON.parse(buf.toString()); } catch { return; }
+    if (mode === "host" && t === topic("a")) {
+      if (m.t === "join") return hostJoin(m);
+      return act(m);
+    }
+    if (mode === "guest" && t === topic("lobby")) { LOBBY = m; if (!m.started) drawLobby(); }
+    if (mode === "guest" && t === topic("v/" + me.id)) { if (m.v <= lastV && VIEW && m.round === VIEW.round) return; lastV = m.v; VIEW = m; G = m; show(); }
+  });
+}
+function hostJoin(m) {
+  if (G) { if (G.players.some((p) => p.id === m.pid)) publishAll(); return; }
+  if (!LOBBY.players.some((p) => p.id === m.pid) && LOBBY.players.length < 5) LOBBY.players.push({ id: m.pid, name: String(m.name || "لاعب").slice(0, 14) });
+  publishAll(); drawLobby();
+}
+function hostRoom() {
+  mode = "host"; room = String(Math.floor(10000 + Math.random() * 90000));
+  LOBBY = { room, host: me.id, players: [{ id: me.id, name: me.name }] };
+  render(`<div class="loading">عم بفتح الغرفة...</div>`);
+  connect(() => { client.subscribe([topic("a")], { qos: 1 }); publishAll(); drawLobby(); });
+}
+function joinRoom(code) {
+  mode = "guest"; room = code;
+  render(`<div class="loading">عم بدخل الغرفة...</div>`);
+  connect(() => {
+    client.subscribe([topic("lobby"), topic("v/" + me.id)], { qos: 1 });
+    client.publish(topic("a"), JSON.stringify({ t: "join", pid: me.id, name: me.name }), { qos: 1 });
+    setTimeout(() => { if (!LOBBY) { render(`<h1>ما في رد من الغرفة ${esc(room)}</h1><p class="sub">تأكد من الكود، وإن تلفون صاحب الغرفة مفتوح.</p><button class="btn alt" id="back" type="button">رجوع</button>`); bind({ back: leave }); } }, 7000);
+  });
+}
+function drawLobby() {
+  if (G && mode === "host") return;
+  const isHost = mode === "host", L = LOBBY, link = location.origin + location.pathname + "?room=" + room;
+  render(`<p class="sub center">كود الغرفة</p><div class="code">${esc(room)}</div>
+    ${isHost ? `<button class="btn alt" id="share" type="button">ابعت الرابط لأصحابك</button>` : ""}
+    <h2>اللاعبين (${L.players.length} من 5)</h2>
+    <ol class="final">${L.players.map((p) => `<li>${avatar({ name: p.name })}<span>${esc(p.name)}${p.id === L.host ? " 👑" : ""}</span></li>`).join("")}</ol>
+    ${isHost ? `<button class="btn" id="start" type="button" ${L.players.length < 2 ? "disabled" : ""}>${L.players.length < 2 ? "استنى لاعب ثاني على الأقل" : "يلا نبلّش ✂️"}</button>` : `<p class="note">صاحب الغرفة بيبلّش لما الكل يدخل</p>`}
+    <button class="linkish" id="out" type="button">${isHost ? "سكّر الغرفة" : "اطلع"}</button>`);
+  bind({ out: leave, start: () => { newGame(L.players); commit(); },
+    share: async () => { const text = `تعالوا نلعب «قسمة ونصيب»! كود الغرفة ${room}`;
+      try { if (navigator.share) return await navigator.share({ title: "قسمة ونصيب", text, url: link }); } catch { return; }
+      try { await navigator.clipboard.writeText(text + "\n" + link); $("share").textContent = "انسخ الرابط ✓"; } catch {} } });
+}
+function fail(msg) { render(`<h1>مشكلة بالاتصال</h1><p class="sub">${esc(msg)}</p><button class="btn" id="back" type="button">رجوع</button>`); bind({ back: leave }); }
+function leave() {
+  try { if (client && mode === "host" && room) { client.publish(topic("lobby"), "", { qos: 1, retain: true }); G?.players.forEach((p) => client.publish(topic("v/" + p.id), "", { qos: 1, retain: true })); } } catch {}
+  const c = client; setTimeout(() => { try { c?.end(true); } catch {} }, 400);
+  if (mode === "solo" || mode === "local") store.set("save", null);
+  client = null; room = null; G = null; VIEW = null; LOBBY = null; mode = null; clearTimeout(botTimer); lastV = -1;
+  history.replaceState(null, "", location.pathname);
+  intro();
+}
+
+// ================= البداية =================
+function intro() {
+  const saved = store.get("save", null);
+  const lvl = store.get("level", "medium"), bots = store.get("bots", 1);
+  render(`<div><h1>إنت بتقسم... وهم بيختاروا</h1><p class="sub">بس إنت الوحيد اللي شايف الورق! اكشف شوي، خبّي شوي، واضحك عليهم 😏</p></div>
+    <div class="panel"><ul class="rules">
+      <li><b>✂️ القاسم</b> بيشوف كل الورق، وبيقسمه حصص (حصة لكل لاعب)، وبيكشف بس ورقتين (أو قد عدد اللاعبين).</li>
+      <li><b>👀 الباقين</b> بيختاروا حصة واحد ورا الثاني، والقاسم بياخذ اللي بتضل.</li>
+      <li><b>🔍 بصّة</b>: معك بصّتين باللعبة، بتشوف فيهن ورقة مخفية قبل ما تختار.</li>
+      <li><b>🔥 الجولة الأخيرة</b> نقاطها ×2، واللي متأخر هو اللي بيقسم. فرصة ترجع!</li>
+    </ul></div>
+    <div class="legend">${[{ k: "n", v: 7 }, { k: "b", v: -4 }, { k: "x", v: 0 }, { k: "g", v: 10 }, { k: "f", v: 0 }].map((c) => cardHtml(c)).join("")}</div>
+    ${saved && saved.G && saved.G.phase !== "over" ? `<button class="btn gold" id="resume" type="button">كمّل اللعبة اللي وقفت</button>` : ""}
+    <h2>🤖 ضد الكمبيوتر</h2>
+    <p class="label">المستوى</p>
+    <div class="seg" id="lvl">${[["easy", "سهل"], ["medium", "متوسط"], ["hard", "صعب"]].map(([k, t]) => `<button type="button" data-lvl="${k}" aria-pressed="${lvl === k}">${t}</button>`).join("")}</div>
+    <p class="label">عدد الخصوم</p>
+    <div class="seg" id="bots">${[1, 2, 3, 4].map((k) => `<button type="button" data-bots="${k}" aria-pressed="${bots === k}">${k}</button>`).join("")}</div>
+    <button class="btn" id="solo" type="button">العب ضد الكمبيوتر</button>
+    <h2>👥 مع صحابك</h2>
+    <input class="input" id="name" type="text" maxlength="14" placeholder="اسمك" value="${esc(me.name)}" autocomplete="off">
+    <button class="btn alt" id="local" type="button">على تلفون واحد (بنمرّره)</button>
+    <button class="btn alt" id="create" type="button">اعمل غرفة (كل واحد من تلفونه)</button>
+    <div class="row"><input class="input" id="code" type="text" inputmode="numeric" maxlength="5" placeholder="كود الغرفة" value="${esc(qs.get("room") || "")}" style="flex:1.4;letter-spacing:4px;text-align:center">
+      <button class="btn alt" id="join" type="button" style="flex:1">ادخل</button></div>
+    <p class="err" id="err" hidden></p>`);
+  document.querySelectorAll("[data-lvl]").forEach((b) => b.onclick = () => { store.set("level", b.dataset.lvl); intro(); });
+  document.querySelectorAll("[data-bots]").forEach((b) => b.onclick = () => { store.set("bots", +b.dataset.bots); intro(); });
+  const getName = () => { const n = $("name").value.trim(); if (!n) { $("err").hidden = false; $("err").textContent = "اكتب اسمك أول."; $("name").focus(); return null; } me.name = n; store.set("name", n); return n; };
+  const BOT_NAMES = ["أبو عودة", "الثعلب", "أم سعيد", "الحاج"];
+  bind({
+    resume: () => { mode = saved.mode; G = saved.G; LOCAL.gate = null; driveBots(); show(); },
+    solo: () => {
+      mode = "solo"; const n = $("name").value.trim() || "إنت"; const level = store.get("level", "medium");
+      newGame([{ id: "me", name: n }, ...Array.from({ length: store.get("bots", 1) }, (_, i) => ({ id: "bot" + i, name: BOT_NAMES[i], bot: level }))]);
+      commit();
+    },
+    local: () => { getName() && localSetup(); },
+    create: () => { getName() && hostRoom(); },
+    join: () => { if (!getName()) return; const code = $("code").value.replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/\D/g, "");
+      if (code.length !== 5) { $("err").hidden = false; $("err").textContent = "الكود 5 أرقام."; return; } joinRoom(code); },
+  });
+}
+function localSetup() {
+  let list = store.get("names", [{ name: me.name, bot: null }, { name: "", bot: null }]);
+  const draw = () => {
+    render(`<h1>على تلفون واحد</h1><p class="sub">من 2 لـ5 لاعبين. فيكم تضيفوا كمبيوتر 🤖 معكم.</p>
+      <div class="plist">${list.map((p, i) => `<div class="item"><input class="input" data-i="${i}" type="text" maxlength="14" placeholder="${p.bot ? "كمبيوتر" : "لاعب " + (i + 1)}" value="${esc(p.name)}"><button class="bot" type="button" data-bot="${i}" aria-pressed="${!!p.bot}" aria-label="كمبيوتر">🤖</button></div>`).join("")}</div>
+      <div class="row"><button class="btn alt" id="add" type="button" style="flex:1" ${list.length >= 5 ? "disabled" : ""}>+ لاعب</button><button class="btn alt" id="rem" type="button" style="flex:1" ${list.length <= 2 ? "disabled" : ""}>− لاعب</button></div>
+      <p class="err" id="err" hidden></p>
+      <button class="btn" id="go" type="button">يلا نبلّش ✂️</button><button class="linkish" id="back" type="button">رجوع</button>`);
+    const read = () => document.querySelectorAll("[data-i]").forEach((el) => { list[+el.dataset.i].name = el.value.trim(); });
+    document.querySelectorAll("[data-bot]").forEach((b) => b.onclick = () => { read(); const p = list[+b.dataset.bot]; p.bot = p.bot ? null : store.get("level", "medium"); draw(); });
+    bind({
+      add: () => { read(); list.push({ name: "", bot: null }); draw(); }, rem: () => { read(); list.pop(); draw(); }, back: () => { read(); store.set("names", list); intro(); },
+      go: () => {
+        read();
+        const ps = list.map((p, i) => ({ id: "p" + i, name: p.name || (p.bot ? "كمبيوتر " + (i + 1) : "لاعب " + (i + 1)), bot: p.bot }));
+        if (new Set(ps.map((p) => p.name)).size !== ps.length) { $("err").hidden = false; $("err").textContent = "في اسمين متشابهين."; return; }
+        if (!ps.some((p) => !p.bot)) { $("err").hidden = false; $("err").textContent = "لازم لاعب واحد على الأقل مش كمبيوتر."; return; }
+        store.set("names", list); mode = "local"; LOCAL.gate = null; newGame(ps); commit();
+      },
+    });
+  };
+  draw();
+}
+$("theme-slot").outerHTML = themeSwitch();
+$("quit").onclick = () => { location.href = "./"; };
+intro();
+if (qs.get("room")) $("code")?.focus();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+</body>
+</html>

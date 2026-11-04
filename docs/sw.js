@@ -1,5 +1,5 @@
 // أبو عودة: تشغيل كتطبيق، ويضل يفتح حتى لو النت ضعيف
-const VERSION = "abu-odeh-v6";
+const VERSION = "abu-odeh-v7";
 const SHELL = ["./", "index.html", "theme.js", "shell.css", "shell.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
