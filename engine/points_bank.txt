@@ -2619,3 +2619,587 @@
 4|أنا الملكة اللي حكمت تدمر وتحدّت روما. مين أنا؟|زنوبيا|كليوباترا|بلقيس|نفرتيتي
 4|أنا اللاعب اللي فزت بالكرة الذهبية كحارس الوحيد. مين أنا؟|ليف ياشين|بوفون|كان|نوير
 4|أنا المخترع اللي تنافست مع إديسون على الكهرباء المتناوبة. مين أنا؟|نيكولا تسلا|غراهام بيل|ماركوني|فاراداي
+
+# ================= 30 قسم جديد (صور، شعارات، أصوات، فيديو) =================
+## bridges | جسور مشهورة | 🌉 | img | شو اسم هالجسر؟
+1|Brooklyn Bridge|جسر بروكلين
+1|Sydney Harbour Bridge|جسر ميناء سيدني
+1|Rialto Bridge|جسر ريالتو (البندقية)
+1|Charles Bridge|جسر تشارلز (براغ)
+1|Bosphorus Bridge|جسر البوسفور (إسطنبول)
+2|Millau Viaduct|جسر ميو (فرنسا)
+2|Ponte Vecchio|بونتي فيكيو (فلورنسا)
+2|Akashi Kaikyō Bridge|جسر أكاشي كايكيو (اليابان)
+2|Øresund Bridge|جسر أوريسند
+2|King Fahd Causeway|جسر الملك فهد
+3|Széchenyi Chain Bridge|جسر السلاسل (بودابست)
+3|Stari Most|الجسر القديم (موستار)
+3|Helix Bridge|جسر الحلزون (سنغافورة)
+3|Pont du Gard|جسر غار الروماني
+3|Sheikh Zayed Bridge|جسر الشيخ زايد
+4|Hangzhou Bay Bridge|جسر خليج هانغتشو
+4|Danyang–Kunshan Grand Bridge|جسر دانيانغ كونشان (أطول جسر)
+4|Tsing Ma Bridge|جسر تسينغ ما
+4|Rolling Bridge|الجسر الملفوف (لندن)
+4|Gateshead Millennium Bridge|جسر الألفية (غيتسهيد)
+## towers | أبراج وناطحات سحاب | 🗼 | img | شو اسم هالبرج؟
+1|Empire State Building|مبنى إمباير ستيت
+1|CN Tower|برج سي إن (تورنتو)
+1|Tokyo Skytree|طوكيو سكاي تري
+1|Kingdom Centre|برج المملكة (الرياض)
+1|Abraj Al Bait|أبراج البيت (ساعة مكة)
+2|Shanghai Tower|برج شنغهاي
+2|Taipei 101|تايبيه 101
+2|One World Trade Center|مركز التجارة العالمي الجديد
+2|Kuwait Towers|أبراج الكويت
+2|The Shard|برج ذا شارد (لندن)
+3|Al Faisaliyah Center|برج الفيصلية
+3|Cayan Tower|برج كيان (دبي)
+3|Space Needle|برج سبيس نيدل
+3|Oriental Pearl Tower|برج اللؤلؤة الشرقية
+3|Jordan Gate Towers|أبراج بوابة الأردن
+4|Lotte World Tower|برج لوتي العالمي
+4|Ostankino Tower|برج أوستانكينو
+4|Galata Tower|برج غلطة
+4|Milad Tower|برج ميلاد
+4|Torre Glòries|برج أغبار (برشلونة)
+## waterfalls | شلالات | 💦 | img | شو اسم هالشلال؟
+1|Victoria Falls|شلالات فيكتوريا
+1|Iguazu Falls|شلالات إيغوازو
+1|Angel Falls|شلالات أنجل
+2|Rhine Falls|شلالات الراين
+2|Plitvice Lakes National Park|بحيرات بليتفيتشه
+2|Gullfoss|شلال غولفوس (آيسلندا)
+2|Havasu Falls|شلالات هافاسو
+3|Kaieteur Falls|شلالات كايتور
+3|Skógafoss|شلال سكوغافوس
+3|Seljalandsfoss|شلال سيلياندسفوس
+3|Yosemite Falls|شلالات يوسمايت
+4|Huangguoshu Waterfall|شلال هوانغ قوه شو
+4|Ban Gioc–Detian Falls|شلالات بان جيوك
+4|Tugela Falls|شلالات توغيلا
+4|Sutherland Falls|شلالات ساذرلاند
+## mountains | جبال وقمم | 🏔️ | img | شو اسم هالجبل؟
+1|Mount Everest|جبل إيفرست
+1|Matterhorn|جبل الماترهورن
+1|Mount Kilimanjaro|جبل كليمنجارو
+1|Mount Vesuvius|بركان فيزوف
+2|K2|جبل كي 2
+2|Mont Blanc|جبل مون بلان
+2|Mount Sinai|جبل موسى (سيناء)
+2|Table Mountain|جبل الطاولة (كيب تاون)
+3|Mount Ararat|جبل أرارات
+3|Denali|جبل دينالي
+3|Aconcagua|جبل أكونكاغوا
+3|Mount Hermon|جبل الشيخ
+3|Toubkal|جبل توبقال
+4|Mount Elbrus|جبل إلبروس
+4|Annapurna|جبل أنابورنا
+4|Mount Kailash|جبل كايلاش
+4|Mount Nebo|جبل نيبو
+4|Jebel Shams|جبل شمس (عُمان)
+## islands | جزر مشهورة | 🏝️ | img | شو اسم هالجزيرة؟
+1|Bali|جزيرة بالي
+1|Santorini|سانتوريني
+1|Palm Jumeirah|نخلة جميرا
+1|Bora Bora|بورا بورا
+2|Hawaii (island)|جزيرة هاواي
+2|Mallorca|مايوركا
+2|Socotra|سقطرى
+2|Maldives|جزر المالديف
+3|Zanzibar|زنجبار
+3|Galápagos Islands|جزر غالاباغوس
+3|Capri|جزيرة كابري
+3|Djerba|جزيرة جربة
+4|Mont-Saint-Michel|مون سان ميشيل
+4|Faroe Islands|جزر فارو
+4|Lord Howe Island|جزيرة لورد هاو
+4|Phi Phi Islands|جزر في في (تايلاند)
+## museums | متاحف عالمية | 🏺 | img | شو اسم هالمتحف؟
+1|Louvre|متحف اللوفر
+1|British Museum|المتحف البريطاني
+1|Grand Egyptian Museum|المتحف المصري الكبير
+2|Museum of the Future|متحف المستقبل (دبي)
+2|Louvre Abu Dhabi|متحف اللوفر أبوظبي
+2|Metropolitan Museum of Art|متحف المتروبوليتان
+2|Vatican Museums|متاحف الفاتيكان
+3|Guggenheim Museum Bilbao|متحف غوغنهايم بلباو
+3|Museum of Islamic Art, Doha|متحف الفن الإسلامي (الدوحة)
+3|Hermitage Museum|متحف الإرميتاج
+3|Jordan Museum|متحف الأردن
+4|Rijksmuseum|متحف ريكز (أمستردام)
+4|Museo del Prado|متحف برادو
+4|Uffizi|معرض أوفيزي
+4|National Museum of Qatar|متحف قطر الوطني
+## paintings | لوحات فنية مشهورة | 🖼️ | img | شو اسم هاللوحة؟
+1|Mona Lisa|الموناليزا
+1|The Starry Night|ليلة النجوم
+1|The Scream|الصرخة
+1|The Last Supper (Leonardo)|العشاء الأخير
+2|Girl with a Pearl Earring|الفتاة ذات القرط اللؤلؤي
+2|The Birth of Venus|ولادة فينوس
+2|The Creation of Adam|خلق آدم
+2|The Great Wave off Kanagawa|الموجة العظيمة
+2|Sunflowers (Van Gogh series)|زهور دوار الشمس
+3|The Night Watch|الحراسة الليلية
+3|The Kiss (Klimt)|القبلة (كليمت)
+3|Liberty Leading the People|الحرية تقود الشعب
+3|Water Lilies (Monet series)|زنابق الماء (مونيه)
+4|The Garden of Earthly Delights|حديقة المباهج الأرضية
+4|The School of Athens|مدرسة أثينا
+4|Las Meninas|وصيفات الشرف
+4|Wanderer above the Sea of Fog|المتجول فوق بحر الضباب
+4|The Hay Wain|عربة القش
+## ancient | آثار وحضارات قديمة | 🗿 | img | شو اسم هالأثر؟
+1|Pantheon, Rome|البانثيون (روما)
+1|Karnak|معبد الكرنك
+1|Terracotta Army|جيش التيراكوتا
+2|Persepolis|برسبوليس
+2|Pompeii|بومبي
+2|Valley of the Kings|وادي الملوك
+2|Teotihuacan|تيوتيهواكان
+3|Palmyra|تدمر
+3|Leptis Magna|لبدة الكبرى
+3|Ephesus|أفسس
+3|Göbekli Tepe|غوبكلي تبه
+3|Hegra (Mada'in Salih)|مدائن صالح (الحجر)
+4|Volubilis|وليلي (المغرب)
+4|Timgad|تيمقاد
+4|Carthage|قرطاج
+4|Ziggurat of Ur|زقورة أور
+4|Umm Qais|أم قيس
+## birds | طيور بالصور | 🦜 | img | شو اسم هالطير؟
+1|Eagle|نسر (عقاب)
+1|Parrot|ببغاء
+1|Swan|بجعة (تمّ)
+1|Hummingbird|طائر الطنان
+2|Pelican|بجع (بيليكان)
+2|Woodpecker|نقار الخشب
+2|Kingfisher|صياد السمك (الرفراف)
+2|Falcon|صقر
+2|Hoopoe|هدهد
+3|Puffin|البفن
+3|Kiwi (bird)|كيوي
+3|Emu|إيمو
+3|Macaw|مكاو
+3|Stork|لقلق
+4|Secretarybird|الطائر الكاتب
+4|Cassowary|الكاسواري
+4|Harpy eagle|عقاب هاربي
+4|Resplendent quetzal|الكيتزال
+4|Bird-of-paradise|طائر الجنة
+## reptiles | زواحف وبرمائيات | 🦎 | img | شو اسمه؟
+1|Crocodile|تمساح
+1|Turtle|سلحفاة
+1|Snake|أفعى (حية)
+1|Frog|ضفدع
+2|Komodo dragon|تنين كومودو
+2|King cobra|كوبرا ملكية
+2|Iguana|إغوانا
+2|Gecko|برص (أبو بريص)
+3|Pythonidae|أصلة (بايثون)
+3|Alligator|قاطور (أليغيتور)
+3|Galápagos tortoise|سلحفاة غالاباغوس العملاقة
+3|Poison dart frog|الضفدع السهمي السام
+4|Gila monster|وحش جيلا
+4|Thorny devil|الشيطان الشوكي
+4|Tuatara|التواتارا
+4|Gharial|الغاريال
+4|Frilled-neck lizard|السحلية المزركشة
+## desserts | حلويات من العالم | 🍰 | img | شو اسم هالحلو؟
+1|Cheesecake|تشيز كيك
+1|Ice cream|بوظة (آيس كريم)
+1|Pancake|بان كيك
+1|Chocolate chip cookie|كوكيز
+2|Macaron|ماكرون
+2|Crème brûlée|كريم بروليه
+2|Basbousa|بسبوسة (هريسة)
+2|Qatayef|قطايف
+2|Ma'amoul|معمول
+3|Luqmat al-Qadi|لقيمات (عوامة)
+3|Mochi|موتشي
+3|Chocolate brownie|براونيز
+3|Umm Ali|أم علي
+3|Gulab jamun|غلاب جامون
+4|Pastel de nata|باستيل دي ناتا
+4|Pavlova (cake)|بافلوفا
+4|Halva|حلاوة طحينية
+4|Muhallebi|مهلبية
+4|Black Forest gâteau|كيكة الغابة السوداء
+## gems | أحجار كريمة ومعادن | 💎 | img | شو هاد؟
+1|Diamond|ألماس
+1|Gold|ذهب
+1|Pearl|لؤلؤ
+2|Ruby|ياقوت أحمر
+2|Emerald|زمرد
+2|Sapphire|ياقوت أزرق
+2|Amethyst|جمشت (أمثيست)
+3|Turquoise (mineral)|فيروز
+3|Opal|أوبال
+3|Topaz|توباز
+3|Amber|كهرمان
+3|Coral|مرجان
+4|Lapis lazuli|لازورد
+4|Jade|يشم
+4|Malachite|ملكيت
+4|Obsidian|سبج (زجاج بركاني)
+4|Garnet|غارنيت (عقيق أحمر)
+## tools | أدوات وعدّة | 🔧 | img | شو اسم هالأداة؟
+1|Hammer|شاكوش
+1|Screwdriver|مفك
+1|Scissors|مقص
+1|Saw|منشار
+2|Wrench|مفتاح شد (إنجليزي)
+2|Pliers|زرادية (كماشة)
+2|Tape measure|متر قياس
+2|Drill|دريل
+3|Spirit level|ميزان ماء
+3|Trowel|مسطرين
+3|Chisel|إزميل
+3|Soldering iron|كاوية لحام
+4|Vise|ملزمة
+4|Calipers|قدمة (كاليبر)
+4|Anvil|سندان
+4|Hand plane|فارة نجارة
+## sportsgear | أدوات رياضية | 🏓 | img | شو هاد؟
+1|Ball (association football)|طابة كرة قدم
+1|Racket (sports equipment)|مضرب تنس
+1|Boxing glove|قفاز ملاكمة
+1|Basketball (ball)|طابة سلة
+2|Shuttlecock|ريشة بادمنتون
+2|Hockey stick|عصا هوكي
+2|Dumbbell|دمبل
+2|Golf ball|طابة غولف
+3|Kettlebell|كيتل بيل
+3|Baseball bat|مضرب بيسبول
+3|Snowboard|لوح تزلج على الثلج
+3|Bowling pin|قوارير بولينغ
+4|Curling stone|حجر الكيرلنغ
+4|Javelin|رمح
+4|Pommel horse|حصان الحلق (جمباز)
+4|Discus|قرص الرمي
+## planes | طيارات ومركبات طايرة | 🛩️ | img | شو هاد؟
+1|Helicopter|هليكوبتر
+1|Hot air balloon|منطاد هوائي
+1|Airbus A380|إيرباص A380
+1|Paragliding|طيران شراعي (باراغلايدر)
+2|Concorde|كونكورد
+2|Boeing 747|بوينغ 747
+2|Space Shuttle|المكوك الفضائي
+2|Airship|منطاد زبلن
+3|Wright Flyer|طيارة الأخوين رايت
+3|Lockheed SR-71 Blackbird|بلاك بيرد SR-71
+3|Seaplane|طيارة مائية
+3|Glider (aircraft)|طيارة شراعية
+4|Antonov An-225 Mriya|أنتونوف 225
+4|Bell Boeing V-22 Osprey|أوسبري V-22
+4|Autogyro|جايروكوبتر
+4|Solar Impulse|سولار إمبلس (طيارة شمسية)
+## athletes | أبطال رياضة عالميين | 🥇 | img | مين هالبطل؟
+1|Usain Bolt|يوسين بولت
+1|Michael Jordan|مايكل جوردن
+1|Muhammad Ali|محمد علي كلاي
+1|Roger Federer|روجر فيدرر
+1|Rafael Nadal|رافاييل نادال
+2|LeBron James|ليبرون جيمس
+2|Michael Phelps|مايكل فيلبس
+2|Serena Williams|سيرينا ويليامز|f
+2|Lewis Hamilton|لويس هاميلتون
+2|Novak Djokovic|نوفاك ديوكوفيتش
+2|Simone Biles|سيمون بايلز|f
+3|Mike Tyson|مايك تايسون
+3|Tiger Woods|تايغر وودز
+3|Khabib Nurmagomedov|حبيب نورمحمدوف
+3|Ons Jabeur|أنس جابر|f
+3|Stephen Curry|ستيفن كاري
+3|Maria Sharapova|ماريا شارابوفا|f
+4|Mo Farah|مو فرح
+4|Hicham El Guerrouj|هشام الكروج
+4|Mutaz Essa Barshim|معتز برشم
+4|Ahmad Abughaush|أحمد أبو غوش
+4|Max Verstappen|ماكس فيرستابن
+4|Naomi Osaka|ناعومي أوساكا|f
+4|Shelly-Ann Fraser-Pryce|شيلي آن فريزر برايس|f
+## dances | رقصات من العالم | 💃 | img | شو اسم هالرقصة؟
+1|Dabke|الدبكة
+1|Ballet|الباليه
+1|Breakdancing|البريك دانس
+1|Tango|التانغو
+2|Flamenco|الفلامنكو
+2|Samba|السامبا
+2|Belly dance|الرقص الشرقي
+2|Haka|الهاكا (نيوزيلندا)
+2|Ardah|العرضة
+3|Sema (Sufism)|المولوية (رقصة الدراويش)
+3|Capoeira|الكابويرا
+3|Hula|الهولا (هاواي)
+3|Irish stepdance|الرقص الأيرلندي
+3|Salsa (dance)|السالسا
+4|Hopak|الهوباك (القوزاق)
+4|Bharatanatyam|بهاراتاناتيام
+4|Tahtib|التحطيب
+4|Yowlah|اليولة
+4|Kathakali|كاتاكالي
+## inventions | اختراعات غيّرت العالم | 💡 | img | شو هالاختراع؟
+1|Incandescent light bulb|اللمبة
+1|Telephone|التلفون
+1|Television|التلفزيون
+1|Wheel|العجلة
+2|Printing press|آلة الطباعة
+2|Compass|البوصلة
+2|Steam engine|المحرك البخاري
+2|Telescope|التلسكوب
+2|Microscope|الميكروسكوب
+3|Phonograph|الفونوغراف
+3|Typewriter|الآلة الكاتبة
+3|Astrolabe|الأسطرلاب
+3|Sewing machine|ماكينة الخياطة
+3|Abacus|المعداد
+4|Electrical telegraph|التلغراف
+4|Hourglass|الساعة الرملية
+4|Water clock|الساعة المائية
+4|Enigma machine|آلة إنيغما
+4|Difference engine|آلة الفروق (أول حاسبة)
+## spices | بهارات وتوابل | 🌶️ | img | شو هاد؟
+1|Black pepper|فلفل أسود
+1|Cinnamon|قرفة
+1|Garlic|ثوم
+1|Chili pepper|فلفل حار
+2|Cumin|كمون
+2|Turmeric|كركم
+2|Cardamom|هيل
+2|Clove|قرنفل
+2|Sesame|سمسم
+3|Sumac|سماق
+3|Anise|يانسون
+3|Nutmeg|جوزة الطيب
+3|Ginger|زنجبيل
+3|Za'atar|زعتر
+4|Illicium verum|يانسون نجمي
+4|Fenugreek|حلبة
+4|Mahlab|محلب
+4|Nigella sativa|حبة البركة (قزحة)
+4|Vanilla|فانيلا
+## trees | أشجار | 🌳 | img | شو هالشجرة؟
+1|Oak|بلوط (سنديان)
+1|Pine|صنوبر
+1|Coconut|نخلة جوز الهند
+1|Salix babylonica|صفصاف
+2|Maple|قيقب (مابل)
+2|Cedrus libani|أرز لبنان
+2|Eucalyptus|كينا
+2|Ficus benghalensis|شجرة البانيان
+2|Cupressus sempervirens|سرو
+3|Sequoiadendron giganteum|السيكويا العملاقة
+3|Jacaranda mimosifolia|جاكرندا
+3|Argania|شجرة الأركان
+3|Boswellia sacra|شجرة اللبان
+3|Acacia|سنط (أكاسيا)
+4|Ginkgo biloba|الجنكة
+4|Delonix regia|شجرة اللهب (بونسيانا)
+4|Eucalyptus deglupta|الكينا الملونة
+4|Ziziphus spina-christi|السدر
+4|Juniperus|العرعر
+## techlogos | شعارات شركات تقنية | 💻 | logo | شعار أي شركة؟
+1|Apple Inc.|أبل
+1|Samsung|سامسونج
+1|Microsoft|مايكروسوفت
+1|Google|جوجل
+2|Intel|إنتل
+2|Sony|سوني
+2|Huawei|هواوي
+2|Nvidia|إنفيديا
+2|Xiaomi|شاومي
+3|IBM|آي بي إم
+3|Oracle Corporation|أوراكل
+3|Dell|ديل
+3|HP Inc.|إتش بي
+3|Lenovo|لينوفو
+3|Nintendo|نينتندو
+4|Cisco|سيسكو
+4|Adobe Inc.|أدوبي
+4|Logitech|لوجيتك
+4|Qualcomm|كوالكوم
+4|Siemens|سيمنز
+## orglogos | شعارات منظمات وبطولات | 🌐 | logo | شعار مين هاد؟
+1|FIFA|الفيفا
+1|Olympic Games|الألعاب الأولمبية
+1|United Nations|الأمم المتحدة
+1|UEFA Champions League|دوري أبطال أوروبا
+2|World Health Organization|منظمة الصحة العالمية
+2|UNICEF|اليونيسف
+2|International Committee of the Red Cross|الصليب الأحمر
+2|National Basketball Association|الدوري الأمريكي لكرة السلة
+2|Formula One|الفورمولا 1
+3|Arab League|جامعة الدول العربية
+3|NASA|ناسا
+3|Premier League|الدوري الإنجليزي
+3|UNESCO|اليونسكو
+3|WWE|WWE للمصارعة
+4|Interpol|الإنتربول
+4|OPEC|أوبك
+4|Gulf Cooperation Council|مجلس التعاون الخليجي
+4|Asian Football Confederation|الاتحاد الآسيوي لكرة القدم
+4|World Wide Fund for Nature|الصندوق العالمي للطبيعة
+## soundshome | أصوات البيت | 🏠 | audio | شو هالصوت؟ 🔊
+1|Vacuum cleaner|مكنسة كهربائية
+1|Kettle whistle|إبريق بيصفّر
+1|Toilet flush|سيفون الحمام
+1|Alarm clock|منبّه
+1|Microwave oven|مايكروويف
+2|Washing machine|غسالة
+2|Hair dryer|سشوار
+2|Blender|خلاط
+2|Frying|قلي بالزيت
+2|Zipper|سحّاب
+3|Door creaking|باب بيزيّق
+3|Water dripping|تنقيط مي
+3|Paper tearing|ورق بينشق
+3|Keys jingling|مفاتيح
+3|Coins dropping|فراطة (مصاري معدن)
+4|Shower|دوش
+4|Dishwasher|جلاية صحون
+4|Refrigerator|ثلاجة
+4|Sewing machine|ماكينة خياطة
+4|Lighter|ولاعة
+## soundssport | أصوات ملاعب ورياضة | 🏟️ | audio | شو هالصوت؟ 🔊
+1|Whistle|صفارة الحكم
+1|Crowd cheering|جمهور بيشجّع
+1|Basketball dribbling|طابة سلة
+1|Table tennis|تنس طاولة
+2|Tennis|تنس
+2|Boxing bell|جرس الملاكمة
+2|Bowling|بولينغ
+2|Skateboard|سكيت بورد
+2|Starting pistol|مسدس الانطلاق
+3|Golf|غولف
+3|Vuvuzela|الفوفوزيلا
+3|Galloping|خيل بتركض
+3|Fencing|مبارزة
+3|Splash|نطّة بالمسبح
+4|Formula One|سيارة فورمولا 1
+4|Archery|رماية بالقوس
+4|Ice hockey|هوكي الجليد
+4|Volleyball|كرة طائرة
+4|Badminton|بادمنتون
+## soundsmachines | أصوات مركبات وآلات | 🚂 | audio | شو هالصوت؟ 🔊
+1|Ambulance siren|سيارة إسعاف
+1|Airplane|طيارة
+1|Bicycle bell|جرس بسكليت
+1|Fire engine|سيارة إطفاء
+2|Steam locomotive|قطار بخاري
+2|Ship horn|زامور باخرة
+2|Chainsaw|منشار كهربائي
+2|Jackhammer|كمبريسة (دقّاقة)
+2|Tractor|تراكتور
+3|Lawn mower|ماكينة قص عشب
+3|Drill|دريل
+3|Truck|شاحنة
+3|Tram|ترام
+3|Jet engine|محرك نفاث
+4|Sonar|سونار غواصة
+4|Morse code|شيفرة مورس
+4|Dial-up modem|مودم الإنترنت القديم
+4|Printer|طابعة
+4|Elevator|مصعد
+## soundshuman | أصوات الإنسان | 🧍 | audio | شو هالصوت؟ 🔊
+1|Heartbeat|دقات القلب
+1|Whistling|تصفير
+1|Hiccup|حازوقة
+1|Yawn|تثاؤب
+2|Finger snapping|طقطقة أصابع
+2|Kiss|بوسة
+2|Scream|صريخ
+2|Burp|تجشؤ
+2|Gargling|غرغرة
+3|Humming|دندنة
+3|Chewing|مضغ (علك)
+3|Breathing|تنفّس
+3|Beatbox|بيت بوكس
+3|Slurping|شفط
+4|Toothbrush|تفريش أسنان
+4|Knuckle cracking|طقطقة مفاصل
+4|Gasp|شهقة
+4|Throat clearing|تنحنح
+4|Stomach growling|قرقرة البطن
+## vidsea | عالم البحار بالفيديو | 🌊 | video | شو هاد؟ 🎥
+1|Shark|قرش
+1|Sea turtle|سلحفاة بحرية
+1|Whale|حوت
+1|Harbor seal|فقمة
+1|Crab|سلطعون
+2|Clownfish|سمكة المهرج
+2|Starfish|نجم البحر
+2|Seahorse|فرس البحر
+2|Stingray|الراي اللاسع
+2|Coral reef|شعاب مرجانية
+3|Manta ray|المانتا
+3|Squid|حبار
+3|Sea lion|أسد البحر
+3|Walrus|فظ
+3|Moray eel|ثعبان البحر
+4|Cuttlefish|سبيدج (حبار السيبيا)
+4|Nudibranch|بزاق البحر
+4|Sea urchin|قنفذ البحر
+4|Lionfish|سمكة الأسد
+4|Sea anemone|شقائق النعمان البحرية
+## vidspace | الفضاء بالفيديو | 🚀 | video | شو هاد؟ 🎥
+1|Rocket launch|إطلاق صاروخ
+1|Astronaut|رائد فضاء
+1|Moon|القمر
+1|Earth from space|الأرض من الفضاء
+2|International Space Station|محطة الفضاء الدولية
+2|Space Shuttle|المكوك الفضائي
+2|Meteor|شهب
+2|Mars|المريخ
+2|Saturn|زحل
+3|Spacewalk|سير بالفضاء
+3|Jupiter|المشتري
+3|Comet|مذنب
+3|Satellite|قمر صناعي
+3|Solar flare|توهج شمسي
+4|Apollo 11|هبوط أبولو 11 على القمر
+4|Galaxy|مجرة
+4|Black hole|ثقب أسود
+4|Nebula|سديم
+4|Transit of Venus|عبور الزهرة
+## vidmachines | آلات ومركبات بالفيديو | 🚜 | video | شو هاد؟ 🎥
+1|Helicopter|هليكوبتر
+1|Excavator|حفّارة (باجر)
+1|Train|قطار
+1|Fire engine|سيارة إطفاء
+2|Tower crane|رافعة (ونش)
+2|Hot air balloon|منطاد
+2|Bulldozer|بلدوزر
+2|Tractor|تراكتور
+2|Forklift|رافعة شوكية (فوركلفت)
+3|Steam locomotive|قطار بخاري
+3|Submarine|غواصة
+3|Hovercraft|حوّامة
+3|Wind turbine|توربين رياح
+3|Roller coaster|قطار الملاهي
+4|Segway|سيغواي
+4|Monorail|مونوريل
+4|Paddle steamer|باخرة بعجلات
+4|Funicular|قطار جبلي (فونيكولار)
+4|Combine harvester|حصّادة
+## vidinsects | حشرات بالفيديو | 🐝 | video | شو هاد؟ 🎥
+1|Butterfly|فراشة
+1|Apis mellifera|نحلة
+1|Formicidae|نملة
+1|Spider|عنكبوت
+2|Ladybug|دعسوقة
+2|Dragonfly|يعسوب
+2|Grasshopper|جندب (جرادة)
+2|Caterpillar|يرقة (دودة)
+2|Snail|حلزون
+3|Mantis|فرس النبي
+3|Scorpion|عقرب
+3|Firefly|يراعة (حشرة مضيئة)
+3|Beetle|خنفسة
+3|Cockroach|صرصور
+4|Stick insect|الحشرة العصوية
+4|Dung beetle|خنفساء الروث
+4|Leafcutter ant|نمل قاطع الأوراق
+4|Cicada|زيز
+4|Centipede|أم أربعة وأربعين
