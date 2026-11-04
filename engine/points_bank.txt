@@ -534,6 +534,7 @@
 3|Axolotl|أكسولوتل
 3|Mandrill|ميمون (ماندريل)
 3|Walrus|فظ (حصان البحر)
+3|Toucan|طوقان
 3|Seahorse|فرس البحر
 3|Fennec fox|ثعلب الفنك
 4|Okapi|أوكابي
