@@ -2636,7 +2636,6 @@
 3|Stari Most|الجسر القديم (موستار)
 3|Helix Bridge|جسر الحلزون (سنغافورة)
 3|Pont du Gard|جسر غار الروماني
-3|Sheikh Zayed Bridge|جسر الشيخ زايد
 4|Hangzhou Bay Bridge|جسر خليج هانغتشو
 4|Danyang–Kunshan Grand Bridge|جسر دانيانغ كونشان (أطول جسر)
 4|Tsing Ma Bridge|جسر تسينغ ما
@@ -2673,7 +2672,6 @@
 2|Havasu Falls|شلالات هافاسو
 3|Kaieteur Falls|شلالات كايتور
 3|Skógafoss|شلال سكوغافوس
-3|Seljalandsfoss|شلال سيلياندسفوس
 3|Yosemite Falls|شلالات يوسمايت
 4|Huangguoshu Waterfall|شلال هوانغ قوه شو
 4|Ban Gioc–Detian Falls|شلالات بان جيوك
@@ -2700,7 +2698,6 @@
 4|Jebel Shams|جبل شمس (عُمان)
 ## islands | جزر مشهورة | 🏝️ | img | شو اسم هالجزيرة؟
 1|Bali|جزيرة بالي
-1|Santorini|سانتوريني
 1|Palm Jumeirah|نخلة جميرا
 1|Bora Bora|بورا بورا
 2|Hawaii (island)|جزيرة هاواي
@@ -2708,7 +2705,6 @@
 2|Socotra|سقطرى
 2|Maldives|جزر المالديف
 3|Zanzibar|زنجبار
-3|Galápagos Islands|جزر غالاباغوس
 3|Capri|جزيرة كابري
 3|Djerba|جزيرة جربة
 4|Mont-Saint-Michel|مون سان ميشيل
@@ -2752,7 +2748,6 @@
 4|The Hay Wain|عربة القش
 ## ancient | آثار وحضارات قديمة | 🗿 | img | شو اسم هالأثر؟
 1|Pantheon, Rome|البانثيون (روما)
-1|Karnak|معبد الكرنك
 1|Terracotta Army|جيش التيراكوتا
 2|Persepolis|برسبوليس
 2|Pompeii|بومبي
@@ -2850,7 +2845,6 @@
 1|Scissors|مقص
 1|Saw|منشار
 2|Wrench|مفتاح شد (إنجليزي)
-2|Pliers|زرادية (كماشة)
 2|Tape measure|متر قياس
 2|Drill|دريل
 3|Spirit level|ميزان ماء
@@ -2863,7 +2857,7 @@
 4|Hand plane|فارة نجارة
 ## sportsgear | أدوات رياضية | 🏓 | img | شو هاد؟
 1|Ball (association football)|طابة كرة قدم
-1|Racket (sports equipment)|مضرب تنس
+1|Racket (sports equipment)|مضرب سكواش
 1|Boxing glove|قفاز ملاكمة
 1|Basketball (ball)|طابة سلة
 2|Shuttlecock|ريشة بادمنتون
@@ -2904,11 +2898,9 @@
 2|LeBron James|ليبرون جيمس
 2|Michael Phelps|مايكل فيلبس
 2|Serena Williams|سيرينا ويليامز|f
-2|Lewis Hamilton|لويس هاميلتون
 2|Novak Djokovic|نوفاك ديوكوفيتش
 2|Simone Biles|سيمون بايلز|f
 3|Mike Tyson|مايك تايسون
-3|Tiger Woods|تايغر وودز
 3|Khabib Nurmagomedov|حبيب نورمحمدوف
 3|Ons Jabeur|أنس جابر|f
 3|Stephen Curry|ستيفن كاري
@@ -2919,14 +2911,12 @@
 4|Ahmad Abughaush|أحمد أبو غوش
 4|Max Verstappen|ماكس فيرستابن
 4|Naomi Osaka|ناعومي أوساكا|f
-4|Shelly-Ann Fraser-Pryce|شيلي آن فريزر برايس|f
 ## dances | رقصات من العالم | 💃 | img | شو اسم هالرقصة؟
 1|Dabke|الدبكة
 1|Ballet|الباليه
 1|Breakdancing|البريك دانس
 1|Tango|التانغو
 2|Flamenco|الفلامنكو
-2|Samba|السامبا
 2|Belly dance|الرقص الشرقي
 2|Haka|الهاكا (نيوزيلندا)
 2|Ardah|العرضة
@@ -2935,7 +2925,6 @@
 3|Hula|الهولا (هاواي)
 3|Irish stepdance|الرقص الأيرلندي
 3|Salsa (dance)|السالسا
-4|Hopak|الهوباك (القوزاق)
 4|Bharatanatyam|بهاراتاناتيام
 4|Tahtib|التحطيب
 4|Yowlah|اليولة
@@ -3002,11 +2991,8 @@
 4|Juniperus|العرعر
 ## techlogos | شعارات شركات تقنية | 💻 | logo | شعار أي شركة؟
 1|Apple Inc.|أبل
-1|Samsung|سامسونج
-1|Microsoft|مايكروسوفت
 1|Google|جوجل
 2|Intel|إنتل
-2|Sony|سوني
 2|Huawei|هواوي
 2|Nvidia|إنفيديا
 2|Xiaomi|شاومي
@@ -3014,25 +3000,19 @@
 3|Oracle Corporation|أوراكل
 3|Dell|ديل
 3|HP Inc.|إتش بي
-3|Lenovo|لينوفو
-3|Nintendo|نينتندو
 4|Cisco|سيسكو
-4|Adobe Inc.|أدوبي
 4|Logitech|لوجيتك
 4|Qualcomm|كوالكوم
-4|Siemens|سيمنز
 ## orglogos | شعارات منظمات وبطولات | 🌐 | logo | شعار مين هاد؟
 1|FIFA|الفيفا
 1|Olympic Games|الألعاب الأولمبية
-1|United Nations|الأمم المتحدة
 1|UEFA Champions League|دوري أبطال أوروبا
 2|World Health Organization|منظمة الصحة العالمية
 2|UNICEF|اليونيسف
 2|International Committee of the Red Cross|الصليب الأحمر
 2|National Basketball Association|الدوري الأمريكي لكرة السلة
 2|Formula One|الفورمولا 1
-3|Arab League|جامعة الدول العربية
-3|NASA|ناسا
+1|NASA|ناسا
 3|Premier League|الدوري الإنجليزي
 3|UNESCO|اليونسكو
 3|WWE|WWE للمصارعة
