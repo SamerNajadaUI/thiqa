@@ -3042,7 +3042,6 @@
 4|Asian Football Confederation|الاتحاد الآسيوي لكرة القدم
 4|World Wide Fund for Nature|الصندوق العالمي للطبيعة
 ## soundshome | أصوات البيت | 🏠 | audio | شو هالصوت؟ 🔊
-1|Vacuum cleaner|مكنسة كهربائية
 1|Kettle whistle|إبريق بيصفّر
 1|Toilet flush|سيفون الحمام
 1|Alarm clock|منبّه
@@ -3062,26 +3061,27 @@
 4|Refrigerator|ثلاجة
 4|Sewing machine|ماكينة خياطة
 4|Lighter|ولاعة
-## soundssport | أصوات ملاعب ورياضة | 🏟️ | audio | شو هالصوت؟ 🔊
-1|Whistle|صفارة الحكم
-1|Crowd cheering|جمهور بيشجّع
-1|Basketball dribbling|طابة سلة
-1|Table tennis|تنس طاولة
-2|Tennis|تنس
-2|Boxing bell|جرس الملاكمة
-2|Bowling|بولينغ
-2|Skateboard|سكيت بورد
-2|Starting pistol|مسدس الانطلاق
-3|Golf|غولف
-3|Vuvuzela|الفوفوزيلا
-3|Galloping|خيل بتركض
-3|Fencing|مبارزة
-3|Splash|نطّة بالمسبح
-4|Formula One|سيارة فورمولا 1
-4|Archery|رماية بالقوس
-4|Ice hockey|هوكي الجليد
-4|Volleyball|كرة طائرة
-4|Badminton|بادمنتون
+## vidbirds | طيور بالفيديو | 🦅 | video | شو هالطير؟ 🎥
+1|Eagle|نسر (عقاب)
+1|Pavo cristatus|طاووس
+1|Flamingo|فلامنغو
+1|Owl|بومة
+1|Parrot|ببغاء
+2|Pelican|بجع (بيليكان)
+2|Swan|بجعة (تمّ)
+2|Ostrich|نعامة
+2|Woodpecker|نقار الخشب
+2|Kingfisher|صياد السمك (الرفراف)
+3|Puffin|البفن
+3|Stork|لقلق
+3|Toucan|طوقان
+3|Vulture|نسر (رخمة)
+3|Heron|بلشون (مالك الحزين)
+4|Lyrebird|الطائر المقلّد (القيثاري)
+4|Shoebill|أبو مركوب
+4|Hoopoe|هدهد
+4|Bowerbird|طائر التعريشة
+4|Roadrunner|طائر الطريق
 ## soundsmachines | أصوات مركبات وآلات | 🚂 | audio | شو هالصوت؟ 🔊
 1|Ambulance siren|سيارة إسعاف
 1|Airplane|طيارة
@@ -3096,7 +3096,6 @@
 3|Drill|دريل
 3|Truck|شاحنة
 3|Tram|ترام
-3|Jet engine|محرك نفاث
 4|Sonar|سونار غواصة
 4|Morse code|شيفرة مورس
 4|Dial-up modem|مودم الإنترنت القديم
@@ -3108,11 +3107,9 @@
 1|Hiccup|حازوقة
 1|Yawn|تثاؤب
 2|Finger snapping|طقطقة أصابع
-2|Kiss|بوسة
 2|Scream|صريخ
 2|Burp|تجشؤ
 2|Gargling|غرغرة
-3|Humming|دندنة
 3|Chewing|مضغ (علك)
 3|Breathing|تنفّس
 3|Beatbox|بيت بوكس
@@ -3120,7 +3117,6 @@
 4|Toothbrush|تفريش أسنان
 4|Knuckle cracking|طقطقة مفاصل
 4|Gasp|شهقة
-4|Throat clearing|تنحنح
 4|Stomach growling|قرقرة البطن
 ## vidsea | عالم البحار بالفيديو | 🌊 | video | شو هاد؟ 🎥
 1|Shark|قرش
@@ -3144,8 +3140,6 @@
 4|Lionfish|سمكة الأسد
 4|Sea anemone|شقائق النعمان البحرية
 ## vidspace | الفضاء بالفيديو | 🚀 | video | شو هاد؟ 🎥
-1|Rocket launch|إطلاق صاروخ
-1|Astronaut|رائد فضاء
 1|Moon|القمر
 1|Earth from space|الأرض من الفضاء
 2|International Space Station|محطة الفضاء الدولية
@@ -3156,15 +3150,12 @@
 3|Spacewalk|سير بالفضاء
 3|Jupiter|المشتري
 3|Comet|مذنب
-3|Satellite|قمر صناعي
 3|Solar flare|توهج شمسي
-4|Apollo 11|هبوط أبولو 11 على القمر
 4|Galaxy|مجرة
 4|Black hole|ثقب أسود
 4|Nebula|سديم
 4|Transit of Venus|عبور الزهرة
 ## vidmachines | آلات ومركبات بالفيديو | 🚜 | video | شو هاد؟ 🎥
-1|Helicopter|هليكوبتر
 1|Excavator|حفّارة (باجر)
 1|Train|قطار
 1|Fire engine|سيارة إطفاء
@@ -3187,18 +3178,14 @@
 1|Butterfly|فراشة
 1|Apis mellifera|نحلة
 1|Formicidae|نملة
-1|Spider|عنكبوت
 2|Ladybug|دعسوقة
 2|Dragonfly|يعسوب
-2|Grasshopper|جندب (جرادة)
 2|Caterpillar|يرقة (دودة)
 2|Snail|حلزون
 3|Mantis|فرس النبي
-3|Scorpion|عقرب
 3|Firefly|يراعة (حشرة مضيئة)
 3|Beetle|خنفسة
 3|Cockroach|صرصور
-4|Stick insect|الحشرة العصوية
 4|Dung beetle|خنفساء الروث
 4|Leafcutter ant|نمل قاطع الأوراق
 4|Cicada|زيز
