@@ -2427,8 +2427,8 @@
     "sharp_prob": 0.7958,
     "prob": 0.7973,
     "books": 19,
-    "result": "pending",
-    "score": null,
+    "result": "miss",
+    "score": "3-2",
     "model_prob": 0.8048,
     "support": 4,
     "signals": 4,
@@ -2504,6 +2504,17 @@
       "t": "الصافي: مع. ⁨Liverpool⁩ ما بيخسر باحتمال 80%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.751
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.champions",
+     "id": "401915382",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "3-2"
     }
    },
    {
@@ -2523,8 +2534,8 @@
     "sharp_prob": 0.8049,
     "prob": 0.7985,
     "books": 19,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-3",
     "model_prob": 0.7843,
     "support": 3,
     "signals": 3,
@@ -2597,6 +2608,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 80%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.799
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.champions",
+     "id": "401915306",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "2-3"
     }
    },
    {
@@ -2616,8 +2638,8 @@
     "sharp_prob": 0.8059,
     "prob": 0.8039,
     "books": 19,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "4-1",
     "model_prob": 0.7977,
     "support": 2,
     "signals": 2,
@@ -2691,6 +2713,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 80%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.751
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.champions",
+     "id": "401915302",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "4-1"
     }
    },
    {
@@ -2710,8 +2743,8 @@
     "sharp_prob": 0.7794,
     "prob": 0.7716,
     "books": 19,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "1-2",
     "model_prob": 0.7549,
     "support": 2,
     "signals": 2,
@@ -2785,6 +2818,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.714
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.champions",
+     "id": "401915303",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "1-2"
     }
    },
    {
@@ -2804,8 +2848,8 @@
     "sharp_prob": 0.7682,
     "prob": 0.7644,
     "books": 19,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-1",
     "model_prob": 0.7564,
     "support": 3,
     "signals": 3,
@@ -2878,6 +2922,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 76%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.758
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.champions",
+     "id": "401915304",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "2-1"
     }
    },
    {
@@ -2897,8 +2952,8 @@
     "sharp_prob": 0.7675,
     "prob": 0.7628,
     "books": 19,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "1-9",
     "model_prob": 0.7803,
     "support": 3,
     "signals": 3,
@@ -2971,6 +3026,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 76%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.758
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.champions",
+     "id": "401915305",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "1-9"
     }
    },
    {
@@ -4835,6 +4901,6 @@
   "prob": 0.000998,
   "fair_odds": 1001.7,
   "reached": true,
-  "result": "pending"
+  "result": "lost"
  }
 }
