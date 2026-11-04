@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>لا تطمع</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<style>
+/* لا تطمع: لوح 5×5 مربعات، ذهب وقنابل. الألوان الأساسية (فاتح/غامق) من shell.css. */
+:root { --font: "Readex Pro", "Segoe UI", Tahoma, sans-serif; --display: "Lalezar", "Readex Pro", sans-serif;
+  --gold: #F5A524; --gold-soft: #FFF4DB; --bomb: #F04438; --bomb-soft: #FEECEA; --fox: #F38744; --ok: #12B76A; }
+:root[data-theme="dark"] { --gold-soft: #3A2C0E; --bomb-soft: #3A1717; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; min-height: 100vh; font-family: var(--font); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+html, body, button, input { touch-action: manipulation; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.wrap { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;
+  padding: calc(8px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+#app { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 8.5vw, 40px); line-height: 1.15; margin: 0; }
+h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 4px 0 0; }
+.sub { color: var(--muted); margin: 0; font-size: 14px; }
+.note { color: var(--muted); font-size: 13px; margin: 0; text-align: center; }
+.err { color: var(--bomb); font-size: 13px; margin: 0; text-align: center; }
+.btn { border: 0; width: 100%; border-radius: 18px; padding: 15px; font-family: var(--display); font-size: 22px; line-height: 1.1; background: var(--brand); color: #FFF; box-shadow: 0 8px 20px -8px var(--brand); transition: transform .12s; }
+.btn:active { transform: scale(.97); }
+.btn.alt { background: var(--card); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+.btn.gold { background: linear-gradient(135deg, #FFC23D, #F08A0C); box-shadow: 0 8px 20px -8px #F08A0C; }
+.btn[disabled] { opacity: .45; transform: none; }
+.linkish { border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; align-self: center; padding: 6px; }
+.row { display: flex; gap: 8px; align-items: center; }
+.input { width: 100%; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 14px; padding: 12px 14px; font-size: 16px; font-family: var(--font); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 16px; background: var(--soft); border: 1px solid var(--line); }
+.seg button { border: 0; background: none; border-radius: 12px; padding: 9px 4px; font-weight: 600; font-size: 14px; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: var(--shadow-sm); }
+.label { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0 0 -6px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 46px; }
+.top .logo { font-family: var(--display); font-size: 26px; color: var(--ink); text-decoration: none; line-height: 1; }
+.top .logo span { color: var(--bomb); }
+.top .end { display: flex; gap: 8px; align-items: center; }
+.ghost { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 7px 13px; font-size: 13px; font-weight: 600; color: var(--muted); }
+
+/* شرح بسيط */
+.how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.how div { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 12px 8px; text-align: center; box-shadow: var(--shadow-sm); }
+.how span { font-size: 30px; display: block; line-height: 1.2; }
+.how b { display: block; font-size: 13px; line-height: 1.4; margin-top: 4px; }
+
+/* النقاط */
+.scores { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 10px 2px 2px; }
+.scores::-webkit-scrollbar { display: none; }
+.pod { flex: 1 0 auto; min-width: 82px; display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow-sm); position: relative; transition: border-color .2s; }
+.pod.turn { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-soft); }
+.pod .av { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #FFF; font-weight: 700; font-size: 13px; flex: none; background: hsl(var(--h) 60% 50%); }
+.pod b { display: block; font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1; direction: ltr; text-align: right; }
+.pod small { display: block; font-size: 11px; color: var(--muted); max-width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pod .crown { position: absolute; top: -10px; left: 6px; font-size: 15px; }
+.roundbar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); font-weight: 600; }
+.roundbar .hot { color: #F08A0C; }
+
+/* اللوح */
+.board { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
+.tile { aspect-ratio: 1; border-radius: 14px; border: 0; padding: 0; display: grid; place-items: center; font-family: var(--display); font-size: clamp(20px, 6.5vw, 30px); line-height: 1;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--brand) 78%, #FFF), var(--brand)); color: #FFF; box-shadow: 0 4px 0 var(--brand-dark), 0 8px 14px -8px var(--brand-dark); transition: transform .1s; }
+.tile:active:not([disabled]) { transform: translateY(3px); box-shadow: 0 1px 0 var(--brand-dark); }
+.tile.hid::after { content: "؟"; opacity: .45; font-size: .8em; }
+.tile.open { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.tile.coin { background: var(--gold-soft); color: #B86E00; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 45%, transparent); }
+:root[data-theme="dark"] .tile.coin { color: #FFC94D; }
+.tile.coin small { font-family: var(--font); font-size: 10px; display: block; font-weight: 700; }
+.tile.bomb { background: var(--bomb-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bomb) 45%, transparent); }
+.tile.fox { background: color-mix(in srgb, var(--fox) 18%, var(--card)); }
+.tile.mine { outline: 3px solid var(--gold); outline-offset: -3px; }
+.tile.new { animation: pop .35s cubic-bezier(.2,.9,.3,1.4) both; }
+.tile[disabled] { cursor: default; }
+@keyframes pop { from { transform: scale(.6) rotateY(90deg); } }
+.board.boom { animation: shake .45s; }
+@keyframes shake { 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+
+/* لوحة الدور */
+.turnbox { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 12px 14px; box-shadow: var(--shadow); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; align-items: center; }
+.turnbox .who { font-weight: 700; font-size: 15px; }
+.turnbox .pot { font-family: var(--display); font-size: 40px; line-height: 1; color: #E08A00; direction: ltr; text-align: left; }
+.turnbox .pot small { font-family: var(--font); font-size: 12px; color: var(--muted); display: block; text-align: left; }
+.risk { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; }
+.risk .lbl { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--muted); }
+.risk .lbl b { color: var(--rc); }
+.risk .bar { height: 10px; border-radius: 10px; background: var(--soft); overflow: hidden; }
+.risk .bar i { display: block; height: 100%; border-radius: 10px; background: var(--rc); transition: width .3s; }
+.msg { text-align: center; font-weight: 700; min-height: 24px; font-size: 15px; }
+.msg.bad { color: var(--bomb); } .msg.good { color: var(--ok); }
+.thinking { display: inline-flex; gap: 5px; vertical-align: middle; margin-inline-start: 6px; }
+.thinking i { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); animation: dot 1s infinite ease-in-out; }
+.thinking i:nth-child(2) { animation-delay: .15s; } .thinking i:nth-child(3) { animation-delay: .3s; }
+@keyframes dot { 50% { transform: translateY(-5px); opacity: .5; } }
+
+.banner { border-radius: 22px; padding: 18px 16px; text-align: center; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 4px; }
+.banner b { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.2; }
+.banner.gold { background: linear-gradient(135deg, color-mix(in srgb, #FFC23D 22%, var(--card)), var(--card)); border-color: color-mix(in srgb, #F08A0C 40%, var(--line)); }
+.final { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.final li { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+.final li:first-child { border-color: #F5B13D; background: linear-gradient(135deg, color-mix(in srgb, #FFC23D 20%, var(--card)), var(--card)); }
+.final li b { font-family: var(--display); font-weight: 400; font-size: 24px; margin-inline-start: auto; direction: ltr; }
+.final .medal { font-size: 22px; width: 28px; text-align: center; }
+.final .av { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #FFF; font-weight: 700; font-size: 13px; background: hsl(var(--h) 60% 50%); }
+.plist { display: flex; flex-direction: column; gap: 8px; }
+.plist .item { display: flex; gap: 8px; align-items: center; }
+.plist .bot { flex: none; width: 46px; height: 46px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); font-size: 20px; }
+.plist .bot[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="logo" href="./">لا <span>تطمع</span> 💣</a><div class="end"><span id="theme-slot"></span><button class="ghost" id="quit" type="button">الألعاب</button></div></div>
+  <main id="app"></main>
+</div>
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const store = { get(k, d) { try { const v = localStorage.getItem("tamaa-" + k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem("tamaa-" + k, JSON.stringify(v)); } catch {} } };
+const hue = (s) => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+const render = (html) => { $("app").innerHTML = html; };
+const bind = (map) => { for (const [id, fn] of Object.entries(map)) { const el = $(id); if (el) el.onclick = fn; } };
+
+// ================= القوانين =================
+// اللوح 25 مربع: 18 ذهب (1–5)، 5 قنابل، 2 حرامي. 3 جولات، والأخيرة الذهب فيها دبل.
+const COINS = [1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5];
+const BOMBS = 5, FOXES = 2, ROUNDS = 3, STEAL = 5, FOX_SELF = 2;
+const makeBoard = () => shuffle([...COINS.map((v) => ({ k: "c", v })), ...Array(BOMBS).fill(null).map(() => ({ k: "b" })), ...Array(FOXES).fill(null).map(() => ({ k: "f" }))])
+  .map((t) => ({ ...t, open: false, by: null }));
+
+let G = null;
+function newGame(players) {
+  G = { players: players.map((p) => ({ ...p, score: 0 })), round: 0, first: Math.floor(Math.random() * players.length), v: 0 };
+  startRound();
+}
+const mult = () => (G.round === ROUNDS - 1 ? 2 : 1);
+const cur = () => G.players[G.turn];
+const hidden = () => G.board.filter((t) => !t.open);
+const goodLeft = () => hidden().filter((t) => t.k !== "b").length;
+const bombsLeft = () => hidden().filter((t) => t.k === "b").length;
+const risk = () => (hidden().length ? bombsLeft() / hidden().length : 0);
+function startRound() {
+  G.board = makeBoard();
+  G.turn = (G.first + G.round) % G.players.length;
+  G.phase = "play"; G.pot = 0; G.flips = 0; G.last = null; G.tn = (G.tn || 0) + 1;
+}
+function nextTurn() {
+  if (!goodLeft()) { G.phase = "roundEnd"; return; }
+  G.turn = (G.turn + 1) % G.players.length; G.pot = 0; G.flips = 0; G.tn++;
+}
+function leaderOther(i) {
+  let best = -1;
+  G.players.forEach((p, j) => { if (j !== i && (best < 0 || p.score > G.players[best].score)) best = j; });
+  return best;
+}
+// كشف مربع: ذهب بينضاف للي بإيدك، قنبلة بتطيّره، والحرامي بيسرق من الأول فوراً
+function flip(i) {
+  const t = G.board[i];
+  if (G.phase !== "play" || !t || t.open) return;
+  t.open = true; t.tn = G.tn; G.flips++;
+  if (t.k === "b") { G.last = { kind: "bomb", lost: G.pot, who: G.turn }; G.pot = 0; nextTurn(); return; }
+  if (t.k === "f") {
+    const L = leaderOther(G.turn), me = cur();
+    const target = G.players[L];
+    if (target.score > me.score) { const s = Math.min(STEAL, target.score); target.score -= s; G.pot += s; G.last = { kind: "fox", from: L, amount: s, who: G.turn }; }
+    else { G.pot += FOX_SELF; G.last = { kind: "fox", from: null, amount: FOX_SELF, who: G.turn }; }
+  } else { G.pot += t.v * mult(); G.last = { kind: "coin", amount: t.v * mult(), who: G.turn }; }
+  if (!goodLeft()) bank();
+}
+function bank() {
+  if (G.phase !== "play" || !G.flips) return;
+  cur().score += G.pot; G.last = { kind: "bank", amount: G.pot, who: G.turn };
+  nextTurn();
+}
+function nextRound() {
+  if (G.phase !== "roundEnd") return;
+  G.round++;
+  if (G.round >= ROUNDS) G.phase = "over"; else startRound();
+}
+
+// ================= الكمبيوتر =================
+// الصعب بيكمّل إذا الربح المتوقع أكبر من الخسارة المتوقعة. المتوسط نفس الإشي بس بيغلط أحياناً. السهل بيكشف عشوائي.
+function botWants() {
+  if (!G.flips) return true;
+  const L = store.get("level", "medium"), p = risk();
+  const good = hidden().filter((t) => t.k !== "b");
+  const avg = good.reduce((s, t) => s + (t.k === "c" ? t.v * mult() : 4), 0) / Math.max(1, good.length);
+  const gain = (1 - p) * avg, loss = p * G.pot;
+  if (L === "easy") return G.flips < 1 + Math.floor(Math.random() * 4);
+  if (L === "medium") return gain * (0.7 + Math.random() * 0.6) > loss;
+  // الصعب: لما يكون متأخر بالجولة الأخيرة بيطمع أكثر
+  const behind = Math.max(...G.players.map((x) => x.score)) - (cur().score + G.pot);
+  const push = G.round === ROUNDS - 1 && behind > 0 ? 1.35 : 1;
+  return gain * push > loss;
+}
+let botTimer = null;
+const FAST = new URLSearchParams(location.search).has("fast");   // للتجارب بس
+function driveBot() {
+  clearTimeout(botTimer);
+  if (!G || G.phase !== "play" || !cur().bot) return;
+  botTimer = setTimeout(() => {
+    if (botWants()) { const hs = G.board.map((t, i) => [t, i]).filter(([t]) => !t.open); flip(hs[Math.floor(Math.random() * hs.length)][1]); }
+    else bank();
+    commit();
+  }, FAST ? 30 : G.flips ? 700 + Math.random() * 500 : 1100);
+}
+
+// ================= أصوات =================
+let AC = null;
+function tone(f, t0, dur, type = "sine", vol = .1) {
+  try { AC ||= new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume();
+    const o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(.0001, AC.currentTime + t0); g.gain.exponentialRampToValueAtTime(vol, AC.currentTime + t0 + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + t0 + dur); o.connect(g).connect(AC.destination); o.start(AC.currentTime + t0); o.stop(AC.currentTime + t0 + dur + .05); } catch {}
+}
+const haptic = (k) => { try { window.webkit?.messageHandlers?.haptic?.postMessage(k); } catch {} try { navigator.vibrate?.(k === "error" ? [80, 40, 120] : 20); } catch {} };
+function sound(last) {
+  if (!last) return;
+  if (last.kind === "coin") { const f = 600 + last.amount * 60; tone(f, 0, .12, "triangle", .09); tone(f * 1.5, .07, .14, "triangle", .07); }
+  else if (last.kind === "bomb") { tone(90, 0, .5, "sawtooth", .14); tone(60, .1, .6, "square", .08); haptic("error"); }
+  else if (last.kind === "fox") { [700, 900, 1200].forEach((f, k) => tone(f, k * .06, .1, "square", .05)); }
+  else if (last.kind === "bank") { [523, 659, 784].forEach((f, k) => tone(f, k * .08, .2, "triangle", .1)); haptic("success"); }
+}
+
+// ================= الواجهة =================
+let mode = null, lastSeen = null;
+function commit() { G.v++; store.set("save", G); draw(); driveBot(); }
+const avatar = (p) => `<span class="av" style="--h:${hue(p.name)}">${p.bot ? "🤖" : esc([...p.name][0] || "؟")}</span>`;
+function scoresHtml() {
+  const top = Math.max(...G.players.map((p) => p.score));
+  return `<div class="scores">${G.players.map((p, i) => `<div class="pod ${i === G.turn && G.phase === "play" ? "turn" : ""}">${p.score === top && top > 0 ? `<span class="crown">👑</span>` : ""}${avatar(p)}<span><b>${p.score}</b><small>${esc(p.name)}</small></span></div>`).join("")}</div>
+    <div class="roundbar"><span>اللوح ${G.round + 1} من ${ROUNDS}</span>${mult() > 1 ? `<span class="hot">🔥 اللوح الأخير: الذهب ×2</span>` : `<span>💣 باقي ${bombsLeft()} قنابل</span>`}</div>`;
+}
+function tileHtml(t, i, can, fresh) {
+  if (!t.open) return `<button class="tile hid" type="button" data-t="${i}" ${can ? "" : "disabled"} aria-label="مربع مخفي"></button>`;
+  const mine = t.tn === G.tn && G.phase === "play" ? " mine" : "";   // اللي انكشف بهالدور
+  const nw = fresh ? " new" : "";
+  if (t.k === "b") return `<div class="tile open bomb${nw}">💣</div>`;
+  if (t.k === "f") return `<div class="tile open fox${mine}${nw}">🦊</div>`;
+  return `<div class="tile open coin${mine}${nw}"><span>${t.v * (G.round === ROUNDS - 1 ? 2 : 1)}<small>ذهب</small></span></div>`;
+}
+function lastMsg(L) {
+  if (!L) return "";
+  const n = (i) => esc(G.players[i].name);
+  if (L.kind === "bomb") return `<p class="msg bad">💥 بووم! طار ${L.lost} ذهب على ${n(L.who)} ${L.lost >= 10 ? "😭" : ""}</p>`;
+  if (L.kind === "bank") return `<p class="msg good">✋ تخزّن ${L.amount} ذهب لـ${n(L.who)}</p>`;
+  if (L.kind === "fox") return `<p class="msg">${L.from !== null ? `🦊 سرق ${L.amount} من ${n(L.from)}!` : `🦊 +${L.amount}`}</p>`;
+  return `<p class="msg">+${L.amount} 💰</p>`;
+}
+function draw() {
+  if (!G) return;
+  if (G.phase === "over") return drawOver();
+  const fresh = lastSeen !== G.v; lastSeen = G.v;
+  if (fresh) sound(G.last);
+  const p = cur(), human = !p.bot && G.phase === "play";
+  const r = Math.round(risk() * 100), rc = r < 20 ? "var(--ok)" : r < 35 ? "var(--gold)" : "var(--bomb)";
+  const lastIdx = fresh && G.last && G.last.kind !== "bank" ? lastOpened() : -1;
+  const boardHtml = `<div class="board ${fresh && G.last?.kind === "bomb" ? "boom" : ""}">${G.board.map((t, i) => tileHtml(t, i, human, i === lastIdx)).join("")}</div>`;
+  if (G.phase === "roundEnd") {
+    render(`${scoresHtml()}${lastMsg(G.last)}<div class="banner gold"><b>خلص اللوح ${G.round + 1} 🎉</b><span class="sub">${G.round + 1 < ROUNDS ? (G.round + 2 === ROUNDS ? "اللوح الجاي هو الأخير، والذهب فيه ×2 🔥" : "يلا عاللوح الجاي") : "هلأ النتيجة!"}</span></div>${boardHtml}
+      <button class="btn" id="nr" type="button">${G.round + 1 < ROUNDS ? "اللوح الجاي" : "النتيجة 🏆"}</button>`);
+    return bind({ nr: () => { nextRound(); commit(); } });
+  }
+  render(`${scoresHtml()}
+    <div class="turnbox"><div><div class="who">${p.bot ? `🤖 ${esc(p.name)} عم يلعب<span class="thinking"><i></i><i></i><i></i></span>` : `دورك يا ${esc(p.name)} 👇`}</div>
+      <div class="sub" style="font-size:12.5px">${G.flips ? `كشفت ${G.flips} مربعات` : "اكبس على أي مربع"}</div></div>
+      <div class="pot">${G.pot}<small>💰 بإيدك</small></div>
+      <div class="risk" style="--rc:${rc}"><div class="lbl"><span>خطر القنبلة بالكشفة الجاية</span><b>${r}%</b></div><div class="bar"><i style="width:${r}%"></i></div></div></div>
+    ${lastMsg(G.last)}
+    ${boardHtml}
+    ${human ? `<button class="btn gold" id="bank" type="button" ${G.flips ? "" : "disabled"}>${G.flips ? `✋ خزّن ${G.pot} ذهب ووقّف` : "اكشف مربع واحد على الأقل"}</button>` : ""}`);
+  if (!human) return;
+  document.querySelectorAll("[data-t]").forEach((b) => b.onclick = () => { flip(+b.dataset.t); commit(); });
+  bind({ bank: () => { bank(); commit(); } });
+}
+let openOrder = [];
+function lastOpened() {
+  // آخر مربع انفتح: بنقارن مع اللي كان مفتوح قبل
+  const now = G.board.map((t, i) => (t.open ? i : -1)).filter((i) => i >= 0);
+  const fresh = now.find((i) => !openOrder.includes(i));
+  openOrder = now;
+  return fresh ?? -1;
+}
+function drawOver() {
+  const ranked = G.players.slice().sort((a, b) => b.score - a.score);
+  const tie = ranked[1] && ranked[1].score === ranked[0].score;
+  const solo = mode === "solo", humanWon = solo && !ranked[0].bot && !tie;
+  if (lastSeen !== "over") { lastSeen = "over"; [523, 659, 784, 1047].forEach((f, k) => tone(f, k * .12, .35, "triangle", .12)); }
+  render(`<div class="banner gold"><span style="font-size:54px;line-height:1">${tie ? "🤝" : "🏆"}</span>
+    <b>${tie ? "تعادل!" : solo ? (humanWon ? "فزت على الكمبيوتر! 🎉" : "الكمبيوتر فاز هالمرة 😅") : `${esc(ranked[0].name)} فاز!`}</b><span class="sub">${tie ? "ولا حدا غلب الثاني" : `بـ${ranked[0].score} ذهب`}</span></div>
+    <ol class="final">${ranked.map((p, i) => `<li><span class="medal">${["🥇", "🥈", "🥉", "4", "5", "6"][i]}</span>${avatar(p)}<span>${esc(p.name)}</span><b>${p.score}</b></li>`).join("")}</ol>
+    <button class="btn" id="again" type="button">العب مرة ثانية</button><button class="btn alt" id="out" type="button">رجوع</button>`);
+  bind({ again: () => { newGame(G.players.map(({ score, ...p }) => p)); openOrder = []; commit(); }, out: () => { store.set("save", null); G = null; intro(); } });
+}
+
+// ================= البداية =================
+const BOT_NAMES = ["أبو عودة", "الثعلب", "أم سعيد"];
+function intro() {
+  clearTimeout(botTimer);
+  const saved = store.get("save", null), lvl = store.get("level", "medium"), bots = store.get("bots", 1);
+  render(`<div><h1>اجمع ذهب... بس لا تطمع!</h1><p class="sub">بدورك اكشف مربعات واجمع ذهب. وقّف وخزّن قبل ما تطلعلك قنبلة!</p></div>
+    <div class="how"><div><span>💰</span><b>كل مربع فيه ذهب</b></div><div><span>💣</span><b>القنبلة بتطيّر ذهب دورك</b></div><div><span>✋</span><b>خزّن ووقّف وقت ما بدك</b></div></div>
+    <p class="note">🦊 الحرامي بيسرق 5 من الأول · 3 لوحات، والأخير الذهب فيه دبل 🔥</p>
+    ${saved && saved.phase !== "over" ? `<button class="btn gold" id="resume" type="button">كمّل اللعبة اللي وقفت</button>` : ""}
+    <h2>🤖 ضد الكمبيوتر</h2>
+    <p class="label">المستوى</p>
+    <div class="seg">${[["easy", "سهل"], ["medium", "متوسط"], ["hard", "صعب"]].map(([k, t]) => `<button type="button" data-lvl="${k}" aria-pressed="${lvl === k}">${t}</button>`).join("")}</div>
+    <p class="label">عدد الخصوم</p>
+    <div class="seg">${[1, 2, 3].map((k) => `<button type="button" data-bots="${k}" aria-pressed="${bots === k}">${k}</button>`).join("")}</div>
+    <button class="btn" id="solo" type="button">العب ضد الكمبيوتر</button>
+    <h2>👥 مع صحابك على نفس التلفون</h2>
+    <button class="btn alt" id="local" type="button">من 2 لـ6 لاعبين</button>`);
+  document.querySelectorAll("[data-lvl]").forEach((b) => b.onclick = () => { store.set("level", b.dataset.lvl); intro(); });
+  document.querySelectorAll("[data-bots]").forEach((b) => b.onclick = () => { store.set("bots", +b.dataset.bots); intro(); });
+  bind({
+    resume: () => { G = saved; mode = G.players.filter((p) => !p.bot).length > 1 ? "local" : "solo"; openOrder = G.board.map((t, i) => (t.open ? i : -1)).filter((i) => i >= 0); lastSeen = G.v; draw(); driveBot(); },
+    solo: () => { mode = "solo"; openOrder = []; newGame([{ name: store.get("me", "") || "إنت" }, ...BOT_NAMES.slice(0, store.get("bots", 1)).map((name) => ({ name, bot: true }))]); commit(); },
+    local: localSetup,
+  });
+}
+function localSetup() {
+  const list = store.get("names", [{ name: "", bot: false }, { name: "", bot: false }]);
+  const draw2 = () => {
+    render(`<h1>مين بيلعب؟</h1><p class="sub">كل واحد بدوره على نفس التلفون. فيكم تضيفوا كمبيوتر 🤖</p>
+      <div class="plist">${list.map((p, i) => `<div class="item"><input class="input" data-i="${i}" type="text" maxlength="14" placeholder="${p.bot ? "كمبيوتر" : "لاعب " + (i + 1)}" value="${esc(p.name)}"><button class="bot" type="button" data-bot="${i}" aria-pressed="${p.bot}" aria-label="كمبيوتر">🤖</button></div>`).join("")}</div>
+      <div class="row"><button class="btn alt" id="add" type="button" style="flex:1" ${list.length >= 6 ? "disabled" : ""}>+ لاعب</button><button class="btn alt" id="rem" type="button" style="flex:1" ${list.length <= 2 ? "disabled" : ""}>− لاعب</button></div>
+      <p class="err" id="err" hidden></p><button class="btn" id="go" type="button">يلا نبلّش 💰</button><button class="linkish" id="back" type="button">رجوع</button>`);
+    const read = () => document.querySelectorAll("[data-i]").forEach((el) => { list[+el.dataset.i].name = el.value.trim(); });
+    document.querySelectorAll("[data-bot]").forEach((b) => b.onclick = () => { read(); list[+b.dataset.bot].bot = !list[+b.dataset.bot].bot; draw2(); });
+    bind({ add: () => { read(); list.push({ name: "", bot: false }); draw2(); }, rem: () => { read(); list.pop(); draw2(); }, back: () => { read(); store.set("names", list); intro(); },
+      go: () => {
+        read();
+        const ps = list.map((p, i) => ({ name: p.name || (p.bot ? BOT_NAMES[i % 3] + " " + (i + 1) : "لاعب " + (i + 1)), bot: p.bot }));
+        if (new Set(ps.map((p) => p.name)).size !== ps.length) { $("err").hidden = false; $("err").textContent = "في اسمين متشابهين."; return; }
+        if (!ps.some((p) => !p.bot)) { $("err").hidden = false; $("err").textContent = "لازم لاعب واحد على الأقل مش كمبيوتر."; return; }
+        store.set("names", list); mode = "local"; openOrder = []; newGame(ps); commit();
+      } });
+  };
+  draw2();
+}
+$("theme-slot").outerHTML = themeSwitch();
+$("quit").onclick = () => { location.href = "./"; };
+intro();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+</body>
+</html>
