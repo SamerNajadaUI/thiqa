@@ -98,6 +98,19 @@
       "t": "الصافي: بحذر. فوز ⁨Ben Shelton⁩ باحتمال 67%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
       "score": -0.032
      }
+    },
+    "espn": {
+     "s": "tennis",
+     "l": "atp",
+     "id": "186497",
+     "sw": false
+    },
+    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
+    "live": {
+     "state": "pre",
+     "detail": "11/5 - 6:30 AM EST",
+     "score": null
     }
    },
    {
