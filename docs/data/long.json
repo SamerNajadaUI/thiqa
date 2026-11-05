@@ -22,8 +22,8 @@
     "sharp_prob": 0.7243,
     "prob": 0.6721,
     "books": 19,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-1",
     "crowd_prob": 0.725,
     "crowd_volume": 17680,
     "model_prob": null,
@@ -108,9 +108,9 @@
     "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
     "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
     "live": {
-     "state": "pre",
-     "detail": "11/5 - 6:30 AM EST",
-     "score": null
+     "state": "post",
+     "detail": "Final",
+     "score": "2-1"
     }
    },
    {
@@ -130,8 +130,8 @@
     "sharp_prob": 0.8443,
     "prob": 0.7702,
     "books": 21,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "0-1",
     "crowd_prob": 0.825,
     "crowd_volume": 181538,
     "model_prob": null,
@@ -206,6 +206,19 @@
       "t": "الصافي: مع. فوز ⁨Carlos Alcaraz⁩ باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.714
      }
+    },
+    "espn": {
+     "s": "tennis",
+     "l": "atp",
+     "id": "186502",
+     "sw": false
+    },
+    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
+    "live": {
+     "state": "post",
+     "detail": "Walkover",
+     "score": "0-1"
     }
    },
    {
@@ -2800,6 +2813,17 @@
       "t": "الصافي: بحذر. ما في تعادل باحتمال 79%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
       "score": 0.349
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915535",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "53'",
+     "score": "1-1"
     }
    },
    {
@@ -2891,6 +2915,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 82%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.649
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915534",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "52'",
+     "score": "0-0"
     }
    },
    {
@@ -2982,6 +3017,17 @@
       "t": "الصافي: بحذر. ما في تعادل باحتمال 76%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
       "score": 0.309
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915527",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "53'",
+     "score": "0-1"
     }
    },
    {
@@ -3073,6 +3119,17 @@
       "t": "الصافي: بحذر. ما في تعادل باحتمال 76%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
       "score": 0.309
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915526",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "53'",
+     "score": "0-1"
     }
    },
    {
@@ -3164,6 +3221,17 @@
       "t": "الصافي: بحذر. ما في تعادل باحتمال 75%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
       "score": 0.309
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915537",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "51'",
+     "score": "1-0"
     }
    },
    {

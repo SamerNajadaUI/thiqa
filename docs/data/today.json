@@ -1,7 +1,7 @@
 {
  "date": "2026-11-05",
  "generated_at": "2026-11-05T10:45:48Z",
- "updated_at": "2026-11-05T11:27:40Z",
+ "updated_at": "2026-11-05T18:56:36Z",
  "demo": false,
  "coupons": [
   {
@@ -38,8 +38,8 @@
      "sharp_prob": 0.7243,
      "prob": 0.6721,
      "books": 19,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "2-1",
      "crowd_prob": 0.725,
      "crowd_volume": 17680,
      "model_prob": null,
@@ -124,9 +124,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
      "live": {
-      "state": "pre",
-      "detail": "11/5 - 6:30 AM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "2-1"
      }
     },
     {
@@ -146,8 +146,8 @@
      "sharp_prob": 0.8443,
      "prob": 0.7702,
      "books": 21,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "0-1",
      "crowd_prob": 0.825,
      "crowd_volume": 181538,
      "model_prob": null,
@@ -232,9 +232,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
      "live": {
-      "state": "pre",
-      "detail": "11/5 - 1:00 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Walkover",
+      "score": "0-1"
      }
     },
     {
@@ -556,8 +556,8 @@
    "sharp_prob": 0.8443,
    "prob": 0.7702,
    "books": 21,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "0-1",
    "crowd_prob": 0.825,
    "crowd_volume": 181538,
    "model_prob": null,
@@ -643,9 +643,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
    "live": {
-    "state": "pre",
-    "detail": "11/5 - 1:00 PM EST",
-    "score": null
+    "state": "post",
+    "detail": "Walkover",
+    "score": "0-1"
    }
   },
   {
@@ -665,8 +665,8 @@
    "sharp_prob": 0.7243,
    "prob": 0.6721,
    "books": 19,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "2-1",
    "crowd_prob": 0.725,
    "crowd_volume": 17680,
    "model_prob": null,
@@ -752,9 +752,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
    "live": {
-    "state": "pre",
-    "detail": "11/5 - 6:30 AM EST",
-    "score": null
+    "state": "post",
+    "detail": "Final",
+    "score": "2-1"
    }
   },
   {
@@ -774,8 +774,8 @@
    "sharp_prob": 0.7243,
    "prob": 0.666,
    "books": 21,
-   "result": "pending",
-   "score": null,
+   "result": "miss",
+   "score": "1-2",
    "crowd_prob": 0.725,
    "crowd_volume": 10991,
    "model_prob": null,
@@ -861,9 +861,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
    "live": {
-    "state": "pre",
-    "detail": "11/5 - 8:00 AM EST",
-    "score": null
+    "state": "post",
+    "detail": "Final",
+    "score": "1-2"
    }
   },
   {
