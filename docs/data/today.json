@@ -1,7 +1,7 @@
 {
  "date": "2026-11-04",
  "generated_at": "2026-11-04T06:55:59Z",
- "updated_at": "2026-11-04T22:08:04Z",
+ "updated_at": "2026-11-05T02:43:34Z",
  "demo": false,
  "coupons": [
   {
@@ -668,9 +668,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ny.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
      "live": {
-      "state": "pre",
-      "detail": "11/4 - 7:30 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "7:58 - 4th",
+      "score": "123-88"
      }
     }
    ],
@@ -1665,9 +1665,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ny.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
    "live": {
-    "state": "pre",
-    "detail": "11/4 - 7:30 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "7:58 - 4th",
+    "score": "123-88"
    }
   },
   {
@@ -2213,9 +2213,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
    "live": {
-    "state": "pre",
-    "detail": "11/4 - 7:30 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "3:50 - 4th",
+    "score": "97-97"
    }
   },
   {
