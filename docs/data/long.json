@@ -749,7 +749,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2925.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4057.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4057.png",
+    "espn": {
+     "s": "soccer",
+     "l": "ita.1",
+     "id": "401874791",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "HT",
+     "score": "1-0"
+    }
    },
    {
     "id": "0d53a5dbd9d4f4716e923b97e92dfb0d|double_chance|No Draw|None|None",
@@ -846,7 +857,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/239.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/113.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/113.png",
+    "espn": {
+     "s": "soccer",
+     "l": "ita.1",
+     "id": "401874811",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "45'+3'",
+     "score": "0-0"
+    }
    },
    {
     "id": "813cc4970b2dcab8457490a332fb5a6c|double_chance|No Draw|None|None",
@@ -3676,6 +3698,17 @@
       "t": "الصافي: مع. أكثر من 2.5 أهداف باحتمال 79%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.496
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ger.1",
+     "id": "401884740",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "35'",
+     "score": "0-1"
     }
    },
    {
@@ -3770,6 +3803,17 @@
       "t": "الصافي: مع. أكثر من 2.5 أهداف باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.454
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ger.1",
+     "id": "401884744",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "34'",
+     "score": "1-1"
     }
    },
    {
@@ -3864,6 +3908,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 76%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.712
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "ger.1",
+     "id": "401884737",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "34'",
+     "score": "0-1"
     }
    },
    {
