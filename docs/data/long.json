@@ -238,8 +238,8 @@
     "sharp_prob": 0.7345,
     "prob": 0.7415,
     "books": 23,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "3-1",
     "crowd_prob": 0.7363,
     "crowd_volume": 2029,
     "model_prob": 0.7672,
@@ -323,8 +323,8 @@
      "sw": false
     },
     "live": {
-     "state": "in",
-     "detail": "73'",
+     "state": "post",
+     "detail": "FT",
      "score": "3-1"
     }
    },
@@ -345,8 +345,8 @@
     "sharp_prob": 0.7295,
     "prob": 0.7324,
     "books": 24,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-1",
     "crowd_prob": 0.7291,
     "crowd_volume": 8411,
     "model_prob": 0.7494,
@@ -431,9 +431,9 @@
      "sw": false
     },
     "live": {
-     "state": "in",
-     "detail": "58'",
-     "score": "1-1"
+     "state": "post",
+     "detail": "FT",
+     "score": "2-1"
     }
    },
    {
@@ -453,8 +453,8 @@
     "sharp_prob": 0.8049,
     "prob": 0.801,
     "books": 25,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "3-1",
     "crowd_prob": 0.806,
     "crowd_volume": 8199,
     "model_prob": 0.7904,
@@ -541,9 +541,9 @@
      "sw": false
     },
     "live": {
-     "state": "in",
-     "detail": "HT",
-     "score": "0-0"
+     "state": "post",
+     "detail": "FT",
+     "score": "3-1"
     }
    },
    {
@@ -563,8 +563,8 @@
     "sharp_prob": 0.7208,
     "prob": 0.7259,
     "books": 21,
-    "result": "pending",
-    "score": null,
+    "result": "miss",
+    "score": "0-0",
     "crowd_prob": 0.7164,
     "crowd_volume": 16476,
     "model_prob": 0.756,
@@ -649,8 +649,8 @@
      "sw": false
     },
     "live": {
-     "state": "in",
-     "detail": "HT",
+     "state": "post",
+     "detail": "FT",
      "score": "0-0"
     }
    },
@@ -1922,7 +1922,7 @@
   "prob": 0.00497,
   "fair_odds": 201.2,
   "reached": true,
-  "result": "pending"
+  "result": "lost"
  },
  "monthly": {
   "kind": "monthly",
