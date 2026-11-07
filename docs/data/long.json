@@ -1101,8 +1101,8 @@
     "sharp_prob": 0.8456,
     "prob": 0.8478,
     "books": 24,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "3-0",
     "crowd_prob": 0.8515,
     "crowd_volume": 7275,
     "model_prob": 0.862,
@@ -1187,9 +1187,9 @@
      "sw": false
     },
     "live": {
-     "state": "pre",
-     "detail": "Scheduled",
-     "score": null
+     "state": "post",
+     "detail": "FT",
+     "score": "3-0"
     }
    },
    {
@@ -4078,8 +4078,8 @@
     "sharp_prob": 0.8216,
     "prob": 0.8128,
     "books": 15,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "0-3",
     "model_prob": 0.8003,
     "support": 3,
     "signals": 3,
@@ -4160,9 +4160,9 @@
      "sw": false
     },
     "live": {
-     "state": "pre",
-     "detail": "Scheduled",
-     "score": null
+     "state": "post",
+     "detail": "FT",
+     "score": "0-3"
     }
    },
    {
