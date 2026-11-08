@@ -1642,8 +1642,8 @@
     "sharp_prob": 0.863,
     "prob": 0.8732,
     "books": 23,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-0",
     "crowd_prob": 0.8657,
     "crowd_volume": 3428,
     "model_prob": 0.9434,
@@ -1730,9 +1730,9 @@
      "sw": false
     },
     "live": {
-     "state": "in",
-     "detail": "43'",
-     "score": "0-0"
+     "state": "post",
+     "detail": "FT",
+     "score": "2-0"
     }
    },
    {
@@ -1752,8 +1752,8 @@
     "sharp_prob": 0.7695,
     "prob": 0.7706,
     "books": 24,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-0",
     "crowd_prob": 0.77,
     "crowd_volume": 27651,
     "model_prob": 0.7769,
@@ -1838,9 +1838,9 @@
      "sw": false
     },
     "live": {
-     "state": "in",
-     "detail": "9'",
-     "score": "0-0"
+     "state": "post",
+     "detail": "FT",
+     "score": "2-0"
     }
    },
    {
@@ -1860,8 +1860,8 @@
     "sharp_prob": 0.7728,
     "prob": 0.783,
     "books": 21,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "0-0",
     "crowd_prob": 0.78,
     "crowd_volume": 164,
     "model_prob": 0.8292,
@@ -1949,9 +1949,9 @@
      "sw": false
     },
     "live": {
-     "state": "pre",
-     "detail": "Scheduled",
-     "score": null
+     "state": "post",
+     "detail": "FT",
+     "score": "0-0"
     }
    },
    {
@@ -2048,7 +2048,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
+    "espn": {
+     "s": "soccer",
+     "l": "ita.1",
+     "id": "401875003",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "71'",
+     "score": "2-2"
+    }
    }
   ],
   "prob": 0.00497,
@@ -4850,6 +4861,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 76%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.758
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "fra.1",
+     "id": "401876404",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "77'",
+     "score": "1-1"
     }
    },
    {
@@ -4943,6 +4965,17 @@
       "t": "الصافي: مع. ما في تعادل باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.758
      }
+    },
+    "espn": {
+     "s": "soccer",
+     "l": "esp.1",
+     "id": "401882816",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "59'",
+     "score": "1-1"
     }
    }
   ],
