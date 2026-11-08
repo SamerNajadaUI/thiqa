@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>ركّب الكلمة</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.roundbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.chip { background: var(--brand-soft); color: var(--brand); border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
+.letters { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 14px 6px; }
+.lt { width: 52px; height: 58px; border-radius: 16px; display: grid; place-items: center; font-family: var(--display); font-size: 30px; line-height: 1; background: linear-gradient(160deg, color-mix(in srgb, var(--brand) 70%, #FFF), var(--brand)); color: #FFF; box-shadow: 0 5px 0 var(--brand-dark); animation: pop .3s ease-out both; }
+.lt:nth-child(2n) { transform: rotate(-3deg); } .lt:nth-child(3n) { transform: rotate(2deg); }
+.answer { display: flex; gap: 8px; }
+.answer .input { text-align: center; font-size: 20px; font-weight: 600; }
+.clock { font-family: var(--display); font-size: 22px; color: var(--ink); direction: ltr; }
+.shake { animation: shake .35s; }
+@keyframes shake { 25% { transform: translateX(-6px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="anagram"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// ركّب الكلمة: حروف مخلوطة، أول واحد يكتب الكلمة يكسب. الكمبيوتر بيحاول بعد وقت حسب المستوى.
+const WORDS = [
+  ["تفاحة", "فاكهة"], ["برتقال", "فاكهة"], ["بطيخ", "فاكهة"], ["رمان", "فاكهة"], ["عنب", "فاكهة"], ["موز", "فاكهة"],
+  ["خيار", "خضار"], ["بندورة", "خضار"], ["بصل", "خضار"], ["جزر", "خضار"],
+  ["قطة", "حيوان"], ["جمل", "حيوان"], ["فيل", "حيوان"], ["نمر", "حيوان"], ["حصان", "حيوان"], ["دلفين", "حيوان"],
+  ["مدرسة", "مكان"], ["مستشفى", "مكان"], ["مطار", "مكان"], ["سوق", "مكان"], ["جامعة", "مكان"], ["مكتبة", "مكان"],
+  ["كتاب", "شي بالبيت"], ["كرسي", "شي بالبيت"], ["طاولة", "شي بالبيت"], ["شباك", "شي بالبيت"], ["مفتاح", "شي بالبيت"], ["ساعة", "شي بالبيت"],
+  ["شمس", "طبيعة"], ["قمر", "طبيعة"], ["مطر", "طبيعة"], ["ثلج", "طبيعة"], ["جبل", "طبيعة"], ["صحراء", "طبيعة"], ["بحر", "طبيعة"],
+  ["سيارة", "مواصلات"], ["طيارة", "مواصلات"], ["قطار", "مواصلات"], ["دراجة", "مواصلات"],
+  ["حاسوب", "تكنولوجيا"], ["تلفون", "تكنولوجيا"], ["شاشة", "تكنولوجيا"], ["كاميرا", "تكنولوجيا"],
+];
+const ROUNDS = 10;
+// وقت الكمبيوتر (ثواني) حسب المستوى
+const LEVEL = { "سهل": [9, 15], "وسط": [6, 11], "صعب": [3.5, 7] };
+let level = store.get("anag-level", "وسط");
+let S = null;
+let tick = 0;
+
+window.leaveGuard = () => (S && S.phase === "play" ? "الكلمة لسا ما انحلّت، بدك تطلع؟" : false);
+
+function setup() {
+  S = null;
+  render(`
+    <section class="card stack">
+      <h1>ركّب الكلمة</h1>
+      <p class="sub">${ROUNDS} كلمات. رتّب الحروف وأكتب الكلمة قبل الكمبيوتر. أول واحد يحلّها يكسب الجولة. الإجابة الصح بتعطيك نقاط أكتر كل ما كنت أسرع. تلميح بيكلّف 3 نقاط.</p>
+      <div class="label">مستوى الكمبيوتر</div>
+      <div class="seg" id="lvl">${Object.keys(LEVEL).map((k) => `<button data-l="${k}" aria-pressed="${k === level}">${k}</button>`).join("")}</div>
+      <button class="btn" id="go">ابدأ</button>
+    </section>`);
+  $("lvl").onclick = (e) => { const b = e.target.closest("[data-l]"); if (!b) return; level = b.dataset.l; store.set("anag-level", level); setup(); };
+  $("go").onclick = start;
+}
+
+function start() {
+  S = { r: 0, me: 0, bot: 0, phase: "idle", pool: shuffle(WORDS), word: "", cat: "", letters: [], t0: 0, hinted: false, msg: "", good: true, timers: [] };
+  next();
+}
+
+function next() {
+  clearInterval(tick);
+  S.r++;
+  if (S.r > ROUNDS) return finish();
+  const [word, cat] = S.pool[(S.r - 1) % S.pool.length];
+  S.word = word; S.cat = cat;
+  let letters = shuffle([...word]);
+  for (let i = 0; i < 6 && letters.join("") === word; i++) letters = shuffle(letters);
+  S.letters = letters;
+  S.hinted = false; S.msg = ""; S.good = true;
+  S.phase = "play";
+  S.t0 = performance.now();
+  const [lo, hi] = LEVEL[level];
+  S.timers.push(setTimeout(() => end("bot"), rand(lo, hi) * 1000));
+  draw();
+  tick = setInterval(updateClock, 200);
+}
+
+function updateClock() {
+  const el = $("clock");
+  if (el && S && S.phase === "play") el.textContent = ((performance.now() - S.t0) / 1000).toFixed(1) + "ث";
+}
+
+function end(who) {
+  if (!S || S.phase !== "play") return;
+  S.timers.forEach(clearTimeout); S.timers = [];
+  clearInterval(tick);
+  S.phase = "done";
+  if (who === "me") {
+    const secs = (performance.now() - S.t0) / 1000;
+    const pts = Math.max(3, 10 - Math.floor(secs / 3)) - (S.hinted ? 3 : 0);
+    S.me += pts; S.good = true; S.msg = `✅ صح! +${pts} نقطة`; beep(880);
+  } else {
+    S.bot += 6; S.good = false; S.msg = `🤖 الكمبيوتر حلّها أول! الكلمة: ${S.word}`; beep(220, 180, "square");
+  }
+  draw();
+  S.timers.push(setTimeout(next, 1800));
+}
+
+function check() {
+  if (!S || S.phase !== "play") return;
+  const input = $("ans");
+  if (normAr(input.value) === normAr(S.word)) return end("me");
+  input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake");
+  S.msg = "❌ مو هيك، جرّب مرة ثانية"; S.good = false;
+  $("msg").textContent = S.msg; $("msg").className = "msg bad";
+  input.select();
+}
+
+function draw() {
+  const playing = S.phase === "play";
+  render(`
+    <div class="pods">
+      <div class="pod ${S.me >= S.bot ? "turn" : ""}">${av("أنت")}<div><small>أنت</small><b>${S.me}</b></div></div>
+      <div class="pod">${av("كمبيوتر")}<div><small>الكمبيوتر 🤖</small><b>${S.bot}</b></div></div>
+    </div>
+    <div class="roundbar"><span>كلمة ${S.r} من ${ROUNDS}</span><span class="chip">${esc(S.cat)}</span><span class="clock" id="clock">0.0ث</span></div>
+    <div class="letters">${S.letters.map((l) => `<span class="lt">${esc(l)}</span>`).join("")}</div>
+    <div class="answer">
+      <input class="input" id="ans" autocomplete="off" placeholder="اكتب الكلمة" ${playing ? "" : "disabled"} aria-label="الكلمة">
+      <button class="btn sm" id="ok" ${playing ? "" : "disabled"}>جرّب</button>
+    </div>
+    <div class="row">
+      <button class="linkish grow" id="hint" ${playing && !S.hinted ? "" : "disabled"}>${S.hinted ? `أول حرف: ${esc(S.word[0])}` : "تلميح: أول حرف (−3 نقاط)"}</button>
+    </div>
+    <p class="msg ${S.good ? "good" : "bad"}" id="msg">${S.msg || "&nbsp;"}</p>`);
+  $("ok").onclick = check;
+  $("ans").onkeydown = (e) => { if (e.key === "Enter") check(); };
+  $("hint").onclick = () => { S.hinted = true; draw(); $("ans").focus(); };
+  if (playing) $("ans").focus();
+}
+
+function finish() {
+  S.phase = "end";
+  const title = S.me > S.bot ? "🏆 فزت!" : S.me < S.bot ? "🤖 الكمبيوتر فاز" : "🤝 تعادل";
+  render(`
+    <section class="banner gold pop"><b>${title}</b><span>${S.me} : ${S.bot}</span></section>
+    <button class="btn" id="again">العب مرة ثانية</button>
+    <button class="btn alt" id="menu">تغيير المستوى</button>`);
+  $("again").onclick = start;
+  $("menu").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>

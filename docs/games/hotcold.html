@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>دافئ بارد</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.roundbar { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.range { text-align: center; padding: 18px 12px; }
+.range .lbl { font-size: 13px; color: var(--muted); font-weight: 600; }
+.range .nums { font-family: var(--display); font-size: 42px; line-height: 1.1; direction: ltr; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.track { position: relative; height: 12px; border-radius: 999px; background: var(--soft); margin: 12px 4px 2px; overflow: visible; }
+.track i { position: absolute; top: 0; bottom: 0; border-radius: 999px; background: linear-gradient(90deg, #2E90FA, #F79009 55%, #F04438); }
+.guessrow { display: flex; gap: 8px; }
+.guessrow .input { text-align: center; font-size: 22px; font-weight: 700; direction: ltr; }
+.hist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.hist li { display: flex; align-items: center; gap: 8px; font-size: 14px; padding: 8px 12px; border-radius: 14px; background: var(--soft); }
+.hist li b { direction: ltr; font-family: var(--display); font-weight: 400; font-size: 17px; min-width: 52px; }
+.hist li span.who { color: var(--muted); font-size: 12px; }
+.hist li .t { margin-inline-start: auto; font-weight: 600; font-size: 13px; }
+.shake { animation: shake .35s; }
+@keyframes shake { 25% { transform: translateX(-6px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="hotcold"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// دافئ بارد: الكمبيوتر اختار رقم سري. اللاعبين يخمّنون بالدور، والتلميح بيقول قد إيش قريب ووين الرقم.
+// أول واحد يصيبه بياخد نقاط، وكل ما كانت محاولاته أقل كانت النقاط أكبر.
+const ROUNDS = 5;
+const MAX_G = 12;
+const RANGES = [50, 100, 500];
+let n = store.get("hc-n", 2);
+let range = store.get("hc-range", 100);
+let S = null;
+
+window.leaveGuard = () => (S && S.phase !== "end" && S.round > 0 ? "الجولة شغّالة، بدك تطلع؟" : false);
+
+function setup() {
+  S = null;
+  render(`
+    <section class="card stack">
+      <h1>دافئ بارد</h1>
+      <p class="sub">الرقم السري بين 1 و ${range}. كل واحد يخمّن بدوره. التلميح بيقول إذا أنت دافئ أو متجمّد، ووين الرقم. أول واحد يصيبه بياخد النقاط.</p>
+      <div class="label">عدد اللاعبين</div>
+      <div class="seg" id="cnt">${[2, 3, 4].map((k) => `<button data-n="${k}" aria-pressed="${k === n}">${k}</button>`).join("")}</div>
+      <div class="label">مدى الأرقام</div>
+      <div class="seg" id="rng">${RANGES.map((k) => `<button data-r="${k}" aria-pressed="${k === range}">1 – ${k}</button>`).join("")}</div>
+      <div class="stack" id="names">${nameFields(n)}</div>
+      <button class="btn" id="go">ابدأ</button>
+    </section>`);
+  $("cnt").onclick = (e) => { const b = e.target.closest("[data-n]"); if (!b) return; n = +b.dataset.n; store.set("hc-n", n); setup(); };
+  $("rng").onclick = (e) => { const b = e.target.closest("[data-r]"); if (!b) return; range = +b.dataset.r; store.set("hc-range", range); setup(); };
+  $("go").onclick = start;
+}
+
+function start() {
+  const names = readNames(n);
+  S = { names, pts: names.map(() => 0), round: 0, turn: 0, target: 0, lo: 1, hi: range, g: 0, hist: [], over: false, msg: "", good: true, phase: "play" };
+  newRound();
+}
+
+function newRound() {
+  S.round++;
+  if (S.round > ROUNDS) return finish();
+  S.target = 1 + Math.floor(Math.random() * range);
+  S.lo = 1; S.hi = range; S.g = 0; S.hist = []; S.over = false;
+  S.msg = `جولة ${S.round}: خمّن الرقم`; S.good = true;
+  drawRound();
+  setTimeout(() => { const i = $("g"); if (i) i.focus(); }, 50);
+}
+
+function hintFor(v) {
+  const d = Math.abs(v - S.target);
+  const r = d / range;
+  const heat = d === 0 ? "🎯 صح!" : r <= 0.03 ? "🔥 حامي جداً" : r <= 0.1 ? "🌤️ دافئ" : r <= 0.25 ? "❄️ بارد" : "🧊 متجمّد";
+  const dir = v < S.target ? "⬆️ أكبر" : v > S.target ? "⬇️ أصغر" : "";
+  return d === 0 ? heat : `${heat} · الرقم ${dir}`;
+}
+
+function guess() {
+  if (S.over) return;
+  const input = $("g");
+  const v = Number(input.value);
+  if (!Number.isInteger(v) || v < 1 || v > range) {
+    input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake");
+    S.msg = `اكتب رقم صحيح من 1 لـ ${range}`; S.good = false; drawRound(); return;
+  }
+  const who = S.turn;
+  S.turn = (S.turn + 1) % n;
+  S.g++;
+  const hit = v === S.target;
+  const hint = hintFor(v);
+  if (!hit) {
+    if (v < S.target) S.lo = Math.max(S.lo, v + 1); else S.hi = Math.min(S.hi, v - 1);
+  }
+  S.hist.unshift({ who, v, hint, hit });
+  if (hit) {
+    const pts = Math.max(2, 11 - S.g);
+    S.pts[who] += pts;
+    S.lo = S.hi = v; S.over = true;
+    S.msg = `🎯 ${S.names[who]} أصاب الرقم ${v}! +${pts}`; S.good = true;
+    beep(880); drawRound();
+    setTimeout(newRound, 2000);
+    return;
+  }
+  S.msg = `${S.names[who]}: ${hint}`; S.good = true;
+  if (S.g >= MAX_G) {
+    S.over = true; S.good = false;
+    S.msg = `انتهت المحاولات! الرقم كان ${S.target}`;
+    beep(200, 300, "square");
+    drawRound();
+    setTimeout(newRound, 2400);
+    return;
+  }
+  drawRound();
+  $("g")?.focus();
+}
+
+function drawRound() {
+  const pct = (v) => ((v - 1) / Math.max(1, range - 1)) * 100;
+  const left = pct(S.lo), width = Math.max(1.5, pct(S.hi) - left);
+  render(`
+    <div class="pods">${S.names.map((name, i) => `<div class="pod ${!S.over && i === S.turn ? "turn" : ""}">${av(name)}<div><small>${esc(name)}</small><b>${S.pts[i]}</b></div></div>`).join("")}</div>
+    <div class="roundbar"><span>جولة ${S.round} من ${ROUNDS}</span><span>محاولات: ${S.g} / ${MAX_G}</span></div>
+    <section class="card range">
+      <span class="lbl">الرقم السري بين</span>
+      <div class="nums"><span>${S.lo}</span><span>و</span><span>${S.hi}</span></div>
+      <div class="track" aria-hidden="true"><i style="inset-inline-start:${left}%;width:${width}%"></i></div>
+    </section>
+    <p class="msg ${S.good ? "good" : "bad"}">${esc(S.msg)}</p>
+    ${S.over ? `<p class="note">الجولة الجاية بعد لحظة...</p>` : `
+    <div class="guessrow">
+      <input class="input" id="g" type="number" inputmode="numeric" min="1" max="${range}" placeholder="اكتب رقم" aria-label="تخمين">
+      <button class="btn sm" id="ok">خمّن</button>
+    </div>`}
+    ${S.hist.length ? `<ol class="hist">${S.hist.map((h) => `<li><b>${h.v}</b><span class="who">${esc(S.names[h.who])}</span><span class="t">${esc(h.hint)}</span></li>`).join("")}</ol>` : ""}`);
+  if ($("ok")) $("ok").onclick = guess;
+  if ($("g")) $("g").onkeydown = (e) => { if (e.key === "Enter") guess(); };
+}
+
+function finish() {
+  S.phase = "end";
+  const list = S.names.map((name, i) => ({ name, score: S.pts[i] })).sort((a, b) => b.score - a.score);
+  render(`
+    <section class="banner gold pop"><b>${winnerLine(list)}</b><span class="sub">بعد ${ROUNDS} جولات</span></section>
+    ${standingsHTML(list, "نقطة")}
+    <button class="btn" id="again">العب مرة ثانية</button>
+    <button class="btn alt" id="menu">تغيير الإعدادات</button>`);
+  $("again").onclick = start;
+  $("menu").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>

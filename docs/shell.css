@@ -72,6 +72,20 @@ body { transition: background-color .25s, color .25s; }
 .g-qisma { --g1: #FF5FA2; --g2: #8B3DFF; }
 .g-tamaa { --g1: #FFB340; --g2: #E2532D; }
 .g-barra { --g1: #2FD58E; --g2: #0B9A62; }
+.g-speed { --g1: #3DD9FF; --g2: #1677FF; }
+.g-catch { --g1: #7BE495; --g2: #14866D; }
+.g-anagram { --g1: #FF9BD2; --g2: #D6457E; }
+.g-simon { --g1: #A3FF6B; --g2: #2E9E3C; }
+.g-hotcold { --g1: #FF9F6B; --g2: #E0522D; }
+.g-dots { --g1: #7A8CFF; --g2: #2E3FB8; }
+.g-connect { --g1: #FFD84D; --g2: #D9A200; }
+.g-auction { --g1: #B794FF; --g2: #6A3DD9; }
+.g-wheel { --g1: #5EEAD4; --g2: #0F766E; }
+.g-pictionary { --g1: #FF7AB8; --g2: #B02C7A; }
+/* أقسام الألعاب في الرئيسية */
+.gsec { display: flex; flex-direction: column; gap: 10px; }
+.gsec + .gsec { margin-top: 14px; }
+.gsec-title { margin: 0 2px; font-size: 16px; font-weight: 700; color: var(--ink); }
 :root[data-theme="dark"] .gcard .art { filter: saturate(.92) brightness(.92); }
 :root[data-theme="dark"] .gcard .flag { background: rgb(14 15 20 / .78); color: #FFFFFF; }
 @media (max-width: 350px) { .gcard b { font-size: 18px; } .gcard .art .ic { width: 54px; height: 54px; } }

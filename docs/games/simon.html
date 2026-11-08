@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>تذكّر الألوان</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.roundbar { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.pads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 4px; }
+.pad { aspect-ratio: 1; border: 0; border-radius: 28px; background: var(--c); opacity: .78; box-shadow: inset 0 -8px 0 rgb(0 0 0 / .18), 0 10px 22px -12px var(--c); transition: transform .08s, opacity .15s, filter .15s; }
+.pad:active:not([disabled]) { transform: scale(.96); }
+.pad.lit { opacity: 1; filter: brightness(1.35) saturate(1.1); transform: scale(1.03); }
+.pad:not([disabled]) { opacity: 1; }
+.pad[disabled] { cursor: default; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="simon"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// تذكّر الألوان: كل واحد يزيد لون على السلسلة، والتاني لازم يعيد السلسلة كلها من الذاكرة.
+// غلطة = برا اللعبة. كل إعادة ناجحة = نقطة. آخر واحد باقي هو الفايز.
+const PADS = [
+  { c: "#F04438", n: "أحمر", f: 392 },
+  { c: "#12B76A", n: "أخضر", f: 494 },
+  { c: "#2E90FA", n: "أزرق", f: 587 },
+  { c: "#FDB022", n: "أصفر", f: 698 },
+];
+const MAX = 14;
+let n = store.get("simon-n", 3);
+let S = null;
+
+window.leaveGuard = () => (S && S.phase !== "end" && S.seq.length > 0 ? "اللعبة شغّالة، بدك تطلع؟" : false);
+
+function setup() {
+  S = null;
+  render(`
+    <section class="card stack">
+      <h1>تذكّر الألوان</h1>
+      <p class="sub">مرّر الجهاز بين اللاعبين. كل واحد يزيد لون، والتاني لازم يعيد السلسلة كلها من الذاكرة. غلطة = برا. آخر واحد باقي يفوز.</p>
+      <div class="label">عدد اللاعبين</div>
+      <div class="seg" id="cnt">${[2, 3, 4].map((k) => `<button data-n="${k}" aria-pressed="${k === n}">${k}</button>`).join("")}</div>
+      <div class="stack" id="names">${nameFields(n)}</div>
+      <button class="btn" id="go">ابدأ</button>
+    </section>`);
+  $("cnt").onclick = (e) => {
+    const b = e.target.closest("[data-n]"); if (!b) return;
+    const names = readNames(n); n = +b.dataset.n; store.set("simon-n", n);
+    setup(); names.forEach((v, i) => { if (i < n && !v.startsWith("لاعب")) $(`p${i}`).value = v; });
+  };
+  $("go").onclick = start;
+}
+
+function start() {
+  const names = readNames(n);
+  S = { names, pts: names.map(() => 0), alive: names.map((_, i) => i), out: [], seq: [], adder: 0, replayer: -1, pos: 0, busy: false, phase: "", msg: "", good: true };
+  askAdd();
+}
+
+const nextAlive = (p) => S.alive[(S.alive.indexOf(p) + 1) % S.alive.length];
+
+function pods() {
+  return `<div class="pods">${S.names.map((name, i) => {
+    const turn = (S.phase === "add" && i === S.adder) || (S.phase === "rep" && i === S.replayer);
+    return `<div class="pod ${turn ? "turn" : ""} ${S.alive.includes(i) ? "" : "out"}">${av(name)}<div><small>${esc(name)}</small><b>${S.pts[i]}</b></div></div>`;
+  }).join("")}</div>`;
+}
+
+function handoff(who, label, onReady) {
+  S.phase = "handoff"; S.busy = true;
+  render(`${pods()}
+    <div class="handoff pop">
+      <span class="sub">${label}</span>
+      <div class="big">${esc(S.names[who])}</div>
+      <p>خلّي الباقين ما يشوفوا الشاشة</p>
+      <button class="btn" id="ready">أنا ${esc(S.names[who])} جاهز</button>
+    </div>`);
+  $("ready").onclick = onReady;
+}
+
+function askAdd() {
+  handoff(S.adder, "دورك تزيد لون", () => {
+    S.phase = "add";
+    S.msg = ""; S.good = true;
+    playback(() => { S.busy = false; drawBoard(); });
+  });
+}
+
+function askRep() {
+  S.replayer = nextAlive(S.adder);
+  handoff(S.replayer, "دورك تعيد السلسلة", () => {
+    S.phase = "rep"; S.pos = 0; S.msg = ""; S.good = true;
+    playback(() => { S.busy = false; drawBoard(); });
+  });
+}
+
+// يعرض السلسلة بالضوء والصوت
+function playback(done) {
+  S.busy = true;
+  const seq = S.seq.slice();
+  let k = 0;
+  drawBoard(true);
+  const step = () => {
+    if (k >= seq.length) return done();
+    const i = seq[k++];
+    lit(i, true); beep(PADS[i].f, 300, "sine", 0.1);
+    setTimeout(() => { lit(i, false); setTimeout(step, 160); }, 420);
+  };
+  setTimeout(step, 350);
+}
+
+const padEl = (i) => document.querySelector(`[data-p="${i}"]`);
+const lit = (i, on) => padEl(i)?.classList.toggle("lit", on);
+
+function press(i) {
+  if (S.busy) return;
+  beep(PADS[i].f, 140);
+  if (S.phase === "add") {
+    S.seq.push(i);
+    S.busy = true;
+    lit(i, true);
+    setTimeout(() => { lit(i, false); if (S.seq.length >= MAX) return finish(); askRep(); }, 380);
+    return;
+  }
+  if (S.phase === "rep") {
+    if (i !== S.seq[S.pos]) return eliminate();
+    S.pos++;
+    if (S.pos === S.seq.length) {
+      S.pts[S.replayer]++;
+      S.msg = `✅ ${S.names[S.replayer]} عاد السلسلة! +1`; S.good = true;
+      S.adder = S.replayer; S.busy = true;
+      drawBoard();
+      setTimeout(askAdd, 1000);
+      return;
+    }
+    drawBoard();
+  }
+}
+
+function eliminate() {
+  const p = S.replayer;
+  S.alive = S.alive.filter((x) => x !== p);
+  S.out.push(p);
+  S.msg = `❌ ${S.names[p]} غلط! برا اللعبة`; S.good = false;
+  S.busy = true;
+  beep(180, 400, "square");
+  if (S.alive.length <= 1) return finish();
+  drawBoard();
+  setTimeout(askAdd, 1300);
+}
+
+function drawBoard(quiet = false) {
+  const active = S.phase === "add" || S.phase === "rep";
+  const hint = S.phase === "add" ? "زيد لون واحد" : S.phase === "rep" ? `أعد السلسلة (${S.pos} / ${S.seq.length})` : "";
+  render(`${pods()}
+    <div class="roundbar"><span>طول السلسلة: ${S.seq.length}</span><span>${quiet ? "شاهد السلسلة..." : hint}</span></div>
+    <div class="pads" id="pads">${PADS.map((p, i) => `<button class="pad" data-p="${i}" style="--c:${p.c}" aria-label="${p.n}" ${active && !S.busy ? "" : "disabled"}></button>`).join("")}</div>
+    <p class="msg ${S.good ? "good" : "bad"}">${S.msg || "&nbsp;"}</p>`);
+  $("pads").onpointerdown = (e) => {
+    const b = e.target.closest("[data-p]");
+    if (b && !b.disabled) press(+b.dataset.p);
+  };
+}
+
+function finish() {
+  S.phase = "end"; S.busy = true;
+  const order = [...S.alive].sort((a, b) => S.pts[b] - S.pts[a]).concat(S.out.slice().reverse());
+  const list = order.map((i) => ({ name: S.names[i], score: S.pts[i] }));
+  render(`
+    <section class="banner gold pop">
+      <b>${S.alive.length === 1 ? `🏆 ${esc(S.names[S.alive[0]])} آخر واحد باقي!` : winnerLine(list)}</b>
+      <span class="sub">طول السلسلة وصلت ${S.seq.length}</span>
+    </section>
+    ${standingsHTML(list, "نقطة")}
+    <button class="btn" id="again">العب مرة ثانية</button>
+    <button class="btn alt" id="menu">تغيير الإعدادات</button>`);
+  $("again").onclick = start;
+  $("menu").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>

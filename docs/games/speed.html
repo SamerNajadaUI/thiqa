@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>تحدي السرعة</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.roundbar { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--muted); }
+.board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 6px 0; }
+.tile { aspect-ratio: 1; border: 0; border-radius: 22px; padding: 0; transition: transform .08s, background .15s; }
+.tile:active { transform: scale(.94); }
+.tile.idle { background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); }
+.tile.norm { background: linear-gradient(160deg, #7C9BFF, #3F63EE); box-shadow: 0 6px 0 #2B4BBE; }
+.tile.odd { background: linear-gradient(160deg, #FF9A88, #F0443A); box-shadow: 0 6px 0 #B42318; }
+.tile.wrongpick { outline: 3px solid var(--bad); outline-offset: -3px; }
+.tile[disabled] { cursor: default; }
+.tile[disabled]:active { transform: none; }
+.shake { animation: shake .35s; }
+@keyframes shake { 25% { transform: translateX(-6px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="speed"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// تحدي السرعة: 9 جولات ضد الكمبيوتر. بلاطة وحدة بلون مختلف، أسرع واحد يضغطها يكسب الجولة.
+const ROUNDS = 9;
+const LEVEL = { "سهل": [520, 980], "وسط": [380, 800], "صعب": [280, 620] };
+let level = store.get("speed-level", "وسط");
+let best = store.get("speed-best", null);
+let S = null;
+
+window.leaveGuard = () => (S && S.phase !== "end" && S.r > 0 ? "الجولة شغّالة، بدك تطلع؟" : false);
+
+function setup() {
+  S = null;
+  render(`
+    <section class="card stack">
+      <h1>تحدي السرعة</h1>
+      <p class="sub">${ROUNDS} جولات. كل البلاطات بنفس اللون إلا وحدة. استنى الإشارة، وبعدين اضغط البلاطة المختلفة قبل الكمبيوتر. ضغطة بدري قبل الإشارة = خسارة الجولة.</p>
+      <div class="label">مستوى الكمبيوتر</div>
+      <div class="seg" id="lvl">${Object.keys(LEVEL).map((k) => `<button data-l="${k}" aria-pressed="${k === level}">${k}</button>`).join("")}</div>
+      ${best != null ? `<p class="note">أفضل متوسط زمن ردّ لك: ${best} ملّي ثانية</p>` : ""}
+      <button class="btn" id="go">ابدأ</button>
+    </section>`);
+  $("lvl").onclick = (e) => { const b = e.target.closest("[data-l]"); if (!b) return; level = b.dataset.l; store.set("speed-level", level); setup(); };
+  $("go").onclick = start;
+}
+
+function start() {
+  S = { r: 0, me: 0, bot: 0, times: [], phase: "wait", odd: 0, t0: 0, botMs: 0, timers: [], msg: "", good: true };
+  nextRound();
+}
+
+function later(fn, ms) { const t = setTimeout(fn, ms); S.timers.push(t); return t; }
+function clearTimers() { S.timers.forEach(clearTimeout); S.timers = []; }
+
+function nextRound() {
+  S.r++;
+  if (S.r > ROUNDS) return finish();
+  S.phase = "wait";
+  S.odd = Math.floor(Math.random() * 9);
+  S.msg = "";
+  const [lo, hi] = LEVEL[level];
+  S.botMs = Math.round(rand(lo, hi));
+  draw();
+  later(go, rand(900, 2200));
+}
+
+function go() {
+  S.phase = "go";
+  S.t0 = performance.now();
+  later(() => endRound("bot"), S.botMs);
+  draw();
+}
+
+function tap(i) {
+  if (S.phase === "wait") { clearTimers(); return endRound("early"); }
+  if (S.phase !== "go") return;
+  if (i !== S.odd) { document.querySelectorAll(".tile")[i]?.classList.add("wrongpick"); return endRound("wrong"); }
+  endRound("me", Math.round(performance.now() - S.t0));
+}
+
+function endRound(who, ms) {
+  if (S.phase === "done" || S.phase === "end") return;
+  clearTimers();
+  S.phase = "done";
+  if (who === "me") { S.me++; S.times.push(ms); S.msg = `✅ ضغطت بعد ${ms} ملّي ثانية`; S.good = true; beep(880); }
+  else {
+    S.bot++; S.good = false; beep(220, 180, "square");
+    S.msg = who === "bot" ? "🤖 الكمبيوتر كان أسرع" : who === "early" ? "⚠️ ضغطت قبل الإشارة" : "❌ ضغطت بلاطة غلط";
+  }
+  draw(true);
+  later(nextRound, 1300);
+}
+
+function draw(resolved = false) {
+  const status = S.phase === "wait" ? "استنى الإشارة..." : S.phase === "go" ? "اضغط المختلفة!" : "";
+  const tiles = Array.from({ length: 9 }, (_, i) => {
+    const cls = S.phase === "go" || (resolved && i === S.odd) ? (i === S.odd ? "tile odd" : "tile norm") : "tile idle";
+    return `<button class="${cls}" data-i="${i}" aria-label="بلاطة ${i + 1}"></button>`;
+  }).join("");
+  render(`
+    <div class="pods">
+      <div class="pod ${S.me >= S.bot ? "turn" : ""}">${av("أنت")}<div><small>أنت</small><b>${S.me}</b></div></div>
+      <div class="pod">${av("كمبيوتر")}<div><small>الكمبيوتر 🤖</small><b>${S.bot}</b></div></div>
+    </div>
+    <div class="roundbar"><span>جولة ${S.r} من ${ROUNDS}</span><span>${status}</span></div>
+    <div class="board ${resolved && !S.good ? "shake" : ""}" id="board">${tiles}</div>
+    <p class="msg ${S.good ? "good" : "bad"}">${S.msg || "&nbsp;"}</p>`);
+  $("board").onpointerdown = (e) => {
+    const b = e.target.closest("[data-i]");
+    if (b) tap(+b.dataset.i);
+  };
+}
+
+function finish() {
+  S.phase = "end";
+  const avg = S.times.length ? Math.round(S.times.reduce((a, b) => a + b, 0) / S.times.length) : null;
+  if (avg != null && (best == null || avg < best)) { best = avg; store.set("speed-best", best); }
+  const title = S.me > S.bot ? "🏆 فزت!" : S.me < S.bot ? "🤖 الكمبيوتر فاز هالمرة" : "🤝 تعادل";
+  render(`
+    <section class="banner gold pop">
+      <b>${title}</b>
+      <span>${S.me} : ${S.bot}</span>
+      <span class="sub">${avg != null ? `متوسط زمن ردّك: ${avg} ملّي ثانية` : "ما ضغطت ولا بلاطة صح"}${avg != null && avg === best ? " · أفضل نتيجة لحد الآن 🎉" : ""}</span>
+    </section>
+    <button class="btn" id="again">العب مرة ثانية</button>
+    <button class="btn alt" id="menu">تغيير المستوى</button>`);
+  $("again").onclick = start;
+  $("menu").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>

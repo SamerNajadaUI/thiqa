@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>نقاط وصناديق</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.board { width: 100%; max-width: 440px; height: auto; margin: 0 auto; display: block; touch-action: manipulation; }
+.board .dot { fill: var(--ink); }
+.board .ln { stroke: var(--line); stroke-width: 7; stroke-linecap: round; }
+.board .ln.p1 { stroke: var(--brand); }
+.board .ln.p2 { stroke: var(--bad); }
+.board .hit { stroke: transparent; stroke-width: 34; stroke-linecap: round; cursor: pointer; }
+.board .hit:hover { stroke: color-mix(in srgb, var(--brand) 22%, transparent); }
+.board .box { stroke: none; }
+.board .box.p1 { fill: color-mix(in srgb, var(--brand) 22%, transparent); }
+.board .box.p2 { fill: color-mix(in srgb, var(--bad) 20%, transparent); }
+.board .lbl { font-family: var(--display); font-size: 22px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.board .lbl.p1 { fill: var(--brand); } .board .lbl.p2 { fill: var(--bad); }
+.roundbar { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="dots"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// نقاط وصناديق: اسحب خط بين نقطتين. لما تقفل صندوق بتاخده وبتلعب مرة ثانية.
+// الكمبيوتر بيقفل الصناديق اللي تنقفل، وبيحاول ما يفتح صندوق للخصم.
+// الفايز: صاحب أكثر صناديق.
+let N = store.get("dots-n", 4);
+let S = null;
+const C = 64, M = 26;
+
+window.leaveGuard = () => (S && !S.over && S.taken > 0 ? "اللعبة شغّالة، بدك تطلع؟" : false);
+
+function setup() {
+  S = null;
+  render(`
+    <section class="card stack">
+      <h1>نقاط وصناديق</h1>
+      <p class="sub">اضغط على الخط اللي بين نقطتين. الصندوق اللي يتقفل بأربع خطوط بيكون إلك. إذا قفلت صندوق بتلعب مرة ثانية. أكثر صناديق يفوز.</p>
+      <div class="label">حجم اللوح</div>
+      <div class="seg" id="sz">${[3, 4, 5].map((k) => `<button data-s="${k}" aria-pressed="${k === N}">${k} × ${k}</button>`).join("")}</div>
+      <button class="btn" id="go">ابدأ ضد الكمبيوتر</button>
+    </section>`);
+  $("sz").onclick = (e) => { const b = e.target.closest("[data-s]"); if (!b) return; N = +b.dataset.s; store.set("dots-n", N); setup(); };
+  $("go").onclick = start;
+}
+
+function start() {
+  const mk = (r, c) => Array.from({ length: r }, () => Array(c).fill(0));
+  S = {
+    H: mk(N + 1, N), // أفقي: H[r][c] بين النقطة (c,r) و (c+1,r)
+    V: mk(N, N + 1), // عمودي: V[r][c] بين النقطة (c,r) و (c,r+1)
+    B: mk(N, N),     // الصناديق: 0 فاضي، 1 إلك، 2 للكمبيوتر
+    turn: 1, taken: 0, total: 2 * N * (N + 1), over: false, msg: "دورك، اسحب خط", good: true,
+  };
+  draw();
+}
+
+// الخطوط كقائمة: {t: "H" أو "V", r, c}
+function lines() {
+  const out = [];
+  for (let r = 0; r <= N; r++) for (let c = 0; c < N; c++) out.push({ t: "H", r, c });
+  for (let r = 0; r < N; r++) for (let c = 0; c <= N; c++) out.push({ t: "V", r, c });
+  return out;
+}
+const owner = (l) => S[l.t][l.r][l.c];
+
+// الصناديق اللي بتتأثر بخط
+function boxesOf(l) {
+  const res = [];
+  if (l.t === "H") { if (l.r - 1 >= 0) res.push([l.r - 1, l.c]); if (l.r < N) res.push([l.r, l.c]); }
+  else { if (l.c - 1 >= 0) res.push([l.r, l.c - 1]); if (l.c < N) res.push([l.r, l.c]); }
+  return res;
+}
+const sides = (r, c) => [S.H[r][c], S.H[r + 1][c], S.V[r][c], S.V[r][c + 1]].filter(Boolean).length;
+
+function play(l, who) {
+  S[l.t][l.r][l.c] = who;
+  S.taken++;
+  let got = 0;
+  for (const [r, c] of boxesOf(l)) {
+    if (S.B[r][c] === 0 && sides(r, c) === 4) { S.B[r][c] = who; got++; }
+  }
+  return got;
+}
+
+function move(l) {
+  if (S.over || S.turn !== 1 || owner(l)) return;
+  const got = play(l, 1);
+  if (got) { beep(760, 90); S.msg = `🎉 قفلت ${got} صندوق! كمّل`; S.good = true; }
+  else { S.turn = 2; S.msg = "دور الكمبيوتر..."; S.good = true; }
+  afterMove();
+}
+
+function botMove() {
+  if (S.over || S.turn !== 2) return;
+  const free = lines().filter((l) => !owner(l));
+  const completes = (l) => boxesOf(l).some(([r, c]) => S.B[r][c] === 0 && sides(r, c) === 3);
+  const gives = (l) => boxesOf(l).some(([r, c]) => sides(r, c) === 2);
+  let pick = free.find(completes);
+  if (!pick) {
+    const safe = free.filter((l) => !gives(l));
+    const pool = safe.length ? safe : free;
+    pick = pool[Math.floor(Math.random() * pool.length)];
+  }
+  const got = play(pick, 2);
+  if (got) { S.msg = `🤖 الكمبيوتر قفل ${got} صندوق`; S.good = false; beep(230, 120, "square"); }
+  else { S.turn = 1; S.msg = "دورك، اسحب خط"; S.good = true; }
+  afterMove();
+}
+
+function afterMove() {
+  const count = (w) => S.B.flat().filter((x) => x === w).length;
+  if (S.taken >= S.total) {
+    S.over = true;
+    const a = count(1), b = count(2);
+    S.msg = a > b ? "🏆 فزت!" : a < b ? "🤖 الكمبيوتر فاز" : "🤝 تعادل";
+    S.good = a >= b;
+    draw();
+    return;
+  }
+  draw();
+  if (S.turn === 2 && !S.over) setTimeout(botMove, 650);
+}
+
+function draw() {
+  const size = N * C + M * 2;
+  const cx = (c) => M + c * C, cy = (r) => M + r * C;
+  let svg = `<svg class="board" viewBox="0 0 ${size} ${size}" role="img" aria-label="لوح نقاط وصناديق">`;
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const o = S.B[r][c];
+    if (o) svg += `<rect class="box p${o}" x="${cx(c)}" y="${cy(r)}" width="${C}" height="${C}" rx="6"/>`;
+  }
+  const canPlay = !S.over && S.turn === 1;
+  for (const l of lines()) {
+    const o = owner(l);
+    const [x1, y1, x2, y2] = l.t === "H" ? [cx(l.c), cy(l.r), cx(l.c + 1), cy(l.r)] : [cx(l.c), cy(l.r), cx(l.c), cy(l.r + 1)];
+    svg += `<line class="ln ${o ? "p" + o : ""}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+    if (!o && canPlay) svg += `<line class="hit" data-k="${l.t}${l.r},${l.c}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+  }
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const o = S.B[r][c];
+    if (o) svg += `<text class="lbl p${o}" x="${cx(c) + C / 2}" y="${cy(r) + C / 2}">${o === 1 ? "أنت" : "🤖"}</text>`;
+  }
+  for (let r = 0; r <= N; r++) for (let c = 0; c <= N; c++) svg += `<circle class="dot" cx="${cx(c)}" cy="${cy(r)}" r="5"/>`;
+  svg += "</svg>";
+  const mine = S.B.flat().filter((x) => x === 1).length, bot = S.B.flat().filter((x) => x === 2).length;
+  render(`
+    <div class="pods">
+      <div class="pod ${S.turn === 1 && !S.over ? "turn" : ""}">${av("أنت")}<div><small>أنت</small><b>${mine}</b></div></div>
+      <div class="pod ${S.turn === 2 && !S.over ? "turn" : ""}">${av("كمبيوتر")}<div><small>الكمبيوتر 🤖</small><b>${bot}</b></div></div>
+    </div>
+    <div class="roundbar"><span>${S.taken} / ${S.total} خط</span><span>${N} × ${N}</span></div>
+    <div class="card" style="padding:10px">${svg}</div>
+    <p class="msg ${S.good ? "good" : "bad"}">${esc(S.msg)}</p>
+    ${S.over ? `<button class="btn" id="again">العب مرة ثانية</button><button class="btn alt" id="menu">تغيير الحجم</button>` : ""}`);
+  const board = document.querySelector(".board");
+  if (board) board.onclick = (e) => {
+    const h = e.target.closest("[data-k]");
+    if (!h) return;
+    const m = h.dataset.k.match(/^([HV])(\d+),(\d+)$/);
+    if (m) move({ t: m[1], r: +m[2], c: +m[3] });
+  };
+  if ($("again")) $("again").onclick = start;
+  if ($("menu")) $("menu").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>

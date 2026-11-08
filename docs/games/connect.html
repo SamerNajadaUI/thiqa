@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>إكس أو بالجاذبية</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.cols, .grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.cols button { height: 36px; border: 0; background: none; color: var(--brand); font-size: 20px; border-radius: 12px; }
+.cols button:not([disabled]):hover, .cols button:not([disabled]):focus-visible { background: var(--brand-soft); }
+.cols button[disabled] { color: transparent; cursor: default; }
+.grid { background: #2E3FB8; padding: 10px; border-radius: 22px; box-shadow: var(--shadow); }
+:root[data-theme="dark"] .grid { background: #26309A; }
+.cell { aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, #0E0F14 55%, #2E3FB8); }
+:root[data-theme="dark"] .cell { background: #0E0F14; }
+.cell.p1 { background: radial-gradient(circle at 35% 30%, #FFE28A, #F5A524 70%); box-shadow: inset 0 -4px 0 rgb(0 0 0 / .15); }
+.cell.p2 { background: radial-gradient(circle at 35% 30%, #FF9C92, #F04438 70%); box-shadow: inset 0 -4px 0 rgb(0 0 0 / .15); }
+.cell.win { outline: 3px solid #FFF; outline-offset: -3px; }
+.cell.new { animation: drop .35s ease-in both; }
+@keyframes drop { from { transform: translateY(-40px); opacity: .4; } }
+.score { display: flex; gap: 8px; justify-content: space-between; }
+.score .pod { flex: 1; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-inline-end: 4px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="connect"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// إكس أو بالجاذبية: 4 قطع بخط واحد (أفقي أو عمودي أو قطري) بتفوز.
+// 3 جولات. الفوز بجولة = 3 نقاط، التعادل = نقطة. الكمبيوتر بيفكر خطوتين أو أكثر قدام.
+const ROWS = 6, COLS = 7, MATCH_GAMES = 3;
+const LEVEL = { "سهل": 1, "وسط": 3, "صعب": 5 };
+let level = store.get("connect-level", "وسط");
+let S = null;
+const DIRS = [[0, 1], [1, 0], [1, 1], [1, -1]];
+
+window.leaveGuard = () => (S && S.phase === "play" && S.moves > 0 ? "الجولة شغّالة، بدك تطلع؟" : false);
+
+const mk = () => Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+const dropRow = (b, c) => { for (let r = ROWS - 1; r >= 0; r--) if (!b[r][c]) return r; return -1; };
+const full = (b) => b[0].every((x) => x);
+
+// الخط الفائز لو موجود، وإلا null
+function winLine(b) {
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const p = b[r][c];
+    if (!p) continue;
+    for (const [dr, dc] of DIRS) {
+      const cells = [];
+      for (let k = 0; k < 4; k++) {
+        const rr = r + dr * k, cc = c + dc * k;
+        if (rr < 0 || rr >= ROWS || cc < 0 || cc >= COLS || b[rr][cc] !== p) break;
+        cells.push([rr, cc]);
+      }
+      if (cells.length === 4) return { p, cells };
+    }
+  }
+  return null;
+}
+
+// تقييم الوضع للكمبيوتر (2): نافذة من 4 خانات
+function evalBoard(b) {
+  let s = 0;
+  for (let r = 0; r < ROWS; r++) if (b[r][3] === 2) s += 3; else if (b[r][3] === 1) s -= 3;
+  const win = (cells) => {
+    let bot = 0, you = 0;
+    for (const [r, c] of cells) { if (b[r][c] === 2) bot++; else if (b[r][c] === 1) you++; }
+    if (bot && you) return 0;
+    if (bot === 3) return 6;
+    if (bot === 2) return 2;
+    if (you === 3) return -7;
+    if (you === 2) return -2;
+    return 0;
+  };
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) for (const [dr, dc] of DIRS) {
+    const cells = [];
+    for (let k = 0; k < 4; k++) {
+      const rr = r + dr * k, cc = c + dc * k;
+      if (rr < 0 || rr >= ROWS || cc < 0 || cc >= COLS) break;
+      cells.push([rr, cc]);
+    }
+    if (cells.length === 4) s += win(cells);
+  }
+  return s;
+}
+
+// Minimax مع قطع (alpha-beta)
+function minimax(b, depth, alpha, beta, botTurn) {
+  const w = winLine(b);
+  if (w) return w.p === 2 ? 100000 + depth : -100000 - depth;
+  if (full(b)) return 0;
+  if (depth === 0) return evalBoard(b);
+  const order = [3, 2, 4, 1, 5, 0, 6];
+  if (botTurn) {
+    let best = -Infinity;
+    for (const c of order) {
+      const r = dropRow(b, c); if (r < 0) continue;
+      b[r][c] = 2;
+      best = Math.max(best, minimax(b, depth - 1, alpha, beta, false));
+      b[r][c] = 0;
+      alpha = Math.max(alpha, best);
+      if (beta <= alpha) break;
+    }
+    return best;
+  }
+  let best = Infinity;
+  for (const c of order) {
+    const r = dropRow(b, c); if (r < 0) continue;
+    b[r][c] = 1;
+    best = Math.min(best, minimax(b, depth - 1, alpha, beta, true));
+    b[r][c] = 0;
+    beta = Math.min(beta, best);
+    if (beta <= alpha) break;
+  }
+  return best;
+}
+
+function botPick() {
+  const legal = [...Array(COLS).keys()].filter((c) => dropRow(S.b, c) >= 0);
+  if (level === "سهل" && Math.random() < 0.35) return pick(legal);
+  const depth = LEVEL[level];
+  let best = -Infinity, choices = [];
+  for (const c of legal) {
+    const r = dropRow(S.b, c);
+    S.b[r][c] = 2;
+    const v = minimax(S.b, depth - 1, -Infinity, Infinity, false);
+    S.b[r][c] = 0;
+    if (v > best) { best = v; choices = [c]; } else if (v === best) choices.push(c);
+  }
+  return pick(choices.length ? choices : legal);
+}
+
+function setup() {
+  S = null;
+  render(`
+    <section class="card stack">
+      <h1>إكس أو بالجاذبية</h1>
+      <p class="sub">حط قطعتك بأي عمود، وبتنزل لأخر مكان فاضي. أول واحد يجيب 4 قطع بخط واحد يفوز. 3 جولات، والفوز = 3 نقاط.</p>
+      <div class="label">مستوى الكمبيوتر</div>
+      <div class="seg" id="lvl">${Object.keys(LEVEL).map((k) => `<button data-l="${k}" aria-pressed="${k === level}">${k}</button>`).join("")}</div>
+      <button class="btn" id="go">ابدأ ضد الكمبيوتر</button>
+    </section>`);
+  $("lvl").onclick = (e) => { const b = e.target.closest("[data-l]"); if (!b) return; level = b.dataset.l; store.set("connect-level", level); setup(); };
+  $("go").onclick = start;
+}
+
+function start() {
+  S = { g: 0, pts: [0, 0], first: 1, b: null, turn: 1, moves: 0, phase: "", msg: "", good: true, last: null, win: null };
+  newGame();
+}
+
+function newGame() {
+  S.g++;
+  if (S.g > MATCH_GAMES) return finish();
+  S.b = mk(); S.moves = 0; S.win = null; S.last = null;
+  S.turn = S.g % 2 === 1 ? 1 : 2;  // بالتناوب: أنت تبدأ الأولى
+  S.phase = "play";
+  S.msg = S.turn === 1 ? "دورك، اختار عمود" : "الكمبيوتر يبدأ هالجولة";
+  S.good = true;
+  draw();
+  if (S.turn === 2) setTimeout(botTurn, 600);
+}
+
+function drop(c, who) {
+  const r = dropRow(S.b, c);
+  if (r < 0) return false;
+  S.b[r][c] = who; S.moves++; S.last = [r, c];
+  beep(who === 1 ? 620 : 420, 90);
+  const w = winLine(S.b);
+  if (w) return end(w);
+  if (full(S.b)) return end(null);
+  S.turn = who === 1 ? 2 : 1;
+  return true;
+}
+
+function end(w) {
+  S.phase = "end";
+  if (w) {
+    S.win = w.cells;
+    if (w.p === 1) { S.pts[0] += 3; S.msg = "🏆 فزت بهالجولة! +3"; S.good = true; beep(880); }
+    else { S.pts[1] += 3; S.msg = "🤖 الكمبيوتر فاز بهالجولة"; S.good = false; beep(200, 300, "square"); }
+  } else { S.pts[0] += 1; S.pts[1] += 1; S.msg = "🤝 تعادل! نقطة لكل واحد"; S.good = true; }
+  draw(true);
+  return false;
+}
+
+function botTurn() {
+  if (!S || S.phase !== "play" || S.turn !== 2) return;
+  const c = botPick();
+  drop(c, 2);
+  if (S.phase === "play") { draw(); }
+  else { /* نهاية الجولة */ }
+}
+
+function onCol(c) {
+  if (!S || S.phase !== "play" || S.turn !== 1) return;
+  if (!drop(c, 1)) return;
+  if (S.phase === "play") { S.msg = "الكمبيوتر يفكّر..."; S.good = true; draw(); setTimeout(botTurn, 450); }
+}
+
+function draw(ended = false) {
+  const win = new Set((S.win || []).map(([r, c]) => r * COLS + c));
+  const last = S.last ? S.last[0] * COLS + S.last[1] : -1;
+  const playing = S.phase === "play" && S.turn === 1;
+  const cells = S.b.flat().map((v, i) => `<div class="cell ${v === 1 ? "p1" : v === 2 ? "p2" : ""} ${win.has(i) ? "win" : ""} ${i === last && !ended ? "new" : ""}"></div>`).join("");
+  const cols = Array.from({ length: COLS }, (_, c) => `<button data-c="${c}" aria-label="عمود ${c + 1}" ${playing && dropRow(S.b, c) >= 0 ? "" : "disabled"}>▼</button>`).join("");
+  render(`
+    <div class="score">
+      <div class="pod ${S.turn === 1 && S.phase === "play" ? "turn" : ""}">${av("أنت")}<div><small><i class="dot" style="background:#F5A524"></i>أنت</small><b>${S.pts[0]}</b></div></div>
+      <div class="pod ${S.turn === 2 && S.phase === "play" ? "turn" : ""}">${av("كمبيوتر")}<div><small><i class="dot" style="background:#F04438"></i>الكمبيوتر 🤖</small><b>${S.pts[1]}</b></div></div>
+    </div>
+    <div class="roundbar" style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600"><span>جولة ${S.g} من ${MATCH_GAMES}</span><span>${level}</span></div>
+    <div class="cols" id="cols">${cols}</div>
+    <div class="grid" id="grid">${cells}</div>
+    <p class="msg ${S.good ? "good" : "bad"}">${esc(S.msg)}</p>
+    ${S.phase === "end" ? `<button class="btn" id="next">${S.g >= MATCH_GAMES ? "شوف النتيجة" : "الجولة الجاية"}</button>` : ""}`);
+  $("cols").onclick = (e) => { const b = e.target.closest("[data-c]"); if (b && !b.disabled) onCol(+b.dataset.c); };
+  if ($("next")) $("next").onclick = newGame;
+}
+
+function finish() {
+  S.phase = "over";
+  const list = [{ name: "أنت", score: S.pts[0] }, { name: "الكمبيوتر", score: S.pts[1] }].sort((a, b) => b.score - a.score);
+  render(`
+    <section class="banner gold pop"><b>${list[0].score === list[1].score ? "🤝 تعادل" : list[0].name === "أنت" ? "🏆 فزت بالمباراة!" : "🤖 الكمبيوتر فاز بالمباراة"}</b><span class="sub">${S.pts[0]} : ${S.pts[1]}</span></section>
+    ${standingsHTML(list, "نقطة")}
+    <button class="btn" id="again">مباراة جديدة</button>
+    <button class="btn alt" id="menu">تغيير المستوى</button>`);
+  $("again").onclick = start;
+  $("menu").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>

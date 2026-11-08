@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>المزاد</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.lot { text-align: center; padding: 18px 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: linear-gradient(165deg, var(--brand-soft), var(--card)); }
+.lot .em { font-size: 64px; line-height: 1; }
+.lot b { font-family: var(--display); font-weight: 400; font-size: 26px; }
+.estimate { font-size: 14px; color: var(--muted); font-weight: 600; }
+.estimate strong { color: var(--ink); direction: ltr; unicode-bidi: isolate; }
+.bidrow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.bidrow button { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 9px 2px; font-weight: 700; font-size: 14px; box-shadow: var(--shadow-sm); }
+.bidrow button:active { transform: scale(.96); }
+.bidin { display: flex; gap: 8px; align-items: center; }
+.bidin .input { text-align: center; font-family: var(--display); font-size: 28px; direction: ltr; }
+.bidin .unit { color: var(--muted); font-weight: 700; }
+.reveal { display: flex; flex-direction: column; gap: 6px; }
+.reveal li { list-style: none; display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 14px; background: var(--soft); font-size: 14px; }
+.reveal li.win { background: color-mix(in srgb, var(--good) 16%, var(--card)); font-weight: 700; }
+.reveal li b { margin-inline-start: auto; direction: ltr; font-family: var(--display); font-weight: 400; font-size: 18px; }
+ol.reveal { margin: 0; padding: 0; }
+.profit { font-family: var(--display); font-size: 30px; direction: ltr; }
+.profit.neg { color: var(--bad); } .profit.pos { color: var(--good); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="auction"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// المزاد: كل جولة بتطلع سلعة، وقيمتها الحقيقية مخفية. عندك تقدير للسوق (مجال).
+// كل واحد بيكتب عرضه بالسر، وأعلى عرض بيكسب السلعة ويدفع عرضه.
+// ربحك = القيمة الحقيقية − سعر الشراء. الفايز: أكبر مجموع أرباح.
+const ITEMS = [
+  ["سيارة قديمة", "🚗", 4000], ["دراجة هوائية", "🚲", 180], ["ساعة ذهبية", "⌚", 1200], ["لابتوب", "💻", 650],
+  ["تلفزيون 55 إنش", "📺", 900], ["سجادة عجمي", "🧶", 1500], ["تحفة نحاسية", "🏺", 350], ["كاميرا احترافية", "📷", 1100],
+  ["قيثارة", "🎸", 500], ["عربية شاي", "🫖", 120], ["سرير خشب", "🛏️", 800], ["لوحة زيتية", "🖼️", 2200],
+  ["طاولة خشب", "🪵", 420], ["دراجة نارية", "🏍️", 2600], ["كرسي مكتب", "🪑", 140], ["خاتم ألماس", "💍", 3000],
+  ["حقيبة جلد", "👜", 380], ["ثلاجة", "🧊", 600], ["مولد كهرباء", "⚡", 950], ["قرص ذهبي نادر", "🪙", 1800],
+  ["مكيف", "❄️", 470], ["ساعة حائط قديمة", "🕰️", 260], ["سماعات", "🎧", 210], ["طابعة", "🖨️", 190],
+];
+// التجّار: كل واحد بيعرض بين نسبة من القيمة الحقيقية (ذكاؤه)
+const TRADERS = [
+  { name: "أبو سامي", lo: 0.7, hi: 0.95 },
+  { name: "الحاج كريم", lo: 0.6, hi: 1.0 },
+  { name: "ليلى", lo: 0.75, hi: 0.9 },
+];
+const ROUNDS = 8;
+const STEPS = [-100, -10, 10, 100];
+let S = null;
+
+window.leaveGuard = () => (S && S.phase !== "end" && S.r > 0 ? "المزاد شغّال، بدك تطلع؟" : false);
+
+const round10 = (v) => Math.max(10, Math.round(v / 10) * 10);
+const fmt = (v) => `${Math.round(v).toLocaleString("en-US")} دينار`;
+
+function setup() {
+  S = null;
+  render(`
+    <section class="card stack">
+      <h1>المزاد</h1>
+      <p class="sub">${ROUNDS} سلع. ما بتعرف قيمتها بالضبط، بس بتعرف تقدير السوق. زايد بالسر، وأعلى عرض بيكسب السلعة. ربحك = القيمة − سعر الشراء، فلا تدفع أكتر من اللازم. وإذا زايدت زيادة، بتخسر!</p>
+      <p class="note">أنت ضد ${TRADERS.length} تجّار من الكمبيوتر</p>
+      <button class="btn" id="go">ابدأ المزاد</button>
+    </section>`);
+  $("go").onclick = start;
+}
+
+function start() {
+  S = { r: 0, lots: shuffle(ITEMS).slice(0, ROUNDS), profit: [0, 0, 0, 0], phase: "bid", cur: null, bids: null, msg: "", good: true };
+  S.names = ["أنت", ...TRADERS.map((t) => t.name)];
+  next();
+}
+
+function next() {
+  S.r++;
+  if (S.r > ROUNDS) return finish();
+  const [name, em, value] = S.lots[S.r - 1];
+  const lo = round10(value * 0.8), hi = round10(value * 1.2);
+  S.cur = { name, em, value, lo, hi };
+  S.phase = "bid";
+  S.bid = Math.max(10, round10(((lo + hi) / 2) * 0.85));
+  S.bids = null; S.msg = ""; S.good = true;
+  draw();
+}
+
+function bump(d) {
+  const i = $("bid");
+  const v = Math.max(0, Math.round((Number(i.value) || 0) + d));
+  i.value = v;
+  S.bid = v;
+}
+
+function submit() {
+  const raw = $("bid").value;
+  const bid = Math.round(Number(raw));
+  if (!Number.isFinite(bid) || bid < 0) { S.msg = "اكتب عرض صحيح (0 أو أكثر)"; S.good = false; draw(); return; }
+  const bids = [bid, ...TRADERS.map((t) => Math.round(S.cur.value * rand(t.lo, t.hi) / 10) * 10)];
+  const top = Math.max(...bids);
+  const winners = bids.map((b, i) => (b === top ? i : -1)).filter((i) => i >= 0);
+  // التعادل: الكمبيوتر بياخد أول واحد، بس إذا عندك عرض عالي بتاخدها أنت
+  const winner = winners.includes(0) ? 0 : winners[Math.floor(Math.random() * winners.length)];
+  const profit = S.cur.value - top;
+  S.profit[winner] += profit;
+  S.bids = bids; S.winner = winner; S.lastProfit = profit;
+  S.phase = "reveal";
+  S.msg = winner === 0 ? (profit >= 0 ? "🎉 كسبت السلعة!" : "😬 كسبتها بس دفعت زيادة") : `🤖 ${S.names[winner]} كسبها`;
+  S.good = winner === 0 && profit >= 0;
+  beep(winner === 0 ? 880 : 300, 200, winner === 0 ? "sine" : "triangle");
+  draw();
+}
+
+function draw() {
+  const c = S.cur;
+  const bidUI = S.phase === "bid";
+  render(`
+    <div class="pods">${S.names.map((n, i) => `<div class="pod ${i === 0 ? "turn" : ""}">${av(n)}<div><small>${esc(n)}</small><b>${Math.round(S.profit[i])}</b></div></div>`).join("")}</div>
+    <div class="roundbar" style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600"><span>سلعة ${S.r} من ${ROUNDS}</span><span>الأرباح بالدينار</span></div>
+    <section class="card lot pop">
+      <div class="em">${c.em}</div>
+      <b>${esc(c.name)}</b>
+      <span class="estimate">تقدير السوق: بين <strong>${fmt(c.lo)}</strong> و <strong>${fmt(c.hi)}</strong></span>
+    </section>
+    ${bidUI ? `
+      <div class="label">عرضك بالسر</div>
+      <div class="bidin">
+        <input class="input" id="bid" type="number" inputmode="numeric" min="0" step="10" value="${S.bid}" aria-label="عرضك بالدينار">
+        <span class="unit">دينار</span>
+      </div>
+      <div class="bidrow">${STEPS.map((s) => `<button data-s="${s}">${s > 0 ? "+" : ""}${s}</button>`).join("")}</div>
+      <button class="btn" id="ok">أرسل العرض</button>
+      <p class="msg bad">${esc(S.msg)}</p>`
+    : `
+      <section class="card stack">
+        <div class="row" style="justify-content:space-between"><span class="label">القيمة الحقيقية</span><b class="profit" style="font-size:24px">${fmt(c.value)}</b></div>
+        <ol class="reveal">${S.bids.map((b, i) => `<li class="${i === S.winner ? "win" : ""}">${av(S.names[i])}<span>${esc(S.names[i])}</span><b>${fmt(b)}</b></li>`).join("")}</ol>
+        <div class="row" style="justify-content:space-between"><span class="label">ربحك من هالسلعة</span><span class="profit ${S.winner === 0 ? (S.lastProfit >= 0 ? "pos" : "neg") : ""}">${S.winner === 0 ? (S.lastProfit >= 0 ? "+" : "") + Math.round(S.lastProfit) : "0"}</span></div>
+      </section>
+      <p class="msg ${S.good ? "good" : "bad"}">${esc(S.msg)}</p>
+      <button class="btn" id="nxt">${S.r >= ROUNDS ? "شوف النتيجة" : "السلعة الجاية"}</button>`}`);
+  if (bidUI) {
+    $("bid").oninput = (e) => { S.bid = Number(e.target.value) || 0; };
+    $("bid").onkeydown = (e) => { if (e.key === "Enter") submit(); };
+    document.querySelectorAll("[data-s]").forEach((b) => { b.onclick = () => bump(+b.dataset.s); });
+    $("ok").onclick = submit;
+  } else {
+    $("nxt").onclick = next;
+  }
+}
+
+function finish() {
+  S.phase = "end";
+  const list = S.names.map((name, i) => ({ name, score: Math.round(S.profit[i]) })).sort((a, b) => b.score - a.score);
+  render(`
+    <section class="banner gold pop"><b>${winnerLine(list)}</b><span class="sub">مجموع الأرباح بالدينار</span></section>
+    ${standingsHTML(list, "دينار")}
+    <button class="btn" id="again">مزاد جديد</button>
+    <button class="btn alt" id="menu">رجوع للمقدمة</button>`);
+  $("again").onclick = start;
+  $("menu").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>

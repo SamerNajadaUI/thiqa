@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>ارسم وخمّن</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.roundbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.clock { font-family: var(--display); font-size: 26px; color: var(--ink); direction: ltr; }
+.clock.low { color: var(--bad); }
+.word { text-align: center; padding: 12px; background: var(--brand-soft); border: 0; box-shadow: none; }
+.word small { display: block; font-size: 12px; color: var(--brand); font-weight: 700; }
+.word b { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.2; }
+.paper { display: block; width: 100%; aspect-ratio: 4 / 3; background: #FFFFFF; border-radius: 22px; border: 1px solid var(--line); box-shadow: var(--shadow); touch-action: none; cursor: crosshair; }
+.tools { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.tools button { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--card); box-shadow: 0 0 0 1px var(--line); padding: 0; }
+.tools button[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--brand); }
+.tools .txt { width: auto; border-radius: 14px; padding: 0 12px; height: 34px; font-size: 13px; font-weight: 700; color: var(--ink); background: var(--card); border: 1px solid var(--line); box-shadow: none; }
+.tools .txt[aria-pressed="true"] { background: var(--soft); box-shadow: 0 0 0 2px var(--brand); }
+.guessers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.guessers .btn { font-size: 18px; padding: 12px 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="pictionary"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// ارسم وخمّن: كل دور واحد يرسم الكلمة بدون حروف، والباقين يخمّنوها. من يخمّن صح يكسب نقطتين، والرسام نقطة.
+// الرسام بيشوف الكلمة بس على التلفون، وبعدين بيمرّر الجهاز.
+const WORDS = [
+  "قطة", "بيت", "شمس", "قمر", "سيارة", "طيارة", "بحر", "جبل", "شجرة", "تفاحة", "موزة", "بطيخة", "كرسي", "طاولة",
+  "ساعة", "مفتاح", "باب", "شباك", "هاتف", "حاسوب", "كتاب", "قلم", "مظلة", "قبعة", "نظارة", "حذاء", "سمكة", "فيل",
+  "زرافة", "جمل", "حصان", "دجاجة", "بطة", "عصفور", "نحلة", "فراشة", "مطر", "ثلج", "برق", "قلب", "نجمة", "جسر",
+  "خيمة", "كوب", "ملعقة", "مروحة", "جرس", "بالون", "دراجة", "سفينة", "قلعة", "مسجد", "كعكة", "بيتزا", "كرة", "طائرة ورقية",
+  "صاروخ", "مفتاح ربط", "قمر صناعي", "كاميرا", "سماعة", "عجلة", "مظلّي", "طبيب", "خباز", "حدّاد",
+];
+const COLORS = ["#111316", "#F04438", "#2E90FA", "#12B76A", "#F5A524", "#8B5CF6"];
+const TIMES = [45, 60, 90];
+let n = store.get("pic-n", 3);
+let time = store.get("pic-time", 60);
+let S = null;
+
+window.leaveGuard = () => (S && (S.phase === "draw" || S.phase === "guess") ? "الرسم شغّال، بدك تطلع؟" : false);
+
+function setup() {
+  S = null;
+  render(`
+    <section class="card stack">
+      <h1>ارسم وخمّن</h1>
+      <p class="sub">كل دور واحد يرسم الكلمة، والباقين يخمّنوها. التخمين الصح: المخمّن +2، والرسام +1. الكل بيرسم دورين.</p>
+      <div class="label">عدد اللاعبين</div>
+      <div class="seg" id="cnt">${[2, 3, 4, 5].map((k) => `<button data-n="${k}" aria-pressed="${k === n}">${k}</button>`).join("")}</div>
+      <div class="label">وقت الدور (ثانية)</div>
+      <div class="seg" id="tm">${TIMES.map((k) => `<button data-t="${k}" aria-pressed="${k === time}">${k}</button>`).join("")}</div>
+      <div class="stack" id="names">${nameFields(n)}</div>
+      <button class="btn" id="go">ابدأ</button>
+    </section>`);
+  $("cnt").onclick = (e) => { const b = e.target.closest("[data-n]"); if (!b) return; const names = readNames(n); n = +b.dataset.n; store.set("pic-n", n); setup(); names.forEach((v, i) => { if (i < n && !v.startsWith("لاعب")) $(`p${i}`).value = v; }); };
+  $("tm").onclick = (e) => { const b = e.target.closest("[data-t]"); if (!b) return; time = +b.dataset.t; store.set("pic-time", time); setup(); };
+  $("go").onclick = start;
+}
+
+function start() {
+  const names = readNames(n);
+  S = { names, pts: names.map(() => 0), turns: n * 2, idx: 0, words: shuffle(WORDS), word: "", drawer: 0, phase: "", left: time, tick: 0, color: COLORS[0], tool: "pen", drawing: false, last: null };
+  nextTurn();
+}
+
+function nextTurn() {
+  clearInterval(S.tick);
+  if (S.idx >= S.turns) return finish();
+  S.drawer = S.idx % n;
+  S.word = S.words[S.idx % S.words.length];
+  S.phase = "handoff";
+  S.left = time;
+  render(`${pods()}
+    <div class="handoff pop">
+      <span class="sub">دور الرسم ${S.idx + 1} من ${S.turns}</span>
+      <div class="big">${esc(S.names[S.drawer])} يرسم</div>
+      <p>الباقين لا يشوفوا الشاشة! الرسام يضغط الزر ويشوف الكلمة.</p>
+      <button class="btn" id="see">شفت الكلمة، ابدأ</button>
+    </div>`);
+  $("see").onclick = startDraw;
+}
+
+function startDraw() {
+  S.phase = "draw";
+  S.color = COLORS[0]; S.tool = "pen";
+  render(`${pods()}
+    <div class="roundbar"><span>يرسم: ${esc(S.names[S.drawer])}</span><span class="clock" id="clock">${S.left}</span></div>
+    <section class="card word"><small>الكلمة (للرسام فقط)</small><b>${esc(S.word)}</b></section>
+    <canvas class="paper" id="cv" aria-label="لوحة الرسم"></canvas>
+    <div class="tools" id="tools">
+      ${COLORS.map((c) => `<button data-c="${c}" style="background:${c}" aria-label="لون" aria-pressed="${c === S.color}"></button>`).join("")}
+      <button class="txt" data-tool="eraser" aria-pressed="false">ممحاة</button>
+      <button class="txt" data-tool="clear">مسح الكل</button>
+    </div>
+    <div class="row">
+      <button class="btn ok grow" id="done">انخمّنت ✅</button>
+      <button class="btn alt" id="skip">تخطّي</button>
+    </div>`);
+  setupCanvas();
+  $("tools").onclick = (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.c) { S.color = b.dataset.c; S.tool = "pen"; }
+    if (b.dataset.tool === "eraser") S.tool = S.tool === "eraser" ? "pen" : "eraser";
+    if (b.dataset.tool === "clear") clearPaper();
+    document.querySelectorAll("#tools [data-c]").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.c === S.color && S.tool === "pen")));
+    document.querySelector('#tools [data-tool="eraser"]').setAttribute("aria-pressed", String(S.tool === "eraser"));
+  };
+  $("done").onclick = askGuesser;
+  $("skip").onclick = () => reveal(null, "⏭️ تخطّيتها، ما في نقاط");
+  S.tick = setInterval(() => {
+    S.left--;
+    const c = $("clock");
+    if (c) { c.textContent = S.left; c.classList.toggle("low", S.left <= 10); }
+    if (S.left <= 0) { clearInterval(S.tick); reveal(null, "⏰ خلص الوقت!"); }
+  }, 1000);
+}
+
+// ============ لوحة الرسم ============
+let ctx = null, cv = null;
+function setupCanvas() {
+  cv = $("cv");
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = cv.clientWidth, h = cv.clientHeight;
+  cv.width = w * dpr; cv.height = h * dpr;
+  ctx = cv.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  clearPaper();
+  const pos = (e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * (w / r.width), (e.clientY - r.top) * (h / r.height)]; };
+  cv.onpointerdown = (e) => { cv.setPointerCapture(e.pointerId); S.drawing = true; S.last = pos(e); dot(S.last); };
+  cv.onpointermove = (e) => {
+    if (!S.drawing) return;
+    const p = pos(e);
+    ctx.beginPath(); ctx.moveTo(...S.last); ctx.lineTo(...p);
+    ctx.strokeStyle = S.tool === "eraser" ? "#FFFFFF" : S.color;
+    ctx.lineWidth = S.tool === "eraser" ? 26 : 5;
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.stroke();
+    S.last = p;
+  };
+  const up = () => { S.drawing = false; S.last = null; };
+  cv.onpointerup = up; cv.onpointercancel = up;
+}
+function dot(p) { ctx.fillStyle = S.tool === "eraser" ? "#FFFFFF" : S.color; ctx.beginPath(); ctx.arc(p[0], p[1], (S.tool === "eraser" ? 13 : 2.5), 0, Math.PI * 2); ctx.fill(); }
+function clearPaper() { if (!ctx) return; ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, cv.clientWidth, cv.clientHeight); }
+
+// ============ تخمين ============
+function askGuesser() {
+  clearInterval(S.tick);
+  S.phase = "guess";
+  const others = S.names.map((nm, i) => i).filter((i) => i !== S.drawer);
+  render(`${pods()}
+    <section class="card stack">
+      <span class="label">مين خمّنها صح؟</span>
+      <div class="guessers">
+        ${others.map((i) => `<button class="btn alt" data-g="${i}">${av(S.names[i])} ${esc(S.names[i])}</button>`).join("")}
+      </div>
+      <button class="linkish" id="nobody">محد خمّنها</button>
+    </section>`);
+  document.querySelectorAll("[data-g]").forEach((b) => { b.onclick = () => reveal(+b.dataset.g, null); });
+  $("nobody").onclick = () => reveal(null, "❌ محد خمّنها");
+}
+
+function reveal(guesser, note) {
+  clearInterval(S.tick);
+  S.phase = "reveal";
+  let text;
+  if (guesser != null) {
+    S.pts[guesser] += 2; S.pts[S.drawer] += 1;
+    text = `🎉 ${S.names[guesser]} خمّنها! +2 · ${S.names[S.drawer]} +1`;
+    beep(880);
+  } else { text = note; beep(260, 200, "square"); }
+  S.idx++;
+  render(`${pods()}
+    <section class="banner gold pop">
+      <span class="sub">الكلمة كانت</span>
+      <b>${esc(S.word)}</b>
+      <span>${esc(text)}</span>
+    </section>
+    <button class="btn" id="next">${S.idx >= S.turns ? "شوف النتيجة" : "الدور الجاي"}</button>`);
+  $("next").onclick = nextTurn;
+}
+
+function pods() {
+  return `<div class="pods">${S.names.map((name, i) => `<div class="pod ${S.phase !== "reveal" && i === S.drawer ? "turn" : ""}">${av(name)}<div><small>${esc(name)}</small><b>${S.pts[i]}</b></div></div>`).join("")}</div>`;
+}
+
+function finish() {
+  S.phase = "end";
+  const list = S.names.map((name, i) => ({ name, score: S.pts[i] })).sort((a, b) => b.score - a.score);
+  render(`
+    <section class="banner gold pop"><b>${winnerLine(list)}</b></section>
+    ${standingsHTML(list, "نقطة")}
+    <button class="btn" id="again">لعبة جديدة</button>
+    <button class="btn alt" id="menu">تغيير الإعدادات</button>`);
+  $("again").onclick = start;
+  $("menu").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>

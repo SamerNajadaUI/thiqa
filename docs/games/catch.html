@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>صيد الكنز</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.stage { position: relative; border-radius: 26px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--card); }
+#cv { display: block; width: 100%; height: min(70svh, 480px); min-height: 380px; touch-action: none; cursor: grab; }
+.ov { position: absolute; inset: 0; display: grid; place-items: center; padding: 18px; background: color-mix(in srgb, var(--card) 72%, transparent); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.ov .panel { width: min(320px, 100%); display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 20px 16px; box-shadow: var(--shadow); }
+.ov .panel b { font-family: var(--display); font-weight: 400; font-size: 28px; }
+.ov .panel .big { font-family: var(--display); font-size: 46px; line-height: 1; direction: ltr; }
+.hint { font-size: 13px; color: var(--muted); text-align: center; margin: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="catch"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// صيد الكنز: الكنز بيقع من فوق. اصطد الذهب والجواهر، وتجنّب القنابل. 60 ثانية، 3 أرواح، والسرعة بتزيد.
+const DURATION = 60;
+const KINDS = [
+  { e: "🪙", pts: 10, w: 52 },
+  { e: "💎", pts: 30, w: 20 },
+  { e: "👑", pts: 70, w: 5 },
+  { e: "💣", bad: true, w: 23 },
+];
+let G = null;
+let W = 0, H = 0, cv = null, ctx = null;
+
+window.leaveGuard = () => (G && G.run ? "اللعبة شغّالة، بدك تطلع؟" : false);
+
+function setup() {
+  G = null;
+  const best = store.get("catch-best", 0);
+  render(`
+    <section class="stage" id="stage">
+      <canvas id="cv" aria-label="ساحة صيد الكنز"></canvas>
+      <div class="ov" id="ov">
+        <div class="panel">
+          <b>صيد الكنز</b>
+          <p class="hint">حرّك السلة بالإصبع أو الماوس. 🪙 = 10 · 💎 = 30 · 👑 = 70<br>💣 بتكلّف روح. عندك 3 أرواح.</p>
+          ${best ? `<span class="hint">أفضل نتيجة: ${best}</span>` : ""}
+          <button class="btn" id="go">ابدأ</button>
+        </div>
+      </div>
+    </section>`);
+  cv = $("cv"); ctx = cv.getContext("2d");
+  fit();
+  $("go").onclick = start;
+  cv.onpointermove = move;
+  cv.onpointerdown = move;
+}
+
+function fit() {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  W = cv.clientWidth; H = cv.clientHeight;
+  cv.width = W * dpr; cv.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener("resize", () => { if (cv) fit(); });
+
+function move(e) {
+  if (!G || !G.run) return;
+  const r = cv.getBoundingClientRect();
+  G.bx = clamp(e.clientX - r.left, 34, W - 34);
+}
+
+function start() {
+  G = { run: true, t: 0, left: DURATION, score: 0, lives: 3, items: [], bx: W / 2, spawnIn: 0.6, flash: 0 };
+  $("ov").hidden = true;
+}
+
+function spawn() {
+  const total = KINDS.reduce((s, k) => s + k.w, 0);
+  let r = Math.random() * total, k = KINDS[0];
+  for (const kind of KINDS) { if ((r -= kind.w) < 0) { k = kind; break; } }
+  G.items.push({ x: rand(26, W - 26), y: -26, vy: rand(140, 210), e: k.e, pts: k.pts || 0, bad: !!k.bad });
+}
+
+function update(dt) {
+  G.t += dt;
+  G.left -= dt;
+  if (G.left <= 0) return over();
+  G.flash = Math.max(0, G.flash - dt);
+  const speed = 1 + G.t / 40;
+  G.spawnIn -= dt;
+  if (G.spawnIn <= 0) { spawn(); G.spawnIn = Math.max(0.3, 0.9 - G.t * 0.008) * rand(0.7, 1.2); }
+  const basketY = H - 66;
+  for (const it of G.items) it.y += it.vy * speed * dt;
+  G.items = G.items.filter((it) => {
+    if (it.y >= basketY - 8 && it.y <= basketY + 30 && Math.abs(it.x - G.bx) < 50) {
+      if (it.bad) { G.lives--; G.flash = 0.35; beep(170, 220, "square"); }
+      else { G.score += it.pts; beep(it.pts >= 30 ? 990 : 720, 90); }
+      return false;
+    }
+    return it.y < H + 30;
+  });
+  if (G.lives <= 0) over();
+}
+
+function draw() {
+  const cs = getComputedStyle(document.documentElement);
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = cs.getPropertyValue("--card").trim() || "#fff";
+  ctx.fillRect(0, 0, W, H);
+  if (G && G.flash > 0) { ctx.fillStyle = "rgba(240,68,56,.18)"; ctx.fillRect(0, 0, W, H); }
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  if (!G) return;
+  ctx.font = "34px serif";
+  for (const it of G.items) ctx.fillText(it.e, it.x, it.y);
+  ctx.font = "54px serif";
+  ctx.fillText("🧺", G.bx, H - 36);
+  ctx.textAlign = "start";
+  ctx.font = "600 17px Readex Pro, sans-serif";
+  ctx.fillStyle = cs.getPropertyValue("--ink").trim() || "#111";
+  ctx.fillText(`النقاط: ${G.score}`, 14, 22);
+  ctx.textAlign = "end";
+  ctx.fillText(`⏱ ${Math.max(0, Math.ceil(G.left))}`, W - 14, 22);
+  ctx.textAlign = "center";
+  ctx.fillText("❤️".repeat(Math.max(0, G.lives)) || "—", W / 2, 22);
+}
+
+function over() {
+  G.run = false;
+  const prev = store.get("catch-best", 0);
+  const best = Math.max(prev, G.score);
+  if (G.score > prev) store.set("catch-best", best);
+  beep(G.score > prev ? 1046 : 330, 380, "triangle");
+  const ov = $("ov");
+  ov.hidden = false;
+  ov.innerHTML = `<div class="panel pop">
+    <b>${G.lives <= 0 ? "خلص الأرواح!" : "خلص الوقت!"}</b>
+    <span class="big">${G.score}</span>
+    <span class="hint">${G.score > prev ? "🎉 نتيجة جديدة قياسية!" : `أفضل نتيجة: ${best}`}</span>
+    <button class="btn" id="again">العب مرة ثانية</button>
+  </div>`;
+  $("again").onclick = start;
+}
+
+let last = 0;
+function frame(t) {
+  const dt = Math.min(0.05, (t - (last || t)) / 1000);
+  last = t;
+  if (G && G.run) update(dt);
+  if (cv && cv.isConnected) draw();
+  requestAnimationFrame(frame);
+}
+
+setup();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

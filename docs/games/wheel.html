@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>عجلة الحظ</title>
+<meta name="theme-color" content="#F5F5F9">
+<script src="../theme.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.roundbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.wheel-wrap { position: relative; width: min(300px, 80vw); aspect-ratio: 1; margin: 6px auto 0; }
+#wheel { width: 100%; height: 100%; display: block; }
+.pointer { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 26px solid var(--bad); filter: drop-shadow(0 3px 2px rgb(0 0 0 / .25)); z-index: 2; }
+.phrase { text-align: center; padding: 14px 10px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.phrase .cat { font-size: 12px; font-weight: 700; color: var(--brand); background: var(--brand-soft); border-radius: 999px; padding: 3px 12px; }
+.words { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 16px; direction: rtl; }
+.word { display: flex; gap: 4px; }
+.box { width: 30px; height: 38px; border-radius: 9px; display: grid; place-items: center; font-family: var(--display); font-size: 22px; line-height: 1; background: var(--soft); border: 1px solid var(--line); }
+.box.open { background: var(--card); color: var(--ink); box-shadow: var(--shadow-sm); }
+.box.blank { background: transparent; border: 0; }
+.keys { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.keys button { height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); font-family: var(--display); font-size: 20px; box-shadow: var(--shadow-sm); }
+.keys button[disabled] { opacity: .3; box-shadow: none; }
+.keys button:not([disabled]):active { transform: scale(.94); }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.msg { min-height: 44px; }
+.msg.big { font-size: 17px; }
+.solvebox { display: flex; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="wheel"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// عجلة الحظ: لف العجلة، اختار حرف. كل حرف موجود بيعطيك قيمته لكل مرة بيظهر فيها.
+// لو بدك تحل الجملة اكتبها. إفلاس بيمسح نقاط الدور. الكشف بجولة الكل = بونص.
+const PHRASES = [
+  ["الصبر مفتاح الفرج", "مثل"], ["على قد لحافك مد رجليك", "مثل"], ["الجار قبل الدار", "مثل"], ["من جد وجد", "مثل"],
+  ["كل شي بوقته حلو", "مثل"], ["العجلة من الشيطان", "مثل"], ["اللي ما بيعرف الصقر يشويه", "مثل"], ["الكلب ينبح والقافلة تسير", "مثل"],
+  ["مدينة العقبة", "مكان"], ["جبل عجلون", "مكان"], ["البحر الميت", "مكان"], ["وادي رم", "مكان"], ["قلعة الكرك", "مكان"], ["مدينة البتراء", "مكان"],
+  ["منسف جميل", "أكلة"], ["كنافة نابلسية", "أكلة"], ["فلافل وحمص", "أكلة"], ["شاي بالنعنع", "مشروب"], ["قهوة عربية", "مشروب"],
+  ["الأسد ملك الغابة", "حيوان"], ["الفيل حيوان ضخم", "حيوان"], ["النحلة تصنع العسل", "حيوان"],
+  ["كرة القدم لعبة جميلة", "رياضة"], ["المكتبة الكبيرة", "مكان"], ["السيارة الكهربائية", "شي"], ["الذكاء الاصطناعي", "علم"],
+];
+// قطع العجلة (12 قطاع، كل واحد 30 درجة)
+const SEG = [
+  { t: "100", v: 100 }, { t: "200", v: 200 }, { t: "300", v: 300 }, { t: "400", v: 400 },
+  { t: "500", v: 500 }, { t: "700", v: 700 }, { t: "1000", v: 1000 }, { t: "2000", v: 2000 },
+  { t: "💥 إفلاس", k: "bankrupt" }, { t: "⏭️ دورك يروح", k: "skip" }, { t: "🔁 لف تاني", k: "again" }, { t: "🎁 هدية", k: "gift", v: 500 },
+];
+const STEP = 360 / SEG.length;
+const SEG_COLORS = ["#2E90FA", "#12B76A", "#F79009", "#7A5AF8", "#F04438", "#06AED4", "#EE46BC", "#D92D20", "#1D2939", "#F5A524", "#0E9384", "#2E90FA"];
+const LETTERS = "ابتثجحخدذرزسشصضطظعغفقكلمنهوي".split("");
+const ROUNDS = 3;
+let S = null;
+
+window.leaveGuard = () => (S && S.phase !== "end" && S.round > 0 ? "الجولة شغّالة، بدك تطلع؟" : false);
+
+function setup() {
+  S = null;
+  let n = store.get("wheel-n", 3);
+  const draw = () => render(`
+    <section class="card stack">
+      <h1>عجلة الحظ</h1>
+      <p class="sub">${ROUNDS} جولات. كل واحد يلف العجلة ويختار حرف. الحرف الموجود بيعطيك قيمته بكل مرة يطلع فيها. حزّر الجملة قبل الكل، أو اكشفها بالحروف.</p>
+      <div class="label">عدد اللاعبين</div>
+      <div class="seg" id="cnt">${[2, 3, 4].map((k) => `<button data-n="${k}" aria-pressed="${k === n}">${k}</button>`).join("")}</div>
+      <div class="stack" id="names">${nameFields(n)}</div>
+      <button class="btn" id="go">ابدأ</button>
+    </section>`);
+  draw();
+  $("cnt").onclick = (e) => {
+    const b = e.target.closest("[data-n]"); if (!b) return;
+    const names = readNames(n);
+    n = +b.dataset.n; store.set("wheel-n", n);
+    draw();
+    names.forEach((v, i) => { if (i < n && !v.startsWith("لاعب")) $(`p${i}`).value = v; });
+  };
+  $("go").onclick = () => start(n);
+}
+
+function start(n) {
+  const names = readNames(n);
+  S = { names, n, pts: names.map(() => 0), bank: names.map(() => 0), round: 0, turnP: 0, pool: shuffle(PHRASES), phrase: null, guessed: new Set(), phase: "spin", rot: 0, spinning: false, msg: "", good: true, timers: [], value: 0 };
+  newRound();
+}
+
+function newRound() {
+  S.round++;
+  if (S.round > ROUNDS) return finish();
+  S.phrase = S.pool[(S.round - 1) % S.pool.length];
+  S.guessed = new Set();
+  S.bank = S.names.map(() => 0);
+  S.turnP = (S.round - 1) % S.n;
+  S.phase = "spin"; S.msg = `جولة ${S.round}: دور ${S.names[S.turnP]}`; S.good = true;
+  board();
+}
+
+// الحرف بالمقارنة المطبّعة (أ = ا، ة = ه)
+const key = (ch) => normAr(ch);
+const isLetter = (ch) => /\S/.test(ch);
+const revealed = (ch) => S.guessed.has(key(ch));
+const allRevealed = () => [...S.phrase[0]].every((ch) => !isLetter(ch) || revealed(ch));
+
+function phraseHTML() {
+  return S.phrase[0].split(" ").map((w) => `<span class="word">${[...w].map((ch) => `<span class="box ${revealed(ch) ? "open" : ""}">${revealed(ch) ? esc(ch) : ""}</span>`).join("")}</span>`).join("");
+}
+
+function wheelHTML() {
+  return `<div class="wheel-wrap"><div class="pointer" aria-hidden="true"></div><canvas id="wheel" aria-label="عجلة الحظ"></canvas></div>`;
+}
+
+function board() {
+  const playing = S.phase === "spin" || S.phase === "letter";
+  const extra = S.phase === "letter"
+    ? `<div class="keys" id="keys">${LETTERS.map((ch) => `<button data-ch="${ch}" ${S.guessed.has(key(ch)) ? "disabled" : ""}>${ch}</button>`).join("")}</div>`
+    : "";
+  const actions = S.phase === "spin"
+    ? `<div class="actions"><button class="btn" id="spin" ${S.spinning ? "disabled" : ""}>🎡 لف العجلة</button><button class="btn alt" id="solve">🔤 حزّر الجملة</button></div>`
+    : "";
+  render(`
+    <div class="pods">${S.names.map((name, i) => `<div class="pod ${i === S.turnP ? "turn" : ""}">${av(name)}<div><small>${esc(name)}</small><b>${S.pts[i]}${S.bank[i] ? `<em style="font-size:12px;color:var(--good)"> +${S.bank[i]}</em>` : ""}</b></div></div>`).join("")}</div>
+    <div class="roundbar"><span>جولة ${S.round} من ${ROUNDS}</span><span>الدور: ${esc(S.names[S.turnP])}</span></div>
+    <section class="card phrase"><span class="cat">${esc(S.phrase[1])}</span><div class="words">${phraseHTML()}</div></section>
+    ${playing ? wheelHTML() : ""}
+    <p class="msg big ${S.good ? "good" : "bad"}" id="msg">${esc(S.msg) || "&nbsp;"}</p>
+    ${actions}${extra}`);
+  if (playing) drawWheel(S.rot);
+  if ($("spin")) $("spin").onclick = spin;
+  if ($("solve")) $("solve").onclick = askSolve;
+  if ($("keys")) $("keys").onclick = (e) => { const b = e.target.closest("[data-ch]"); if (b && !b.disabled) pickLetter(b.dataset.ch); };
+}
+
+// ============ العجلة ============
+function drawWheel(rot) {
+  const cv = $("wheel");
+  if (!cv) return;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const size = cv.clientWidth || 300;
+  cv.width = size * dpr; cv.height = size * dpr;
+  const c = cv.getContext("2d");
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const R = size / 2;
+  c.clearRect(0, 0, size, size);
+  SEG.forEach((seg, i) => {
+    const a0 = (rot + i * STEP) * Math.PI / 180, a1 = a0 + STEP * Math.PI / 180;
+    c.beginPath(); c.moveTo(R, R); c.arc(R, R, R - 4, a0, a1); c.closePath();
+    c.fillStyle = SEG_COLORS[i]; c.fill();
+    c.strokeStyle = "rgba(255,255,255,.35)"; c.lineWidth = 2; c.stroke();
+    const am = (rot + i * STEP + STEP / 2) * Math.PI / 180;
+    c.save(); c.translate(R, R); c.rotate(am);
+    c.fillStyle = "#FFFFFF"; c.font = "700 14px Readex Pro, Segoe UI, sans-serif"; c.textAlign = "right"; c.textBaseline = "middle";
+    c.fillText(seg.t, R - 16, 0); c.restore();
+  });
+  c.beginPath(); c.arc(R, R, 18, 0, Math.PI * 2); c.fillStyle = "#FFFFFF"; c.fill();
+  c.strokeStyle = "#111316"; c.lineWidth = 3; c.stroke();
+}
+
+function spin() {
+  if (S.spinning || S.phase !== "spin") return;
+  S.spinning = true;
+  const idx = Math.floor(Math.random() * SEG.length);
+  const center = idx * STEP + STEP / 2;
+  const cur = S.rot;
+  const delta = ((270 - center - (cur % 360)) % 360 + 360) % 360;
+  const target = cur + 360 * 5 + delta;
+  const t0 = performance.now(), dur = 3600;
+  $("spin").disabled = true;
+  const frame = (t) => {
+    const k = Math.min(1, (t - t0) / dur);
+    S.rot = cur + (target - cur) * (1 - Math.pow(1 - k, 3));
+    drawWheel(S.rot);
+    if (k < 1) return requestAnimationFrame(frame);
+    S.spinning = false;
+    S.rot = target % 360;
+    onResult(SEG[idx]);
+  };
+  requestAnimationFrame(frame);
+}
+
+function onResult(seg) {
+  beep(520, 90, "triangle");
+  if (seg.k === "bankrupt") { S.bank[S.turnP] = 0; return endTurn("💥 إفلاس! خسرت نقاط دورك"); }
+  if (seg.k === "skip") return endTurn("⏭️ دورك راح!");
+  if (seg.k === "again") { S.msg = "🔁 لف تاني!"; S.good = true; return board(); }
+  S.value = seg.v;
+  S.phase = "letter";
+  S.msg = `قيمة الحرف: ${seg.v} · اختار حرف`; S.good = true;
+  board();
+}
+
+// ============ الحروف ============
+function pickLetter(ch) {
+  if (S.phase !== "letter" || S.guessed.has(key(ch))) return;
+  S.guessed.add(key(ch));
+  const count = [...S.phrase[0]].filter((x) => isLetter(x) && key(x) === key(ch)).length;
+  if (count === 0) return endTurn(`❌ ما في حرف "${ch}"`);
+  S.bank[S.turnP] += S.value * count;
+  beep(760, 100);
+  if (allRevealed()) return roundOver(S.turnP, 1000, `🎉 انكشفت الجملة! +1000 بونص`);
+  S.phase = "spin";
+  S.msg = `✅ فيه ${count} من "${ch}"! +${S.value * count} · لف تاني`; S.good = true;
+  board();
+}
+
+function askSolve() {
+  S.phase = "solve";
+  render(`
+    <div class="pods">${S.names.map((name, i) => `<div class="pod ${i === S.turnP ? "turn" : ""}">${av(name)}<div><small>${esc(name)}</small><b>${S.pts[i]}</b></div></div>`).join("")}</div>
+    <section class="card phrase"><span class="cat">${esc(S.phrase[1])}</span><div class="words">${phraseHTML()}</div></section>
+    <div class="label">اكتب الجملة كاملة</div>
+    <div class="solvebox"><input class="input" id="sol" autocomplete="off" aria-label="الجملة"><button class="btn sm" id="sendsol">حزّرت</button></div>
+    <button class="linkish" id="cancel">رجوع للعجلة</button>`);
+  $("sol").focus();
+  $("sendsol").onclick = () => {
+    if (normAr($("sol").value) === normAr(S.phrase[0])) return roundOver(S.turnP, 1000, "🎉 حزّرتها! +1000 بونص");
+    endTurn("❌ مو هيك! دورك انتهى");
+  };
+  $("sol").onkeydown = (e) => { if (e.key === "Enter") $("sendsol").click(); };
+  $("cancel").onclick = () => { S.phase = "spin"; board(); };
+}
+
+// ============ نهاية الدور والجولة ============
+function endTurn(msg) {
+  const p = S.turnP;
+  S.pts[p] += S.bank[p];
+  S.bank[p] = 0;
+  S.turnP = (S.turnP + 1) % S.n;
+  S.phase = "spin";
+  S.msg = `${msg} · الدور الجاي: ${S.names[S.turnP]}`; S.good = false;
+  board();
+}
+
+function roundOver(p, bonus, msg) {
+  S.pts[p] += S.bank[p] + bonus;
+  S.bank[p] = 0;
+  S.phase = "reveal";
+  S.msg = msg; S.good = true; beep(988, 300, "triangle");
+  render(`
+    <section class="card phrase pop"><span class="cat">${esc(S.phrase[1])}</span><div class="words">${S.phrase[0].split(" ").map((w) => `<span class="word">${[...w].map((ch) => `<span class="box open">${esc(ch)}</span>`).join("")}</span>`).join("")}</div></section>
+    <p class="msg big good">${esc(msg)}</p>
+    <button class="btn" id="nextr">${S.round >= ROUNDS ? "شوف النتيجة" : "الجولة الجاية"}</button>`);
+  $("nextr").onclick = newRound;
+}
+
+function finish() {
+  S.phase = "end";
+  const list = S.names.map((name, i) => ({ name, score: S.pts[i] })).sort((a, b) => b.score - a.score);
+  render(`
+    <section class="banner gold pop"><b>${winnerLine(list)}</b><span class="sub">بعد ${ROUNDS} جولات</span></section>
+    ${standingsHTML(list, "نقطة")}
+    <button class="btn" id="again">لعبة جديدة</button>
+    <button class="btn alt" id="menu">تغيير الإعدادات</button>`);
+  $("again").onclick = setup;
+  $("menu").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>
