@@ -11548,9 +11548,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
      "live": {
-      "state": "pre",
-      "detail": "11/8 - 7:00 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "Halftime",
+      "score": "57-51"
      }
     },
     {
@@ -11683,8 +11683,8 @@
      "sharp_prob": 0.7791,
      "prob": 0.7785,
      "books": 20,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "1-2",
      "movement": -0.0042,
      "crowd_prob": 0.7839,
      "crowd_volume": 788443,
@@ -11771,9 +11771,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
      "live": {
-      "state": "in",
-      "detail": "59'",
-      "score": "1-1"
+      "state": "post",
+      "detail": "FT",
+      "score": "1-2"
      }
     },
     {
@@ -12457,9 +12457,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
        "live": {
-        "state": "pre",
-        "detail": "11/8 - 7:00 PM EST",
-        "score": null
+        "state": "in",
+        "detail": "Halftime",
+        "score": "57-51"
        }
       },
       {
@@ -12916,8 +12916,8 @@
        "sharp_prob": 0.7203,
        "prob": 0.7255,
        "books": 24,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "2-2",
        "movement": -0.0057,
        "crowd_prob": 0.7264,
        "crowd_volume": 67057,
@@ -13003,8 +13003,8 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
        "live": {
-        "state": "in",
-        "detail": "71'",
+        "state": "post",
+        "detail": "FT",
         "score": "2-2"
        }
       },
@@ -13119,7 +13119,7 @@
      ],
      "prob": 0.1982,
      "fair_odds": 5.05,
-     "result": "pending"
+     "result": "lost"
     }
    ]
   }
