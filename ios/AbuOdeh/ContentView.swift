@@ -75,7 +75,7 @@ struct SplashView: View {
                     .rotationEffect(.degrees(spin ? 0 : -18))
                     .opacity(pop ? 1 : 0)
                 VStack(spacing: 6) {
-                    Text("أبو عودة").font(.system(size: 40, weight: .black, design: .rounded))
+                    Text("تعليلة").font(.system(size: 40, weight: .black, design: .rounded))
                     Text("للمرح").font(.system(size: 22, weight: .bold, design: .rounded)).opacity(0.85)
                 }
                 .foregroundStyle(.white)

@@ -20,7 +20,7 @@ targets:
         SWIFT_VERSION: "5.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: "أبو عودة"
+        INFOPLIST_KEY_CFBundleDisplayName: "تعليلة"
         INFOPLIST_FILE: AbuOdeh/Info.plist
         INFOPLIST_KEY_UIUserInterfaceStyle: Light
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait

@@ -58,5 +58,5 @@ jobs:
         run: |
           gh release delete ios-latest --yes --cleanup-tag || true
           gh release create ios-latest AbuOdeh.ipa AbuOdeh-Xcode.zip \
-            --title "أبو عودة للآيفون" \
+            --title "تعليلة للآيفون" \
             --notes "طريقتين: AbuOdeh-Xcode.zip تفتحه بـ Xcode على الماك وتشغّله على تلفونك مباشرة، أو AbuOdeh.ipa تركّبه بـ Sideloadly. التعليمات بـ ios/README.md"
