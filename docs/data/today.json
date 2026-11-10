@@ -1,7 +1,7 @@
 {
  "date": "2026-11-09",
  "generated_at": "2026-11-09T08:37:43Z",
- "updated_at": "2026-11-09T19:59:33Z",
+ "updated_at": "2026-11-10T02:53:18Z",
  "demo": false,
  "coupons": [
   {
@@ -44,8 +44,8 @@
    "sharp_prob": 0.8087,
    "prob": 0.7718,
    "books": 24,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "122-111",
    "crowd_prob": 0.815,
    "crowd_volume": 6434,
    "model_prob": null,
@@ -131,9 +131,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png",
    "live": {
-    "state": "pre",
-    "detail": "11/9 - 7:00 PM EST",
-    "score": null
+    "state": "post",
+    "detail": "Final",
+    "score": "122-111"
    }
   },
   {
@@ -262,8 +262,8 @@
    "sharp_prob": 0.7678,
    "prob": 0.7288,
    "books": 24,
-   "result": "pending",
-   "score": null,
+   "result": "miss",
+   "score": "124-112",
    "crowd_prob": 0.765,
    "crowd_volume": 28999,
    "model_prob": null,
@@ -349,9 +349,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cle.png",
    "live": {
-    "state": "pre",
-    "detail": "11/9 - 7:00 PM EST",
-    "score": null
+    "state": "post",
+    "detail": "Final",
+    "score": "124-112"
    }
   },
   {
@@ -455,9 +455,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phx.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
    "live": {
-    "state": "pre",
-    "detail": "11/9 - 9:00 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "6:49 - 2nd",
+    "score": "31-47"
    }
   },
   {
@@ -564,9 +564,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png",
    "live": {
-    "state": "pre",
-    "detail": "11/9 - 8:30 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "9:19 - 3rd",
+    "score": "58-48"
    }
   }
  ],
