@@ -1,0 +1,6 @@
+{
+  "name": "abuodeh-tests",
+  "private": true,
+  "description": "Local test helpers: MQTT broker and automated playthroughs (Playwright is preinstalled in the cloud session)",
+  "dependencies": { "aedes": "^0.51.3", "aedes-server-factory": "^0.2.1", "mqtt": "5.10.1" }
+}

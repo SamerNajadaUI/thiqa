@@ -3,3 +3,5 @@ ios/build/
 ios/*.xcodeproj/
 ios/Payload/
 ios/*.ipa
+tools/test/node_modules/
+tools/test/shots/
