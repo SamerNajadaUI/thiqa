@@ -30,7 +30,7 @@ const SECTIONS = [
 ];
 const NEW = "🆕 جديدة";
 const GAMES = [
-  { id: "sahra", href: "sahra.html", sec: "top", name: "ملك السهرة", desc: "8 مراحل، كل مرحلة لعبة شكل: كذب وتمثيل وقنبلة ورهان", tags: ["👥 3–8", "🌐 غرفة أو تلفون"], flag: "👑 الأقوى" },
+  { id: "sahra", href: "sahra.html", sec: "top", name: "ملك السهرة", desc: "10 مراحل: ركلات ترجيح، كذب، تمثيل، قنبلة... وسهرة كروية", tags: ["👥 3–8", "🌐 غرفة أو تلفون"], flag: "👑 الأقوى" },
   { id: "points", href: "points.html", sec: "top", name: "جمع نقاط", desc: "75 قسم بصور وأصوات وفيديو، وكروت سرقة", tags: ["👥 2–5 فرق", "🌐 أونلاين"], flag: "🔥 الأشهر" },
   { id: "tamaa", href: "tamaa.html", sec: "top", name: "لا تطمع", desc: "اكشف مربعات واجمع ذهب، ووقّف قبل القنبلة 💣", tags: ["👥 1–6", "🤖 ضد الكمبيوتر"], flag: "✨ جديد" },
   { id: "mafia", href: "mafia.html", sec: "top", name: "مافيا", desc: "مين المافيا بيناتنا؟ ليل ونهار وتصويت", tags: ["👥 4–16", "🌐 أونلاين"] },
