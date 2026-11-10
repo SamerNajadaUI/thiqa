@@ -31,6 +31,7 @@
 - **`docs/app/core.js`** (بدّه `app/firebase-config.js` قبله، ويتحمّل بالـ`<head>` عشان الحارس يشتغل بدري): `Auth` (محلي، أو Firebase لما `window.APP_FIREBASE_CONFIG` ينعبّى)، `Rewards` (نقاط، مستوى `50*(n-1)^2`، مضاعف بلس ×2، سقف يومي 300، بونص يومي 10)، قفل الألعاب `Rewards.LOCKED` (المزاد، عجلة الحظ، ارسم وخمّن، إكس أو بالجاذبية = بلس)، وحارس الدخول: أي صفحة بدون `window.APP_PUBLIC` بتحوّل للدخول، وصفحة لعبة مقفولة بتحوّل لـ`rewards.html?locked=`. **كل لعبة جديدة** لازم تحط سطري `firebase-config.js` و`core.js` بالـ`<head>`، وتنادي `Rewards.finish("<id>", نقاط)` لما تخلص.
 - `docs/app/ui.js` (`AppUI.tabs(active)`, `safeNext`, `planBadge`, `sheet`). `auth-firebase.js` بيتحمّل بس بوضع Firebase، وما انفحص بدون مفاتيح.
 - حساب الأدمن: `ADMIN_CREDENTIALS` بأول `core.js` (admin/admin بطلب سامر، ظاهر بالكود). الكود التجريبي للرقم بالوضع المحلي `123456`.
+- **صفحة الدخول فيها بس أبل والأدمن** (سامر شال جوجل والرقم من الواجهة بـ2026-11-10؛ دوال `signInGoogle` و`sendPhoneCode` لسا بـ`core.js` بدون واجهة). مشروع Firebase: `ta3lela-9b4d1`.
 - الاشتراكات تجريبية بدون دفع. الجوجل ما بيشتغل داخل WKWebView (لازم دخول أصلي بالتطبيق لاحقاً).
 - الصفحات: `index` (سبلاش) · `login` · `home` · `games/` (شرائح أقسام وترتيب) · `rewards` · `settings`.
 - تصميم ومرحلة التنفيذ: `specs/2026-11-10-app-shell-design.md` و`specs/2026-11-10-app-shell-plan.md`.
