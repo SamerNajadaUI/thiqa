@@ -58,11 +58,26 @@ const GAMES = [
 ];
 
 // base: المسار لمجلد الألعاب ("games/" من الرئيسية، "" من صفحة الألعاب)
+function gameLocked(id) {
+  try { return typeof Rewards !== "undefined" && !!Rewards.tierOf(id) && !Rewards.canPlay((Auth.user() || {}).plan, id); } catch { return false; }
+}
 function gameCard(g, base) {
-  return `<a class="gcard g-${g.id}" href="${base}${g.href}" data-game="${g.id}">
-    <span class="art">${g.flag ? `<span class="flag">${g.flag}</span>` : ""}<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GAME_ICON[g.id]}</svg></span></span>
+  const locked = gameLocked(g.id);
+  return `<a class="gcard g-${g.id}${locked ? " locked" : ""}" href="${base}${g.href}" data-game="${g.id}">
+    <span class="art">${locked ? `<span class="lock">🔒 بلس</span>` : ""}${g.flag ? `<span class="flag">${g.flag}</span>` : ""}<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GAME_ICON[g.id]}</svg></span></span>
     <span class="body"><b>${g.name}</b><small>${g.desc}</small><span class="tags">${g.tags.map((t) => `<span>${t}</span>`).join("")}</span></span>
   </a>`;
+}
+// ترتيب وتصفية لصفحة الألعاب: sec = "all" أو id قسم، sort = pop | new | solo | group
+const GAME_SORTS = [["pop", "الأشهر"], ["new", "الجديد"], ["solo", "لحالك"], ["group", "جماعي"]];
+function gamesFiltered(base = "", sec = "all", sort = "pop") {
+  let list = GAMES.filter((g) => sec === "all" || g.sec === sec);
+  const has = (g, re) => g.tags.some((t) => re.test(t));
+  if (sort === "new") list = list.filter((g) => g.flag === NEW || g.flag === "✨ جديد");
+  if (sort === "solo") list = list.filter((g) => has(g, /👤|ضد الكمبيوتر|1–|لحالك/));
+  if (sort === "group") list = list.filter((g) => has(g, /👥/));
+  if (!list.length) return `<div class="card flat"><p class="sub">ما في ألعاب بهالفلتر.</p></div>`;
+  return `<div class="games-grid">${list.map((g) => gameCard(g, base)).join("")}</div>`;
 }
 function gamesGrid(base = "") {
   return SECTIONS.map((sec) => {

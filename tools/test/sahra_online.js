@@ -10,6 +10,7 @@ const names = ['سامر', 'ليلى', 'خالد', 'نور'];
   for (const n of names) {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
     await ctx.route('**/mqtt.min.js', r => r.fulfill({ contentType: 'application/javascript', body: MQ }));
+    await ctx.addInitScript(require('./session').adminInit);
     const p = await ctx.newPage();
     p.on('pageerror', e => errs.push(n + ': ' + e.message));
     await p.goto(URL, { waitUntil: 'load' });

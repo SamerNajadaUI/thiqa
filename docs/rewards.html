@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#FFFAF4">
+<script src="theme.js"></script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="أبو عودة للمرح">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="shell.css">
+<link rel="stylesheet" href="ds/ui.css">
+<style>html,body{margin:0;touch-action:manipulation}body{font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}*{box-sizing:border-box}</style>
+<script src="app/firebase-config.js"></script>
+<script src="app/core.js"></script>
+<title>المكافآت — أبو عودة للمرح</title>
+</head>
+<body>
+<div class="app-wrap" id="page"></div>
+<script src="shell.js"></script>
+<script src="app/ui.js"></script>
+<script>
+const R = Rewards, esc = AppUI.esc;
+const PLAN_TEXT = {
+  free: ["مجاني", ["كل الألعاب الأساسية", "نقاط وتتبّع مستواك", "بونص يومي ١٠ نقاط"]],
+  plus_m: ["بلس شهري", ["نقاط ×٢ على كل لعبة", "تفتح ٤ ألعاب إضافية", "شارة بلس بحسابك"]],
+  plus_y: ["بلس سنوي", ["كل مزايا بلس", "أوفر من الشهري بحوالي ٣ أشهر", "شارة بلس بحسابك"]],
+};
+function render() {
+  const u = Auth.user(); if (!u) return;
+  const L = R.levelInfo(u.points || 0), left = R.dailyRemaining(u);
+  const lockedId = new URLSearchParams(location.search).get("locked");
+  const lg = lockedId && GAMES.find((g) => g.id === lockedId);
+  const locks = Object.keys(R.LOCKED).map((id) => GAMES.find((g) => g.id === id)).filter(Boolean);
+  const plans = ["free", "plus_m", "plus_y"].map((id) => {
+    const p = R.PLANS[id], t = PLAN_TEXT[id], cur = u.plan === id;
+    const price = id === "free" ? "ببلاش" : p.price.toFixed(2) + " <small>د.أ " + p.per + "</small>";
+    let btn;
+    if (u.plan === "admin") btn = '<button class="btn btn-ghost btn-block" disabled>أنت أدمن</button>';
+    else if (cur) btn = '<button class="btn btn-ghost btn-block" disabled>خطتك الحالية</button>';
+    else btn = '<button class="btn ' + (id === "plus_y" ? "btn-primary" : "btn-ghost") + ' btn-block" data-plan="' + id + '">' + (id === "free" ? "ارجع للمجاني" : "فعّل (تجريبي)") + '</button>';
+    return '<div class="card plan' + (id === "plus_y" ? " best" : "") + '">' + (id === "plus_y" ? '<span class="badge" style="position:absolute;top:14px;left:14px">الأوفر</span>' : "") +
+      '<b class="h-title">' + t[0] + '</b><div class="price">' + price + '</div><ul>' + t[1].map((x) => "<li>" + x + "</li>").join("") + '</ul>' + btn + '</div>';
+  }).join("");
+  document.getElementById("page").innerHTML = `
+    <header class="row"><h1 class="h-hero grow">المكافآت</h1>${AppUI.planBadge(u.plan)}</header>
+    ${lg ? '<div class="note" role="status">«' + esc(lg.name) + '» بدها اشتراك بلس. فعّله من تحت وبتلعبها.</div>' : ""}
+    <section class="card grad frame fade-in"><i></i>
+      <span class="sub">المستوى ${L.level} · ${L.name}</span>
+      <div class="points-big">${(u.points || 0).toLocaleString("en")}</div><span class="sub">نقطة</span>
+      <div class="progress" style="--p:${L.pct}%;margin-top:14px"><i></i></div>
+      <p class="sub" style="margin-top:8px">باقي ${(L.need - L.into).toLocaleString("en")} نقطة للمستوى ${L.level + 1}</p>
+    </section>
+    <div class="row">
+      <div class="stat"><b>×${R.multiplier(u.plan)}</b><span>مضاعف النقاط</span></div>
+      <div class="stat"><b>${left === Infinity ? "∞" : left}</b><span>متبقي من سقف اليوم</span></div>
+    </div>
+    <section class="stack"><h2 class="sec-title">كيف بتكسب نقاط؟</h2>
+      <div class="list">
+        <div class="li"><span class="ic">🎮</span><span><b>خلّص لعبة أو جولة</b><small>٢٠ نقطة، وأكتر بالألعاب الكبيرة</small></span></div>
+        <div class="li"><span class="ic">⏱️</span><span><b>وقت لعب</b><small>نقطة كل ٣٠ ثانية، وحد أقصى ٢٠ بالجلسة</small></span></div>
+        <div class="li"><span class="ic">📅</span><span><b>بونص يومي</b><small>${R.DAILY_BONUS} نقاط أول مرة بتفتح فيها اليوم</small></span></div>
+      </div>
+      <p class="sub">سقف نقاط اللعب باليوم ${R.DAILY_CAP}${u.plan === "admin" ? " (الأدمن بدون سقف)" : ""}.</p>
+    </section>
+    <section class="stack" id="plans"><h2 class="sec-title">الخطط</h2>
+      <p class="sub">الاشتراك تجريبي هلق: بدون دفع حقيقي.</p>${plans}</section>
+    <section class="stack"><h2 class="sec-title">ألعاب بلس</h2>
+      <div class="list">${locks.map((g) => '<a class="li" href="games/' + g.href + '"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + GAME_ICON[g.id] + '</svg></span><span><b>' + g.name + '</b><small>' + g.desc + '</small></span><span class="end">' + (R.canPlay(u.plan, g.id) ? "مفتوحة" : "🔒 بلس") + '</span></a>').join("")}</div>
+    </section>`;
+  document.querySelectorAll("[data-plan]").forEach((b) => b.onclick = () => { R.setPlan(b.dataset.plan); window.uiToast && uiToast(b.dataset.plan === "free" ? "رجعت للمجاني" : "تم التفعيل (تجريبي)"); render(); });
+  if (location.hash === "#plans" && lg) document.getElementById("plans").scrollIntoView({ block: "start" });
+}
+render();
+document.addEventListener("app:points", render);
+AppUI.tabs("rewards");
+</script>
+</body>
+</html>

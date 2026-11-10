@@ -17,6 +17,7 @@ const names = ['سامر', 'ليلى', 'خالد'];
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
     await ctx.route('**/mqtt.min.js', (r) => r.fulfill({ contentType: 'application/javascript', body: MQ }));
     await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+    await ctx.addInitScript(require('./session').adminInit);
     const p = await ctx.newPage();
     p.on('pageerror', (e) => errs.push(n + ': ' + e.message));
     p.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource|ERR_FAILED/.test(m.text())) errs.push(n + ' console: ' + m.text()); });

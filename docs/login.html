@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#FFFAF4">
+<script src="theme.js"></script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="أبو عودة للمرح">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="shell.css">
+<link rel="stylesheet" href="ds/ui.css">
+<style>html,body{margin:0;touch-action:manipulation}body{font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}*{box-sizing:border-box}</style>
+<title>تسجيل الدخول — أبو عودة للمرح</title>
+</head>
+<body>
+<div class="fullscreen">
+  <header class="login-top grad bg">
+    <i></i>
+    <img class="logo" src="icons/icon.svg" alt="">
+    <h1>أهلاً فيك!</h1>
+    <p>سجّل دخولك وابدأ اجمع نقاط</p>
+  </header>
+  <main class="login-sheet" id="sheet">
+    <div class="stack" id="step-main">
+      <button class="btn btn-ghost btn-block sso" id="b-google" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M20 12h-8M20 12a8 8 0 1 1-2.3-5.6"/></svg>كمّل مع جوجل</button>
+      <button class="btn btn-ghost btn-block sso" id="b-apple" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 7.2c-1.1-1.4-3.700-1.600-5.200.9-1.500 2.500-.5 6.800 1.400 8.800 1 1 2 1.100 3.800.2 1.800.9 2.800.8 3.800-.2 1.900-2 2.900-6.300 1.400-8.800-1.500-2.500-4.100-2.300-5.200-.9z"/><path d="M12 7.200c-.2-2 .8-3.600 2.600-4.300.2 2-.8 3.600-2.600 4.300z"/></svg>كمّل مع أبل</button>
+      <div class="or">أو برقم جوالك</div>
+      <form class="stack" id="f-phone" novalidate>
+        <div class="field"><label for="phone">رقم الجوال الأردني</label>
+          <div class="phone"><span class="pre">+962</span><input class="input ltr grow" id="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="79 123 4567" maxlength="16"></div></div>
+        <button class="btn btn-primary btn-block" type="submit" id="b-send">ابعتلي الكود</button>
+      </form>
+      <button class="btn btn-text" id="b-admin-open" type="button">دخول الأدمن</button>
+    </div>
+
+    <form class="stack" id="f-code" hidden novalidate>
+      <h2 class="h-title">اكتب الكود</h2>
+      <p class="sub" id="code-to"></p>
+      <input class="input ltr" id="code" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" maxlength="6" aria-label="كود التحقق">
+      <p class="note" id="test-note" hidden>وضع تجريبي: الكود هو <b>123456</b>.</p>
+      <button class="btn btn-primary btn-block" type="submit" id="b-code">تأكيد</button>
+      <button class="btn btn-text" id="b-back1" type="button">غيّر الرقم</button>
+    </form>
+
+    <form class="stack" id="f-admin" hidden novalidate>
+      <h2 class="h-title">دخول الأدمن</h2>
+      <div class="field"><label for="au">اليوزر</label><input class="input ltr" id="au" autocomplete="username" autocapitalize="none"></div>
+      <div class="field"><label for="ap">الباسورد</label><input class="input ltr" id="ap" type="password" autocomplete="current-password"></div>
+      <button class="btn btn-primary btn-block" type="submit">دخول</button>
+      <button class="btn btn-text" id="b-back2" type="button">رجوع</button>
+    </form>
+
+    <p class="note" id="err" role="alert" hidden></p>
+    <p class="sub" id="mode-note" hidden>وضع تجريبي: الحسابات محفوظة على جهازك لحد ما نربط Firebase.</p>
+  </main>
+</div>
+<script>window.APP_PUBLIC = true;</script>
+<script src="app/firebase-config.js"></script>
+<script src="app/core.js"></script>
+<script src="app/ui.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const next = AppUI.safeNext(new URLSearchParams(location.search).get("next") || "");
+if (Auth.user()) location.replace(next);
+if (Auth.mode === "local") { $("mode-note").hidden = false; }
+function err(msg) { const e = $("err"); e.textContent = msg || ""; e.hidden = !msg; }
+function show(step) { for (const id of ["step-main", "f-code", "f-admin"]) $(id).hidden = id !== step; err(""); }
+async function run(btn, fn) {
+  const t = btn.textContent; btn.disabled = true; btn.textContent = "لحظة...";
+  try { await fn(); } catch (e) { err(e && e.message ? e.message : "صار خطأ، جرّب كمان مرة"); } finally { btn.disabled = false; btn.textContent = t; }
+}
+const done = () => location.replace(next);
+$("b-google").onclick = (e) => run(e.currentTarget, async () => { await Auth.signInGoogle(); done(); });
+$("b-apple").onclick = (e) => run(e.currentTarget, async () => { await Auth.signInApple(); done(); });
+$("f-phone").onsubmit = (e) => { e.preventDefault(); run($("b-send"), async () => { const p = await Auth.sendPhoneCode($("phone").value); $("code-to").textContent = "بعتنا كود على " + p; $("test-note").hidden = Auth.mode !== "local"; show("f-code"); $("code").focus(); }); };
+$("f-code").onsubmit = (e) => { e.preventDefault(); run($("b-code"), async () => { await Auth.confirmPhoneCode($("code").value); done(); }); };
+$("f-admin").onsubmit = (e) => { e.preventDefault(); run(e.submitter || $("f-admin").querySelector("button[type=submit]"), async () => { await Auth.signInAdmin($("au").value, $("ap").value); done(); }); };
+$("b-admin-open").onclick = () => { show("f-admin"); $("au").focus(); };
+$("b-back1").onclick = () => show("step-main");
+$("b-back2").onclick = () => show("step-main");
+</script>
+</body>
+</html>

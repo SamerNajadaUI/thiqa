@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>ألعاب أبو عودة للمرح</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="theme-color" content="#F5F5F9">
+<meta name="theme-color" content="#FFFAF4">
 <script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
@@ -146,6 +148,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 }
 /* no double-tap zoom */
 html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
+.wrap { padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px)); }
 </style>
 <link rel="stylesheet" href="../shell.css">
 </head>
@@ -162,6 +165,7 @@ html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 </div>
 
 <script src="../shell.js"></script>
+<script src="../app/ui.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -186,6 +190,7 @@ const age = (p) => p.by ? ((p.dy || new Date().getFullYear()) - p.by) : null;
 function show(render, push = true) {
   if (push) stack.push(render);
   $("back").hidden = stack.length <= 1;
+  const tb = document.querySelector(".apptabs"); if (tb) tb.style.display = stack.length > 1 ? "none" : "";
   $("app").innerHTML = `<div class="screen">${render()}</div>`;
   window.scrollTo(0, 0);
   bind();
@@ -200,10 +205,25 @@ function bind() { for (const [id, fn] of Object.entries(handlers)) { const el = 
 const ACTS = {};
 
 // ---------- screens ----------
-function screenGames() {
-  return `<h1 class="shell-title">شو بدنا نلعب؟</h1><p class="shell-sub">اختاروا لعبة، وكل وحدة إلها طريقتها.</p>
-    <div style="margin-top:14px">${gamesGrid("")}</div>`;
+const GF = { sec: "all", sort: "pop" };
+function gamesFilterHTML() {
+  const secs = [["all", "الكل"], ...SECTIONS.map((x) => [x.id, x.name])];
+  const chip = (kind, id, label, cur) => `<button class="pill" type="button" data-f="${kind}" data-v="${id}" aria-pressed="${cur === id}">${label}</button>`;
+  return `<div class="pills" role="group" aria-label="الأقسام">${secs.map(([id, n]) => chip("sec", id, n, GF.sec)).join("")}</div>
+    <div class="pills" role="group" aria-label="الترتيب">${GAME_SORTS.map(([id, n]) => chip("sort", id, n, GF.sort)).join("")}</div>`;
 }
+function screenGames() {
+  return `<h1 class="shell-title">الألعاب</h1><p class="shell-sub">اختاروا لعبة، وكل وحدة إلها طريقتها.</p>
+    <div style="margin-top:10px" id="gfilters">${gamesFilterHTML()}</div>
+    <div style="margin-top:6px" id="gres">${gamesFiltered("", GF.sec, GF.sort)}</div>`;
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-f]"); if (!b) return;
+  GF[b.dataset.f] = b.dataset.v;
+  document.getElementById("gfilters").innerHTML = gamesFilterHTML();
+  document.getElementById("gres").innerHTML = gamesFiltered("", GF.sec, GF.sort);
+  const who = document.querySelector('[data-game="who"]'); if (who) who.onclick = (ev) => { ev.preventDefault(); openWho(); };
+});
 
 // قاعدة اللاعبين كبيرة (حوالي 2.6MB)، فبنحمّلها بس لما حدا يفتح «احزر اللاعب»
 let dataReq = null;
@@ -380,6 +400,7 @@ function tick() {
 
 // ---------- boot ----------
 $("theme-slot").outerHTML = themeSwitch();
+AppUI.tabs("games");
 show(screenGames);
 if (location.hash === "#who") { history.replaceState(null, "", location.pathname); openWho(); }
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});

@@ -11,6 +11,7 @@ const names = ['سامر', 'ليلى', 'خالد', 'نور', 'عمر', 'هبة']
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net/, (r) => r.abort());
+  await ctx.addInitScript(require('./session').adminInit);
   const p = await ctx.newPage();
   const errs = [];
   p.on('pageerror', (e) => errs.push(e.message));

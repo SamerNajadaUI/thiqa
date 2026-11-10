@@ -311,6 +311,7 @@ function advance() {
 }
 
 function finale() {
+  if (window.Rewards) Rewards.toast(Rewards.finish("sahra", 40));
   S.si = S.plan.length - 1;
   const AW = [
     ["right", "🎯", "القنّاص", "أكثر واحد جاوب صح"], ["fast", "⚡", "البرق", "أكثر واحد جاوب أول"], ["goals", "⚽", "الهدّاف", "أكثر واحد سجّل ركلات"], ["saves", "🧤", "الأخطبوط", "أكثر حارس صدّ ركلات"],

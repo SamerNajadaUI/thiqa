@@ -626,7 +626,7 @@ function vTable() {
 function vFinal() {
   const f = S.fin, v = viewer(), ch = cl(f.champ);
   const dyn = isBoss() ? `<button class="btn" data-a="again">موسم جديد 🔁</button><button class="linkish" data-a="leave">رجوع للبداية</button>` : `<p class="wait center">صاحب الغرفة بيقرر إذا في موسم جديد</p><button class="linkish" data-a="leave">اطلع</button>`;
-  return { key: "final", dyn, run: () => { Snd.crowd(0.5); Snd.fx("champ"); confetti(110); haptic("goal"); }, html: `${hud(v)}
+  return { key: "final", dyn, run: () => { if (window.Rewards && !window.__hasmPaid) { window.__hasmPaid = 1; Rewards.toast(Rewards.finish("hasm", 40)); } Snd.crowd(0.5); Snd.fx("champ"); confetti(110); haptic("goal"); }, html: `${hud(v)}
     <div class="champ"><span class="cup">🏆</span><span class="sub">بطل الدوري</span>${crest(ch, "xl")}<h1>${esc(ch.name)}</h1>${ch.id === v ? `<span class="kicker gold">مبروووك! إنت البطل</span>` : ""}</div>
     <div class="panel"><div class="seclabel">📖 قصة الموسم</div><div class="story">${f.story.map((s, i) => `<p style="--i:${i}">${esc(s)}</p>`).join("")}</div></div>
     <div class="seclabel">🏅 ألقاب الموسم</div>

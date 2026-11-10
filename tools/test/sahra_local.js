@@ -3,6 +3,7 @@ const len = process.argv[2] || 'full';
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.addInitScript(require('./session').adminInit);
   const errs = [];
   page.on('pageerror', e => errs.push(e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load|ERR_/.test(m.text())) errs.push(m.text()); });

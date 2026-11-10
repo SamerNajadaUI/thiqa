@@ -17,13 +17,23 @@
 ## الملفات المهمة
 | الملف | شو فيه |
 |---|---|
-| `docs/index.html` | الرئيسية: شبكة الألعاب بأقسام + قسم القسائم المخفي |
+| `docs/index.html` | سبلاش + موجّه (بيودي على `login.html` أو `home.html`) |
+| `docs/home.html` | الرئيسية: كرت النقاط، كمّل لعب، ألعاب مميزة + قسم القسائم المخفي |
 | `docs/games/index.html` | صفحة الألعاب |
 | `docs/shell.js` | **سجل الألعاب** `GAMES` (id, href, sec, name, desc, tags, flag) + `SECTIONS` + أيقونات `GAME_ICON` + `mountGameBar()` + `howto()` |
 | `docs/shell.css` | الألوان (فاتح/غامق) كمتغيرات، `.gcard`، `.gbar`، `.stage` (ألعاب غامقة دايماً)، ولون كل لعبة `.g-<id>` |
 | `docs/theme.js` | فاتح/غامق/حسب الجهاز (`theme-pref` بالـlocalStorage) |
 | `docs/sw.js` | الكاش. **غيّر `VERSION` (abu-odeh-vN) مع كل نشر** |
 | `docs/games/mini.css` + `mini.js` | أساس مشترك للألعاب الصغيرة: `$`, `esc`, `shuffle`, `pick`, `store`, `normAr`, `beep`, `standingsHTML`, `winnerLine`, `nameFields/readNames` |
+
+## طبقة التطبيق (حسابات ونقاط وخطط)
+- **ألوان وجرادينت البراند فقط** (Guidelines V1.1)، والخط الحالي (Lalezar + Readex Pro). `docs/ds/ds.css` فيه الباليت `--c-*` والأدوار (فاتح/غامق) وشريط التبويب `.apptabs` والجرادينت `.grad` (أشكال ضبابية، مش خطي) والشرائح `.pill`. بيتحمّل مع `shell.css` بكل الصفحات. `docs/ds/ui.css` فيه المكوّنات (`.btn .card .list .li .input .badge .progress .sheet`...) **لصفحات التطبيق الجديدة بس**، ما بنحمّله بصفحات الألعاب لأنه بيتعارض مع ستايلها. صفحة العرض `docs/ds/index.html`. أي hex خارج جدول البراند ممنوع (`node tools/test/ds_check.js`).
+- **`docs/app/core.js`** (بدّه `app/firebase-config.js` قبله، ويتحمّل بالـ`<head>` عشان الحارس يشتغل بدري): `Auth` (محلي، أو Firebase لما `window.APP_FIREBASE_CONFIG` ينعبّى)، `Rewards` (نقاط، مستوى `50*(n-1)^2`، مضاعف بلس ×2، سقف يومي 300، بونص يومي 10)، قفل الألعاب `Rewards.LOCKED` (المزاد، عجلة الحظ، ارسم وخمّن، إكس أو بالجاذبية = بلس)، وحارس الدخول: أي صفحة بدون `window.APP_PUBLIC` بتحوّل للدخول، وصفحة لعبة مقفولة بتحوّل لـ`rewards.html?locked=`. **كل لعبة جديدة** لازم تحط سطري `firebase-config.js` و`core.js` بالـ`<head>`، وتنادي `Rewards.finish("<id>", نقاط)` لما تخلص.
+- `docs/app/ui.js` (`AppUI.tabs(active)`, `safeNext`, `planBadge`, `sheet`). `auth-firebase.js` بيتحمّل بس بوضع Firebase، وما انفحص بدون مفاتيح.
+- حساب الأدمن: `ADMIN_CREDENTIALS` بأول `core.js` (admin/admin بطلب سامر، ظاهر بالكود). الكود التجريبي للرقم بالوضع المحلي `123456`.
+- الاشتراكات تجريبية بدون دفع. الجوجل ما بيشتغل داخل WKWebView (لازم دخول أصلي بالتطبيق لاحقاً).
+- الصفحات: `index` (سبلاش) · `login` · `home` · `games/` (شرائح أقسام وترتيب) · `rewards` · `settings`.
+- تصميم ومرحلة التنفيذ: `specs/2026-11-10-app-shell-design.md` و`specs/2026-11-10-app-shell-plan.md`.
 
 ## الألعاب (docs/games/)
 - **ليلة الحسم** `hasm.html` + `hasm.css` + `hasm.js` (الواجهة والغرفة وتلفون واحد) + `hasm-core.js` (القواعد بدون DOM، بتشتغل بـNode كمان) + `hasm-content.js` (نجوم، أخبار، كروت، معلّق، ألغاز إيموجي) + `hasm-audio.js`. الأقوى حالياً. كل واحد رئيس نادي بدوري 4 أو 6 أندية (الكمبيوتر بيعبي الناقص)، 1-6 لاعبين، غرفة أو تلفون واحد أو لحالك. كل جولة: خبر عاجل، لغز (الصح = كرت تكتيكي)، مزاد سري على نجم، ومباراة شوطين (هجمة ضد دفاع بالسر)، وآخر جولة فيها وقت قاتل. الأسرار `H` بتضل عند صاحب الغرفة وما بتنبعث. التصميم بـ`specs/2026-11-10-hasm-design.md`.
@@ -44,6 +54,7 @@
 ## الفحص
 - `cd docs && python3 -m http.server 8765` وبعدين Playwright (موجود جاهز، لا تثبّته).
 - سكربتات الفحص بـ`tools/test/` (اقرأ `tools/test/README.md`): سيرفر MQTT محلي، ولعب سهرة كاملة آلياً على تلفون واحد وبغرفة من 4 تلفونات. ولـ«ليلة الحسم»: `node --test hasm_core.test.js` (القواعد)، `hasm_local.js`، `hasm_online.js`.
+- فحوصات التطبيق: `node tools/test/app_core.test.js` (منطق)، `node tools/test/app_flow.js` (سبلاش ← دخول ← رئيسية ← ألعاب ← قفل ← مكافآت ← إعدادات ← أدمن)، `node tools/test/app_games_smoke.js` (كل الألعاب بدون أخطاء)، `node tools/test/ds_check.js` (ألوان وتباين). سكربتات الألعاب القديمة بتدخل بحساب أدمن عبر `tools/test/session.js`.
 - قبل ما تقول "خلص": شغّل اللعبة آلياً لآخرها، وتأكد إنه ما في أخطاء JS، وشوف صور الشاشات بعرض 390px.
 
 ## شو ممكن يكون جاي
