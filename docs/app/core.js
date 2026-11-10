@@ -66,7 +66,7 @@
   }
   function startSession(u) { J.set(KEY_SESSION, u.uid); emit(); return u; }
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-  const fbCfg = () => root.APP_FIREBASE_CONFIG || null;
+  const fbCfg = () => (root.__APP_LOCAL ? null : root.APP_FIREBASE_CONFIG || null);   // __APP_LOCAL: للفحوصات الآلية بس
 
   const Auth = {
     mode: fbCfg() ? "firebase" : "local",

@@ -8,6 +8,7 @@ const B = 'http://localhost:8765/', SHOTS = __dirname + '/shots';
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net/, (r) => r.abort());
+  await ctx.addInitScript(() => { window.__APP_LOCAL = true; });
   const p = await ctx.newPage(); const errs = [];
   p.on('pageerror', (e) => errs.push(p.url() + ' :: ' + e.message));
   p.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource|ERR_FAILED|net::/.test(m.text())) errs.push('console: ' + m.text().slice(0, 200)); });

@@ -8,7 +8,7 @@ const games = fs.readdirSync(__dirname + '/../../docs/games').filter((f) => f.en
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net/, (r) => r.abort());
-  await ctx.addInitScript(() => { try { localStorage.setItem('app-users', JSON.stringify({ admin: { uid: 'admin', name: 'الأدمن', provider: 'admin', plan: 'admin', points: 0, dayKey: '', dayPlay: 0, lastDaily: '' } })); localStorage.setItem('app-session', '"admin"'); } catch {} });
+  await ctx.addInitScript(() => { window.__APP_LOCAL = true; try { localStorage.setItem('app-users', JSON.stringify({ admin: { uid: 'admin', name: 'الأدمن', provider: 'admin', plan: 'admin', points: 0, dayKey: '', dayPlay: 0, lastDaily: '' } })); localStorage.setItem('app-session', '"admin"'); } catch {} });
   let bad = 0;
   for (const g of games) {
     const p = await ctx.newPage(); const errs = [];
