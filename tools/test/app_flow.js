@@ -21,8 +21,8 @@ const B = 'http://localhost:8765/', SHOTS = __dirname + '/shots';
   await p.waitForURL(/login\.html/, { timeout: 5000 }); ok('السبلاش بيودي على الدخول');
   await shot('2-login');
 
-  // 2) دخول أبل التجريبي (الوضع المحلي)
-  await p.click('#b-apple'); await p.waitForURL(/home\.html/); ok('دخول ← الرئيسية');
+  // 2) دخول جوجل التجريبي (الوضع المحلي)
+  await p.click('#b-google'); await p.waitForURL(/home\.html/); ok('دخول ← الرئيسية');
   await p.waitForSelector('#pts-card .points-big'); await shot('4-home');
   assert.equal(await pts(), 10, 'بونص يومي 10'); ok('بونص يومي +10');
   assert.equal(await p.locator('#games .gcard').count(), 4); ok('4 ألعاب مميزة');
@@ -71,7 +71,7 @@ const B = 'http://localhost:8765/', SHOTS = __dirname + '/shots';
   // 7) ثغرة next: رابط خارجي ما بيتبع
   await p.evaluate(() => Auth.signOut());
   await p.goto(B + 'login.html?next=' + encodeURIComponent('https://evil.example/x'));
-  await p.click('#b-apple'); await p.waitForURL(/home\.html/); ok('next خارجي بيتجاهل');
+  await p.click('#b-google'); await p.waitForURL(/home\.html/); ok('next خارجي بيتجاهل');
 
   // 8) صفحة سيستم التصميم + لعبة قديمة شغّالة
   await p.goto(B + 'ds/index.html'); await p.waitForSelector('.sws'); await shot('10-ds');
