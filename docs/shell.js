@@ -18,6 +18,7 @@ const GAME_ICON = {
   pictionary: '<path d="M16 3l5 5L9 20H4v-5z"/><path d="M13 6l5 5"/>',
   wheel: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>',
   sahra: '<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/><path d="M5 19h14"/>',
+  hasm: '<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 14v4M8 20h8"/>',
   barra: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5M15 14.6c2.6-.4 5 1.3 6 5.4"/>',
 };
 // الأقسام: كل لعبة إلها قسم، والصفحة الرئيسية بتعرضهم كل قسم لحاله
@@ -30,7 +31,8 @@ const SECTIONS = [
 ];
 const NEW = "🆕 جديدة";
 const GAMES = [
-  { id: "sahra", href: "sahra.html", sec: "top", name: "ملك السهرة", desc: "10 مراحل: ركلات ترجيح، كذب، تمثيل، قنبلة... وسهرة كروية", tags: ["👥 3–8", "🌐 غرفة أو تلفون"], flag: "👑 الأقوى" },
+  { id: "hasm", href: "hasm.html", sec: "top", name: "ليلة الحسم", desc: "كل واحد رئيس نادي: مزاد نجوم، ألغاز، وحرب أعصاب بالملعب", tags: ["👥 1–6", "🌐 غرفة أو 🤖"], flag: "🏆 الأقوى" },
+  { id: "sahra", href: "sahra.html", sec: "top", name: "ملك السهرة", desc: "10 مراحل: ركلات ترجيح، كذب، تمثيل، قنبلة... وسهرة كروية", tags: ["👥 3–8", "🌐 غرفة أو تلفون"], flag: "👑 ملك السهرات" },
   { id: "points", href: "points.html", sec: "top", name: "جمع نقاط", desc: "75 قسم بصور وأصوات وفيديو، وكروت سرقة", tags: ["👥 2–5 فرق", "🌐 أونلاين"], flag: "🔥 الأشهر" },
   { id: "tamaa", href: "tamaa.html", sec: "top", name: "لا تطمع", desc: "اكشف مربعات واجمع ذهب، ووقّف قبل القنبلة 💣", tags: ["👥 1–6", "🤖 ضد الكمبيوتر"], flag: "✨ جديد" },
   { id: "mafia", href: "mafia.html", sec: "top", name: "مافيا", desc: "مين المافيا بيناتنا؟ ليل ونهار وتصويت", tags: ["👥 4–16", "🌐 أونلاين"] },
