@@ -17,6 +17,7 @@ const GAME_ICON = {
   auction: '<path d="M14 4l6 6-3 3-6-6z"/><path d="M9 9l-6 6 4 4 6-6"/><path d="M3 21h9"/>',
   pictionary: '<path d="M16 3l5 5L9 20H4v-5z"/><path d="M13 6l5 5"/>',
   wheel: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>',
+  sahra: '<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/><path d="M5 19h14"/>',
   barra: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5M15 14.6c2.6-.4 5 1.3 6 5.4"/>',
 };
 // الأقسام: كل لعبة إلها قسم، والصفحة الرئيسية بتعرضهم كل قسم لحاله
@@ -29,7 +30,8 @@ const SECTIONS = [
 ];
 const NEW = "🆕 جديدة";
 const GAMES = [
-  { id: "points", href: "points.html", sec: "top", name: "جمع نقاط", desc: "75 قسم بصور وأصوات وفيديو، وكروت سرقة", tags: ["👥 2–5 فرق", "🌐 أونلاين"], flag: "🔥 الأقوى" },
+  { id: "sahra", href: "sahra.html", sec: "top", name: "ملك السهرة", desc: "8 مراحل، كل مرحلة لعبة شكل: كذب وتمثيل وقنبلة ورهان", tags: ["👥 3–8", "🌐 غرفة أو تلفون"], flag: "👑 الأقوى" },
+  { id: "points", href: "points.html", sec: "top", name: "جمع نقاط", desc: "75 قسم بصور وأصوات وفيديو، وكروت سرقة", tags: ["👥 2–5 فرق", "🌐 أونلاين"], flag: "🔥 الأشهر" },
   { id: "tamaa", href: "tamaa.html", sec: "top", name: "لا تطمع", desc: "اكشف مربعات واجمع ذهب، ووقّف قبل القنبلة 💣", tags: ["👥 1–6", "🤖 ضد الكمبيوتر"], flag: "✨ جديد" },
   { id: "mafia", href: "mafia.html", sec: "top", name: "مافيا", desc: "مين المافيا بيناتنا؟ ليل ونهار وتصويت", tags: ["👥 4–16", "🌐 أونلاين"] },
   { id: "who", href: "#who", sec: "top", name: "احزر اللاعب", desc: "صاحبك بيسأل آه أو لا لحد ما يعرف اللاعب", tags: ["👥 2–5", "📱 تلفون واحد"] },

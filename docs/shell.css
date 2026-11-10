@@ -72,6 +72,7 @@ body { transition: background-color .25s, color .25s; }
 .g-qisma { --g1: #FF5FA2; --g2: #8B3DFF; }
 .g-tamaa { --g1: #FFB340; --g2: #E2532D; }
 .g-barra { --g1: #2FD58E; --g2: #0B9A62; }
+.g-sahra { --g1: #FFC53D; --g2: #6A2FE0; }
 .g-speed { --g1: #3DD9FF; --g2: #1677FF; }
 .g-catch { --g1: #7BE495; --g2: #14866D; }
 .g-anagram { --g1: #FF9BD2; --g2: #D6457E; }
