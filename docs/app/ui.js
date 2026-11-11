@@ -22,7 +22,7 @@
     esc: (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])),
     // وين نرجّع اللاعب بعد الدخول: بس مسارات من نفس الموقع
     safeNext(raw) { try { const u = new URL(raw, location.origin); return u.origin === location.origin && u.pathname.startsWith(new URL(ROOT).pathname) ? u.pathname + u.search + u.hash : ROOT + "home.html"; } catch { return ROOT + "home.html"; } },
-    planBadge(plan) { const p = Rewards.PLANS[plan] || Rewards.PLANS.free; return `<span class="badge${Rewards.isPlus(plan) ? " plus" : ""}">${Rewards.isPlus(plan) ? "⭐ " : ""}${p.name}</span>`; },
+    planBadge(plan) { const p = Rewards.PLANS[plan] || Rewards.PLANS.free; return `<span class="badge${Rewards.isPlus(plan) ? " plus" : ""}">${p.name}</span>`; },
     sheet(html) {
       const back = document.createElement("div"); back.className = "sheet-back";
       back.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><span class="grip"></span>${html}</div>`;

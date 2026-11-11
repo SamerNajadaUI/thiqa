@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#FFFAF4">
+<meta name="theme-color" content="#FFF6E3">
 <script src="theme.js"></script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -44,8 +44,8 @@ function render() {
     let btn;
     if (u.plan === "admin") btn = '<button class="btn btn-ghost btn-block" disabled>أنت أدمن</button>';
     else if (cur) btn = '<button class="btn btn-ghost btn-block" disabled>خطتك الحالية</button>';
-    else btn = '<button class="btn ' + (id === "plus_y" ? "btn-primary" : "btn-ghost") + ' btn-block" data-plan="' + id + '">' + (id === "free" ? "ارجع للمجاني" : "فعّل (تجريبي)") + '</button>';
-    return '<div class="card plan' + (id === "plus_y" ? " best" : "") + '">' + (id === "plus_y" ? '<span class="badge" style="position:absolute;top:14px;left:14px">الأوفر</span>' : "") +
+    else btn = '<button class="btn ' + (id === "plus_y" ? "btn-toot" : "btn-ghost") + ' btn-block" data-plan="' + id + '">' + (id === "free" ? "ارجع للمجاني" : "فعّل (تجريبي)") + '</button>';
+    return '<div class="card plan' + (id === "plus_y" ? " best" : "") + '">' + (id === "plus_y" ? '<span class="badge plus" style="position:absolute;top:16px;left:16px">الأوفر</span>' : "") +
       '<b class="h-title">' + t[0] + '</b><div class="price">' + price + '</div><ul>' + t[1].map((x) => "<li>" + x + "</li>").join("") + '</ul>' + btn + '</div>';
   }).join("");
   document.getElementById("page").innerHTML = `
@@ -63,16 +63,16 @@ function render() {
     </div>
     <section class="stack"><h2 class="sec-title">كيف بتكسب نقاط؟</h2>
       <div class="list">
-        <div class="li"><span class="ic">🎮</span><span><b>خلّص لعبة أو جولة</b><small>٢٠ نقطة، وأكتر بالألعاب الكبيرة</small></span></div>
-        <div class="li"><span class="ic">⏱️</span><span><b>وقت لعب</b><small>نقطة كل ٣٠ ثانية، وحد أقصى ٢٠ بالجلسة</small></span></div>
-        <div class="li"><span class="ic">📅</span><span><b>بونص يومي</b><small>${R.DAILY_BONUS} نقاط أول مرة بتفتح فيها اليوم</small></span></div>
+        <div class="li"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M7 11v3M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".6" fill="currentColor"/><circle cx="17.5" cy="13.5" r=".6" fill="currentColor"/></svg></span><span><b>خلّص لعبة أو جولة</b><small>٢٠ نقطة، وأكتر بالألعاب الكبيرة</small></span></div>
+        <div class="li"><span class="ic jamr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2h4"/></svg></span><span><b>وقت لعب</b><small>نقطة كل ٣٠ ثانية، وحد أقصى ٢٠ بالجلسة</small></span></div>
+        <div class="li"><span class="ic nanaa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/><circle cx="10" cy="15" r="1" fill="currentColor"/><circle cx="14" cy="15" r="1" fill="currentColor"/></svg></span><span><b>بونص يومي</b><small>${R.DAILY_BONUS} نقاط أول مرة بتفتح فيها اليوم</small></span></div>
       </div>
       <p class="sub">سقف نقاط اللعب باليوم ${R.DAILY_CAP}${u.plan === "admin" ? " (الأدمن بدون سقف)" : ""}.</p>
     </section>
     <section class="stack" id="plans"><h2 class="sec-title">الخطط</h2>
       <p class="sub">الاشتراك تجريبي هلق: بدون دفع حقيقي.</p>${plans}</section>
     <section class="stack"><h2 class="sec-title">ألعاب بلس</h2>
-      <div class="list">${locks.map((g) => '<a class="li" href="games/' + g.href + '"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + GAME_ICON[g.id] + '</svg></span><span><b>' + g.name + '</b><small>' + g.desc + '</small></span><span class="end">' + (R.canPlay(u.plan, g.id) ? "مفتوحة" : "🔒 بلس") + '</span></a>').join("")}</div>
+      <div class="list">${locks.map((g) => '<a class="li" href="games/' + g.href + '"><span class="ic toot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + GAME_ICON[g.id] + '</svg></span><span><b>' + g.name + '</b><small>' + g.desc + '</small></span><span class="end">' + (R.canPlay(u.plan, g.id) ? "مفتوحة" : "بلس") + '</span></a>').join("")}</div>
     </section>`;
   document.querySelectorAll("[data-plan]").forEach((b) => b.onclick = () => { R.setPlan(b.dataset.plan); window.uiToast && uiToast(b.dataset.plan === "free" ? "رجعت للمجاني" : "تم التفعيل (تجريبي)"); render(); });
   if (location.hash === "#plans" && lg) document.getElementById("plans").scrollIntoView({ block: "start" });

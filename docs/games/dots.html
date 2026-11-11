@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>نقاط وصناديق</title>
-<meta name="theme-color" content="#FFFAF4">
+<meta name="theme-color" content="#FFF6E3">
 <script src="../theme.js"></script>
 <script src="../app/firebase-config.js"></script>
 <script src="../app/core.js"></script>
@@ -21,7 +21,7 @@
 .board { width: 100%; max-width: 440px; height: auto; margin: 0 auto; display: block; touch-action: manipulation; }
 .board .dot { fill: var(--ink); }
 .board .ln { stroke: var(--line); stroke-width: 7; stroke-linecap: round; }
-.board .ln.p1 { stroke: var(--brand); }
+.board .ln.p1 { stroke: var(--brand-text); }
 .board .ln.p2 { stroke: var(--bad); }
 .board .hit { stroke: transparent; stroke-width: 34; stroke-linecap: round; cursor: pointer; }
 .board .hit:hover { stroke: color-mix(in srgb, var(--brand) 22%, transparent); }
@@ -29,7 +29,7 @@
 .board .box.p1 { fill: color-mix(in srgb, var(--brand) 22%, transparent); }
 .board .box.p2 { fill: color-mix(in srgb, var(--bad) 20%, transparent); }
 .board .lbl { font-family: var(--display); font-size: 22px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-.board .lbl.p1 { fill: var(--brand); } .board .lbl.p2 { fill: var(--bad); }
+.board .lbl.p1 { fill: var(--brand-text); } .board .lbl.p2 { fill: var(--bad); }
 .roundbar { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
 </style>
 </head>

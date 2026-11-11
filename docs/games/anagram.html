@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>ركّب الكلمة</title>
-<meta name="theme-color" content="#FFFAF4">
+<meta name="theme-color" content="#FFF6E3">
 <script src="../theme.js"></script>
 <script src="../app/firebase-config.js"></script>
 <script src="../app/core.js"></script>
@@ -19,9 +19,9 @@
 <link rel="stylesheet" href="mini.css">
 <style>
 .roundbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
-.chip { background: var(--brand-soft); color: var(--brand); border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
+.chip { background: var(--brand-soft); color: var(--brand-text); border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
 .letters { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 14px 6px; }
-.lt { width: 52px; height: 58px; border-radius: 16px; display: grid; place-items: center; font-family: var(--display); font-size: 30px; line-height: 1; background: linear-gradient(160deg, color-mix(in srgb, var(--brand) 70%, #FFF), var(--brand)); color: #FFF; box-shadow: 0 5px 0 var(--brand-dark); animation: pop .3s ease-out both; }
+.lt { width: 52px; height: 58px; border-radius: 16px; display: grid; place-items: center; font-family: var(--display); font-size: 30px; line-height: 1; background: linear-gradient(160deg, color-mix(in srgb, var(--brand) 70%, #FFF), var(--brand)); color: var(--on-brand); box-shadow: 0 5px 0 var(--brand-dark); animation: pop .3s ease-out both; }
 .lt:nth-child(2n) { transform: rotate(-3deg); } .lt:nth-child(3n) { transform: rotate(2deg); }
 .answer { display: flex; gap: 8px; }
 .answer .input { text-align: center; font-size: 20px; font-weight: 600; }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#FFFAF4">
+<meta name="theme-color" content="#FFF6E3">
 <script src="theme.js"></script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -37,14 +37,14 @@ function render() {
     <section class="stack"><h2 class="sec-title">الحساب</h2>
       <div class="card stack"><div class="field"><label for="nm">اسمك</label><input class="input" id="nm" maxlength="20" value="${esc(u.name)}"></div>
         <button class="btn btn-primary" id="save" type="button">احفظ الاسم</button></div>
-      <div class="list"><a class="li" href="rewards.html#plans"><span class="ic">⭐</span><span><b>الخطة</b><small>${(Rewards.PLANS[u.plan] || Rewards.PLANS.free).name}</small></span><span class="end">‹</span></a></div>
+      <div class="list"><a class="li" href="rewards.html#plans"><span class="ic toot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg></span><span><b>الخطة</b><small>${(Rewards.PLANS[u.plan] || Rewards.PLANS.free).name}</small></span><span class="end">‹</span></a></div>
     </section>
     <section class="stack"><h2 class="sec-title">المظهر</h2>
       <div class="card row"><span class="grow"><b>فاتح / غامق</b><div class="sub">أو حسب جهازك</div></span>${themeSwitch()}</div></section>
     <section class="stack"><h2 class="sec-title">عن التطبيق</h2>
       <div class="list">
-        <div class="li"><span class="ic">📱</span><span><b>تعليلة</b><small>ألعاب كورة مع صحابك</small></span></div>
-        <div class="li"><span class="ic">🔐</span><span><b>وضع الحسابات</b><small>${Auth.mode === "firebase" ? "Firebase" : "تجريبي على الجهاز"}</small></span></div>
+        <div class="li"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="3"/><path d="M11 18.5h2"/></svg></span><span><b>تعليلة</b><small>ألعاب السهرة مع الشباب</small></span></div>
+        <div class="li"><span class="ic soft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span><b>وضع الحسابات</b><small>${Auth.mode === "firebase" ? "Firebase" : "تجريبي على الجهاز"}</small></span></div>
       </div></section>
     <button class="btn btn-ghost btn-block" id="out" type="button">تسجيل الخروج</button>`;
   document.getElementById("save").onclick = () => { const n = document.getElementById("nm").value.trim().slice(0, 20); if (!n) return uiToast("اكتب اسم"); Auth.update({ name: n }); uiToast("انحفظ"); render(); };

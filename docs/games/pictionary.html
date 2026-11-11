@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>ارسم وخمّن</title>
-<meta name="theme-color" content="#FFFAF4">
+<meta name="theme-color" content="#FFF6E3">
 <script src="../theme.js"></script>
 <script src="../app/firebase-config.js"></script>
 <script src="../app/core.js"></script>
@@ -22,14 +22,14 @@
 .clock { font-family: var(--display); font-size: 26px; color: var(--ink); direction: ltr; }
 .clock.low { color: var(--bad); }
 .word { text-align: center; padding: 12px; background: var(--brand-soft); border: 0; box-shadow: none; }
-.word small { display: block; font-size: 12px; color: var(--brand); font-weight: 700; }
+.word small { display: block; font-size: 12px; color: var(--brand-text); font-weight: 700; }
 .word b { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.2; }
 .paper { display: block; width: 100%; aspect-ratio: 4 / 3; background: #FFFFFF; border-radius: 22px; border: 1px solid var(--line); box-shadow: var(--shadow); touch-action: none; cursor: crosshair; }
 .tools { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
 .tools button { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--card); box-shadow: 0 0 0 1px var(--line); padding: 0; }
-.tools button[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--brand); }
+.tools button[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--focus); }
 .tools .txt { width: auto; border-radius: 14px; padding: 0 12px; height: 34px; font-size: 13px; font-weight: 700; color: var(--ink); background: var(--card); border: 1px solid var(--line); box-shadow: none; }
-.tools .txt[aria-pressed="true"] { background: var(--soft); box-shadow: 0 0 0 2px var(--brand); }
+.tools .txt[aria-pressed="true"] { background: var(--soft); box-shadow: 0 0 0 2px var(--focus); }
 .guessers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .guessers .btn { font-size: 18px; padding: 12px 8px; }
 </style>

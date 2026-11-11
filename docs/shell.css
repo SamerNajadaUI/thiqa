@@ -8,14 +8,14 @@ body { transition: background-color .25s, color .25s; }
 /* شريط فوق: الشعار + زر المظهر */
 .shellbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; }
 .shellbar .brand { display: flex; align-items: center; gap: 10px; min-width: 0; text-decoration: none; color: var(--ink); cursor: pointer; }
-.shellbar .brand img { width: 44px; height: 44px; border-radius: 14px; flex: none; box-shadow: var(--shadow-sm); }
+.shellbar .brand img { width: 44px; height: 44px; border-radius: 11px; flex: none; }
 .shellbar .brand b { display: block; font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.05; white-space: nowrap; }
 .shellbar .brand small { display: block; color: var(--muted); font-size: 12px; line-height: 1.3; }
 /* بالشاشات الداخلية (لما يبين زر رجوع) بنخبي اسم التطبيق عشان ما يتزاحم */
 .shellbar:has(.back:not([hidden])) .brand > span { display: none; }
 .shellbar .end { display: flex; align-items: center; gap: 8px; }
 
-.theme-switch { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); flex: none; }
+.theme-switch { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--soft); border: 0; flex: none; }
 .theme-switch button { width: 36px; height: 34px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: grid; place-items: center; padding: 0; cursor: pointer; transition: background .2s, color .2s; }
 .theme-switch button svg { width: 17px; height: 17px; }
 .theme-switch button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: var(--shadow-sm); }
@@ -26,55 +26,52 @@ body { transition: background-color .25s, color .25s; }
 /* شبكة الألعاب: عمودين، وبالشاشة بيبين صفين (4 ألعاب) والباقي بالسكرول */
 .games-grid { --card-h: clamp(212px, calc((100svh - 268px) / 2), 300px);
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
-.gcard { --g1: var(--c-medium-orange); --g2: var(--c-orange);
+/* كرت اللعبة: راس بلون واحد من الأربعة (لمبة، جمر، نعنع، توت) وأيقونة خطّية، وتحته الاسم بـLalezar */
+.gcard { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl);
   position: relative; display: flex; flex-direction: column; height: var(--card-h); min-width: 0; overflow: hidden;
-  border: 1px solid var(--line); border-radius: 24px; background: var(--card); color: var(--ink); text-decoration: none; text-align: right;
+  border: 0; border-radius: 24px; background: var(--card); color: var(--ink); text-decoration: none; text-align: right;
   box-shadow: var(--shadow); padding: 0; font: inherit; cursor: pointer; width: 100%;
-  transition: transform .18s cubic-bezier(.2,.8,.3,1), box-shadow .18s; -webkit-user-select: none; user-select: none; }
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s; -webkit-user-select: none; user-select: none; }
 .gcard:active { transform: scale(.97); box-shadow: var(--shadow-press); }
-@media (hover: hover) { .gcard:hover { transform: translateY(-2px); } }
-.gcard:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
-.gcard .art { position: relative; flex: 1 1 auto; min-height: 0; display: grid; place-items: center; overflow: hidden;
-  background: radial-gradient(120% 90% at 85% 0%, rgb(255 255 255 / .28), transparent 55%), linear-gradient(150deg, var(--g1), var(--g2)); }
-.gcard .art::before, .gcard .art::after { content: ""; position: absolute; border-radius: 50%; background: rgb(255 255 255 / .12); }
-.gcard .art::before { width: 70%; aspect-ratio: 1; left: -18%; bottom: -30%; }
-.gcard .art::after { width: 34%; aspect-ratio: 1; right: 8%; top: 10%; background: rgb(255 255 255 / .09); }
-.gcard .art .ic { position: relative; z-index: 1; width: 64px; height: 64px; border-radius: 20px; display: grid; place-items: center; color: var(--c-white);
-  background: rgb(255 255 255 / .18); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .25), 0 10px 24px -8px rgb(0 0 0 / .35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-.gcard .art .ic svg { width: 34px; height: 34px; }
-.gcard .flag { position: absolute; z-index: 2; top: 10px; right: 10px; background: rgb(255 250 244 / .94); color: var(--c-ink); font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
-.gcard .body { flex: none; padding: 11px 12px 12px; display: flex; flex-direction: column; gap: 3px; }
+@media (hover: hover) { .gcard:hover { transform: translateY(-3px); } }
+.gcard:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.gcard .art { position: relative; flex: 1 1 auto; min-height: 0; display: grid; place-items: center; overflow: hidden; background: var(--g); color: var(--g-on); }
+/* النقطتين: توقيع البراند بزاوية الراس */
+.gcard .art::after { content: ""; position: absolute; bottom: 12px; left: 14px; width: 9px; height: 9px; border-radius: 50%; background: currentColor; opacity: .22; box-shadow: 14px 0 0 currentColor; }
+.gcard .art .ic { position: relative; z-index: 1; display: grid; place-items: center; color: var(--g-on); transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
+.gcard .art .ic svg { width: 54px; height: 54px; }
+@media (hover: hover) { .gcard:hover .art .ic { transform: rotate(-8deg) scale(1.06); } }
+.gcard .flag { position: absolute; z-index: 2; top: 10px; right: 10px; background: var(--c-layl); color: var(--c-waraq); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.gcard .body { flex: none; padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 3px; }
 .gcard b { font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1.15; }
 .gcard small { color: var(--muted); font-size: 12px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.9em; }
 .gcard .tags { display: flex; gap: 4px; margin-top: 5px; flex-wrap: nowrap; overflow: hidden; }
 .gcard .tags span { flex: none; font-size: 10.5px; font-weight: 600; color: var(--muted); background: var(--soft); border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
-.g-points { --g1: var(--c-medium-orange); --g2: var(--c-orange); }
-.g-mafia { --g1: var(--c-medium-ink); --g2: var(--c-ink); }
-.g-who { --g1: var(--c-teal); --g2: var(--c-dark-teal); }
-.g-numbers { --g1: var(--c-teal); --g2: var(--c-burgundy); }
-.g-career { --g1: var(--c-medium-orange); --g2: var(--c-burgundy); }
-.g-qisma { --g1: var(--c-medium-burgundy); --g2: var(--c-burgundy); }
-.g-tamaa { --g1: var(--c-orange); --g2: var(--c-dark-orange); }
-.g-barra { --g1: var(--c-teal); --g2: var(--c-dark-teal); }
-.g-sahra { --g1: var(--c-medium-orange); --g2: var(--c-burgundy); }
-.g-hasm { --g1: var(--c-orange); --g2: var(--c-dark-orange); }
-.g-speed { --g1: var(--c-teal); --g2: var(--c-dark-teal); }
-.g-catch { --g1: var(--c-medium-orange); --g2: var(--c-orange); }
-.g-anagram { --g1: var(--c-medium-burgundy); --g2: var(--c-burgundy); }
-.g-simon { --g1: var(--c-orange); --g2: var(--c-dark-orange); }
-.g-hotcold { --g1: var(--c-medium-orange); --g2: var(--c-burgundy); }
-.g-dots { --g1: var(--c-teal); --g2: var(--c-burgundy); }
-.g-connect { --g1: var(--c-medium-orange); --g2: var(--c-orange); }
-.g-auction { --g1: var(--c-medium-ink); --g2: var(--c-ink); }
-.g-wheel { --g1: var(--c-teal); --g2: var(--c-dark-teal); }
-.g-pictionary { --g1: var(--c-medium-burgundy); --g2: var(--c-burgundy); }
+.g-hasm { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
+.g-sahra { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
+.g-points { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
+.g-tamaa { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
+.g-mafia { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
+.g-who { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
+.g-numbers { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
+.g-career { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
+.g-qisma { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
+.g-barra { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
+.g-speed { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
+.g-catch { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
+.g-anagram { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
+.g-simon { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
+.g-hotcold { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
+.g-dots { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
+.g-connect { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
+.g-auction { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
+.g-wheel { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
+.g-pictionary { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
 /* أقسام الألعاب في الرئيسية */
 .gsec { display: flex; flex-direction: column; gap: 10px; }
 .gsec + .gsec { margin-top: 14px; }
 .gsec-title { margin: 0 2px; font-size: 16px; font-weight: 700; color: var(--ink); }
-:root[data-theme="dark"] .gcard .art { filter: saturate(.92) brightness(.92); }
-:root[data-theme="dark"] .gcard .flag { background: rgb(25 24 30 / .78); color: var(--c-light-orange); }
-@media (max-width: 350px) { .gcard b { font-size: 18px; } .gcard .art .ic { width: 54px; height: 54px; } }
+@media (max-width: 350px) { .gcard b { font-size: 18px; } .gcard .art .ic svg { width: 44px; height: 44px; } }
 @media (prefers-reduced-motion: no-preference) {
   .games-grid > * { animation: gin .45s cubic-bezier(.2,.9,.3,1.1) both; }
   .games-grid > :nth-child(2) { animation-delay: .04s; } .games-grid > :nth-child(3) { animation-delay: .08s; }
@@ -86,22 +83,22 @@ body { transition: background-color .25s, color .25s; }
 /* ===== شريط اللعبة الموحّد (كل صفحات الألعاب) ===== */
 .gbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 50px; }
 .gbar .gt { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--ink); text-decoration: none; }
-.gbar .gt .chip { flex: none; width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; color: var(--c-white);
-  background: radial-gradient(120% 90% at 85% 0%, rgb(255 255 255 / .3), transparent 55%), linear-gradient(150deg, var(--g1, var(--c-medium-orange)), var(--g2, var(--c-orange))); box-shadow: 0 6px 14px -6px var(--g2, var(--c-orange)); }
+.gbar .gt .chip { flex: none; width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; color: var(--g-on, var(--c-layl));
+  background: var(--g, var(--c-lamba)); box-shadow: 0 3px 0 var(--g-deep, var(--c-lamba-deep)); }
 .gbar .gt .chip svg { width: 22px; height: 22px; }
 .gbar .gt b { font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gbar .gs { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.theme-toggle { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); display: grid; place-items: center; padding: 0; cursor: pointer; box-shadow: var(--shadow-sm); }
+.theme-toggle { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--card); color: var(--ink); display: grid; place-items: center; padding: 0; cursor: pointer; box-shadow: var(--shadow-sm); }
 .theme-toggle svg { width: 19px; height: 19px; }
 .theme-toggle:active { transform: scale(.94); }
-.gbar .gback { display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+.gbar .gback { display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; border: 0; background: var(--card); color: var(--ink);
   font: 600 13px/1 var(--font); text-decoration: none; box-shadow: var(--shadow-sm); cursor: pointer; }
 .gbar .gback svg { width: 19px; height: 19px; }
 .gbar .gback:active { transform: scale(.96); }
 @media (max-width: 360px) { .gbar .gt b { font-size: 20px; } .gbar .gt .chip { width: 34px; height: 34px; } }
 
 /* «طريقة اللعب» بتنطوى: مفتوحة أول مرة، وبعدين بتضل مسكّرة */
-details.howto { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow-sm); overflow: hidden; }
+details.howto { background: var(--card); border: 0; border-radius: 20px; box-shadow: var(--shadow-sm); overflow: hidden; }
 details.howto > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 13px 16px; font-weight: 700; font-size: 14.5px; color: var(--ink); }
 details.howto > summary::-webkit-details-marker { display: none; }
 details.howto > summary::after { content: ""; width: 9px; height: 9px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); transition: transform .2s; margin-inline-start: auto; }
@@ -112,8 +109,8 @@ details.howto > .howto-body > :first-child { margin-top: 0; }
 /* لمسات عامة لكل الصفحات */
 button, [role="button"], .gcard, .gback { -webkit-user-select: none; user-select: none; }
 input, textarea { -webkit-user-select: text; user-select: text; }
-:where(button, a, input, summary):focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
-::selection { background: var(--brand-soft); }
+:where(button, a, input, summary):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+::selection { background: var(--c-lamba); color: var(--c-layl); }
 
 /* ألوان فاتحة (tints) بتستعملها الألعاب، وإلها نسخة غامقة */
 :root { --t-gold: #FEF0C7; --t-gold2: #FEDF89; --t-red: #FEECEA; --t-red2: #FFD3D4; --t-green: #E6F8EF; --t-sky: #E0F2FE; --t-sky2: #B9E6FE; --t-orange: #FEF3E2; --t-gray: #EAECF0; }

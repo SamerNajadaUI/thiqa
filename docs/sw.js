@@ -1,6 +1,6 @@
 // تعليلة: تشغيل كتطبيق، ويضل يفتح حتى لو النت ضعيف
-const VERSION = "abu-odeh-v19";
-const SHELL = ["./", "index.html", "home.html", "login.html", "rewards.html", "settings.html", "theme.js", "shell.css", "shell.js", "ds/ds.css", "app/core.js", "app/ui.js", "app/firebase-config.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
+const VERSION = "abu-odeh-v20";
+const SHELL = ["./", "index.html", "home.html", "login.html", "rewards.html", "settings.html", "theme.js", "shell.css", "shell.js", "ds/ds.css", "app/core.js", "app/ui.js", "app/firebase-config.js", "manifest.webmanifest", "icons/icon.svg", "icons/wordmark-dark.svg", "ds/ui.css", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

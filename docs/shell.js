@@ -23,17 +23,17 @@ const GAME_ICON = {
 };
 // الأقسام: كل لعبة إلها قسم، والصفحة الرئيسية بتعرضهم كل قسم لحاله
 const SECTIONS = [
-  { id: "top", name: "🔥 الأشهر" },
-  { id: "fast", name: "⚡ سرعة وأكشن" },
-  { id: "think", name: "🧠 ذاكرة وتفكير" },
-  { id: "strat", name: "🎯 استراتيجية وحظ" },
-  { id: "group", name: "🎨 جماعية" },
+  { id: "top", name: "الأشهر" },
+  { id: "fast", name: "سرعة وأكشن" },
+  { id: "think", name: "ذاكرة وتفكير" },
+  { id: "strat", name: "استراتيجية وحظ" },
+  { id: "group", name: "جماعية" },
 ];
 const NEW = "🆕 جديدة";
 const GAMES = [
   { id: "hasm", href: "hasm.html", sec: "top", name: "ليلة الحسم", desc: "كل واحد رئيس نادي: مزاد نجوم، ألغاز، وحرب أعصاب بالملعب", tags: ["👥 1–6", "🌐 غرفة أو 🤖"], flag: "🏆 الأقوى" },
   { id: "sahra", href: "sahra.html", sec: "top", name: "ملك السهرة", desc: "10 مراحل: ركلات ترجيح، كذب، تمثيل، قنبلة... وسهرة كروية", tags: ["👥 3–8", "🌐 غرفة أو تلفون"], flag: "👑 ملك السهرات" },
-  { id: "points", href: "points.html", sec: "top", name: "جمع نقاط", desc: "75 قسم بصور وأصوات وفيديو، وكروت سرقة", tags: ["👥 2–5 فرق", "🌐 أونلاين"], flag: "🔥 الأشهر" },
+  { id: "points", href: "points.html", sec: "top", name: "جمع نقاط", desc: "75 قسم بصور وأصوات وفيديو، وكروت سرقة", tags: ["👥 2–5 فرق", "🌐 أونلاين"], flag: "الأشهر" },
   { id: "tamaa", href: "tamaa.html", sec: "top", name: "لا تطمع", desc: "اكشف مربعات واجمع ذهب، ووقّف قبل القنبلة 💣", tags: ["👥 1–6", "🤖 ضد الكمبيوتر"], flag: "✨ جديد" },
   { id: "mafia", href: "mafia.html", sec: "top", name: "مافيا", desc: "مين المافيا بيناتنا؟ ليل ونهار وتصويت", tags: ["👥 4–16", "🌐 أونلاين"] },
   { id: "who", href: "#who", sec: "top", name: "احزر اللاعب", desc: "صاحبك بيسأل آه أو لا لحد ما يعرف اللاعب", tags: ["👥 2–5", "📱 تلفون واحد"] },
@@ -61,11 +61,13 @@ const GAMES = [
 function gameLocked(id) {
   try { return typeof Rewards !== "undefined" && !!Rewards.tierOf(id) && !Rewards.canPlay((Auth.user() || {}).plan, id); } catch { return false; }
 }
+// البراند: بدون إيموجي بالواجهة. البيانات بتضل زي ما هي (الفلاتر بتعتمد عليها) وبنشيله وقت العرض
+function noEmoji(t) { return String(t).replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}\uFE0F\u200D]+/gu, "").replace(/\s+/g, " ").trim(); }
 function gameCard(g, base) {
   const locked = gameLocked(g.id);
   return `<a class="gcard g-${g.id}${locked ? " locked" : ""}" href="${base}${g.href}" data-game="${g.id}">
-    <span class="art">${locked ? `<span class="lock">🔒 بلس</span>` : ""}${g.flag ? `<span class="flag">${g.flag}</span>` : ""}<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GAME_ICON[g.id]}</svg></span></span>
-    <span class="body"><b>${g.name}</b><small>${g.desc}</small><span class="tags">${g.tags.map((t) => `<span>${t}</span>`).join("")}</span></span>
+    <span class="art">${locked ? `<span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>بلس</span>` : ""}${g.flag ? `<span class="flag">${noEmoji(g.flag)}</span>` : ""}<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GAME_ICON[g.id]}</svg></span></span>
+    <span class="body"><b>${g.name}</b><small>${noEmoji(g.desc)}</small><span class="tags">${g.tags.map((t) => `<span>${noEmoji(t)}</span>`).join("")}</span></span>
   </a>`;
 }
 // ترتيب وتصفية لصفحة الألعاب: sec = "all" أو id قسم، sort = pop | new | solo | group

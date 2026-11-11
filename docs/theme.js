@@ -12,7 +12,7 @@
     root.dataset.theme = dark ? "dark" : "light";
     root.dataset.pref = pref;
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = dark ? "#19181E" : "#FFFAF4";
+    if (meta) meta.content = dark ? "#16113A" : "#FFF6E3";
     document.querySelectorAll("[data-theme-set]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeSet === pref)));
     document.querySelectorAll("[data-theme-cycle]").forEach((b) => { if (!window.themeToggle) return; b.innerHTML = iconFor(pref); b.setAttribute("aria-label", labelFor(pref)); b.title = labelFor(pref); });
   }

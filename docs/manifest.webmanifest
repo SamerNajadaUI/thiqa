@@ -1,15 +1,15 @@
 {
-  "name": "موقع تعليلة",
+  "name": "تعليلة",
   "short_name": "تعليلة",
-  "description": "ألعاب كورة تلعبها مع صحابك: احزر اللاعب وبرا السالفة.",
+  "description": "ألعاب السهرة مع الشباب: كل واحد من تلفونه.",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./?source=app",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFFAF4",
-  "theme_color": "#FFFAF4",
+  "background_color": "#16113A",
+  "theme_color": "#16113A",
   "icons": [
     {
       "src": "icons/icon-192.png",

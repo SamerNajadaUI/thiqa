@@ -5,7 +5,7 @@ const D = path.join(__dirname, '../../docs');
 const css = fs.readFileSync(D + '/ds/ds.css', 'utf8');
 const palBlock = css.slice(css.indexOf(':root {'), css.indexOf('}', css.indexOf(':root {')));
 const PAL = {}; for (const m of palBlock.matchAll(/--c-([\w-]+):\s*(#[0-9A-Fa-f]{6})/g)) PAL[m[1]] = m[2].toUpperCase();
-assert.equal(Object.keys(PAL).length, 16, 'الباليت 16 لون');
+assert.equal(Object.keys(PAL).length, 27, 'الباليت 27 لون');
 const allowed = new Set(Object.values(PAL));
 let bad = [];
 for (const f of ['ds/ds.css', 'ds/ui.css', 'ds/index.html', 'index.html', 'login.html', 'rewards.html', 'settings.html', 'app/ui.js']) {
@@ -21,19 +21,20 @@ const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 
 const mix = (a, b, pa) => '#' + [1, 3, 5].map((i) => Math.round(parseInt(a.slice(i, i + 2), 16) * pa + parseInt(b.slice(i, i + 2), 16) * (1 - pa)).toString(16).padStart(2, '0')).join('');
 const cr = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 const P = (k) => PAL[k];
-const cardDark = mix(P('ink'), P('medium-ink'), 0.84), softLight = mix(P('light-stone'), P('light-orange'), 0.55);
-const brandSoftLight = mix(P('soft-orange'), P('light-orange'), 0.32), brandSoftDark = mix(P('ink'), P('dark-orange'), 0.70);
 const pairs = [   // [وصف، نص، خلفية، أدنى نسبة]
-  ['فاتح: نص على خلفية', P('ink'), P('light-orange'), 7], ['فاتح: نص على كرت', P('ink'), P('white'), 7],
-  ['فاتح: نص ثانوي على خلفية', P('medium-ink'), P('light-orange'), 4.5], ['فاتح: نص ثانوي على soft', P('medium-ink'), softLight, 4.5],
-  ['زر أساسي: Ink على برتقالي', P('ink'), P('orange'), 4.5], ['زر قوي: أبيض على Dark Orange', P('white'), P('dark-orange'), 4.5],
-  ['فاتح: نص برتقالي على brand-soft', P('dark-orange'), brandSoftLight, 4.5], ['فاتح: شارة على brand-soft', P('dark-orange'), brandSoftLight, 4.5],
-  ['غامق: نص على خلفية', P('light-orange'), P('ink'), 7], ['غامق: نص على كرت', P('light-orange'), cardDark, 7],
-  ['غامق: نص ثانوي على كرت', P('stone'), cardDark, 4.5], ['غامق: نص برتقالي فاتح على brand-soft', P('medium-orange'), brandSoftDark, 4.5],
-  ['غامق: Ink على برتقالي (فعّال)', P('ink'), P('orange'), 4.5],
-  ['شارة بلس فاتح', P('soft-orange'), P('ink'), 7], ['شارة بلس غامق', P('ink'), P('soft-orange'), 7],
+  ['فاتح: حبر على ورق', P('layl'), P('waraq'), 7], ['فاتح: حبر على كرت', P('layl'), P('white'), 7], ['فاتح: حبر على soft', P('layl'), P('waraq-2'), 7],
+  ['فاتح: ثانوي على ورق', P('muted'), P('waraq'), 4.5], ['فاتح: ثانوي على كرت', P('muted'), P('white'), 4.5], ['فاتح: ثانوي على soft', P('muted'), P('waraq-2'), 4.5],
+  ['فاتح: نص لمبة على كرت', P('lamba-text'), P('white'), 4.5], ['فاتح: نص لمبة على soft', P('lamba-text'), P('waraq-2'), 4.5],
+  ['فاتح: نص جمر على ورق', P('jamr-text'), P('waraq'), 4.5], ['فاتح: نص نعنع على ورق', P('nanaa-text'), P('waraq'), 4.5], ['فاتح: نص توت على ورق', P('toot-text'), P('waraq'), 4.5],
+  ['فاتح: حدود التحكم على ورق', P('control'), P('waraq'), 3], ['فاتح: التركيز على كرت', P('toot-text'), P('white'), 3],
+  ['غامق: ورق على ليل', P('waraq'), P('layl'), 7], ['غامق: ورق على كرت', P('waraq'), P('layl-2'), 7], ['غامق: ورق على soft', P('waraq'), P('layl-3'), 7],
+  ['غامق: ثانوي على ليل', P('muted-night'), P('layl'), 4.5], ['غامق: ثانوي على كرت', P('muted-night'), P('layl-2'), 4.5], ['غامق: ثانوي على soft', P('muted-night'), P('layl-3'), 4.5],
+  ['غامق: لمبة على كرت', P('lamba'), P('layl-2'), 4.5], ['غامق: جمر على كرت', P('jamr-night'), P('layl-2'), 4.5], ['غامق: نعنع على كرت', P('nanaa-night'), P('layl-2'), 4.5], ['غامق: توت على كرت', P('toot-night'), P('layl-2'), 4.5],
+  ['غامق: حدود التحكم على ليل', P('control-night'), P('layl'), 3],
+  ['زر أساسي: ليل على لمبة', P('layl'), P('lamba'), 7], ['زر جمر: ليل على جمر', P('layl'), P('jamr'), 4.5], ['نعنع: ليل على نعنع', P('layl'), P('nanaa'), 4.5], ['بلس: أبيض على توت', P('white'), P('toot'), 4.5],
+  ['شارة جديد: ورق على ليل', P('waraq'), P('layl'), 7],
 ];
 let fail = 0;
 for (const [n, fg, bg, min] of pairs) { const r = cr(fg, bg); const ok = r >= min; if (!ok) fail++; console.log(ok ? '✓' : '✗', n, r.toFixed(2) + ':1', '(≥' + min + ')'); }
-console.log('ملاحظة: أبيض على البرتقالي', cr(P('white'), P('orange')).toFixed(2) + ':1 (لهيك نص الأزرار Ink)');
+console.log('ملاحظة: أبيض على اللمبة', cr(P('white'), P('lamba')).toFixed(2) + ':1 (لهيك نص الأزرار ليل)');
 process.exit(fail ? 1 : 0);
