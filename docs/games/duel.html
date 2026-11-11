@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="../shell.css">
 <link rel="stylesheet" href="mini.css">
+<link rel="stylesheet" href="kora.css">
 <style>
 .secret { text-align: center; padding: 18px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .secret .nm { font-family: var(--display); font-size: 34px; line-height: 1.15; }
@@ -43,6 +44,8 @@
 </div>
 <script src="../shell.js"></script>
 <script src="mini.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script src="kora.js"></script>
 <script>
 "use strict";
 // تحدي اللاعبين: فريقين. فريق بيخبّي لاعب (ممثله وحده بيشوفه)، والفريق التاني بيسأل أسئلة آه/لا،
@@ -53,7 +56,13 @@ const LV = { 1: ["سهل", 1], 2: ["متوسط", 2], 3: ["صعب", 3] };
 let DATA = null, S = null, tick = null;
 const teamName = (i) => S.names[i];
 
-window.leaveGuard = () => (S && S.phase !== "end" && S.round > 0 ? "التحدي شغّال، بدك تطلع؟" : false);
+window.leaveGuard = () => ((S && S.phase !== "end" && S.round > 0) || (O && O.phase !== "end" && O.phase !== "lobby") ? "التحدي شغّال، بدك تطلع؟" : false);
+// الاسم صح لو كامل أو اسم العيلة لحاله (4 حروف وأكثر)
+function nameHit(raw, name) {
+  const v = normAr(raw), full = normAr(name);
+  const parts = name.split(/\s+/).map(normAr).filter((w) => w.length >= 4);
+  return v === full || (v.length >= 4 && parts.some((w) => w === v));
+}
 
 async function loadPlayers() {
   if (DATA) return DATA;
@@ -64,17 +73,22 @@ async function loadPlayers() {
   return DATA;
 }
 
+let MODE = new URLSearchParams(location.search).get("room") ? "room" : store.get("duel-mode", "one");
 function setup() {
   clearInterval(tick); S = null;
+  if (MODE === "room") return KoraUI.roomMenu({ onHost: hostRoom, onJoin: joinRoom, onBack: () => { MODE = "one"; store.set("duel-mode", MODE); history.replaceState(null, "", location.pathname); setup(); },
+    note: "واحد بيعمل غرفة والباقي بيدخلوا بالكود، وكل واحد بيختار فريقه. الممثل بيشوف اللاعب على تلفونه بس." });
   render(`
     <section class="card stack">
       <h1>تحدي اللاعبين</h1>
       <p class="sub">فريقين. فريق بيخبّي لاعب مشهور وممثله بس بيعرفه، والفريق التاني بيسأل أسئلة جوابها آه أو لا، وإلهم 60 ثانية لكل سؤال. وفي أي وقت بيقدروا يخمّنوا الاسم.</p>
+      <div class="seg" id="md"><button data-m="one" aria-pressed="true">تلفون واحد</button><button data-m="room" aria-pressed="false">غرفة أونلاين</button></div>
       <div class="label">أسماء الفريقين</div>
       <input class="input" id="t0" maxlength="14" placeholder="الفريق الأول" value="${esc(store.get("duel-t0", ""))}">
       <input class="input" id="t1" maxlength="14" placeholder="الفريق التاني" value="${esc(store.get("duel-t1", ""))}">
       <button class="btn" id="go">ابدأ</button>
     </section>`);
+  $("md").onclick = (e) => { const b = e.target.closest("[data-m]"); if (!b) return; MODE = b.dataset.m; store.set("duel-mode", MODE); setup(); };
   $("go").onclick = async () => {
     const names = [($("t0").value.trim() || "الفريق الأول"), ($("t1").value.trim() || "الفريق التاني")];
     store.set("duel-t0", $("t0").value.trim()); store.set("duel-t1", $("t1").value.trim());
@@ -194,12 +208,9 @@ function guessScreen() {
     </section>`);
   $("gn").focus();
   const check = () => {
-    const v = normAr($("gn").value);
-    if (!v) return;
-    const full = normAr(S.p.a);
-    const parts = S.p.a.split(/\s+/).map(normAr).filter((w) => w.length >= 4);
-    const hit = v === full || (v.length >= 4 && (full.includes(v) && parts.some((w) => w === v)));
-    if (hit) {
+    const v = $("gn").value;
+    if (!normAr(v)) return;
+    if (nameHit(v, S.p.a)) {
       const pts = LV[S.lv][1] + (S.qs.length <= 5 ? 1 : 0);
       endRound(1 - S.hider, `صح! ${S.p.a} (+${pts})`, pts);
     } else endRound(S.hider, `غلط! اللاعب كان ${S.p.a}`);
@@ -231,6 +242,180 @@ function finish() {
     <button class="btn" id="again">العب مرة ثانية</button>`);
   Rewards?.finish?.("duel", Math.max(...S.pts) * 5);
   $("again").onclick = setup;
+}
+
+// ================= غرفة أونلاين =================
+// صاحب الغرفة هو المرجع: بيختار اللاعب السري وبيبعته بس لتلفونات الفريق اللي مخبّي.
+const net = KoraNet;
+const ROOT = "abuodeh-duel-v1";
+let O = null, OP = null, SECRET = null, otick = null, ohostT = null;
+const oTeam = (pid) => (O.players.find((p) => p.id === pid) || {}).team;
+const myTeam = () => (O ? oTeam(net.me.id) : null);
+function oLeave() {
+  clearInterval(otick); clearTimeout(ohostT);
+  net.close(); O = null; OP = null; SECRET = null;
+  history.replaceState(null, "", location.pathname);
+  MODE = "one"; store.set("duel-mode", MODE); setup();
+}
+async function hostRoom() {
+  KoraUI.loading("عم بحضّر اللاعبين...");
+  try { await loadPlayers(); } catch { return KoraUI.fail("ما انحمّلت قائمة اللاعبين.", setup); }
+  const room = KoraUI.newCode();
+  net.open({ root: ROOT, room, host: true, onFail: (m) => KoraUI.fail(m, oLeave),
+    onReady: () => { O = { phase: "lobby", host: net.me.id, players: [{ id: net.me.id, name: net.me.name, team: 0 }], tn: ["الفريق الأحمر", "الفريق الأزرق"], pts: [0, 0], round: 0 }; OP = { used: new Set(), p: null }; oPub(); },
+    onReconnect: () => oPub(), onAction: oAction, onPrivate: (m) => { SECRET = m; oDraw(); } });
+}
+function joinRoom(code) {
+  KoraUI.loading("عم بدخل الغرفة...");
+  let got = false;
+  net.open({ root: ROOT, room: code, host: false, onFail: (m) => KoraUI.fail(m, oLeave),
+    onReady: () => { net.send({ t: "join", name: net.me.name }); setTimeout(() => { if (!got) KoraUI.fail("ما لقيت الغرفة. تأكد من الكود، وإنه تلفون صاحب الغرفة مفتوح.", oLeave); }, 8000); },
+    onReconnect: () => net.send({ t: "join", name: net.me.name }),
+    onClosed: () => { if (O && O.phase !== "end") KoraUI.fail("صاحب الغرفة سكّرها.", oLeave); },
+    onState: (m) => { got = true; if (!m.players.some((p) => p.id === net.me.id)) net.send({ t: "join", name: net.me.name }); O = m; oDraw(); },
+    onPrivate: (m) => { SECRET = m; oDraw(); } });
+}
+function oPub() { net.publish(O); oDraw(); }
+function sendSecret(pid) {
+  if (!OP.p || !O.secretKey) return;
+  if (oTeam(pid) !== O.hider) return;
+  const p = OP.p;
+  net.priv(pid, { key: O.secretKey, a: p.a, img: p.img || "", nat: (p.nat || []).join("، "), pos: (p.pos || [])[0] || "" });
+}
+function oAction(a) {
+  if (!O) return;
+  const me = O.players.find((p) => p.id === a.pid);
+  const isHost = a.pid === O.host;
+  switch (a.t) {
+    case "join":
+      if (!me) {
+        if (O.players.length >= 12) return;
+        let n = String(a.name || "لاعب").slice(0, 14); while (O.players.some((p) => p.name === n)) n += "+";
+        const c0 = O.players.filter((p) => p.team === 0).length, c1 = O.players.length - c0;
+        O.players.push({ id: a.pid, name: n, team: c0 <= c1 ? 0 : 1 });
+      } else sendSecret(a.pid);
+      return oPub();
+    case "team": if (me && O.phase === "lobby") { me.team = a.team ? 1 : 0; oPub(); } return;
+    case "start":
+      if (!isHost || O.phase !== "lobby") return;
+      if (![0, 1].every((t) => O.players.some((p) => p.team === t))) return;
+      O.pts = [0, 0]; O.round = 0; O.hider = 1; OP.used = new Set(); O.turnIx = [0, 0];
+      return oNext();
+    case "lvl":
+      if (O.phase !== "pick" || a.pid !== O.actor) return;
+      O.lv = [1, 2, 3].includes(+a.l) ? +a.l : 1;
+      OP.p = pick(DATA.filter((p) => p.lv === O.lv && !OP.used.has(p.id))); OP.used.add(OP.p.id);
+      O.secretKey = O.round + "-" + Math.random().toString(36).slice(2, 6);
+      O.phase = "play"; O.qs = []; O.running = false; O.qStart = 0;
+      O.players.filter((p) => p.team === O.hider).forEach((p) => sendSecret(p.id));
+      return oPub();
+    case "ask":
+      if (O.phase !== "play" || O.running || oTeam(a.pid) !== 1 - O.hider) return;
+      O.running = true; O.qStart = Date.now() + 300;
+      clearTimeout(ohostT); ohostT = setTimeout(() => oEnd(O.hider, "خلص الوقت! النقطة لـ" + O.tn[O.hider]), SECS * 1000 + 600);
+      return oPub();
+    case "ans":
+      if (O.phase !== "play" || !O.running || a.pid !== O.actor) return;
+      clearTimeout(ohostT); O.running = false; O.qs.push(!!a.yes);
+      if (O.qs.length >= MAX_Q) return oEnd(O.hider, `وصلوا لـ${MAX_Q} سؤال بدون ما يعرفوا`);
+      return oPub();
+    case "guess":
+      if (O.phase !== "play" || oTeam(a.pid) !== 1 - O.hider) return;
+      if (nameHit(String(a.text || ""), OP.p.a)) { const pts = LV[O.lv][1] + (O.qs.length <= 5 ? 1 : 0); return oEnd(1 - O.hider, `${me.name} عرفه! +${pts}`, pts); }
+      return oEnd(O.hider, `${me.name} خمّن «${String(a.text).slice(0, 20)}» وغلط`);
+    case "next": if (isHost && O.phase === "res") oNext(); return;
+    case "again": if (isHost && O.phase === "end") { O.phase = "lobby"; oPub(); } return;
+  }
+}
+function oNext() {
+  O.round++;
+  if (O.round > ROUNDS * 2) { O.phase = "end"; return oPub(); }
+  O.hider = 1 - O.hider;
+  const team = O.players.filter((p) => p.team === O.hider);
+  O.turnIx[O.hider] = (O.turnIx[O.hider] || 0) % team.length;
+  O.actor = team[O.turnIx[O.hider]].id; O.turnIx[O.hider]++;
+  O.phase = "pick"; O.qs = []; O.running = false; O.res = null; O.secretKey = null; OP.p = null;
+  oPub();
+}
+function oEnd(win, text, pts = 1) {
+  clearTimeout(ohostT);
+  O.pts[win] += pts; O.running = false; O.phase = "res";
+  O.res = { win, text, a: OP.p.a, img: OP.p.img || "" };
+  oPub();
+}
+function oBoard() {
+  return `<div class="teams">${[0, 1].map((i) => `<div class="team ${O.phase === "play" && O.hider === 1 - i ? "turn" : ""}"><small>${esc(O.tn[i])}</small><b>${O.pts[i]}</b></div>`).join("")}</div>`;
+}
+function oDraw() {
+  if (!O) return;
+  clearInterval(otick);
+  const mt = myTeam(), host = net.host;
+  const nm = (pid) => esc((O.players.find((p) => p.id === pid) || {}).name || "");
+  if (O.phase === "lobby") {
+    const col = (t) => `<section class="card stack"><div class="kmeta"><b>${esc(O.tn[t])}</b><span>${O.players.filter((p) => p.team === t).length}</span></div>
+      ${KoraUI.players(O.players.filter((p) => p.team === t), O.host)}${mt !== t ? `<button class="btn alt sm" data-team="${t}">انقلني لهون</button>` : ""}</section>`;
+    const ready = [0, 1].every((t) => O.players.some((p) => p.team === t));
+    render(`${KoraUI.codeCard(net.room)}${col(0)}${col(1)}
+      ${host ? `<button class="btn" id="st" ${ready ? "" : "disabled"}>${ready ? "ابدأ التحدي" : "لازم لاعب واحد على الأقل بكل فريق"}</button>` : `<p class="note">استنى صاحب الغرفة يبدأ...</p>`}
+      <button class="linkish" id="lv">اطلع من الغرفة</button>`);
+    document.querySelectorAll("[data-team]").forEach((b) => (b.onclick = () => net.send({ t: "team", team: +b.dataset.team })));
+    if ($("st")) $("st").onclick = () => net.send({ t: "start" });
+    $("lv").onclick = oLeave;
+    return;
+  }
+  if (O.phase === "pick") {
+    const meActor = O.actor === net.me.id;
+    render(oBoard() + `<section class="card stack center"><h2>${esc(O.tn[O.hider])} بيخبّي</h2>
+      <p class="sub">جولة ${O.round} من ${ROUNDS * 2}. الممثل: <b>${nm(O.actor)}</b></p>
+      ${meActor ? [1, 2, 3].map((l) => `<button class="btn ${l === 1 ? "ok" : l === 3 ? "bad" : ""}" data-l="${l}">${LV[l][0]} · ${LV[l][1]} ${LV[l][1] === 1 ? "نقطة" : "نقاط"}</button>`).join("") : `<p class="note">${nm(O.actor)} بيختار المستوى...</p>`}</section>`);
+    document.querySelectorAll("[data-l]").forEach((b) => (b.onclick = () => net.send({ t: "lvl", l: +b.dataset.l })));
+    return;
+  }
+  if (O.phase === "play") {
+    const meActor = O.actor === net.me.id, asking = mt === 1 - O.hider, hiding = mt === O.hider;
+    const left = () => Math.min(SECS, Math.max(0, Math.ceil((O.qStart + SECS * 1000 - net.now()) / 1000)));
+    const sec = SECRET && SECRET.key === O.secretKey ? SECRET : null;
+    render(oBoard() + `
+      <div class="kmeta"><span>${esc(O.tn[1 - O.hider])} بيسأل · الممثل ${nm(O.actor)}</span><span>سؤال ${O.qs.length + (O.running ? 1 : 0)} / ${MAX_Q} · ${LV[O.lv][0]}</span></div>
+      <div class="timer" id="tm">${O.running ? left() : SECS}</div>
+      <div class="bar"><i id="br" style="width:${O.running ? (left() / SECS) * 100 : 100}%"></i></div>
+      ${hiding && sec ? `<section class="card secret">${sec.img ? `<img src="${esc(sec.img)}" alt="" onerror="this.remove()">` : ""}<div class="nm">${esc(sec.a)}</div><small class="sub">${esc(sec.nat)}${sec.pos ? " · " + esc(sec.pos) : ""}</small></section>` : ""}
+      ${hiding && !sec ? `<p class="note">عم بستلم اللاعب السري...</p>` : ""}
+      ${meActor ? (O.running ? `<p class="note">جاوب على سؤالهم:</p><div class="two"><button class="btn ok" id="yes">آه</button><button class="btn bad" id="no">لا</button></div>` : `<p class="note">استنى سؤالهم...</p>`) : ""}
+      ${hiding && !meActor ? `<p class="note">إنت بفريق اللي مخبّي. ${nm(O.actor)} هو اللي بيجاوب.</p>` : ""}
+      ${asking ? `${O.running ? `<p class="note">اسألوا ${nm(O.actor)} بصوت عالي واستنوا جوابه</p>` : `<button class="btn" id="ask">${O.qs.length ? "سؤال جديد (يبدأ الوقت)" : "ابدأ أول سؤال"}</button>`}
+        <div class="row"><input class="input grow" id="gn" placeholder="عرفتوه؟ اكتب اسمه" autocomplete="off"><button class="btn sm" id="gs">خمّن</button></div>
+        <p class="note">غلطة وحدة بالتخمين بتخسركم الجولة.</p>` : ""}
+      ${O.qs.length ? `<ul class="qlog">${O.qs.map((y, i) => `<li class="${y ? "y" : "n"}">${i + 1}: ${y ? "آه" : "لا"}</li>`).join("")}</ul>` : ""}`);
+    if ($("yes")) $("yes").onclick = () => net.send({ t: "ans", yes: true });
+    if ($("no")) $("no").onclick = () => net.send({ t: "ans", yes: false });
+    if ($("ask")) $("ask").onclick = () => net.send({ t: "ask" });
+    if ($("gs")) { const go = () => { const v = $("gn").value.trim(); if (v) net.send({ t: "guess", text: v }); }; $("gs").onclick = go; $("gn").onkeydown = (e) => { if (e.key === "Enter") go(); }; }
+    if (O.running) otick = setInterval(() => {
+      const l = left(), tm = $("tm"), br = $("br");
+      if (tm) { tm.textContent = l; tm.classList.toggle("low", l <= 10); }
+      if (br) br.style.width = (l / SECS) * 100 + "%";
+      if (l > 0 && l <= 5) beep(520, 50);
+    }, 1000);
+    return;
+  }
+  if (O.phase === "res") {
+    const good = O.res.win === mt;
+    beep(good ? 880 : 300, 250);
+    render(oBoard() + `<section class="card secret pop">${O.res.img ? `<img src="${esc(O.res.img)}" alt="" onerror="this.remove()">` : ""}<div class="nm">${esc(O.res.a)}</div>
+      <p class="msg ${good ? "good" : "bad"}">${esc(O.res.text)}</p><small class="sub">النقطة لـ${esc(O.tn[O.res.win])}</small></section>
+      ${host ? `<button class="btn" id="nx">${O.round >= ROUNDS * 2 ? "النتيجة" : "الجولة الجاية"}</button>` : `<p class="note">صاحب الغرفة بيكمّل...</p>`}`);
+    if ($("nx")) $("nx").onclick = () => net.send({ t: "next" });
+    return;
+  }
+  if (O.phase === "end") {
+    const list = O.tn.map((name, i) => ({ name, score: O.pts[i] })).sort((a, b) => b.score - a.score);
+    render(`<section class="banner gold pop"><b>${winnerLine(list)}</b></section>${standingsHTML(list, "نقطة")}
+      ${host ? `<button class="btn" id="ag">تحدي جديد بنفس الغرفة</button>` : ""}<button class="btn alt" id="lv">اطلع</button>`);
+    try { Rewards.finish("duel", (O.pts[mt] || 0) * 5); } catch {}
+    if ($("ag")) $("ag").onclick = () => net.send({ t: "again" });
+    $("lv").onclick = oLeave;
+  }
 }
 
 setup();

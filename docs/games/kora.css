@@ -1,0 +1,38 @@
+/* ألعاب الكورة (kora.js): سؤال، صورة/رسمة، تلميحات، وأربع خيارات */
+.kmeta { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.kmeta b { color: var(--ink); }
+.kbar { height: 8px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.kbar i { display: block; height: 100%; background: var(--brand); border-radius: inherit; }
+.kq { display: flex; flex-direction: column; gap: 10px; }
+.kqt { font-family: var(--display); font-size: 24px; line-height: 1.3; text-align: center; }
+.kvis { display: grid; place-items: center; border-radius: 16px; overflow: hidden; background: var(--soft); min-height: 60px; }
+.kvis img { display: block; width: 100%; max-height: 260px; object-fit: contain; }
+.kvis svg { display: block; width: 100%; height: auto; }
+.kvis.nopic { display: none; }
+.kvis .emo { font-size: 64px; line-height: 1.2; padding: 14px 8px; text-align: center; letter-spacing: 4px; }
+.kvis .crop { width: 100%; aspect-ratio: 16 / 9; overflow: hidden; position: relative; }
+.kvis .crop img { position: absolute; inset: 0 0 auto 0; width: 100%; height: auto; max-height: none; object-fit: cover; transform-origin: top center; transform: scale(1.15); }
+.kvis .full img { max-height: 300px; }
+.khints { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.khints li { display: flex; gap: 8px; align-items: flex-start; padding: 8px 10px; border-radius: 14px; background: var(--soft); font-weight: 600; font-size: 14px; }
+.khints li span { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--brand); color: var(--on-brand); font-size: 12px; }
+.kopts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kopts.four { grid-template-columns: repeat(4, 1fr); }
+.kopts.four .kopt { font-family: var(--display); font-size: 26px; font-weight: 400; }
+.kopt { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 16px; padding: 14px 10px; font-weight: 700; font-size: 15px; line-height: 1.3; min-height: 56px; box-shadow: 0 4px 0 var(--line); transition: transform .1s; }
+.kopt:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--line); }
+.kopt.picked { border-color: var(--brand-text); box-shadow: 0 0 0 2px var(--brand), 0 4px 0 var(--line); }
+.kopt.right { background: var(--good); color: var(--c-layl, #16113A); border-color: transparent; opacity: 1; }
+.kopt.wrong { background: var(--bad); color: var(--c-layl, #16113A); border-color: transparent; opacity: 1; }
+.kopt.dim { opacity: .45; }
+.kopt[disabled] { cursor: default; }
+.kscore { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); font-weight: 600; color: var(--muted); }
+.kscore b { font-family: var(--display); font-weight: 400; font-size: 26px; color: var(--ink); }
+.kcode { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.kcode b { font-family: var(--display); font-weight: 400; font-size: 46px; letter-spacing: 8px; direction: ltr; line-height: 1.1; }
+.klist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.klist li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 14px; background: var(--soft); font-weight: 600; }
+.klist li small { margin-inline-start: auto; color: var(--muted); font-size: 12px; }
+.klist.score li em { margin-inline-start: auto; font-style: normal; color: var(--good); font-weight: 700; }
+.klist.score li em.z { color: var(--muted); }
+.klist.score li b { min-width: 40px; text-align: end; font-family: var(--display); font-weight: 400; font-size: 20px; }

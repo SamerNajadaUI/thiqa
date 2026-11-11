@@ -59,6 +59,14 @@ body { transition: background-color .25s, color .25s; }
 .g-catch { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
 .g-anagram { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
 .g-simon { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
+.g-kworld { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
+.g-karab { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
+.g-kucl { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
+.g-kepl { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
+.g-kguess { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
+.g-kemoji { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
+.g-kkits { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
+.g-khair { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
 .g-duel { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
 .g-ball { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
 .g-hotcold { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }

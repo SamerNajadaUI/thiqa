@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>أطقم الأندية</title>
+<meta name="theme-color" content="#FFF6E3">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<link rel="stylesheet" href="kora.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="kkits"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script src="kora.js"></script>
+<script>
+"use strict";
+// كل طقم مرسوم SVG: النقشة ولون القميص والشورت. [النادي، الصعوبة، النقشة، لون1، لون2، الشورت]
+const KITS = [
+  ["برشلونة", 1, "stripes", "#A50044", "#004D98", "#004D98"], ["ريال مدريد", 1, "plain", "#FFFFFF", "#FEBE10", "#FFFFFF"],
+  ["ليفربول", 1, "plain", "#C8102E", "#C8102E", "#C8102E"], ["مانشستر يونايتد", 1, "plain", "#DA291C", "#000000", "#FFFFFF"],
+  ["آرسنال", 1, "sleeves", "#EF0107", "#FFFFFF", "#FFFFFF"], ["تشيلسي", 1, "plain", "#034694", "#034694", "#034694"],
+  ["مانشستر سيتي", 1, "plain", "#6CABDD", "#FFFFFF", "#FFFFFF"], ["يوفنتوس", 1, "stripes", "#FFFFFF", "#111111", "#FFFFFF"],
+  ["ميلان", 1, "stripes", "#FB090B", "#111111", "#FFFFFF"], ["إنتر ميلان", 1, "stripes", "#0068A8", "#111111", "#111111"],
+  ["بروسيا دورتموند", 1, "plain", "#FDE100", "#111111", "#111111"], ["باريس سان جيرمان", 1, "centre", "#004170", "#DA291C", "#004170"],
+  ["النصر", 1, "plain", "#FFD100", "#1B3F8C", "#1B3F8C"], ["الهلال", 1, "plain", "#005BAC", "#FFFFFF", "#005BAC"],
+  ["أتلتيكو مدريد", 2, "stripes", "#CB3524", "#FFFFFF", "#272E61"], ["نيوكاسل", 2, "stripes", "#111111", "#FFFFFF", "#111111"],
+  ["أياكس", 2, "centre", "#FFFFFF", "#D2122E", "#FFFFFF"], ["بورتو", 2, "stripes", "#00428C", "#FFFFFF", "#00428C"],
+  ["سلتيك", 2, "hoops", "#018749", "#FFFFFF", "#FFFFFF"], ["أستون فيلا", 2, "sleeves", "#670E36", "#95BFE5", "#FFFFFF"],
+  ["الاتحاد", 2, "stripes", "#FFD100", "#111111", "#111111"], ["الزمالك", 2, "chest", "#FFFFFF", "#D7141A", "#FFFFFF"],
+  ["بوكا جونيورز", 2, "band", "#103F79", "#F3B229", "#103F79"], ["ريفر بليت", 2, "sash", "#FFFFFF", "#E30613", "#111111"],
+  ["غلطة سراي", 2, "halves", "#A90432", "#FDB912", "#A90432"], ["توتنهام", 2, "plain", "#FFFFFF", "#132257", "#132257"],
+  ["فنربخشة", 3, "stripes", "#163962", "#FFED00", "#FFFFFF"], ["فلامنغو", 3, "hoops", "#C52613", "#111111", "#FFFFFF"],
+  ["وست هام", 3, "sleeves", "#7A263A", "#1BB1E7", "#FFFFFF"], ["أتلتيك بلباو", 3, "stripes", "#EE2523", "#FFFFFF", "#111111"],
+  ["بنفيكا", 3, "plain", "#E83030", "#FFFFFF", "#FFFFFF"], ["نابولي", 3, "plain", "#12A0D7", "#FFFFFF", "#FFFFFF"],
+  ["روما", 3, "plain", "#8E1F2F", "#F0BC42", "#8E1F2F"], ["بايرن ميونخ", 3, "plain", "#DC052D", "#FFFFFF", "#DC052D"],
+  ["الأهلي المصري", 3, "plain", "#D7141A", "#FFFFFF", "#111111"], ["الوحدات", 3, "plain", "#00843D", "#FFFFFF", "#00843D"],
+  ["الفيصلي", 4, "plain", "#1E3A8A", "#FFFFFF", "#FFFFFF"], ["الأهلي السعودي", 4, "plain", "#00843D", "#FFFFFF", "#FFFFFF"],
+  ["بيشكتاش", 4, "stripes", "#111111", "#FFFFFF", "#FFFFFF"], ["الوداد", 4, "plain", "#D7141A", "#FFFFFF", "#D7141A"],
+  ["الرجاء", 4, "plain", "#00843D", "#FFFFFF", "#111111"], ["إيفرتون", 4, "plain", "#003399", "#FFFFFF", "#FFFFFF"],
+];
+const BODY = "M60 28 L84 18 Q100 30 116 18 L140 28 L176 58 L156 84 L140 72 L140 150 L60 150 L60 72 L44 84 L24 58 Z";
+function kitSVG([, , pat, a, b, sh], id) {
+  const r = (x, y, w, h, c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
+  let fill = r(0, 0, 200, 160, a);
+  if (pat === "stripes") for (let x = 66; x < 140; x += 26) fill += r(x, 0, 13, 160, b);
+  if (pat === "hoops") for (let y = 34; y < 160; y += 26) fill += r(0, y, 200, 13, b);
+  if (pat === "halves") fill += r(100, 0, 100, 160, b);
+  if (pat === "sash") fill += `<polygon points="60,30 78,24 142,140 124,150" fill="${b}"/>`;
+  if (pat === "centre") fill += r(86, 0, 28, 160, b);
+  if (pat === "band") fill += r(0, 70, 200, 26, b);
+  if (pat === "chest") fill += r(0, 56, 200, 8, b) + r(0, 72, 200, 8, b);
+  const sleeves = pat === "sleeves" ? `<path d="M60 28 L24 58 L44 84 L60 72 Z M140 28 L176 58 L156 84 L140 72 Z" fill="${b}"/>` : "";
+  return `<svg viewBox="0 0 200 215" role="img" aria-label="طقم نادي"><defs><clipPath id="c${id}"><path d="${BODY}"/></clipPath></defs>
+    <rect width="200" height="215" fill="#FFF6E3" opacity="0"/>
+    <g clip-path="url(#c${id})">${fill}${sleeves}</g>
+    <path d="${BODY}" fill="none" stroke="#16113A" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M84 18 Q100 40 116 18" fill="none" stroke="#16113A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M62 158 L138 158 L142 206 L106 206 L100 186 L94 206 L58 206 Z" fill="${sh}" stroke="#16113A" stroke-width="4" stroke-linejoin="round"/></svg>`;
+}
+KORA({ id: "kkits", title: "أطقم الأندية", desc: "طقم مرسوم بدون شعار ولا اسم. من ألوانه ونقشته، اعرف أي نادي.",
+  load: async () => KITS.map((k, i) => {
+    const sig = (x) => x.slice(2).join("|");
+    const near = KITS.filter((x) => x !== k && sig(x) !== sig(k));
+    // الخيارات الغلط: بنفضّل أندية بنفس الألوان تقريباً عشان يصير فيها تحدي
+    const close = shuffle(near.filter((x) => x[3] === k[3] || x[4] === k[4] || x[2] === k[2]));
+    const opts = [];
+    for (const x of close.concat(shuffle(near))) { if (!opts.includes(x[0])) opts.push(x[0]); if (opts.length === 3) break; }
+    return { d: k[1], q: "طقم أي نادي؟", opts: [k[0], ...opts], vis: kitSVG(k, i) };
+  }) });
+</script>
+</body>
+</html>

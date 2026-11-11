@@ -205,7 +205,7 @@ function bind() { for (const [id, fn] of Object.entries(handlers)) { const el = 
 const ACTS = {};
 
 // ---------- screens ----------
-const GF = { sec: "all", sort: "pop" };
+const GF = { sec: new URLSearchParams(location.search).get("sec") || "all", sort: "pop" };
 function gamesFilterHTML() {
   const secs = [["all", "الكل"], ...SECTIONS.map((x) => [x.id, x.name])];
   const chip = (kind, id, label, cur) => `<button class="pill" type="button" data-f="${kind}" data-v="${id}" aria-pressed="${cur === id}">${label}</button>`;

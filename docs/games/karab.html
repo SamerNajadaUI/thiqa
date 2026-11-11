@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>كرة عربية</title>
+<meta name="theme-color" content="#FFF6E3">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<link rel="stylesheet" href="kora.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="karab"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script src="kora.js"></script>
+<script>
+"use strict";
+KORA({ id: "karab", title: "كرة عربية", desc: "النشامى، الدوري السعودي، كأس آسيا وإفريقيا، نجوم العرب بالصور ومعلقين العرب. 4 خيارات لكل سؤال.",
+  load: () => koraFromPoints({ arabfoot: true, nashama: true, arabplayers: true, commentators: true }) });
+</script>
+</body>
+</html>

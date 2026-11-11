@@ -389,6 +389,7 @@ body:not(.on-home) #view-home { display: none; }
 /* no double-tap zoom */
 html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 body:not(.on-home) .apptabs { display: none; }
+.sec-title .sec-more { float: left; font-size: 13px; font-weight: 600; color: var(--brand-text); text-decoration: none; margin-top: 6px; }
 </style>
 <link rel="stylesheet" href="shell.css">
 <link rel="stylesheet" href="ds/ui.css">
@@ -412,6 +413,8 @@ body:not(.on-home) .apptabs { display: none; }
       <div id="continue"></div>
       <h2 class="sec-title">ألعاب مميزة</h2>
       <div id="games"></div>
+      <h2 class="sec-title">كرة قدم <a class="sec-more" href="games/?sec=kora">شوف الكل</a></h2>
+      <div id="kora"></div>
       <a class="btn btn-ghost btn-block" href="games/">كل الألعاب</a>
     </div>
     <button class="door" id="go-bets" type="button" hidden>
@@ -485,6 +488,7 @@ function renderHome() {
   const last = AppStore.get("app-last", null), g = GAMES.find((x) => x.id === last) || GAMES[0];
   document.getElementById("continue").innerHTML = `<div class="list"><a class="li" href="games/${g.href}"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GAME_ICON[g.id]}</svg></span><span><b>${last ? "كمّل لعب" : "جرّب هاي"}: ${g.name}</b><small>${g.desc}</small></span><span class="end">‹</span></a></div>`;
   document.getElementById("games").innerHTML = `<div class="games-grid">${GAMES.filter((x) => x.sec === "top").slice(0, 4).map((x) => gameCard(x, "games/")).join("")}</div>`;
+  document.getElementById("kora").innerHTML = `<div class="games-grid">${GAMES.filter((x) => x.sec === "kora").slice(0, 4).map((x) => gameCard(x, "games/")).join("")}</div>`;
 }
 renderHome();
 document.addEventListener("app:points", renderHome);

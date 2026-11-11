@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>خمّن اللاعب</title>
+<meta name="theme-color" content="#FFF6E3">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<link rel="stylesheet" href="kora.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="kguess"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script src="kora.js"></script>
+<script>
+"use strict";
+// التلميحات من قاعدة اللاعبين: بتبلّش عامة وبتصير أوضح مع الوقت. كل ما عرفته بتلميحات أقل، نقاطك أكثر.
+function hintsFor(p) {
+  const h = [];
+  const pos = (p.pos || [])[0];
+  h.push(`${pos ? "مركزه " + pos : "لاعب كرة قدم"}${p.by ? "، مواليد " + p.by : ""}${p.act ? "، لسا بيلعب" : "، معتزل"}`);
+  const cl = (p.c || []).map((x) => x[0]);
+  if (cl.length > 1) h.push(`لعب بـ${cl.length} أندية، منهم ${cl[0]}`);
+  const fx = (p.fx || []).filter((t) => !t.includes(p.a));
+  if (p.wc && p.wc.length) h.push(`فاز بكأس العالم ${p.wc.join(" و")}`);
+  else if (p.ucl && p.ucl.length) h.push(`فاز بدوري الأبطال ${p.ucl.length === 1 ? "مرة" : p.ucl.length + " مرات"}`);
+  else if (fx[0]) h.push(fx[0]);
+  h.push(`جنسيته: ${(p.nat || []).join(" و")}`);
+  if (p.sn && p.sn[0]) h.push(`لبس رقم ${p.sn[0]} مع ${p.sn[1]}`);
+  else if (cl.length) h.push(`آخر نادي: ${p.hc || cl[cl.length - 1]}`);
+  return h.slice(0, 5);
+}
+KORA({ id: "kguess", title: "خمّن اللاعب", desc: "تلميحات بتطلع وحدة وحدة عن لاعب. كل ما عرفته من تلميحات أقل، أخذت نقاط أكثر.", secs: 30,
+  load: async () => {
+    const all = await koraPlayers();
+    const ok = all.filter((p) => p.lv <= 3 && (p.c || []).length && (p.nat || []).length);
+    return shuffle(ok).slice(0, 220).map((p) => ({ d: p.lv, q: "مين هاللاعب؟", opts: [p.a, ...koraDecoys(p, ok)], hints: hintsFor(p),
+      rev: p.img ? `<div class="full"><img src="${esc(p.img)}" alt="" onerror="this.remove()"></div>` : "" })).filter((q) => q.opts.length === 4);
+  } });
+</script>
+</body>
+</html>
