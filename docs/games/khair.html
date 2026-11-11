@@ -29,12 +29,17 @@
 <script src="kora.js"></script>
 <script>
 "use strict";
-KORA({ id: "khair", title: "تسريحة لاعب", desc: "بتشوف بس فوق راس اللاعب: التسريحة. اعرف مين هو قبل ما تخلص الثواني.",
+// القصّة محسوبة مسبقاً (engine/hair_build.py بكشف الوجه): من فوق الراس لحد فوق الحواجب، فبيبين الشعر بس.
+function hairBox(src, [x, y, w, h, ar]) {
+  return `<div class="hair" style="aspect-ratio:${(w * ar / h).toFixed(3)}"><img src="${esc(src)}" alt="" style="width:${(100 / w).toFixed(2)}%;left:${(-x / w * 100).toFixed(2)}%;top:${(-y / h * 100).toFixed(2)}%" onerror="this.closest('.kvis').classList.add('nopic')"></div>`;
+}
+KORA({ id: "khair", title: "تسريحة لاعب", desc: "بتشوف شعر اللاعب بس، بدون وجهه. اعرف مين هو قبل ما تخلص الثواني.",
   load: async () => {
-    const all = await koraPlayers();
-    const ok = all.filter((p) => p.lv <= 2 && p.img);
-    return shuffle(ok).slice(0, 160).map((p) => ({ d: p.lv * 2 - 1, q: "مين صاحب هالتسريحة؟", opts: [p.a, ...koraDecoys(p, all.filter((x) => x.lv <= 2))],
-      vis: `<div class="crop"><img src="${esc(p.img)}" alt="" onerror="this.closest('.kvis').classList.add('nopic')"></div>`,
+    const [all, hr] = await Promise.all([koraPlayers(), fetch("hair.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => { if (!r.ok) throw 0; return r.json(); })]);
+    const ok = all.filter((p) => p.lv <= 2 && p.img && hr.c[p.id]);
+    const pool = all.filter((x) => x.lv <= 2);
+    return shuffle(ok).slice(0, 160).map((p) => ({ d: p.lv * 2 - 1, q: "مين صاحب هالتسريحة؟", opts: [p.a, ...koraDecoys(p, pool)],
+      vis: hairBox(p.img, hr.c[p.id]),
       rev: `<div class="full"><img src="${esc(p.img)}" alt=""></div>` })).filter((q) => q.opts.length === 4);
   } });
 </script>

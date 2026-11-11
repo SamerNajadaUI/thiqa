@@ -36,3 +36,5 @@
 .klist.score li em { margin-inline-start: auto; font-style: normal; color: var(--good); font-weight: 700; }
 .klist.score li em.z { color: var(--muted); }
 .klist.score li b { min-width: 40px; text-align: end; font-family: var(--display); font-weight: 400; font-size: 20px; }
+.kvis .hair { width: 100%; position: relative; overflow: hidden; direction: ltr; }
+.kvis .hair img { position: absolute; max-width: none; max-height: none; height: auto; object-fit: fill; }
