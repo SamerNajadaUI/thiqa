@@ -45,6 +45,7 @@ def main():
         f = faces[0]
         if len(faces) > 1 and faces[1][2] * faces[1][3] > 0.5 * f[2] * f[3]:
             print("– أكثر من وجه", p["a"], file=sys.stderr); miss += 1; continue
+        f = [float(v) for v in f]
         fx, fy, fw, fh = f[:4]
         if fw < 0.12 * W:
             print("– الوجه صغير", p["a"], file=sys.stderr); miss += 1; continue
