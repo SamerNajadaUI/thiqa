@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>أين الكرة</title>
+<meta name="theme-color" content="#FFF6E3">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.pitch { width: 100%; max-height: 62vh; border-radius: 20px; display: block; touch-action: manipulation; }
+.pitch .spot { cursor: pointer; }
+.pitch .spot circle { fill: #FFF6E3; stroke: #16113A; stroke-width: 3; transition: fill .15s; }
+.pitch .spot:active circle { fill: #FFC533; }
+.pitch .spot text { font: 700 15px "Readex Pro", sans-serif; fill: #16113A; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.pitch .spot.right circle { fill: #1FCF9A; } .pitch .spot.wrong circle { fill: #FF5638; }
+.roundbar { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--muted); }
+.bar { height: 10px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--brand); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="ball"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// أين الكرة: الكرة مخفية. خط التمريرة بيبين اتجاهها، وإنت بتختار أي نقطة (1-4) هي مكان الكرة.
+// كل ما تقدّمت الجولات، الخط بيصير أقصر والنقاط أقرب لبعض، والوقت أقل.
+const W = 300, H = 400, ROUNDS = 10;
+let S = null, tm = null;
+window.leaveGuard = () => (S && S.round > 0 && !S.end ? "اللعبة شغّالة، بدك تطلع؟" : false);
+
+function setup() {
+  clearInterval(tm); S = null;
+  const best = store.get("ball-best", 0);
+  render(`
+    <section class="card stack">
+      <h1>أين الكرة</h1>
+      <p class="sub">مررة طارت والكرة اختفت! اتبع خط التمريرة وحدد أي نقطة (1 لـ 4) هي مكان الكرة. ${ROUNDS} جولات، وكل جولة أصعب من اللي قبلها.</p>
+      ${best ? `<p class="note">أفضل نتيجة: ${best} / ${ROUNDS}</p>` : ""}
+      <button class="btn" id="go">ابدأ</button>
+    </section>`);
+  $("go").onclick = () => { S = { round: 0, score: 0, end: false }; next(); };
+}
+
+const rr = (a, b) => a + Math.random() * (b - a);
+function next() {
+  S.round++;
+  if (S.round > ROUNDS) return finish();
+  const lvl = (S.round - 1) / (ROUNDS - 1);          // 0..1
+  const len = rr(95, 150) - lvl * 25;
+  const dist = 62 - lvl * 30;                         // المسافة بين الكرة والنقاط الوهمية
+  let P, E, ang, tries = 0;
+  do {
+    P = { x: rr(40, W - 40), y: rr(60, H - 60) }; ang = rr(0, Math.PI * 2);
+    E = { x: P.x + Math.cos(ang) * len, y: P.y + Math.sin(ang) * len };
+  } while ((E.x < 30 || E.x > W - 30 || E.y < 35 || E.y > H - 35) && ++tries < 200);
+  const spots = [E];
+  tries = 0;
+  while (spots.length < 4 && tries++ < 500) {
+    const a = rr(0, Math.PI * 2), d = rr(dist * 0.8, dist * 1.5);
+    const c = { x: E.x + Math.cos(a) * d, y: E.y + Math.sin(a) * d };
+    if (c.x < 25 || c.x > W - 25 || c.y < 25 || c.y > H - 25) continue;
+    if (spots.every((s) => Math.hypot(s.x - c.x, s.y - c.y) > 34)) spots.push(c);
+  }
+  while (spots.length < 4) spots.push({ x: rr(30, W - 30), y: rr(30, H - 30) });
+  const order = shuffle([0, 1, 2, 3]);                // order[i] = رقم النقطة اللي فعلياً spots[i]
+  const dots = [];
+  for (let i = 0; i < 6 + Math.round(lvl * 4); i++) dots.push({ x: rr(20, W - 20), y: rr(20, H - 20), t: i % 2 });
+  S.cur = { P, E, spots, order, dots, shown: lvl > 0.5 ? 0.62 : 0.8, left: 12 - Math.round(lvl * 5), t0: Date.now(), done: false };
+  draw();
+  clearInterval(tm);
+  tm = setInterval(() => {
+    const c = S.cur; if (c.done) return;
+    const left = c.left - (Date.now() - c.t0) / 1000;
+    const b = $("br"); if (b) b.style.width = Math.max(0, left / c.left) * 100 + "%";
+    if (left <= 0) answer(-1);
+  }, 120);
+}
+
+function draw() {
+  const { P, E, spots, order, dots, shown } = S.cur;
+  const lx = P.x + (E.x - P.x) * shown, ly = P.y + (E.y - P.y) * shown;
+  render(`
+    <div class="roundbar"><span>جولة ${S.round} من ${ROUNDS}</span><span>نقاطك: ${S.score}</span></div>
+    <div class="bar"><i id="br" style="width:100%"></i></div>
+    <svg class="pitch" viewBox="0 0 ${W} ${H}" role="img" aria-label="ملعب فيه مررة والكرة مخفية">
+      <rect width="${W}" height="${H}" fill="#1E8F5A"/>
+      ${[0, 1, 2, 3, 4].map((i) => `<rect y="${i * 80}" width="${W}" height="40" fill="#23A068" opacity=".55"/>`).join("")}
+      <g fill="none" stroke="#FFF6E3" stroke-width="2" opacity=".85"><rect x="8" y="8" width="${W - 16}" height="${H - 16}" rx="3"/><line x1="8" y1="${H / 2}" x2="${W - 8}" y2="${H / 2}"/><circle cx="${W / 2}" cy="${H / 2}" r="34"/></g>
+      ${dots.map((d) => `<circle cx="${d.x}" cy="${d.y}" r="9" fill="${d.t ? "#2E6BFF" : "#FF5638"}" stroke="#16113A" stroke-width="2.5"/>`).join("")}
+      <circle cx="${P.x}" cy="${P.y}" r="11" fill="#FFC533" stroke="#16113A" stroke-width="3"/>
+      <line x1="${P.x}" y1="${P.y}" x2="${lx}" y2="${ly}" stroke="#FFF6E3" stroke-width="3.5" stroke-dasharray="3 8" stroke-linecap="round"/>
+      ${spots.map((s, i) => `<g class="spot" data-i="${i}" transform="translate(${s.x},${s.y})"><circle r="15"/><text>${order[i] + 1}</text></g>`).join("")}
+    </svg>
+    <p class="msg" id="msg"> </p>`);
+  document.querySelectorAll(".spot").forEach((g) => (g.onclick = () => answer(+g.dataset.i)));
+}
+
+function answer(i) {
+  const c = S.cur; if (c.done) return; c.done = true;
+  clearInterval(tm);
+  const ok = i === 0;
+  if (ok) S.score++;
+  document.querySelectorAll(".spot").forEach((g) => { const k = +g.dataset.i; if (k === 0) g.classList.add("right"); else if (k === i) g.classList.add("wrong"); });
+  // الكرة بتظهر بمكانها
+  const svg = document.querySelector(".pitch");
+  svg.insertAdjacentHTML("beforeend", `<circle cx="${c.E.x}" cy="${c.E.y}" r="7" fill="#FFF6E3" stroke="#16113A" stroke-width="3"/>`);
+  $("msg").className = "msg " + (ok ? "good" : "bad");
+  $("msg").textContent = ok ? "صح!" : i < 0 ? "خلص الوقت" : "غلط، هاي مكان الكرة";
+  beep(ok ? 880 : 240, 200, ok ? "sine" : "square");
+  setTimeout(next, ok ? 900 : 1600);
+}
+
+function finish() {
+  S.end = true;
+  const best = Math.max(store.get("ball-best", 0), S.score); store.set("ball-best", best);
+  render(`
+    <section class="banner gold pop"><b>${S.score} من ${ROUNDS}</b><span class="sub">${S.score >= 8 ? "عين صقر!" : S.score >= 5 ? "مش بطّال" : "جرّب كمان مرة"} · أفضل نتيجة ${best}</span></section>
+    <button class="btn" id="again">العب مرة ثانية</button>`);
+  Rewards?.finish?.("ball", S.score * 3);
+  $("again").onclick = setup;
+}
+setup();
+</script>
+</body>
+</html>

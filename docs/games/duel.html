@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>تحدي اللاعبين</title>
+<meta name="theme-color" content="#FFF6E3">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="mini.css">
+<style>
+.secret { text-align: center; padding: 18px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.secret .nm { font-family: var(--display); font-size: 34px; line-height: 1.15; }
+.secret img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: var(--soft); border: 3px solid var(--brand); }
+.timer { font-family: var(--display); font-size: 64px; line-height: 1; text-align: center; direction: ltr; }
+.timer.low { color: var(--bad); }
+.bar { height: 10px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--brand); transition: width .25s linear; }
+.qlog { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.qlog li { padding: 4px 10px; border-radius: 999px; background: var(--soft); font-size: 13px; font-weight: 600; }
+.qlog li.y { background: color-mix(in srgb, var(--good) 22%, var(--card)); }
+.qlog li.n { background: color-mix(in srgb, var(--bad) 18%, var(--card)); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.teams { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.team { padding: 10px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); text-align: center; }
+.team.turn { border-color: var(--brand-text); box-shadow: 0 0 0 2px var(--brand-soft); }
+.team b { display: block; font-family: var(--display); font-size: 30px; font-weight: 400; line-height: 1.1; }
+.team small { color: var(--muted); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="gbar" data-game="duel"></header>
+  <main id="app"></main>
+</div>
+<script src="../shell.js"></script>
+<script src="mini.js"></script>
+<script>
+"use strict";
+// تحدي اللاعبين: فريقين. فريق بيخبّي لاعب (ممثله وحده بيشوفه)، والفريق التاني بيسأل أسئلة آه/لا،
+// 60 ثانية لكل سؤال. أي وقت بيخلص أو 15 سؤال بدون جواب = نقطة للي خبّى. أو بيخمّنوا الاسم بأي لحظة.
+const ROUNDS = 3;           // كل فريق بيخبّي ROUNDS مرات
+const MAX_Q = 15, SECS = 60;
+const LV = { 1: ["سهل", 1], 2: ["متوسط", 2], 3: ["صعب", 3] };
+let DATA = null, S = null, tick = null;
+const teamName = (i) => S.names[i];
+
+window.leaveGuard = () => (S && S.phase !== "end" && S.round > 0 ? "التحدي شغّال، بدك تطلع؟" : false);
+
+async function loadPlayers() {
+  if (DATA) return DATA;
+  const r = await fetch("players.json?t=" + Math.floor(Date.now() / 3.6e6));
+  if (!r.ok) throw new Error("load");
+  const d = await r.json();
+  DATA = d.players.filter((p) => p.a && p.lv <= 3 && !/[A-Za-z]/.test(p.a));
+  return DATA;
+}
+
+function setup() {
+  clearInterval(tick); S = null;
+  render(`
+    <section class="card stack">
+      <h1>تحدي اللاعبين</h1>
+      <p class="sub">فريقين. فريق بيخبّي لاعب مشهور وممثله بس بيعرفه، والفريق التاني بيسأل أسئلة جوابها آه أو لا، وإلهم 60 ثانية لكل سؤال. وفي أي وقت بيقدروا يخمّنوا الاسم.</p>
+      <div class="label">أسماء الفريقين</div>
+      <input class="input" id="t0" maxlength="14" placeholder="الفريق الأول" value="${esc(store.get("duel-t0", ""))}">
+      <input class="input" id="t1" maxlength="14" placeholder="الفريق التاني" value="${esc(store.get("duel-t1", ""))}">
+      <button class="btn" id="go">ابدأ</button>
+    </section>`);
+  $("go").onclick = async () => {
+    const names = [($("t0").value.trim() || "الفريق الأول"), ($("t1").value.trim() || "الفريق التاني")];
+    store.set("duel-t0", $("t0").value.trim()); store.set("duel-t1", $("t1").value.trim());
+    $("go").disabled = true; $("go").textContent = "لحظة...";
+    try { await loadPlayers(); } catch { $("go").disabled = false; $("go").textContent = "ما انحمّلت القائمة، جرّب كمان مرة"; return; }
+    S = { names, pts: [0, 0], round: 0, hider: 1, used: new Set(), phase: "pick" };
+    nextRound();
+  };
+}
+
+function nextRound() {
+  S.round++;
+  if (S.round > ROUNDS * 2) return finish();
+  S.hider = 1 - S.hider;
+  S.p = null; S.qs = []; S.t = SECS; S.running = false; S.peek = false; S.msg = "";
+  pickLevel();
+}
+
+function pickLevel() {
+  S.phase = "pick";
+  render(scoreboard() + `
+    <section class="card stack center">
+      <h2>${esc(teamName(S.hider))}: اختاروا المستوى</h2>
+      <p class="sub">جولة ${S.round} من ${ROUNDS * 2}. اتفقوا مين الممثل (هو الوحيد اللي بيشوف اللاعب).</p>
+      ${[1, 2, 3].map((l) => `<button class="btn ${l === 1 ? "ok" : l === 3 ? "bad" : ""}" data-l="${l}">${LV[l][0]} · ${LV[l][1]} ${LV[l][1] === 1 ? "نقطة" : "نقاط"}</button>`).join("")}
+    </section>`);
+  document.querySelectorAll("[data-l]").forEach((b) => (b.onclick = () => {
+    S.lv = +b.dataset.l;
+    const pool = DATA.filter((p) => p.lv === S.lv && !S.used.has(p.id));
+    S.p = pick(pool); S.used.add(S.p.id);
+    handoff();
+  }));
+}
+
+function handoff() {
+  S.phase = "handoff";
+  render(`
+    <section class="handoff">
+      <div class="big">ممثل ${esc(teamName(S.hider))} بس</div>
+      <p>باقي الفريقين يبعدوا عن الشاشة. دوس لما تكون جاهز.</p>
+      <button class="btn" id="show">اعرض اللاعب</button>
+    </section>`);
+  $("show").onclick = reveal;
+}
+
+function playerCard() {
+  const p = S.p;
+  return `<section class="card secret pop">${p.img ? `<img src="${esc(p.img)}" alt="" onerror="this.remove()">` : ""}<div class="nm">${esc(p.a)}</div><small class="sub">${esc((p.nat || []).join("، "))}${p.pos && p.pos[0] ? " · " + esc(p.pos[0]) : ""}</small></section>`;
+}
+function reveal() {
+  S.phase = "reveal";
+  render(playerCard() + `<p class="note">احفظه، وبعدين خبّي الشاشة وسلّمهم التلفون.</p><button class="btn" id="hide">خبّيته، يلا نلعب</button>`);
+  $("hide").onclick = play;
+}
+
+function scoreboard() {
+  return `<div class="teams">${[0, 1].map((i) => `<div class="team ${S.phase !== "end" && S.hider === (1 - i) && S.phase !== "pick" && S.phase !== "handoff" ? "turn" : ""}"><small>${esc(teamName(i))}</small><b>${S.pts[i]}</b></div>`).join("")}</div>`;
+}
+
+function play() {
+  S.phase = "play";
+  clearInterval(tick);
+  drawPlay();
+}
+function drawPlay() {
+  const asker = 1 - S.hider;
+  render(scoreboard() + `
+    <div class="row" style="justify-content:space-between"><span class="label">${esc(teamName(asker))} بيسأل</span><span class="label">سؤال ${S.qs.length + (S.running ? 1 : 0)} / ${MAX_Q} · ${LV[S.lv][0]}</span></div>
+    <div class="timer ${S.running && S.t <= 10 ? "low" : ""}" id="tm">${S.running ? S.t : SECS}</div>
+    <div class="bar"><i id="br" style="width:${S.running ? (S.t / SECS) * 100 : 100}%"></i></div>
+    ${S.msg ? `<p class="msg good">${esc(S.msg)}</p>` : ""}
+    ${S.running ? `
+      <p class="note">اسألوا بصوت عالي، والممثل يجاوب:</p>
+      <div class="two"><button class="btn ok" id="yes">آه</button><button class="btn bad" id="no">لا</button></div>`
+      : `<button class="btn" id="ask">${S.qs.length ? "سؤال جديد (يبدأ الوقت)" : "ابدأ أول سؤال"}</button>`}
+    ${S.qs.length ? `<ul class="qlog">${S.qs.map((a, i) => `<li class="${a ? "y" : "n"}">${i + 1}: ${a ? "آه" : "لا"}</li>`).join("")}</ul>` : ""}
+    ${S.peek ? playerCard() : ""}
+    <div class="two"><button class="btn alt sm" id="peek">${S.peek ? "خبّي" : "الممثل: شوف اللاعب"}</button><button class="btn alt sm" id="guess">بدنا نخمّن</button></div>`);
+  if ($("ask")) $("ask").onclick = startQ;
+  if ($("yes")) $("yes").onclick = () => answer(true);
+  if ($("no")) $("no").onclick = () => answer(false);
+  $("peek").onclick = () => { S.peek = !S.peek; drawPlay(); };
+  $("guess").onclick = guessScreen;
+}
+
+function startQ() {
+  S.running = true; S.t = SECS; S.msg = ""; S.peek = false;
+  drawPlay();
+  clearInterval(tick);
+  tick = setInterval(() => {
+    S.t--;
+    const tm = $("tm"), br = $("br");
+    if (tm) { tm.textContent = S.t; tm.classList.toggle("low", S.t <= 10); }
+    if (br) br.style.width = (S.t / SECS) * 100 + "%";
+    if (S.t > 0 && S.t <= 5) beep(520, 60);
+    if (S.t <= 0) { clearInterval(tick); beep(200, 400, "square"); endRound(S.hider, "خلص الوقت! النقطة لـ" + teamName(S.hider)); }
+  }, 1000);
+}
+
+function answer(yes) {
+  clearInterval(tick); S.running = false;
+  S.qs.push(yes);
+  if (S.qs.length >= MAX_Q) return endRound(S.hider, `وصلتوا لـ${MAX_Q} سؤال بدون ما تعرفوا`);
+  S.msg = yes ? "آه" : "لا";
+  drawPlay();
+}
+
+function guessScreen() {
+  clearInterval(tick); S.running = false;
+  render(scoreboard() + `
+    <section class="card stack">
+      <h2>${esc(teamName(1 - S.hider))}: مين اللاعب؟</h2>
+      <p class="sub">اكتبوا الاسم. غلطة وحدة بتخسركم الجولة.</p>
+      <input class="input" id="gn" placeholder="اسم اللاعب" autocomplete="off">
+      <button class="btn" id="ok">تأكيد</button>
+      <button class="linkish" id="back">رجوع للأسئلة</button>
+    </section>`);
+  $("gn").focus();
+  const check = () => {
+    const v = normAr($("gn").value);
+    if (!v) return;
+    const full = normAr(S.p.a);
+    const parts = S.p.a.split(/\s+/).map(normAr).filter((w) => w.length >= 4);
+    const hit = v === full || (v.length >= 4 && (full.includes(v) && parts.some((w) => w === v)));
+    if (hit) {
+      const pts = LV[S.lv][1] + (S.qs.length <= 5 ? 1 : 0);
+      endRound(1 - S.hider, `صح! ${S.p.a} (+${pts})`, pts);
+    } else endRound(S.hider, `غلط! اللاعب كان ${S.p.a}`);
+  };
+  $("ok").onclick = check;
+  $("gn").onkeydown = (e) => { if (e.key === "Enter") check(); };
+  $("back").onclick = () => { S.phase = "play"; drawPlay(); };
+}
+
+function endRound(winner, text, pts = 1) {
+  clearInterval(tick); S.running = false;
+  S.pts[winner] += pts;
+  S.phase = "result";
+  const good = winner === 1 - S.hider;
+  beep(good ? 880 : 300, 250);
+  render(scoreboard() + `
+    <section class="card secret pop">${S.p.img ? `<img src="${esc(S.p.img)}" alt="" onerror="this.remove()">` : ""}<div class="nm">${esc(S.p.a)}</div>
+      <p class="msg ${good ? "good" : "bad"}">${esc(text)}</p></section>
+    <button class="btn" id="nx">${S.round >= ROUNDS * 2 ? "النتيجة" : "الجولة الجاية"}</button>`);
+  $("nx").onclick = nextRound;
+}
+
+function finish() {
+  S.phase = "end";
+  const list = S.names.map((name, i) => ({ name, score: S.pts[i] })).sort((a, b) => b.score - a.score);
+  render(`
+    <section class="banner gold pop"><b>${winnerLine(list)}</b><span class="sub">بعد ${ROUNDS * 2} جولات</span></section>
+    ${standingsHTML(list, "نقطة")}
+    <button class="btn" id="again">العب مرة ثانية</button>`);
+  Rewards?.finish?.("duel", Math.max(...S.pts) * 5);
+  $("again").onclick = setup;
+}
+
+setup();
+</script>
+</body>
+</html>
