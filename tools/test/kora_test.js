@@ -6,7 +6,7 @@ const { adminInit } = require('./session.js');
 const MQ = fs.readFileSync(__dirname + '/node_modules/mqtt/dist/mqtt.min.js', 'utf8');
 const U = 'http://localhost:8765/games/';
 const SH = '/tmp/ks';
-const GAMES = ['kworld', 'karab', 'kucl', 'kepl', 'kguess', 'kemoji', 'kkits', 'khair', 'ball'];
+const GAMES = (process.env.GAMES || 'kworld,karab,kucl,kepl,kguess,kemoji,kkits,khair,ball').split(',');
 let bad = 0;
 async function ctxNew(b) {
   const c = await b.newContext({ viewport: { width: 390, height: 844 } });
