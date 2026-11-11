@@ -66,7 +66,7 @@ function noEmoji(t) { return String(t).replace(/[\p{Extended_Pictographic}\u{1F1
 function gameCard(g, base) {
   const locked = gameLocked(g.id);
   return `<a class="gcard g-${g.id}${locked ? " locked" : ""}" href="${base}${g.href}" data-game="${g.id}">
-    <span class="art">${locked ? `<span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>بلس</span>` : ""}${g.flag ? `<span class="flag">${noEmoji(g.flag)}</span>` : ""}<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GAME_ICON[g.id]}</svg></span></span>
+    <span class="art">${locked ? `<span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>بلس</span>` : ""}${g.flag ? `<span class="flag">${noEmoji(g.flag)}</span>` : ""}<img class="pic" src="${base}art/${g.id}.webp" alt="" loading="lazy" decoding="async"></span>
     <span class="body"><b>${g.name}</b><small>${noEmoji(g.desc)}</small><span class="tags">${g.tags.map((t) => `<span>${noEmoji(t)}</span>`).join("")}</span></span>
   </a>`;
 }
