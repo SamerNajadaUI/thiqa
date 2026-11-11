@@ -51,10 +51,10 @@ def main():
             print("– الوجه صغير", p["a"], file=sys.stderr); miss += 1; continue
         eye_y = (f[5] + f[7]) / 2
         cx = fx + fw / 2
-        y1 = eye_y - 0.32 * fh            # فوق الحواجب
+        y1 = eye_y - 0.24 * fh            # فوق الحواجب
         y0 = max(0, fy - 0.7 * fh)        # فوق الراس
         x0, x1 = max(0, cx - 0.9 * fw), min(W, cx + 0.9 * fw)
-        if y1 - y0 < 0.3 * fh or y1 <= 0:
+        if y1 - y0 < 0.45 * fh or y1 <= 0 or fy - 0.3 * fh < 0:
             print("– ما في شعر كفاية فوق", p["a"], file=sys.stderr); miss += 1; continue
         out[p["id"]] = [round(x0 / W, 4), round(y0 / H, 4), round((x1 - x0) / W, 4), round((y1 - y0) / H, 4), round(W / H, 4)]
         if len(thumbs) < 80:
