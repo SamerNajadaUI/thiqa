@@ -1,6 +1,6 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
-const MQ = fs.readFileSync(require.resolve('mqtt/dist/mqtt.min.js'), 'utf8');
+const MQ = fs.readFileSync(__dirname + '/node_modules/mqtt/dist/mqtt.min.js', 'utf8');
 const URL = 'http://localhost:8765/games/sahra.html?fast&broker=' + encodeURIComponent('ws://localhost:8883');
 const names = ['سامر', 'ليلى', 'خالد', 'نور'];
 (async () => {

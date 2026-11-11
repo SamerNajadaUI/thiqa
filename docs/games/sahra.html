@@ -237,6 +237,72 @@ input[type=range] { width: 100%; margin: 14px 0 0; accent-color: var(--yellow); 
 .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 5; }
 .confetti i { position: absolute; top: -20px; width: 9px; height: 14px; border-radius: 2px; animation: fall linear forwards; }
 @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+/* ===== الترقية: موشن وطبقة المؤثرات ===== */
+#fxl { position: fixed; inset: 0; pointer-events: none; z-index: 50; overflow: hidden; }
+#fxl canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fx-flash { position: absolute; inset: 0; animation: fxflash .22s ease-out forwards; }
+@keyframes fxflash { from { opacity: .85; } to { opacity: 0; } }
+.fx-wipe { position: absolute; inset: -20% -60%; background: linear-gradient(100deg, transparent 30%, var(--c) 30% 70%, transparent 70%); animation: fxwipe .6s cubic-bezier(.6,0,.3,1) forwards; }
+@keyframes fxwipe { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+.fx-big { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; animation: fxout .35s ease-in forwards; animation-delay: calc(var(--ms, 1700ms) - 350ms); }
+.fx-big .bg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--c, #FFD21F) 70%, transparent), rgb(7 13 38 / .78) 70%); animation: fxbg .25s ease-out both; }
+.fx-big b { position: relative; font-family: var(--display); font-weight: 400; font-size: clamp(64px, 22vw, 120px); line-height: 1; color: #FFF; text-shadow: 0 6px 0 rgb(0 0 0 / .35), 0 0 40px var(--c, #FFD21F); animation: fxslam .5s .12s cubic-bezier(.2,1.5,.35,1) both; white-space: nowrap; }
+.fx-big span { position: relative; font-family: var(--display); font-size: 28px; color: var(--c, #FFD21F); background: #0B1437; padding: 2px 16px; border-radius: 6px; transform: skewX(-10deg); animation: fxup .4s .45s ease-out both; }
+.fx-big.dark .bg { background: radial-gradient(circle at 50% 45%, rgb(255 210 31 / .25), rgb(7 13 38 / .92) 70%); }
+@keyframes fxbg { from { opacity: 0; } }
+@keyframes fxslam { 0% { transform: scale(2.6); opacity: 0; } 60% { transform: scale(.92) scaleY(.86); opacity: 1; } 100% { transform: none; } }
+@keyframes fxup { from { transform: translateY(26px) skewX(-10deg); opacity: 0; } }
+@keyframes fxout { to { opacity: 0; transform: scale(1.06); } }
+.fx-ban { position: absolute; left: 0; right: 0; bottom: calc(88px + env(safe-area-inset-bottom)); display: flex; justify-content: center; animation: fxban 2.6s cubic-bezier(.2,.9,.3,1) forwards; }
+.fx-ban i { font-style: normal; font-weight: 700; font-size: 16px; color: #0B1437; background: #FFD21F; padding: 10px 18px; border-radius: 6px; transform: skewX(-10deg); box-shadow: 0 6px 0 #7A5B00; max-width: 92vw; }
+.fx-ban.fire i { background: linear-gradient(90deg, #FF9D2E, #E8323C); color: #FFF; box-shadow: 0 6px 0 #8E1219; }
+.fx-ban.remo i { background: #39B8FF; box-shadow: 0 6px 0 #17709F; }
+@keyframes fxban { 0% { transform: translateX(110%); } 12% { transform: translateX(0); } 85% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(-110%); opacity: 0; } }
+.fx-float { position: absolute; left: 50%; top: 38%; font-family: var(--display); font-size: 56px; color: #7DF0B5; text-shadow: 0 4px 0 rgb(0 0 0 / .4); animation: fxfloat 1.3s cubic-bezier(.2,.9,.3,1) forwards; white-space: nowrap; }
+.fx-float.neg { color: #FF9AA0; font-size: 40px; }
+@keyframes fxfloat { 0% { transform: translate(-50%, 20px) scale(.4); opacity: 0; } 25% { transform: translate(-50%, 0) scale(1.15); opacity: 1; } 70% { opacity: 1; } 100% { transform: translate(-50%, -90px) scale(.9); opacity: 0; } }
+.fx-var { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(7 13 38 / .55); animation: fxout .25s ease-in forwards; animation-delay: calc(var(--ms) - 250ms); }
+.fx-var .box { position: relative; overflow: hidden; width: min(78vw, 320px); padding: 22px 16px; border-radius: 10px; background: #2A1C5E; border: 3px solid #9B6BFF; text-align: center; display: flex; flex-direction: column; gap: 4px; animation: fxbg .2s ease-out; }
+.fx-var em { font-style: normal; font-family: var(--display); font-size: 54px; color: #FFF; letter-spacing: 6px; line-height: 1; direction: ltr; }
+.fx-var span { font-weight: 700; color: #D6CCFF; }
+.fx-var u { position: absolute; left: 0; right: 0; height: 3px; background: #9B6BFF; box-shadow: 0 0 18px #9B6BFF; top: 0; animation: scan .7s linear infinite alternate; }
+@keyframes scan { to { top: calc(100% - 3px); } }
+.shk { animation: shk .32s; } .shk2 { animation: shk2 .42s; }
+@keyframes shk { 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
+@keyframes shk2 { 15% { transform: translate(-9px, 4px) rotate(-.6deg); } 35% { transform: translate(8px, -5px) rotate(.5deg); } 55% { transform: translate(-6px, 3px); } 75% { transform: translate(4px, -2px); } }
+.bump { animation: bump .3s; } @keyframes bump { 50% { transform: scale(1.18); } }
+
+/* شريط البث: الدقيقة، الشعلة، المشي التلقائي */
+.hud .minute { font-family: var(--display); font-size: 18px; color: #0B1437; background: var(--yellow); border-radius: 5px; padding: 0 7px; direction: ltr; line-height: 1.5; }
+.bug .cell.fire { border-bottom-color: #FF7A2E; background: linear-gradient(0deg, rgb(255 122 46 / .28), var(--panel) 70%); animation: firecell 1.2s infinite alternate; }
+@keyframes firecell { to { box-shadow: 0 0 14px rgb(255 122 46 / .45); } }
+.abar { height: 5px; border-radius: 5px; background: var(--edge); overflow: hidden; direction: ltr; }
+.abar i { display: block; height: 100%; background: var(--sc); animation: abar linear forwards; }
+@keyframes abar { from { width: 100%; } to { width: 0; } }
+.ctl { display: flex; gap: 8px; } .ctl .btn:first-child { flex: 1; } .ctl .btn.alt { width: 64px; flex: none; font-size: 22px; }
+.poster .tip { font-size: 19px; font-weight: 700; line-height: 1.5; max-width: 26ch; }
+.remo { text-align: center; font-weight: 700; color: #04233A; background: var(--sky); border-radius: 6px; padding: 8px; transform: skewX(-8deg); }
+.say { text-align: center; } .say i { display: inline-block; font-style: normal; font-weight: 700; font-size: 14.5px; background: var(--edge); border-inline-start: 4px solid var(--sc); padding: 7px 12px; border-radius: 4px; }
+.fact { font-weight: 600; color: #D6DCF5; }
+.champ { text-align: center; font-family: var(--display); font-size: 30px; color: var(--yellow); }
+.rowi.qual { box-shadow: inset -4px 0 0 #19A35B; }
+.rowi .qz { font-size: 10.5px; font-weight: 700; color: #04233A; background: #7DF0B5; border-radius: 4px; padding: 0 5px; margin-inline-start: 4px; }
+.rows.table { position: relative; }
+.rows.table .rowi { position: relative; }
+.award { animation: rise .4s ease-out both; }
+.opts.two .opt .tag { font-family: var(--display); font-size: 20px; }
+/* النهائي */
+.vs { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; padding: 14px 10px; border-radius: 6px 6px 18px 18px; border-top: 6px solid var(--yellow); background: linear-gradient(165deg, rgb(255 210 31 / .25), var(--panel) 70%); }
+.vs .side { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
+.vs .side b { font-weight: 700; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vs .side .av { width: 40px; height: 40px; font-size: 18px; }
+.vs .k { display: flex; gap: 3px; } .vs .k i { width: 20px; height: 20px; border-radius: 50%; background: var(--edge); font-style: normal; font-size: 12px; display: grid; place-items: center; }
+.vs .k i.m { background: #4A1218; color: #FF9AA0; }
+.vs .sc { font-family: var(--display); font-size: 46px; color: var(--yellow); direction: ltr; line-height: 1; }
+.vs .sc small { font-size: 26px; margin: 0 4px; color: var(--muted); }
+.pre .vs .late, .pre .champ { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { .fx-big b, .fx-ban, .fx-float { animation-duration: .01s !important; } }
 </style>
 </head>
 <body>
@@ -248,6 +314,7 @@ input[type=range] { width: 100%; margin: 14px 0 0; accent-color: var(--yellow); 
 <script src="../shell.js"></script>
 <script src="mini.js"></script>
 <script src="sahra-audio.js"></script>
+<script src="sahra-fx.js"></script>
 <script src="sahra-content.js"></script>
 <script src="sahra.js"></script>
 </body>

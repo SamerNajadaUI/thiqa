@@ -12,7 +12,7 @@ const mem = { get: (k, d) => store.get("sahra-" + k, d), set: (k, v) => store.se
 let mode = null;          // "host" | "guest" | "local"
 let S = null;             // حالة اللعبة
 let client = null, room = null, offset = 0, timer = null, lastFx = null, lastKey = "";
-let POOL = null, CAREER = null;   // بنك الأسئلة، ومسيرات اللاعبين
+let POOL = null, CAREER = null, STARS = null, CLUBS = null;   // بنك الأسئلة، مسيرات اللاعبين، والنجوم (لـ«مين أعلى» و«الدخيل»)
 const DECK = {}, usedQ = new Set();
 const L = { ok: null, t0: 0 };    // تلفون واحد: مين ماسك التلفون، ومتى مسكه
 const me = { id: mem.get("pid", null), name: mem.get("name", "") };
@@ -24,7 +24,7 @@ const P = (id) => S.players.find((p) => p.id === id);
 const ids = () => S.players.map((p) => p.id);
 const stage = () => S.plan[S.si];
 const nm = (id) => esc(P(id) ? P(id).name : "؟");
-const fx = (k) => { S.fx = { id: Date.now() + Math.random(), k }; };
+const fx = (k) => { S.fx = { id: Date.now() + Math.random(), k, at: Date.now() }; };
 const after = (pid) => { const o = S.order; return o[(o.indexOf(pid) + 1) % o.length]; };
 const maxBet = (pid) => Math.max(P(pid).score, 300);
 const ranks = () => Object.fromEntries(sorted().map((p, i) => [p.id, i]));
@@ -54,6 +54,44 @@ async function loadPool() {
     const list = j.players.filter((p) => p.c.length >= 3).sort((a, b) => b.sl - a.sl).slice(0, 170);
     if (list.length > 20) CAREER = list;
   } catch {}
+  if (!STARS) try {
+    const j = await (await fetch("players.json")).json();
+    const list = j.players.filter((p) => p.lv <= 2 && p.a && !/[A-Za-z]/.test(p.a) && (p.c || []).length);
+    if (list.length > 60) {
+      STARS = list;
+      const map = new Map();
+      for (const p of list) for (const n of new Set(p.c.map((c) => c[0]))) { if (!map.has(n)) map.set(n, []); map.get(n).push(p); }
+      CLUBS = [...map].filter(([, l]) => l.length >= 6);
+    }
+  } catch {}
+}
+// «مين أعلى؟»: لاعبين وسؤال واحد، والفرق بينهم واضح
+function takeHilo() {
+  for (let i = 0; i < 80; i++) {
+    const [a, b] = shuffle(STARS).slice(0, 2), t = pick(["age", "age", "h", "clubs"]);
+    let q, win, note;
+    if (t === "age" && a.by && b.by && Math.abs(a.by - b.by) >= 2) { q = "مين الأكبر بالعمر؟"; win = a.by < b.by ? a : b; note = `${a.a} مواليد ${a.by} · ${b.a} مواليد ${b.by}`; }
+    else if (t === "h" && a.h && b.h && Math.abs(a.h - b.h) >= 4) { q = "مين الأطول؟"; win = a.h > b.h ? a : b; note = `${a.a} ${a.h} سم · ${b.a} ${b.h} سم`; }
+    else if (t === "clubs" && Math.abs(a.c.length - b.c.length) >= 2) { q = "مين لعب بأندية أكثر؟"; win = a.c.length > b.c.length ? a : b; note = `${a.a} ${a.c.length} أندية · ${b.a} ${b.c.length} أندية`; }
+    else continue;
+    if (a.a === b.a || usedQ.has("h|" + a.id + b.id)) continue;
+    usedQ.add("h|" + a.id + b.id);
+    return { cat: "⚖️ مين أعلى؟", q, opts: [a.a, b.a], c: win === a ? 0 : 1, note };
+  }
+  return null;
+}
+// «الدخيل»: ثلاثة لعبوا لنفس النادي وواحد لأ
+function takeOdd() {
+  for (let i = 0; i < 60; i++) {
+    const [club, list] = pick(CLUBS);
+    if (usedQ.has("o|" + club)) continue;
+    const three = shuffle(list).slice(0, 3), out = pick(STARS);
+    if (out.c.some((c) => c[0] === club) || three.some((x) => x.a === out.a) || new Set(three.map((x) => x.a)).size < 3) continue;
+    usedQ.add("o|" + club);
+    const opts = shuffle([out, ...three]);
+    return { cat: "🕵️ الدخيل", q: "ثلاثة منهم لعبوا لنفس النادي. مين الدخيل؟", opts: opts.map((x) => x.a), c: opts.indexOf(out), note: `الثلاثة لعبوا بـ${club}` };
+  }
+  return null;
 }
 function takeQ(kind) {
   let cats = POOL || [{ cid: "fb", cat: "معلومات عامة", qs: FALLBACK_Q }];
@@ -85,16 +123,16 @@ function takeCareer() {
 }
 
 // ======================= المحرّك =======================
-const newPlayer = (id, name) => ({ id, name, score: 0, joker: true, st: {} });
-const newState = (players) => ({ room, host: me.id, phase: "lobby", players, cfg: { len: mem.get("len", "full"), vibe: mem.get("vibe", "mix") }, plan: [], si: 0, r: 0, order: [], jok: {}, gain: {}, cur: null });
+const newPlayer = (id, name) => ({ id, name, score: 0, fire: 0, st: {} });
+const newState = (players) => ({ room, host: me.id, phase: "lobby", players, cfg: { len: mem.get("len", "full"), vibe: mem.get("vibe", "ball") }, plan: [], si: 0, r: 0, order: [], jok: {}, gain: {}, cur: null });
 
 async function begin() {
   S.phase = "loading"; commit();
   await loadPool();
-  S.players.forEach((p) => { p.score = 0; p.joker = true; p.st = { right: 0, fooled: 0, herd: 0, star: 0, laugh: 0, boom: 0, acted: 0, goals: 0, saves: 0, fast: 0 }; });
-  S.plan = PLANS[S.cfg.len](S.players.length).filter(([id]) => id !== "career" || CAREER).map(([id, rounds]) => ({ id, rounds }));
+  S.players.forEach((p) => { p.score = 0; p.fire = 0; p.st = { fire: 0, right: 0, fooled: 0, herd: 0, star: 0, laugh: 0, boom: 0, acted: 0, goals: 0, saves: 0, fast: 0 }; });
+  S.plan = PLANS[S.cfg.len](S.players.length).filter(([id]) => (id !== "career" || CAREER) && (!["hilo", "odd"].includes(id) || STARS)).map(([id, rounds]) => ({ id, rounds }));
   S.order = shuffle(ids());
-  S.si = 0; S.r = 0; S.jok = {}; S.gain = {}; S.cur = null; S.awards = null; S.rank0 = ranks();
+  S.si = 0; S.r = 0; S.jok = {}; S.gain = {}; S.cur = null; S.awards = null; S.champ = null; S.auto = null; S.rank0 = ranks();
   S.phase = "stage"; fx("stage");
   commit();
 }
@@ -112,8 +150,13 @@ function startRound() {
   const s = stage(), all = ids(), turn = S.order[S.r % S.order.length];
   const id = s.id === "career" && !CAREER ? "warm" : s.id;   // لو بيانات المسيرات لسا ما تحمّلت
   const base = { ans: {}, need: all, delta: {}, x2: s.rounds >= 2 && S.r === s.rounds - 1 && id !== "bet" };
-  S.phase = "ask";
-  if (id === "warm") {
+  S.phase = "ask"; S.auto = null;
+  if (id === "final") return startFinal();
+  if (id === "hilo" || id === "odd") {
+    const q = (STARS && (id === "hilo" ? takeHilo() : takeOdd())) || null;
+    if (q) { S.cur = { ...base, kind: "mcq", q: q.q, cat: q.cat, opts: q.opts, c: q.c, note: q.note, at: {} }; if (S.cur.x2) fx("gold"); return timeAsk(); }
+  }
+  if (id === "warm" || id === "hilo" || id === "odd") {
     const q = takeQ("warm"), opts = shuffle(q.opts);
     S.cur = { ...base, kind: "mcq", q: q.q, img: q.img, cat: q.cat, opts, c: opts.indexOf(q.opts[0]), at: {} };
   } else if (id === "fib") {
@@ -162,8 +205,9 @@ function answer(pid, val) {
   if (S.phase !== "ask" || !c.need.includes(pid) || pid in c.ans) return;
   const text = (max) => String(val ?? "").trim().replace(/\s+/g, " ").slice(0, max);
   const k = c.kind;
-  if (k === "mcq" || k === "betq") { val = +val; if (!(val >= 0 && val < 4)) return; if (c.at) c.at[pid] = Date.now(); }
-  else if (k === "pen") { val = +val; if (!(val >= 0 && val < 3)) return; }
+  if (k === "mcq" || k === "betq") { val = +val; if (!(val >= 0 && val < c.opts.length)) return; if (c.at) c.at[pid] = Date.now(); }
+  else if (k === "pen" || k === "fin") { val = +val; if (!(val >= 0 && val < 3)) return; }
+  else if (k === "finbet") { if (val !== c.a && val !== c.b) return; }
   else if (k === "career") { const [i, shown] = String(val).split(":").map(Number); if (!(i >= 0 && i < 4)) return; val = { i, k: clamp(shown || 1, 1, c.clubs.length) }; }
   else if (k === "fibw") {
     val = text(40); if (!val) return;
@@ -182,13 +226,32 @@ function answer(pid, val) {
 // كل اللاعبين جاوبوا (أو خلص الوقت): احسب النقاط أو انتقل للخطوة الجاية
 function closeAsk() {
   const c = S.cur, all = ids(), A = Object.entries(c.ans);
-  const reveal = (sound = "show") => { clearTimeout(timer); S.phase = "show"; fx(sound); };
+  const reveal = (sound = "show", sus = 0) => { clearTimeout(timer); S.phase = "show"; c.sus = sus ? (FAST ? 150 : sus) : 0; fx(sound); autoGo(6000 + c.sus); };
+  const quiz = (right) => { all.forEach((pid) => mark(pid, right.includes(pid))); say(right.length === all.length ? "all" : !right.length ? "none" : right.length === 1 ? "solo" : "some", right[0]); };
   switch (c.kind) {
     case "mcq": {
       const right = A.filter(([, v]) => v === c.c).map(([pid]) => pid);
       right.forEach((pid) => { give(pid, 100); P(pid).st.right++; });
       if (mode === "host" && right.length) { c.fast = right.sort((a, b) => c.at[a] - c.at[b])[0]; give(c.fast, 50); P(c.fast).st.fast++; }
-      return reveal("drum");
+      quiz(right);
+      return reveal("drum", 900 + Math.random() * 700);
+    }
+    case "finbet": c.bets = c.ans; return nextKick();
+    case "fin": {
+      for (const id of c.need) if (!(id in c.ans)) c.ans[id] = Math.floor(Math.random() * 3);
+      const goal = c.ans[c.shooter] !== c.ans[c.keeper];
+      c.log.push({ s: c.shooter, z: c.ans[c.shooter], d: c.ans[c.keeper], goal });
+      if (goal) { c.shooter === c.a ? c.ga++ : c.gb++; P(c.shooter).st.goals++; } else P(c.keeper).st.saves++;
+      const n = c.k + 1, ka = Math.ceil(n / 2), kb = Math.floor(n / 2);
+      const done = n <= 6 ? c.ga > c.gb + (3 - kb) || c.gb > c.ga + (3 - ka) : n % 2 === 0 && c.ga !== c.gb;
+      say(goal ? "fgoal" : "fsave", goal ? c.shooter : c.keeper);
+      if (done) {
+        c.done = true; c.champ = S.champ = c.ga > c.gb ? c.a : c.b;
+        give(c.champ, 300);
+        for (const [pid, v] of Object.entries(c.bets || {})) if (v === c.champ) give(pid, 150);
+      }
+      clearTimeout(timer); S.phase = "show"; c.sus = FAST ? 150 : 1700; fx("fin"); autoGo((done ? 7000 : 4200) + c.sus);
+      return;
     }
     case "pen": {
       if (!(c.keeper in c.ans)) c.ans[c.keeper] = Math.floor(Math.random() * 3);
@@ -197,11 +260,13 @@ function closeAsk() {
         if (pid === c.keeper) continue;
         if (v === dive) { give(c.keeper, 100); P(c.keeper).st.saves++; } else { give(pid, 100); P(pid).st.goals++; }
       }
-      return reveal("drum");
+      { const sh = A.filter(([pid]) => pid !== c.keeper), sv = sh.filter(([, v]) => v === dive).length; say(!sv ? "pen0" : sv === sh.length ? "penall" : "pen", c.keeper); }
+      return reveal("drum", 1500);
     }
     case "career":
       for (const [pid, v] of A) if (v.i === c.c) { give(pid, Math.max(100, 350 - v.k * 50)); P(pid).st.right++; }
-      return reveal("drum");
+      quiz(A.filter(([, v]) => v.i === c.c).map(([pid]) => pid));
+      return reveal("drum", 1300);
     case "fibw": {
       const map = new Map();
       for (const [pid, t] of A) { const key = normAr(t); if (!map.has(key)) map.set(key, { t, by: [] }); map.get(key).by.push(pid); }
@@ -214,7 +279,9 @@ function closeAsk() {
         if (o.truth) { give(pid, 200); P(pid).st.right++; }
         else o.by.forEach((liar) => { give(liar, 100); P(liar).st.fooled++; });
       }
-      return reveal("drum");
+      { const found = A.filter(([, v]) => c.opts[v].truth).length, king = c.opts.filter((o) => !o.truth).map((o) => [o.by[0], A.filter(([, v]) => c.opts[v] === o).length]).sort((a, b) => b[1] - a[1])[0];
+        if (!found) say("fibnone"); else if (king && king[1] >= 2) say("fibking", king[0]); }
+      return reveal("var", 2300);
     case "most": {
       const count = {}; A.forEach(([, v]) => { count[v] = (count[v] || 0) + 1; });
       const top = Math.max(0, ...Object.values(count));
@@ -252,8 +319,39 @@ function closeAsk() {
     }
     case "betq":
       for (const [pid, v] of A) { const b = c.bets[pid] || 0; if (v === c.c) { give(pid, b); P(pid).st.right++; } else give(pid, -b); }
-      return reveal("drum");
+      quiz(A.filter(([, v]) => v === c.c).map(([pid]) => pid));
+      return reveal("var", 2400);
   }
+}
+
+// «مولّع»: 3 أجوبة صح ورا بعض بتولّع الشعلة، وكل صح بعدها +50. أول غلطة بتطفيها.
+function mark(pid, ok) {
+  const p = P(pid), c = S.cur;
+  if (ok) { p.fire = (p.fire || 0) + 1; if (p.fire >= 3) { give(pid, 50); p.st.fire++; if (p.fire === 3) (c.fireNew = c.fireNew || []).push(pid); } }
+  else { if ((p.fire || 0) >= 3) (c.fireOut = c.fireOut || []).push(pid); p.fire = 0; }
+}
+function say(key, pid) { const l = COMM[key]; if (l) S.cur.say = pick(l).replace("{n}", pid && P(pid) ? P(pid).name : ""); }
+// المشي التلقائي: بعد النتيجة والترتيب اللعبة بتكمّل لحالها (صاحب الغرفة بيقدر يوقّف أو يستعجل)
+function autoGo(ms) {
+  if (mode === "guest") return;
+  if (FAST) ms = 500;
+  S.auto = { at: Date.now() + ms, dur: ms };
+  arm(ms, () => { if (S.auto) advance(); });
+}
+// ----- النهائي: أول اثنين، 3 ركلات لكل واحد، وبعدها ركلة ذهبية لو تعادل -----
+function startFinal() {
+  const [a, b] = sorted().slice(0, 2).map((p) => p.id);
+  S.cur = { kind: "finbet", a, b, ga: 0, gb: 0, log: [], k: -1, ans: {}, need: ids().filter((id) => id !== a && id !== b), delta: {}, x2: false };
+  S.phase = "ask"; fx("finalcall");
+  if (!S.cur.need.length) { S.cur.bets = {}; return nextKick(); }
+  timeAsk();
+}
+function nextKick() {
+  const c = S.cur, k = c.k + 1;
+  Object.assign(c, { kind: "fin", k, shooter: k % 2 === 0 ? c.a : c.b, keeper: k % 2 === 0 ? c.b : c.a, ans: {}, say: null });
+  c.need = [c.shooter, c.keeper];
+  S.phase = "ask"; S.auto = null; fx("whistle");
+  timeAsk();
 }
 
 // ----- المراحل الحية: تمثيل وقنبلة -----
@@ -261,17 +359,19 @@ function arm(ms, fn) { clearTimeout(timer); timer = setTimeout(() => { fn(); com
 function rearm() {
   const c = S && S.cur;
   if (!c) return;
+  if (S.auto && mode !== "guest" && ["show", "board"].includes(S.phase)) return arm(S.auto.at - Date.now(), () => { if (S.auto) advance(); });
   if (S.phase === "ask" && c.until && mode === "host") return arm(c.until - Date.now(), () => { if (S.phase === "ask") closeAsk(); });
   if (S.phase !== "live" || c.st !== "run") return;
   if (c.kind === "act") arm(c.until - Date.now(), endAct); else arm(c.boomAt - Date.now(), boom);
 }
-function endAct() { clearTimeout(timer); S.cur.st = "done"; S.phase = "show"; fx("show"); }
+function endAct() { clearTimeout(timer); S.cur.st = "done"; S.phase = "show"; fx("whistle3"); autoGo(7000); }
 function boom() {
   clearTimeout(timer);
   const c = S.cur;
   c.st = "boom"; give(c.holder, -150); P(c.holder).st.boom++;
   ids().forEach((id) => { if (id !== c.holder) give(id, 50); });
-  S.phase = "show"; fx("boom");
+  say("boom", c.holder);
+  S.phase = "show"; fx("boom"); autoGo(6000);
 }
 function live(a, who) {
   const c = S.cur;
@@ -293,19 +393,24 @@ function live(a, who) {
 
 // صاحب الغرفة بيكمّل: من بطاقة المرحلة للجولة، ومن النتيجة للجولة الجاية، وهكذا
 function advance() {
+  clearTimeout(timer); S.auto = null;
   if (S.phase === "stage") {
-    Object.keys(S.jok).forEach((pid) => { P(pid).joker = false; });
     S.r = 0; startRound();
+  } else if (S.phase === "show" && S.cur.kind === "fin") {
+    if (S.cur.done) finale(); else nextKick();
   } else if (S.phase === "show") {
     S.r++;
     if (S.r < stage().rounds) return startRound();
     S.bonus = {};
     for (const pid of Object.keys(S.jok)) { const g = S.gain[pid] || 0; if (g > 0) { P(pid).score += g; S.bonus[pid] = g; } }
-    S.phase = "board"; fx("show");
+    S.phase = "board"; fx("board"); autoGo(8500);
   } else if (S.phase === "board") {
     S.rank0 = ranks();
     S.si++; S.jok = {}; S.gain = {}; S.bonus = {}; S.cur = null;
     if (S.si >= S.plan.length) return finale();
+    // ريمونتادا: من المرحلة الثالثة، آخر واحد بالترتيب ربحه ×2 بهالمرحلة (تلقائي)
+    const o = sorted(), last = o[o.length - 1];
+    if (S.si >= 2 && !["bet", "final"].includes(stage().id) && last.score < o[o.length - 2].score) S.jok[last.id] = true;
     S.phase = "stage"; fx("stage");
   }
 }
@@ -314,7 +419,7 @@ function finale() {
   if (window.Rewards) Rewards.toast(Rewards.finish("sahra", 40));
   S.si = S.plan.length - 1;
   const AW = [
-    ["right", "🎯", "القنّاص", "أكثر واحد جاوب صح"], ["fast", "⚡", "البرق", "أكثر واحد جاوب أول"], ["goals", "⚽", "الهدّاف", "أكثر واحد سجّل ركلات"], ["saves", "🧤", "الأخطبوط", "أكثر حارس صدّ ركلات"],
+    ["fire", "🔥", "المولّع", "أكثر واحد ضل مولّع"], ["right", "🎯", "القنّاص", "أكثر واحد جاوب صح"], ["fast", "⚡", "البرق", "أكثر واحد جاوب أول"], ["goals", "⚽", "الهدّاف", "أكثر واحد سجّل ركلات"], ["saves", "🧤", "الأخطبوط", "أكثر حارس صدّ ركلات"],
     ["fooled", "🤥", "أكبر كذّاب", "أكثر واحد صدّقوا كذبه"], ["star", "⭐", "حديث السهرة", "أكثر واحد انصوّت عليه بـ«مين فينا»"], ["herd", "🐑", "مع القطيع", "أكثر واحد صوّت مع الأغلبية"],
     ["laugh", "😂", "مهضوم السهرة", "أكثر واحد ضحّكهم"], ["acted", "🎭", "الممثل", "أكثر واحد فهّمهم كلمات"], ["boom", "💣", "المفجوع", "أكثر واحد انفجرت عنده"],
   ];
@@ -346,17 +451,12 @@ function act(a) {
       break;
     case "kick": if (!boss || S.phase !== "lobby" || a.who === S.host) return; S.players = S.players.filter((p) => p.id !== a.who); break;
     case "start": if (!boss || S.phase !== "lobby" || S.players.length < MIN) return; begin(); return;
-    case "joker": {
-      const p = P(mode === "local" ? a.who : a.pid);
-      if (S.phase !== "stage" || stage().id === "bet" || !p || !p.joker) return;
-      if (S.jok[p.id]) delete S.jok[p.id]; else S.jok[p.id] = true;
-      break;
-    }
     case "go": if (!boss) return; advance(); break;
+    case "hold": if (!boss || !S.auto) return; clearTimeout(timer); S.auto = null; break;
     case "ans": answer(who, a.val); break;
     case "force": if (!boss || S.phase !== "ask") return; closeAsk(); break;
     case "cgo": case "cok": case "cskip": case "bgo": case "bpass": live(a, who); break;
-    case "skipturn": if (!boss || S.phase !== "live") return; clearTimeout(timer); S.cur.st = "skipped"; S.phase = "show"; break;
+    case "skipturn": if (!boss || S.phase !== "live") return; clearTimeout(timer); S.cur.st = "skipped"; S.phase = "show"; autoGo(2500); break;
     case "dare": if (!boss || S.phase !== "final") return; S.dare = take("dare"); break;
     case "again": if (!boss || S.phase !== "final") return; if (mode === "local") { begin(); return; } S.phase = "lobby"; break;
     default: return;
@@ -449,7 +549,7 @@ function onState(st) {
   }
   S = st;
   const f = S.fx;
-  if (f && f.id !== lastFx) { lastFx = f.id; effects(f.k); }
+  if (f && f.id !== lastFx) { lastFx = f.id; if (now() - (f.at || 0) < 6000) effects(f.k); }   // مؤثر قديم (رجعة بعد انقطاع) ما بينعاد
   draw();
 }
 
@@ -460,21 +560,62 @@ function haptic(kind) {
 }
 const musicPref = () => { const m = mem.get("music", null); return m === null ? mode !== "guest" : m; };   // الضيوف ساكتين إلا إذا شغّلوها
 function effects(k) {
-  if (k === "show") Sound.fx("ding");
-  else if (k === "drum") { Sound.fx("drum"); const c = S.cur; if (c && c.kind === "pen") Sound.fx("crowd", 1.4); }
+  const c = S.cur;
+  if (k === "show" || k === "board") Sound.fx("ding");
+  else if (k === "drum") Sound.fx("drum", 0, (c.sus || 1400) / 1000);
+  else if (k === "var") { Sound.fx("var", 0, (c.sus || 2000) / 1000); FXL.varScan(c.sus || 2000); }
+  else if (k === "fin") { [0, 0.55, 1.1].forEach((d) => Sound.fx("heart", d)); }
+  else if (k === "stage") {
+    FXL.clear(); FXL.wipe(STAGES[stage().id].color); Sound.fx("stage");
+    const r = Object.keys(S.jok);
+    if (r.length) setTimeout(() => { FXL.banner(`⚡ ريمونتادا! ${P(r[0]).name} ربحه ×2`, "remo"); Sound.fx("remo"); }, 900);
+  }
+  else if (k === "gold") { Sound.fx("gold"); FXL.banner("🔥 الجولة الذهبية: كل النقاط ×2", "gold"); }
   else if (k === "ok") { Sound.fx("ok"); haptic(); }
-  else if (k === "pass") { Sound.fx("pass"); if (S.cur && S.cur.holder === me.id) haptic("error"); }
-  else if (k === "boom") { Sound.fx("boom"); haptic("error"); }
-  else if (k === "final") { Sound.fx("final"); confetti(); }
+  else if (k === "pass") { Sound.fx("pass"); if (c && c.holder === me.id) haptic("error"); }
+  else if (k === "boom") { Sound.fx("boom"); haptic("error"); FXL.flash("#FFB020"); FXL.shake(true); FXL.burst(innerWidth / 2, innerHeight * 0.35, 44, ["#E8323C", "#FF9D2E", "#FFD21F", "#3A3A3A"]); }
+  else if (k === "finalcall") { Sound.fx("finalcall"); FXL.big("النهائي", `${P(c.a).name} × ${P(c.b).name}`, { quiet: true, ms: 2400, cls: "dark" }); }
+  else if (k === "final") { Sound.fx("final"); const k1 = S.champ ? P(S.champ) : sorted()[0]; FXL.big("🏆", `${k1.name} ملك السهرة`, { ms: 2600, n: 50 }); FXL.confetti(5000); }
   else Sound.fx(k);
 }
-function confetti() {
-  const box = document.createElement("div");
-  box.className = "confetti";
-  const colors = ["#FFD21F", "#E8323C", "#19A35B", "#39B8FF", "#FFFFFF"];
-  box.innerHTML = Array.from({ length: 70 }, () => `<i style="left:${Math.random() * 100}%;background:${pick(colors)};animation-duration:${2.2 + Math.random() * 2.5}s;animation-delay:${Math.random() * 1.2}s"></i>`).join("");
-  document.body.appendChild(box);
-  setTimeout(() => box.remove(), 6500);
+// بعد ما ينكشف الجواب: ردّة فعل لكل لاعب على شاشته (جول، صدّة، صح، غلط، مولّع)
+function afterReveal() {
+  const c = S && S.cur;
+  if (!c || S.phase !== "show") return;
+  const v = mode === "local" ? null : me.id, d = (c.delta || {})[v] || 0;
+  if (c.kind === "pen") {
+    const dive = c.ans[c.keeper], sh = Object.keys(c.ans).filter((id) => id !== c.keeper), goals = sh.filter((id) => c.ans[id] !== dive), saves = sh.length - goals.length;
+    if (v === c.keeper) { if (saves) { FXL.big("صدّة! 🧤", `+${d}`, { color: "#19A35B", quiet: true }); Sound.fx("save"); Sound.fx("cheer", 0.3); } else { Sound.fx("goal"); FXL.shake(); FXL.float("ولا صدّة 😬", false); } }
+    else if (v && goals.includes(v)) { FXL.big("غوووول", `+${d}`); Sound.fx("goal"); }
+    else if (v && sh.includes(v)) { FXL.float("انصدّت 🧤", false); Sound.fx("save"); FXL.shake(); }
+    else if (goals.length) { FXL.big("غوووول", goals.map((id) => P(id).name).join(" · ")); Sound.fx("goal"); }
+    else { FXL.big("صدّهم كلهم 🧤", P(c.keeper).name, { color: "#19A35B", quiet: true }); Sound.fx("save"); }
+  } else if (c.kind === "fin") {
+    const L1 = c.log[c.log.length - 1];
+    if (L1.goal) { FXL.big("غوووول", P(L1.s).name); Sound.fx("goal"); } else { FXL.big("صدّة! 🧤", P(c.keeper).name, { color: "#39B8FF", quiet: true }); Sound.fx("save"); FXL.shake(); }
+    if (c.done) setTimeout(() => { FXL.banner(`🏆 ${P(c.champ).name} بطل السهرة!`, "gold"); Sound.fx("whistle3"); }, 1900);
+  } else if (["mcq", "career", "fibp", "betq"].includes(c.kind)) {
+    if (!v) Sound.fx(Object.values(c.delta || {}).some((x) => x > 0) ? "cheer" : "ooh");
+    else if (d > 0) { FXL.float(`+${d}`); Sound.fx("ok"); Sound.fx("cheer", 0.1); haptic(); }
+    else if (v in c.ans || d < 0) { FXL.float(d < 0 ? String(d) : "غلط ✗", false); Sound.fx("bad"); FXL.shake(); haptic("error"); }
+  }
+  if (c.fireNew && c.fireNew.length) setTimeout(() => { FXL.banner(`🔥 ${c.fireNew.map((id) => P(id).name).join(" و ")} مولّع! كل صح +50`, "fire"); Sound.fx("fire"); }, 700);
+  else if (c.fireOut && c.fireOut.includes(v)) setTimeout(() => { FXL.float("انطفت الشعلة 💨", false); Sound.fx("fizz"); }, 600);
+}
+// لوحة الترتيب: النقاط بتنعدّ، والأسماء بتتحرك لمكانها الجديد
+function boardAnim() {
+  const box = $("btable");
+  if (!box || box.dataset.done || S.phase !== "board") return;
+  box.dataset.done = 1;
+  box.querySelectorAll("b.sc").forEach((b) => FXL.countUp(b, +b.dataset.from, +b.dataset.to, 800));
+  Sound.fx("count", 0, 10);
+  setTimeout(() => {
+    if (!$("btable")) return;
+    const o = sorted();
+    FXL.reorder(box, o.map((p) => p.id)); box.classList.add("moved");
+    const was = Object.entries(S.rank0 || {}).find(([, r]) => r === 0);
+    if (o[0].score > 0 && was && was[0] !== o[0].id && S.si > 0) { FXL.banner(`👑 صدارة جديدة: ${o[0].name}`, "gold"); Sound.fx("lead"); }
+  }, 1000);
 }
 // الساعة: شريط الوقت، عدّاد التمثيل، كشف الأندية، وتكتكة القنبلة
 let lastSec = -1;
@@ -524,12 +665,26 @@ const musBtn = () => `<button class="mus" data-a="music" aria-label="الموس�
 function hud() {
   const s = stage(), info = STAGES[s.id], c = S.cur;
   const round = ["ask", "show", "live"].includes(S.phase) && s.rounds > 1 ? `<span>جولة ${S.r + 1} من ${s.rounds}</span>` : "";
-  return `<div class="hud"><span class="tagk"><i>${info.icon} ${info.name}</i></span><span class="meta"><span>مرحلة ${S.si + 1} من ${S.plan.length}</span>${round}</span>${room ? `<span class="code">${esc(room)}</span>` : ""}${musBtn()}</div>
+  const min = s.id === "final" ? "90+" : Math.min(90, Math.round(((S.si + (["ask", "show", "live"].includes(S.phase) ? S.r / s.rounds : S.phase === "board" ? 1 : 0)) / S.plan.length) * 90));
+  return `<div class="hud"><span class="tagk"><i>${info.icon} ${info.name}</i></span><span class="meta"><span>مرحلة ${S.si + 1} من ${S.plan.length}</span>${round}</span><span class="minute">${min}'</span>${room ? `<span class="code">${esc(room)}</span>` : ""}${musBtn()}</div>
     ${S.phase === "ask" && c.until ? `<div class="tbar" id="tbar"><i></i></div>` : ""}${scorebug()}
     ${c && c.x2 && S.phase !== "board" ? `<div class="golden">🔥 الجولة الذهبية: كل النقاط ×2</div>` : ""}`;
 }
 function scorebug() {
-  return `<div class="bug">${sorted().map((p, i) => `<span class="cell ${i === 0 && p.score > 0 ? "lead" : ""} ${mode !== "local" && p.id === me.id ? "mine" : ""}"><em>${i + 1}</em><span class="n">${esc(p.name)}${S.jok[p.id] ? " 🃏" : ""}</span><b>${p.score}</b></span>`).join("")}</div>`;
+  return `<div class="bug">${sorted().map((p, i) => `<span class="cell ${i === 0 && p.score > 0 ? "lead" : ""} ${mode !== "local" && p.id === me.id ? "mine" : ""} ${p.fire >= 3 ? "fire" : ""}"><em>${i + 1}</em><span class="n">${esc(p.name)}${p.fire >= 3 ? " 🔥" : ""}${S.jok[p.id] ? " ⚡" : ""}</span><b>${p.score}</b></span>`).join("")}</div>`;
+}
+// أزرار صاحب الغرفة + شريط المشي التلقائي
+function ctl(label) {
+  const left = S.auto ? Math.max(0, S.auto.at - now()) : 0;
+  const bar = S.auto ? `<div class="abar"><i style="animation-duration:${left}ms"></i></div>` : "";
+  if (!isBoss()) return bar || `<p class="wait">استنى صاحب الغرفة يكمّل <span class="dots"><i></i><i></i><i></i></span></p>`;
+  return `${bar}<div class="ctl"><button class="btn" data-a="go">${label}</button>${S.auto ? `<button class="btn alt" data-a="hold" aria-label="وقّف المشي التلقائي">✋</button>` : ""}</div>`;
+}
+// كرت النهائي: الاسمين، النتيجة، وركلات كل واحد
+function finCard(c) {
+  const hide = S.phase === "show";
+  const side = (id) => { const l = c.log.filter((x) => x.s === id); return `<div class="side">${pav(id)}<b>${nm(id)}</b><span class="k">${Array.from({ length: Math.max(3, l.length) }, (_, i) => (l[i] ? `<i class="${l[i].goal ? "g" : "m"} ${hide && l[i] === c.log[c.log.length - 1] ? "late" : ""}">${l[i].goal ? "⚽" : "✕"}</i>` : "<i></i>")).join("")}</span></div>`; };
+  return `<section class="vs">${side(c.a)}<div class="sc ${hide ? "late" : ""}">${c.ga}<small>-</small>${c.gb}</div>${side(c.b)}</section>`;
 }
 function qCard(c, extra = "") {
   return `<section class="q">${c.cat ? `<span class="cat">${esc(c.cat)}</span>` : ""}<b>${esc(c.q)}</b>${c.img ? `<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer">` : ""}${extra}</section>`;
@@ -559,8 +714,8 @@ function intro() {
   const online = mem.get("online", null), local = mem.get("local", null);
   const fresh = online && Date.now() - online.at < 3 * 3600e3;
   render(`
-    <div class="hero"><div class="top">${musBtn()}</div><span class="crown">👑</span><h1>ملك السهرة</h1><p class="sub">${Object.keys(STAGES).length} مراحل، وكل مرحلة لعبة شكل. مين بيرفع الكاس الليلة؟</p></div>
-    <div class="strip">${Object.values(STAGES).map((s) => `<span style="--sc:${s.color}">${s.icon} ${s.name}</span>`).join("")}</div>
+    <div class="hero"><div class="top">${musBtn()}</div><span class="crown">👑</span><h1>ملك السهرة</h1><p class="sub">سهرة كروية بتمشي زي مباراة، وبتخلص بنهائي على الكاس. مين بيرفعه الليلة؟</p></div>
+    <div class="strip">${Object.entries(STAGES).filter(([k]) => k !== "wave").map(([, v]) => v).map((s) => `<span style="--sc:${s.color}">${s.icon} ${s.name}</span>`).join("")}</div>
     <input class="input" id="name" type="text" maxlength="14" placeholder="اسمك" value="${esc(me.name)}" autocomplete="off">
     <button class="btn" data-a="create">افتح غرفة (كل واحد من تلفونه)</button>
     <div class="row" style="flex-wrap:nowrap"><input class="input codein" id="code" type="text" inputmode="numeric" maxlength="5" placeholder="كود الغرفة" value="${esc(qs.get("room") || "")}" style="flex:1.4">
@@ -571,12 +726,11 @@ function intro() {
     <button class="btn alt" data-a="one">على تلفون واحد (بنمرّره)</button>
     ${howto("sahra", `<ul class="rules">
       <li>من <b>${MIN}</b> لـ<b>${MAX}</b> لاعبين. كل واحد لحاله، والنقاط بتتجمع من مرحلة لمرحلة.</li>
-      ${Object.values(STAGES).map((s) => `<li><b>${s.icon} ${s.name}</b>: ${s.how}</li>`).join("")}
+      ${Object.entries(STAGES).filter(([k]) => k !== "wave").map(([, s]) => `<li><b>${s.icon} ${s.name}</b>: ${s.how}</li>`).join("")}
+      <li><b>🔥 مولّع</b>: 3 أجوبة صح ورا بعض بتولّع الشعلة، وكل صح بعدها +50. أول غلطة بتطفيها.</li>
+      <li><b>⚡ ريمونتادا</b>: آخر واحد بالترتيب ربحه ×2 بالمرحلة (تلقائي).</li>
       <li><b>🔥 الجولة الذهبية</b>: آخر جولة بكل مرحلة نقاطها ×2.</li>
-      <li><b>⚡ الأسرع</b>: بالغرفة، أول واحد بيجاوب صح بالإحماء بياخد +50، وكل سؤال إله وقت.</li>
-      <li><b>🃏 الجوكر</b>: مرة وحدة بالسهرة، بتضاعف ربحك بمرحلة بتختارها (قبل ما تبلّش).</li>
-      <li><b>⚽ سهرة كروية</b>: اختاروها وكل الأسئلة والكلمات بتصير كرة قدم.</li>
-      <li>بالآخر: تتويج الملك، ألقاب مضحكة، وحكم على آخر واحد.</li>
+      <li>اللعبة بتمشي لحالها بعد كل نتيجة. بالآخر: ملك السهرة، ألقاب مضحكة، وحكم على آخر واحد.</li>
     </ul>`)}`);
 }
 function getName() {
@@ -594,7 +748,7 @@ function localSetup() {
   render(`<h1>على تلفون واحد</h1><p class="sub">التلفون بيلف على الكل: كل واحد بيجاوب بالسر وبيمرّره.</p>
     <div class="stack" id="nl">${names.map((v, i) => `<input class="input" type="text" maxlength="14" placeholder="لاعب ${i + 1}" value="${esc(v)}">`).join("")}</div>
     <div class="row" style="flex-wrap:nowrap"><button class="btn alt" data-a="addp">+ لاعب</button><button class="btn alt" data-a="remp">− لاعب</button></div>
-    ${cfgSegs(mem.get("len", "full"), mem.get("vibe", "mix"), "lcfg")}
+    ${cfgSegs(mem.get("len", "full"), mem.get("vibe", "ball"), "lcfg")}
     <p class="err" id="err" hidden></p>
     <button class="btn" data-a="lgo">صافرة البداية</button><button class="linkish" data-a="home">رجوع</button>`);
 }
@@ -614,18 +768,13 @@ function vLobby() {
 }
 
 function vStage() {
-  const s = stage(), info = STAGES[s.id], canJoker = s.id !== "bet";
-  let jokers = "";
-  if (canJoker && mode === "local") {
-    jokers = `<p class="note">🃏 مين بده يستعمل الجوكر (ضعف الربح) بهالمرحلة؟</p><div class="jokers">${S.players.map((p) => `<button class="jk" data-a="joker" data-v="${p.id}" aria-pressed="${!!S.jok[p.id]}" ${p.joker ? "" : "disabled"}>🃏 ${esc(p.name)}</button>`).join("")}</div>`;
-  } else if (canJoker) {
-    const mine = P(me.id), active = Object.keys(S.jok);
-    jokers = `${mine && mine.joker ? `<div class="jokers"><button class="jk" data-a="joker" aria-pressed="${!!S.jok[me.id]}">${S.jok[me.id] ? "🃏 الجوكر شغّال: ربحك ×2" : "🃏 استعمل الجوكر (ربحك ×2 بهالمرحلة)"}</button></div>` : `<p class="note">الجوكر تبعك راح 🃏</p>`}
-      ${active.length ? `<p class="note">حاطّين جوكر: ${active.map(nm).join("، ")}</p>` : ""}`;
-  }
-  return { key: `stage|${S.si}`, dyn: jokers + bossBtn("يلا ⚡"), html: `${hud()}
-    <section class="poster"><span class="num" aria-hidden="true">${S.si + 1}</span><span class="ico">${info.icon}</span><h1>${info.name}</h1><span class="tagk"><i>${info.from}</i></span><p>${info.how}</p>
-      <span class="meta">${s.rounds > 1 ? `${s.rounds} جولات، والأخيرة ذهبية ×2` : "جولة وحدة"}</span></section><!--dyn-->` };
+  const s = stage(), info = STAGES[s.id], r = Object.keys(S.jok);
+  const fin = s.id === "final" ? sorted().slice(0, 2) : null;
+  const dyn = `${r.length ? `<p class="remo">⚡ ريمونتادا: ${nm(r[0])} ربحه ×2 بهالمرحلة</p>` : ""}${bossBtn("يلا ⚡")}`;
+  return { key: `stage|${S.si}`, dyn, html: `${hud()}
+    <section class="poster"><span class="num" aria-hidden="true">${S.si + 1}</span><span class="ico">${info.icon}</span><h1>${info.name}</h1>
+      <p class="tip">${info.tip || info.how}</p>${fin ? `<span class="tagk"><i>${esc(fin[0].name)} × ${esc(fin[1].name)}</i></span>` : ""}
+      <span class="meta">${s.id === "final" ? "3 ركلات لكل واحد" : s.rounds > 1 ? `${s.rounds} جولات، والأخيرة ذهبية ×2` : "جولة وحدة"}</span></section><!--dyn-->` };
 }
 
 function progHTML() {
@@ -638,7 +787,7 @@ function vAsk(v) {
   const c = S.cur;
   if (mode === "local" && !v) {
     const pend = c.need.find((id) => !(id in c.ans));
-    const what = { wavec: "صاحب التلميح", waveg: "دورك تحزر", bet: "حط رهانك بالسر", pen: pend === c.keeper ? "إنت الحارس 🧤" : "دورك تشوط ⚽", career: "الأندية بتبلّش تطلع أول ما تضغط" }[c.kind] || "جاوب بالسر";
+    const what = { wavec: "صاحب التلميح", waveg: "دورك تحزر", bet: "حط رهانك بالسر", pen: pend === c.keeper ? "إنت الحارس 🧤" : "دورك تشوط ⚽", fin: pend === c.keeper ? "إنت الحارس 🧤" : "دورك تشوط ⚽", finbet: "مين بياخد الكاس؟", career: "الأندية بتبلّش تطلع أول ما تضغط" }[c.kind] || "جاوب بالسر";
     return { key: `hand|${S.v}`, dyn: "", html: `${hud()}<div class="handoff"><span class="sub">أعطوا التلفون لـ</span><div class="big">${nm(pend)}</div><p>${what}، والباقي لا يطّلعوا 👀</p><button class="btn" data-a="hand" data-v="${pend}">أنا ${nm(pend)}، جاهز</button></div>` };
   }
   const mine = c.need.includes(v) && !(v in c.ans);
@@ -646,11 +795,16 @@ function vAsk(v) {
   const textRow = (ph, max, btn = "ابعث") => `<div class="textrow"><input class="input" id="txt" type="text" maxlength="${max}" placeholder="${ph}" autocomplete="off"><button class="btn sm" data-a="text">${btn}</button></div>`;
   let body;
   if (!mine) {
-    const lead = c.kind === "wavec" ? `📡 ${nm(c.psy)} بيجهّز التلميح` : c.need.includes(v) ? "جوابك وصل ✅" : c.kind === "waveg" ? `تلميحك: «${esc(c.clue)}». خليهم يحزروا` : "استنى الباقي";
-    const recap = c.q ? qCard(c) : c.kind === "bet" ? qCard({ cat: "قسم السؤال الأخير", q: c.cat }) : c.kind === "pen" ? `<section class="q"><b>${v === c.keeper ? "🧤 اخترت زاويتك" : "⚽ شطت!"}</b><span class="sub">الحارس: ${nm(c.keeper)}</span></section>` : "";
+    const lead = c.kind === "fin" && !c.need.includes(v) ? `⚽ ${nm(c.shooter)} بيشوط على ${nm(c.keeper)}` : c.kind === "finbet" && !c.need.includes(v) ? "الجمهور بيتوقع مين بياخد الكاس" : c.kind === "wavec" ? `📡 ${nm(c.psy)} بيجهّز التلميح` : c.need.includes(v) ? "جوابك وصل ✅" : c.kind === "waveg" ? `تلميحك: «${esc(c.clue)}». خليهم يحزروا` : "استنى الباقي";
+    const recap = c.kind === "fin" || c.kind === "finbet" ? finCard(c) : c.q ? qCard(c) : c.kind === "bet" ? qCard({ cat: "قسم السؤال الأخير", q: c.cat }) : c.kind === "pen" ? `<section class="q"><b>${v === c.keeper ? "🧤 اخترت زاويتك" : "⚽ شطت!"}</b><span class="sub">الحارس: ${nm(c.keeper)}</span></section>` : "";
     body = `${recap}<p class="wait">${lead} <span class="dots"><i></i><i></i><i></i></span></p>`;
   } else if (c.kind === "mcq" || c.kind === "betq") {
     body = `${qCard(c, c.kind === "betq" ? `<span class="sub">رهانك: ${c.bets[v] || 0}</span>` : "")}${optBtns(c)}`;
+  } else if (c.kind === "finbet") {
+    body = `${finCard(c)}<p class="note">مين بياخد الكاس؟ التوقع الصح = 150</p><div class="who">${[c.a, c.b].map((id) => `<button data-a="ans" data-v="${id}">${pav(id)}<span class="n">${nm(id)}</span></button>`).join("")}</div>`;
+  } else if (c.kind === "fin") {
+    const gk = v === c.keeper;
+    body = `${finCard(c)}<section class="q"><b>${gk ? `🧤 ${nm(c.shooter)} بيشوط. وين بدك تنط؟` : `⚽ الحارس ${nm(c.keeper)}. وين بدك تشوط؟`}</b></section>${goalHTML(() => (gk ? "🧤" : "⚽"), "button")}`;
   } else if (c.kind === "pen") {
     const gk = v === c.keeper;
     body = `<section class="q"><span class="cat">${gk ? "إنت الحارس" : `الحارس: ${nm(c.keeper)}`}</span><b>${gk ? "🧤 وين بدك تنط؟" : "⚽ وين بدك تشوط؟"}</b><span class="sub">${gk ? "كل ركلة بتصدها = 100 إلك" : "إذا الحارس نط لزاوية ثانية = جول و100 إلك"}</span></section>
@@ -676,10 +830,8 @@ function vAsk(v) {
       <button class="btn" data-a="num">ثبّت مكاني</button>`;
   } else if (c.kind === "bet") {
     const max = maxBet(v);
-    body = `${qCard({ cat: "قسم السؤال الأخير", q: c.cat })}<section class="q"><span class="sub">نقاطك ${P(v).score} · أقصى رهان ${max}</span><span class="clue" id="betv">${Math.round(max / 100) * 50}</span>
-      <input type="range" id="rng" min="0" max="${max}" step="50" value="${Math.round(max / 100) * 50}" style="width:100%" aria-label="الرهان">
-      <div class="row" style="justify-content:center">${[["0", 0], ["ربع", .25], ["نص", .5], ["كله 🔥", 1]].map(([t, f]) => `<button class="btn sm alt" data-a="betq" data-v="${Math.round(max * f / 50) * 50}">${t}</button>`).join("")}</div></section>
-      <button class="btn" data-a="num">ثبّت الرهان</button>`;
+    body = `${qCard({ cat: "قسم السؤال الأخير", q: c.cat })}<p class="note">نقاطك ${P(v).score}. قدّيش بتراهن؟ صح بتربحهم، غلط بتخسرهم</p>
+      <div class="opts two">${[["بدون مخاطرة", 0], ["ربع", 0.25], ["نص", 0.5], ["كله 🔥", 1]].map(([t, f], i) => { const a = Math.round((max * f) / 50) * 50; return `<button class="opt o${[3, 1, 2, 0][i]}" data-a="ans" data-v="${a}">${t}<span class="tag">${a}</span></button>`; }).join("")}</div>`;
   }
   return { key, html: `${hud()}${body}<!--dyn-->`, dyn: mode === "local" ? "" : progHTML() };
 }
@@ -688,10 +840,11 @@ function vShow() {
   const c = S.cur, s = stage();
   const voters = (list) => (list.length ? `<span class="voters">${list.map(pav).join("")}</span>` : "");
   const picked = (i) => Object.keys(c.ans).filter((id) => (c.kind === "career" ? c.ans[id].i : c.ans[id]) === i);
-  const sus = ["mcq", "betq", "fibp", "career", "pen"].includes(c.kind);   // كشف بتشويق
+  const sus = ["mcq", "betq", "fibp", "career", "pen", "fin"].includes(c.kind) ? c.sus || 1400 : 0;   // كشف بتشويق (المدة من صاحب الغرفة)
   let body = "";
   if (c.kind === "mcq" || c.kind === "betq") {
     body = `${qCard(c)}<div class="opts two">${c.opts.map((o, i) => `<div class="opt ${i === c.c ? "right" : "wrong"}"><span class="lt">${LETTERS[i]}</span>${esc(o)}${voters(picked(i))}</div>`).join("")}</div>`;
+    if (c.note) body += `<p class="note late fact">${esc(c.note)}</p>`;
     if (c.fast) body += `<p class="note late">⚡ الأسرع: ${nm(c.fast)} (+${c.x2 ? 100 : 50})</p>`;
     if (c.kind === "betq") body += `<p class="note">الرهانات: ${ids().map((id) => `${nm(id)} ${c.bets[id] || 0}`).join(" · ")}</p>`;
   } else if (c.kind === "pen") {
@@ -700,6 +853,11 @@ function vShow() {
     body = `<section class="q"><span class="cat">الحارس: ${nm(c.keeper)}</span><b class="late">${saved.length ? `🧤 صدّ ${saved.length} ${saved.length === 1 ? "ركلة" : "ركلات"}!` : "⚽ ولا صدّة!"}</b></section>
       ${goalHTML((i) => `${i === dive ? `<span class="glove">🧤</span>` : ""}<span class="balls">${shooters.filter((id) => c.ans[id] === i).map(pav).join("")}</span>`)}
       <div class="late">${goals.length ? `<p class="note">⚽ سجّلوا: ${goals.map(nm).join("، ")}</p>` : ""}${saved.length ? `<p class="note">🧤 انصدّت: ${saved.map(nm).join("، ")}</p>` : ""}</div>`;
+  } else if (c.kind === "fin") {
+    const L1 = c.log[c.log.length - 1];
+    body = `${finCard(c)}<section class="q"><b class="late">${L1.goal ? "⚽ غوووول!" : "🧤 صدّة!"}</b></section>
+      ${goalHTML((i) => `${i === L1.d ? `<span class="glove">🧤</span>` : ""}${i === L1.z ? `<span class="balls">${pav(L1.s)}</span>` : ""}`)}
+      ${c.done ? `<p class="champ late">🏆 ${nm(c.champ)} بطل السهرة</p>` : ""}`;
   } else if (c.kind === "career") {
     body = `<section class="q">${c.img ? `<img class="late face" src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<b class="late">${esc(c.opts[c.c])}</b>${clubsHTML(c, true)}</section>
       <div class="opts two">${c.opts.map((o, i) => `<div class="opt ${i === c.c ? "right" : "wrong"}"><span class="lt">${LETTERS[i]}</span>${esc(o)}${voters(picked(i))}</div>`).join("")}</div>`;
@@ -723,7 +881,9 @@ function vShow() {
     body = c.st === "skipped" ? `<p class="wait">انتخطّى الدور</p>` : `<div class="boom">💥</div><section class="q"><b>انفجرت عند ${nm(c.holder)}!</b><span class="sub">«${esc(c.q)}» · انمرّرت ${c.passes} مرة</span></section>`;
   }
   const last = S.r + 1 >= s.rounds;
-  return { key: `show|${S.v}`, dyn: "", sus, html: `${hud()}<div class="stack ${sus ? "pre" : ""}" id="rev">${body}${deltasHTML()}</div>${bossBtn(last ? "ترتيب المرحلة 📊" : "الجولة الجاية")}` };
+  const sayLine = c.say ? `<p class="say late"><i>🎙️ ${esc(c.say)}</i></p>` : "";
+  const label = c.kind === "fin" ? (c.done ? "التتويج 👑" : "الركلة الجاية ⏭") : last ? "ترتيب المرحلة 📊" : "الجولة الجاية ⏭";
+  return { key: `show|${S.si}|${S.r}|${c.kind}|${c.k ?? ""}`, dyn: ctl(label), sus, html: `${hud()}<div class="stack ${sus ? "pre" : ""}" id="rev">${body}${sayLine}${c.kind === "fin" && !c.done ? "" : deltasHTML()}</div><!--dyn-->` };
 }
 
 function vLive(v) {
@@ -754,21 +914,24 @@ function vLive(v) {
 }
 
 function vBoard() {
-  const info = STAGES[stage().id], lastStage = S.si + 1 >= S.plan.length, r0 = S.rank0 || {};
-  const rows = sorted().map((p, i) => {
-    const g = S.gain[p.id] || 0, b = S.bonus[p.id] || 0, move = (r0[p.id] ?? i) - i;
-    return `<div class="rowi ${i === 0 ? "first" : ""}" style="animation-delay:${i * 70}ms"><span class="rk">${i + 1}</span>${pav(p.id)}<span class="n">${esc(p.name)} ${move > 0 ? `<span class="up">▲${move}</span>` : move < 0 ? `<span class="down">▼${-move}</span>` : ""}${b ? `<small>🃏 الجوكر ضاعفها: +${b} زيادة</small>` : ""}</span><span class="g ${g < 0 ? "neg" : ""}">${g + b ? (g + b > 0 ? "+" : "") + (g + b) : ""}</span><b>${p.score}</b></div>`;
+  const info = STAGES[stage().id], lastStage = S.si + 1 >= S.plan.length, r0 = S.rank0 || {}, now1 = ranks();
+  const hasFinal = S.plan.some((x) => x.id === "final");
+  const rows = [...S.players].sort((a, b) => (r0[a.id] ?? 99) - (r0[b.id] ?? 99)).map((p) => {
+    const g = S.gain[p.id] || 0, b = S.bonus[p.id] || 0, move = (r0[p.id] ?? now1[p.id]) - now1[p.id];
+    return `<div class="rowi ${now1[p.id] === 0 ? "first" : ""} ${hasFinal && now1[p.id] < 2 ? "qual" : ""}" data-id="${p.id}">${pav(p.id)}<span class="n">${esc(p.name)}${p.fire >= 3 ? " 🔥" : ""} <span class="mv">${move > 0 ? `<span class="up">▲${move}</span>` : move < 0 ? `<span class="down">▼${-move}</span>` : ""}${hasFinal && now1[p.id] < 2 ? `<span class="qz">للنهائي</span>` : ""}</span>${b ? `<small>⚡ الريمونتادا ضاعفتها: +${b} زيادة</small>` : ""}</span><span class="g ${g < 0 ? "neg" : ""}">${g + b ? (g + b > 0 ? "+" : "") + (g + b) : ""}</span><b class="sc" data-from="${p.score - g - b}" data-to="${p.score}">${p.score - g - b}</b></div>`;
   }).join("");
-  return { key: `board|${S.v}`, dyn: "", html: `${hud()}<h2 class="center">الترتيب بعد ${info.icon} ${info.name}</h2><div class="rows table">${rows}</div>${bossBtn(lastStage ? "التتويج 👑" : "المرحلة الجاية ⏭️")}` };
+  return { key: `board|${S.si}`, dyn: ctl(lastStage ? "التتويج 👑" : "المرحلة الجاية ⏭"), html: `${hud()}<h2 class="center">الترتيب بعد ${info.icon} ${info.name}</h2><div class="rows table" id="btable">${rows}</div><!--dyn-->` };
 }
 
 function vFinal() {
-  const list = sorted(), top = list[0].score, kings = list.filter((p) => p.score === top), loser = list[list.length - 1];
+  const by = sorted(), top = by[0].score, champ = S.champ && P(S.champ);
+  const kings = champ ? [champ] : by.filter((p) => p.score === top), loser = by[by.length - 1];
+  const list = champ ? [champ, ...by.filter((p) => p.id !== champ.id)] : by;
   return { key: `final|${S.v}`, dyn: "", html: `
-    <section class="king"><span class="crown">🏆</span><span class="sub">${kings.length > 1 ? "ملوك السهرة (تعادل)" : "ملك السهرة"}</span><b>${kings.map((p) => esc(p.name)).join(" و ")}</b><span class="sub">${top} نقطة</span></section>
+    <section class="king"><span class="crown">🏆</span><span class="sub">${kings.length > 1 ? "ملوك السهرة (تعادل)" : "ملك السهرة"}</span><b>${kings.map((p) => esc(p.name)).join(" و ")}</b><span class="sub">${champ ? "فاز بالنهائي ورفع الكاس" : `${top} نقطة`}</span></section>
     <div class="rows table">${list.map((p, i) => `<div class="rowi ${i === 0 ? "first" : ""}" style="animation-delay:${i * 80}ms"><span class="rk">${medals[i] || i + 1}</span>${pav(p.id)}<span class="n">${esc(p.name)}</span><b>${p.score}</b></div>`).join("")}</div>
-    ${S.awards.length ? `<h2 class="center">ألقاب السهرة</h2><div class="rows">${S.awards.map((a) => `<div class="award"><span class="e">${a.e}</span><span><b>${a.title}: ${nm(a.pid)}</b><small>${a.why}</small></span></div>`).join("")}</div>` : ""}
-    ${kings.length < list.length ? `<section class="dare"><span class="sub">🟥 الحكم على ${esc(loser.name)}</span><b>${esc(S.dare)}</b>${isBoss() ? `<button class="linkish" data-a="dare">حكم ثاني 🎲</button>` : ""}</section>` : ""}
+    ${S.awards.length ? `<h2 class="center">ألقاب السهرة</h2><div class="rows">${S.awards.map((a, i) => `<div class="award" style="animation-delay:${600 + i * 140}ms"><span class="e">${a.e}</span><span><b>${a.title}: ${nm(a.pid)}</b><small>${a.why}</small></span></div>`).join("")}</div>` : ""}
+    ${kings.length < list.length && !kings.includes(loser) ? `<section class="dare"><span class="sub">🟥 الحكم على ${esc(loser.name)}</span><b>${esc(S.dare)}</b>${isBoss() ? `<button class="linkish" data-a="dare">حكم ثاني 🎲</button>` : ""}</section>` : ""}
     ${isBoss() ? `<button class="btn" data-a="again">سهرة جديدة 🔁</button>` : ""}<button class="btn alt" data-a="leave">خروج</button>` };
 }
 
@@ -787,9 +950,10 @@ function draw() {
   render(view.html.includes("<!--dyn-->") ? view.html.replace("<!--dyn-->", dyn) : view.html + dyn);
   window.scrollTo(0, 0);
   clearTimeout(susTimer);
-  if (view.sus) susTimer = setTimeout(() => { const r = $("rev"); if (r) r.classList.remove("pre"); }, 1400);
+  if (view.sus) susTimer = setTimeout(() => { const r = $("rev"); if (r) { r.classList.remove("pre"); afterReveal(); } }, view.sus);
+  if (S.phase === "board") setTimeout(boardAnim, 550);
   const t = $("txt"); if (t) t.focus();
-  const r = $("rng"), bv = $("betv"); if (r && bv) r.oninput = () => { bv.textContent = r.value; };
+
 }
 
 // ======================= الضغطات =======================
@@ -822,15 +986,14 @@ const UI = {
   cfg: (v) => { const [k, val] = v.split(":"); send({ t: "cfg", [k]: val }); },
   kick: (v) => send({ t: "kick", who: v }),
   start: () => send({ t: "start" }),
-  joker: (v) => send({ t: "joker", who: v }),
   go: () => send({ t: "go" }),
+  hold: () => send({ t: "hold" }),
   force: () => send({ t: "force" }),
   hand: (v) => { L.ok = v; L.t0 = Date.now(); draw(); },
-  ans: (v) => send({ t: "ans", as: viewer(), val: v }),
+  ans: (v) => { Sound.fx(S.cur && ["pen", "fin"].includes(S.cur.kind) ? "kick" : "tick"); send({ t: "ans", as: viewer(), val: v }); },
   career: (v) => { const box = $("clubs"); send({ t: "ans", as: viewer(), val: `${v}:${box ? box.dataset.k : 0}` }); },
   text: () => { const t = $("txt"); if (t && t.value.trim()) send({ t: "ans", as: viewer(), val: t.value }); },
   num: () => { const r = $("rng"); if (r) send({ t: "ans", as: viewer(), val: +r.value }); },
-  betq: (v) => { const r = $("rng"); if (r) { r.value = v; $("betv").textContent = r.value; } },
   cgo: () => send({ t: "cgo", as: viewer() }),
   cok: (v) => send({ t: "cok", as: viewer(), g: v }),
   cskip: () => send({ t: "cskip", as: viewer() }),

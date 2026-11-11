@@ -1,5 +1,5 @@
 // تعليلة: تشغيل كتطبيق، ويضل يفتح حتى لو النت ضعيف
-const VERSION = "abu-odeh-v25";
+const VERSION = "abu-odeh-v26";
 const SHELL = ["./", "index.html", "home.html", "login.html", "rewards.html", "settings.html", "theme.js", "shell.css", "shell.js", "ds/ds.css", "app/core.js", "app/ui.js", "app/firebase-config.js", "manifest.webmanifest", "icons/icon.svg", "icons/wordmark-dark.svg", "ds/ui.css", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
