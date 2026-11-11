@@ -66,7 +66,7 @@ def main():
     if thumbs:
         sheet = Image.new("RGB", (8 * 184, ((len(thumbs) + 7) // 8) * 124), "white")
         for k, t in enumerate(thumbs): sheet.paste(t, ((k % 8) * 184 + 2, (k // 8) * 124 + 2))
-        sheet.save(ROOT / "hair_sheet.jpg", quality=80)
+        sheet.save(ROOT / "engine/hair_sheet.jpg", quality=75)
 
 if __name__ == "__main__":
     main()
