@@ -1,7 +1,7 @@
 {
  "date": "2026-11-12",
- "generated_at": "2026-11-12T04:07:25Z",
- "updated_at": "2026-11-12T04:07:25Z",
+ "generated_at": "2026-11-12T10:56:46Z",
+ "updated_at": "2026-11-12T10:56:46Z",
  "demo": false,
  "coupons": [
   {
@@ -873,8 +873,8 @@
   }
  ],
  "stats": {
-  "events": 14,
-  "legs": 160,
+  "events": 16,
+  "legs": 170,
   "deep_events": 2,
   "markets": [
    "h2h",
@@ -882,6 +882,6 @@
    "totals"
   ],
   "analyzed": 0,
-  "crowd": 6
+  "crowd": 8
  }
 }

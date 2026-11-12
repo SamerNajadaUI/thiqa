@@ -11557,8 +11557,8 @@
      "sharp_prob": 0.6697,
      "prob": 0.6507,
      "books": 24,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "115-108",
      "crowd_prob": 0.675,
      "crowd_volume": 41935,
      "model_prob": null,
@@ -11644,9 +11644,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
      "live": {
-      "state": "in",
-      "detail": "7:52 - 3rd",
-      "score": "67-62"
+      "state": "post",
+      "detail": "Final",
+      "score": "115-108"
      }
     }
    ],
