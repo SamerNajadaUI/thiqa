@@ -99,6 +99,19 @@
       "t": "الصافي: مع. فوز ⁨Coco Gauff⁩ باحتمال 71%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.714
      }
+    },
+    "espn": {
+     "s": "tennis",
+     "l": "wta",
+     "id": "187371",
+     "sw": false
+    },
+    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ukr.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
+    "live": {
+     "state": "in",
+     "detail": "1st",
+     "score": "0-1"
     }
    },
    {

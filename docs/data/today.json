@@ -1,7 +1,7 @@
 {
  "date": "2026-11-12",
  "generated_at": "2026-11-12T10:56:46Z",
- "updated_at": "2026-11-12T13:10:37Z",
+ "updated_at": "2026-11-12T21:03:35Z",
  "demo": false,
  "coupons": [
   {
@@ -757,9 +757,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ukr.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
    "live": {
-    "state": "pre",
-    "detail": "11/12 - 3:00 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "1st",
+    "score": "0-1"
    }
   },
   {
