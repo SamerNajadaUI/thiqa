@@ -1,7 +1,7 @@
 {
  "date": "2026-11-12",
  "generated_at": "2026-11-12T10:56:46Z",
- "updated_at": "2026-11-12T21:03:35Z",
+ "updated_at": "2026-11-13T02:05:24Z",
  "demo": false,
  "coupons": [
   {
@@ -211,9 +211,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
      "live": {
-      "state": "pre",
-      "detail": "11/12 - 7:00 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "7:55 - 4th",
+      "score": "103-102"
      }
     },
     {
@@ -319,9 +319,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phi.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png",
      "live": {
-      "state": "pre",
-      "detail": "11/12 - 7:00 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "8:28 - 4th",
+      "score": "107-96"
      }
     }
    ],
@@ -537,9 +537,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
    "live": {
-    "state": "pre",
-    "detail": "11/12 - 7:00 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "7:55 - 4th",
+    "score": "103-102"
    }
   },
   {
@@ -646,9 +646,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phi.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png",
    "live": {
-    "state": "pre",
-    "detail": "11/12 - 7:00 PM EST",
-    "score": null
+    "state": "in",
+    "detail": "8:28 - 4th",
+    "score": "107-96"
    }
   },
   {
@@ -668,8 +668,8 @@
    "sharp_prob": 0.7243,
    "prob": 0.7045,
    "books": 18,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "0-2",
    "movement": -0.0168,
    "crowd_prob": 0.725,
    "crowd_volume": 7586,
@@ -757,9 +757,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ukr.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
    "live": {
-    "state": "in",
-    "detail": "1st",
-    "score": "0-1"
+    "state": "post",
+    "detail": "Final",
+    "score": "0-2"
    }
   },
   {

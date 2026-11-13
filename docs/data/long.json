@@ -22,8 +22,8 @@
     "sharp_prob": 0.7201,
     "prob": 0.7071,
     "books": 19,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "0-2",
     "movement": 0.0085,
     "crowd_prob": 0.715,
     "crowd_volume": 46585,
@@ -109,9 +109,9 @@
     "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ukr.png",
     "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
     "live": {
-     "state": "in",
-     "detail": "1st",
-     "score": "0-1"
+     "state": "post",
+     "detail": "Final",
+     "score": "0-2"
     }
    },
    {
@@ -210,8 +210,19 @@
       "score": 0.714
      }
     },
-    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/phi.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/tor.png"
+    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phi.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png",
+    "espn": {
+     "s": "basketball",
+     "l": "nba",
+     "id": "401909976",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "8:28 - 4th",
+     "score": "107-96"
+    }
    },
    {
     "id": "d5c5ae8d56762b45d1ec4b85337878f3|h2h|Detroit Pistons|None|None",
@@ -309,8 +320,19 @@
       "score": 0.714
      }
     },
-    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/wsh.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/det.png"
+    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
+    "espn": {
+     "s": "basketball",
+     "l": "nba",
+     "id": "401909977",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "7:55 - 4th",
+     "score": "103-102"
+    }
    },
    {
     "id": "3c93e4724d36d796aed71c0ca4055b1b|h2h|Minnesota Timberwolves|None|None",
@@ -408,8 +430,19 @@
       "score": -0.032
      }
     },
-    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/min.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/dal.png"
+    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png",
+    "espn": {
+     "s": "basketball",
+     "l": "nba",
+     "id": "401909978",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "0.1 - 2nd",
+     "score": "67-52"
+    }
    },
    {
     "id": "f3f429e773bfb2340ba2bb90f2b9dd1e|h2h|Phoenix Suns|None|None",
@@ -506,8 +539,19 @@
       "score": -0.032
      }
     },
-    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/phx.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/cha.png"
+    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phx.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png",
+    "espn": {
+     "s": "basketball",
+     "l": "nba",
+     "id": "401909979",
+     "sw": false
+    },
+    "live": {
+     "state": "pre",
+     "detail": "11/12 - 9:00 PM EST",
+     "score": null
+    }
    },
    {
     "id": "6b92a67eab021047017da9d42e1e1fae|h2h|Mirra Andreeva|None|None",
