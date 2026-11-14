@@ -1,7 +1,7 @@
 {
  "date": "2026-11-14",
  "generated_at": "2026-11-14T06:57:23Z",
- "updated_at": "2026-11-14T19:26:26Z",
+ "updated_at": "2026-11-14T23:19:36Z",
  "demo": false,
  "coupons": [
   {
@@ -256,8 +256,8 @@
    "sharp_prob": 0.7083,
    "prob": 0.6929,
    "books": 18,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "0-2",
    "model_prob": null,
    "support": 1,
    "signals": 1,
@@ -340,9 +340,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
    "live": {
-    "state": "pre",
-    "detail": "11/14 - 3:00 PM EST",
-    "score": null
+    "state": "post",
+    "detail": "Final",
+    "score": "0-2"
    }
   }
  ],
