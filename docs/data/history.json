@@ -12273,8 +12273,8 @@
      "sharp_prob": 0.9072,
      "prob": 0.9034,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "125-118",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -12355,9 +12355,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
      "live": {
-      "state": "pre",
-      "detail": "11/13 - 8:30 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "125-118"
      }
     },
     {
@@ -12377,8 +12377,8 @@
      "sharp_prob": 0.8462,
      "prob": 0.844,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "123-85",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -12459,9 +12459,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
      "live": {
-      "state": "pre",
-      "detail": "11/13 - 9:30 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "123-85"
      }
     },
     {
@@ -12481,8 +12481,8 @@
      "sharp_prob": 0.8107,
      "prob": 0.806,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "107-120",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -12563,9 +12563,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png",
      "live": {
-      "state": "pre",
-      "detail": "11/13 - 10:00 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "107-120"
      }
     },
     {
@@ -12585,8 +12585,8 @@
      "sharp_prob": 0.801,
      "prob": 0.8003,
      "books": 20,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "74-76",
      "movement": -0.0011,
      "model_prob": null,
      "support": 1,
@@ -12677,8 +12677,8 @@
      "sharp_prob": 0.7596,
      "prob": 0.7577,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "107-99",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -12759,9 +12759,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/orl.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
      "live": {
-      "state": "pre",
-      "detail": "11/13 - 7:00 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "107-99"
      }
     },
     {
@@ -12887,8 +12887,8 @@
      "sharp_prob": 0.7202,
      "prob": 0.7158,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "113-112",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -12969,9 +12969,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lac.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/okc.png",
      "live": {
-      "state": "pre",
-      "detail": "11/13 - 10:30 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "113-112"
      }
     },
     {
@@ -12991,8 +12991,8 @@
      "sharp_prob": 0.7159,
      "prob": 0.7109,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "125-117",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -13073,9 +13073,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png",
      "live": {
-      "state": "pre",
-      "detail": "11/13 - 8:00 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final/OT",
+      "score": "125-117"
      }
     },
     {
@@ -13095,8 +13095,8 @@
      "sharp_prob": 0.7071,
      "prob": 0.7002,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "106-104",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -13177,9 +13177,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ind.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ny.png",
      "live": {
-      "state": "pre",
-      "detail": "11/13 - 7:00 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "106-104"
      }
     },
     {
@@ -13199,8 +13199,8 @@
      "sharp_prob": 0.6556,
      "prob": 0.6528,
      "books": 21,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "103-91",
      "movement": 0.035,
      "model_prob": null,
      "support": 2,
@@ -13304,8 +13304,8 @@
        "sharp_prob": 0.801,
        "prob": 0.8003,
        "books": 20,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "74-76",
        "movement": -0.0011,
        "model_prob": null,
        "support": 1,
@@ -13500,8 +13500,8 @@
        "sharp_prob": 0.9072,
        "prob": 0.9034,
        "books": 23,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "125-118",
        "model_prob": null,
        "support": 1,
        "signals": 1,
@@ -13581,9 +13581,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
        "live": {
-        "state": "pre",
-        "detail": "11/13 - 8:30 PM EST",
-        "score": null
+        "state": "post",
+        "detail": "Final",
+        "score": "125-118"
        }
       },
       {
@@ -13603,8 +13603,8 @@
        "sharp_prob": 0.8462,
        "prob": 0.844,
        "books": 23,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "123-85",
        "model_prob": null,
        "support": 1,
        "signals": 1,
@@ -13684,15 +13684,361 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
        "live": {
-        "state": "pre",
-        "detail": "11/13 - 9:30 PM EST",
-        "score": null
+        "state": "post",
+        "detail": "Final",
+        "score": "123-85"
        }
       }
      ],
      "prob": 0.4393,
      "fair_odds": 2.28,
-     "result": "pending"
+     "result": "lost"
+    },
+    {
+     "kind": "risky",
+     "legs": [],
+     "prob": null,
+     "fair_odds": null,
+     "result": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-14",
+   "top": [
+    {
+     "id": "5773e80d52d3fba36b11be38ded62790|h2h|Minnesota Timberwolves|None|None",
+     "event_id": "5773e80d52d3fba36b11be38ded62790",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Minnesota Timberwolves",
+     "away": "Chicago Bulls",
+     "commence_time": "2026-11-15T01:10:00Z",
+     "market": "h2h",
+     "name": "Minnesota Timberwolves",
+     "point": null,
+     "description": null,
+     "market_prob": 0.854,
+     "sharp_prob": 0.8643,
+     "prob": 0.8456,
+     "books": 22,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "22 شركة أودز بتعطيه بالمتوسط 85% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 86%"
+     ],
+     "warnings": [
+      "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.6%"
+     ],
+     "eligible": true,
+     "prob_raw": 0.8592,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.966,
+        "t": "⁨Minnesota Timberwolves⁩ ما في منه! 22 شركة أودز بتعطيه بالمتوسط 85% بعد ما شلنا هامشها. يا عمي فوز ⁨Minnesota Timberwolves⁩ مضمونة، أنا بعطيها 97%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.154,
+        "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.6%. وفوق هيك، احتمال إنها تخيب 15%، يعني تقريباً مرة من كل 6."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.154,
+        "t": "شو بدي بـ«فوز ⁨Minnesota Timberwolves⁩» وأودزها 1.18؟ أنا رايح على «فوز ⁨Chicago Bulls⁩» بأودز 6.48. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 1,
+        "c": 0.846,
+        "t": "85% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.846,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 85%، والشركات الأدق 86%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 15%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Minnesota Timberwolves⁩ باحتمال 85%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": 0.306
+      }
+     },
+     "rank": 1,
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401909984",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/14 - 8:00 PM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "6cb4c8feeadd57aa6ab46ebdee60818a|h2h|Denver Nuggets|None|None",
+     "event_id": "6cb4c8feeadd57aa6ab46ebdee60818a",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "New Orleans Pelicans",
+     "away": "Denver Nuggets",
+     "commence_time": "2026-11-15T00:10:00Z",
+     "market": "h2h",
+     "name": "Denver Nuggets",
+     "point": null,
+     "description": null,
+     "market_prob": 0.8157,
+     "sharp_prob": 0.8192,
+     "prob": 0.8045,
+     "books": 22,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "22 شركة أودز بتعطيه بالمتوسط 82% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 82%"
+     ],
+     "warnings": [
+      "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.6%"
+     ],
+     "eligible": true,
+     "prob_raw": 0.8174,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.924,
+        "t": "⁨Denver Nuggets⁩ ما في منه! 22 شركة أودز بتعطيه بالمتوسط 82% بعد ما شلنا هامشها. يا عمي فوز ⁨Denver Nuggets⁩ مضمونة، أنا بعطيها 92%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.196,
+        "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.6%. وفوق هيك، احتمال إنها تخيب 20%، يعني تقريباً مرة من كل 5."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.196,
+        "t": "شو بدي بـ«فوز ⁨Denver Nuggets⁩» وأودزها 1.24؟ أنا رايح على «فوز ⁨New Orleans Pelicans⁩» بأودز 5.12. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 1,
+        "c": 0.804,
+        "t": "80% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.804,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 82%، والشركات الأدق 82%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 20%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Denver Nuggets⁩ باحتمال 80%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": 0.306
+      }
+     },
+     "rank": 2,
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401909980",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/no.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/14 - 7:00 PM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "53d87628f7d7ae2c16b9b10ab1be03ab|h2h|Mirra Andreeva|None|None",
+     "event_id": "53d87628f7d7ae2c16b9b10ab1be03ab",
+     "sport_key": "tennis_wta_finals",
+     "group": "tennis",
+     "league": "WTA Finals",
+     "home": "Jessica Pegula",
+     "away": "Mirra Andreeva",
+     "commence_time": "2026-11-14T20:00:00Z",
+     "market": "h2h",
+     "name": "Mirra Andreeva",
+     "point": null,
+     "description": null,
+     "market_prob": 0.6998,
+     "sharp_prob": 0.7083,
+     "prob": 0.6929,
+     "books": 18,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "18 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 71%"
+     ],
+     "warnings": [
+      "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.6%"
+     ],
+     "eligible": true,
+     "prob_raw": 0.704,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.813,
+        "t": "⁨Mirra Andreeva⁩ ما في منه! 18 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها. يا عمي فوز ⁨Mirra Andreeva⁩ مضمونة، أنا بعطيها 81%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.307,
+        "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.6%. وفوق هيك، احتمال إنها تخيب 31%، يعني تقريباً مرة من كل 3."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.307,
+        "t": "شو بدي بـ«فوز ⁨Mirra Andreeva⁩» وأودزها 1.44؟ أنا رايح على «فوز ⁨Jessica Pegula⁩» بأودز 3.26. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.693,
+        "t": "احتمالها 69%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.693,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 70%، والشركات الأدق 71%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 31%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 0,
+        "best": "logic",
+        "t": "الفلوس مقسومة: 1 من 1 مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Mirra Andreeva⁩ باحتمال 69%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": -0.032
+      }
+     },
+     "rank": 3,
+     "espn": {
+      "s": "tennis",
+      "l": "wta",
+      "id": "187441",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/14 - 3:00 PM EST",
+      "score": null
+     }
+    }
+   ],
+   "coupons": [
+    {
+     "kind": "safe",
+     "legs": [],
+     "prob": null,
+     "fair_odds": null,
+     "result": "none"
+    },
+    {
+     "kind": "medium",
+     "legs": [],
+     "prob": null,
+     "fair_odds": null,
+     "result": "none"
     },
     {
      "kind": "risky",
