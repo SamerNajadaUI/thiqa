@@ -13243,8 +13243,8 @@
      "sharp_prob": 0.8643,
      "prob": 0.8456,
      "books": 22,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "106-117",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -13327,9 +13327,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
      "live": {
-      "state": "in",
-      "detail": "8:47 - 4th",
-      "score": "88-99"
+      "state": "post",
+      "detail": "Final",
+      "score": "106-117"
      }
     },
     {
