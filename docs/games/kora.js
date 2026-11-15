@@ -13,7 +13,8 @@ const KoraNet = (() => {
   let c = null, root = "", room = null, host = false, H = {}, offset = 0;
   const tp = (k) => `${root}/${room}/${k}`;
   function tryConnect(k) {
-    if (typeof mqtt === "undefined") return H.onFail && H.onFail("ما قدرت أحمّل مكتبة الاتصال. تأكد من النت وجرّب كمان مرة.");
+    if (typeof mqtt === "undefined") { if ((tryConnect.w = (tryConnect.w || 0) + 1) < 25) return setTimeout(() => tryConnect(k), 300); return H.onFail && H.onFail("ما قدرت أحمّل مكتبة الاتصال. تأكد من النت وجرّب كمان مرة."); }
+    tryConnect.w = 0;
     const url = qs.get("broker") || BROKERS[k % BROKERS.length];
     let ready = false;
     const cl = mqtt.connect(url, { clientId: "k_" + me.id + "_" + Math.random().toString(36).slice(2, 6), reconnectPeriod: 2000, connectTimeout: 8000, clean: true });

@@ -1,6 +1,6 @@
 /* واجهة التطبيق من برّا (الرئيسية وقائمة الألعاب): الألوان للوضعين، زر المظهر، وشبكة الألعاب.
    بيتحمّل بعد ستايل الصفحة، فألوانه هي اللي بتمشي. */
-@import url("ds/ds.css");
+/* ds/ds.css بيتحمّل بـ<link> قبل هالملف بكل صفحة (أسرع من @import) */
 
 html, body { background: var(--bg); color: var(--ink); }
 body { transition: background-color .25s, color .25s; }

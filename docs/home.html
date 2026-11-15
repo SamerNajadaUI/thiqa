@@ -19,7 +19,7 @@
 <meta name="apple-mobile-web-app-title" content="تعليلة">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@300;400;500;600;700&display=swap" media="print" onload="this.media=\'all\'">
 <style>
 /* Layout: the launcher (games grid) plus the hidden bets section: rounded cards, one level colour per coupon, a bottom tab bar.
    Base colours for light/dark come from shell.css (loaded after this block). */
@@ -391,6 +391,7 @@ html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 body:not(.on-home) .apptabs { display: none; }
 .sec-title .sec-more { float: left; font-size: 13px; font-weight: 600; color: var(--brand-text); text-decoration: none; margin-top: 6px; }
 </style>
+<link rel="stylesheet" href="ds/ds.css">
 <link rel="stylesheet" href="shell.css">
 <link rel="stylesheet" href="ds/ui.css">
 </head>
@@ -867,7 +868,7 @@ function setTab(which) {
   document.querySelector(".hero h1").textContent = HERO[which];
 }
 for (const k of TABS) $("tab-" + k).addEventListener("click", () => setTab(k));
-$("go-bets").addEventListener("click", () => goBets());
+$("go-bets").addEventListener("click", () => { bootBets(); goBets(); });
 // قسم المراهنات مخفي: بيظهر لما تكبس على الشعار 3 مرات ورا بعض
 let taps = [];
 document.querySelector(".shellbar .brand").addEventListener("click", () => {
@@ -877,7 +878,7 @@ document.querySelector(".shellbar .brand").addEventListener("click", () => {
     taps = [];
     const door = $("go-bets");
     door.hidden = !door.hidden;
-    if (!door.hidden) { goHome(); door.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    if (!door.hidden) { bootBets(); goHome(); door.scrollIntoView({ behavior: "smooth", block: "center" }); }
     return;
   }
   goHome();
@@ -991,22 +992,29 @@ async function refreshData() {
   } catch { /* keep what is on screen */ }
 }
 
-load().then(({ today, history, long }) => {
-  state.today = today; state.history = history; state.long = long;
-  $("demo").hidden = !today?.demo;
-  if (today?.date) $("today-label").textContent = fmtDay.format(new Date(today.date + "T12:00:00+03:00"));
-  renderCoupons(); renderLong(); renderTop(); renderHud(); renderRecord(); showUpdated();
-  const h = location.hash.slice(1);
-  if (TABS.includes(h)) setTab(h);
-  if (!EMBEDDED && !today?.demo) {
-    pollLive();
-    setInterval(pollLive, 60e3);
-    setInterval(refreshData, 5 * 60e3);
-    document.addEventListener("visibilitychange", () => { if (!document.hidden) { pollLive(); refreshData(); } });
-  }
-}).catch(() => {
-  $("coupons").innerHTML = `<div class="empty">ما قدرت أحمّل البيانات. جرّب تحدّث الصفحة بعد شوي.</div>`;
-});
+// بيانات القسائم (حوالي 800KB) ما بتنزل إلا لما القسم المخفي يفتح، عشان الرئيسية تضل خفيفة
+let betsOn = false;
+function bootBets() {
+  if (betsOn) return;
+  betsOn = true;
+  load().then(({ today, history, long }) => {
+    state.today = today; state.history = history; state.long = long;
+    $("demo").hidden = !today?.demo;
+    if (today?.date) $("today-label").textContent = fmtDay.format(new Date(today.date + "T12:00:00+03:00"));
+    renderCoupons(); renderLong(); renderTop(); renderHud(); renderRecord(); showUpdated();
+    const h = location.hash.slice(1);
+    if (TABS.includes(h)) setTab(h);
+    if (!EMBEDDED && !today?.demo) {
+      pollLive();
+      setInterval(pollLive, 60e3);
+      setInterval(refreshData, 5 * 60e3);
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) { pollLive(); refreshData(); } });
+    }
+  }).catch(() => {
+    $("coupons").innerHTML = `<div class="empty">ما قدرت أحمّل البيانات. جرّب تحدّث الصفحة بعد شوي.</div>`;
+  });
+}
+if (TABS.includes(location.hash.slice(1))) bootBets();
 </script>
 </body>
 </html>

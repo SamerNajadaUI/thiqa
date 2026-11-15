@@ -57,6 +57,7 @@
 - **الشبكة بالجلسة السحابية:** ويكيميديا والمواقع الخارجية غالباً محجوبة من الـshell. البيانات اللي بدها نت بتتبنى بالـCI.
 
 ## الفحص
+- **السرعة (2026-11-16):** الـservice worker بيتسجّل من `app/core.js` بكل الصفحات. `ds/ds.css` بيتحمّل بـ`<link>` قبل `shell.css` بكل صفحة (مش @import)، وخطوط جوجل `media=print onload` (ما بتوقف الرسم). بيانات القسائم بالرئيسية ما بتنزل إلا لما القسم المخفي يفتح (`bootBets`). مكتبة mqtt بألعاب الكورة `defer` و`KoraNet` بيستنى المكتبة. رسمات الكروت webp جودة 74. صفحة لعبة جديدة: حط `<link rel="stylesheet" href="../ds/ds.css">` قبل `shell.css`.
 - `cd docs && python3 -m http.server 8765` وبعدين Playwright (موجود جاهز، لا تثبّته).
 - سكربتات الفحص بـ`tools/test/` (اقرأ `tools/test/README.md`): سيرفر MQTT محلي، ولعب سهرة كاملة آلياً على تلفون واحد وبغرفة من 4 تلفونات. ولـ«ليلة الحسم»: `node --test hasm_core.test.js` (القواعد)، `hasm_local.js`، `hasm_online.js`.
 - فحوصات التطبيق: `node tools/test/app_core.test.js` (منطق)، `node tools/test/app_flow.js` (سبلاش ← دخول ← رئيسية ← ألعاب ← قفل ← مكافآت ← إعدادات ← أدمن)، `node tools/test/app_games_smoke.js` (كل الألعاب بدون أخطاء)، `node tools/test/ds_check.js` (ألوان وتباين). سكربتات الألعاب القديمة بتدخل بحساب أدمن عبر `tools/test/session.js`.

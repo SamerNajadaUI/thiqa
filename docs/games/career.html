@@ -17,7 +17,7 @@
 <meta name="apple-mobile-web-app-title" content="تعليلة">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap" media="print" onload="this.media=\'all\'">
 <style>
 /* Layout: same chunky game-app skin as the main app. One screen at a time: games list -> mode -> level -> era -> player card, or challenges -> challenge. Light/dark colours come from ../shell.css (loaded after this block). */
 :root {
@@ -238,6 +238,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 :root[data-theme="dark"] { --l4: #98A2B3; --l4d: #667085; }
 </style>
+<link rel="stylesheet" href="../ds/ds.css">
 <link rel="stylesheet" href="../shell.css">
 </head>
 <body>

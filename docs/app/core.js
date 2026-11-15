@@ -157,3 +157,13 @@
     const s = document.createElement("script"); s.type = "module"; s.src = ROOT + "app/auth-firebase.js"; document.head.appendChild(s);
   }
 })(typeof window !== "undefined" ? window : globalThis);
+
+// الكاش والتشغيل لما النت ضعيف: service worker واحد لكل الموقع، بيتسجّل من أي صفحة
+(function () {
+  try {
+    if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
+    const sw = new URL("../sw.js", document.currentScript ? document.currentScript.src : location.href).href;
+    const go = () => navigator.serviceWorker.register(sw).catch(() => {});
+    if (document.readyState === "complete") go(); else addEventListener("load", go, { once: true });
+  } catch {}
+})();

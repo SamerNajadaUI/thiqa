@@ -36,8 +36,8 @@ let DATA, CAT;
 
 // ---------- ذاكرة ضد التكرار: لكل قسم، الأسئلة اللي انسألت على هالجهاز ----------
 const qkey = (q) => q[1] + "|" + (q[3] || "") + "|" + q[2][0];
-let SEEN = store.get("seen2", null);
-if (!SEEN) { SEEN = {}; const old = store.get("used", []); if (old.length) SEEN._old = old.slice(-2000); }
+const SEEN = store.get("seen2", null) || {};
+try { localStorage.removeItem("points-used"); } catch {}   // الذاكرة القديمة (قبل النسخة 2)
 const seenOf = (cid) => new Set(SEEN[cid] || []);
 function markSeen(cid, q) { const k = qkey(q); const l = SEEN[cid] || (SEEN[cid] = []); if (!l.includes(k)) l.push(k); if (l.length > 1500) l.splice(0, l.length - 1500); store.set("seen2", SEEN); }
 
@@ -507,7 +507,8 @@ function send(a) {
   if (client) client.publish(topic("a"), JSON.stringify(a), { qos: 1 });
 }
 function connect(onReady, k = 0) {
-  if (typeof mqtt === "undefined") return fail("ما قدرت أحمّل الاتصال. تأكدوا من الإنترنت وارجعوا جرّبوا.");
+  if (typeof mqtt === "undefined") { if ((connect.w = (connect.w || 0) + 1) < 25) return setTimeout(() => connect(onReady, k), 300); return fail("ما قدرت أحمّل الاتصال. تأكدوا من الإنترنت وارجعوا جرّبوا."); }
+  connect.w = 0;
   const url = qs.get("broker") || BROKERS[k % BROKERS.length];
   let ready = false;
   const c = mqtt.connect(url, { clientId: "ap_" + me.id + "_" + Math.random().toString(36).slice(2, 6), reconnectPeriod: 2000, connectTimeout: 8000, clean: true });

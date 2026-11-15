@@ -95,7 +95,7 @@ async function roomGame(b) {
 (async () => {
   const b = await chromium.launch();
   if (which !== 'room') {
-    await localGame(b, 2, ['g_math', 'general', 'islamic'], 'l2');
+    await localGame(b, 2, process.env.QUICK ? ['g_math', 'general'] : ['g_math', 'general', 'islamic'], 'l2');
     await localGame(b, 3, ['g_club', 'g_old'], 'l3');
     if (which === 'all') await localGame(b, 5, ['g_nat', 'g_face'], 'l5');
   }
