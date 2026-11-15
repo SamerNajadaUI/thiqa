@@ -3,7 +3,7 @@
 "use strict";
 const Sound = (() => {
   let ac = null, master = null, music = null, soft = null, noiseBuf = null;
-  let musicOn = true, mood = null, loop = null, step = 0, nextT = 0;
+  let musicOn = true, mood = null, loop = null, step = 0, nextT = 0, muted = false;
   const jit = () => 1 + (Math.random() - 0.5) * 0.06;   // كل مؤثر بيطلع شوي مختلف، عشان ما يزهّق
 
   function ctx() {
@@ -14,7 +14,7 @@ const Sound = (() => {
       const comp = ac.createDynamicsCompressor();
       comp.threshold.value = -16; comp.ratio.value = 5; comp.attack.value = 0.004; comp.release.value = 0.2;
       comp.connect(ac.destination);
-      master = ac.createGain(); master.gain.value = 0.95; master.connect(comp);
+      master = ac.createGain(); master.gain.value = muted ? 0 : 0.95; master.connect(comp);
       music = ac.createGain(); music.gain.value = 0.3; music.connect(master);
       soft = ac.createBiquadFilter(); soft.type = "lowpass"; soft.frequency.value = 3000; soft.connect(master);   // الموجات الحادة بتمر من هون
       noiseBuf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
@@ -150,7 +150,10 @@ const Sound = (() => {
   document.addEventListener("visibilitychange", () => { if (!document.hidden && ac && ac.state === "suspended") ac.resume().catch(() => {}); });
   return {
     unlock() { if (ctx() && musicOn && mood && !loop) run(); },
-    fx(name, delay = 0, arg) { if (!ctx() || !FX[name]) return; try { FX[name](ac.currentTime + delay, arg); } catch {} },
+    fx(name, delay = 0, arg) { if (muted || !ctx() || !FX[name]) return; try { FX[name](ac.currentTime + delay, arg); } catch {} },
+    // كتم كل الصوت (مؤثرات وموسيقى)
+    mute(v) { muted = !!v; if (master) master.gain.setValueAtTime(muted ? 0 : 0.95, ac.currentTime); },
+    get muted() { return muted; },
     mood(m) { if (m === mood) return; mood = m; run(); },
     setMusic(v) { if (v === musicOn) return; musicOn = v; run(); },
     get musicOn() { return musicOn; },

@@ -59,7 +59,7 @@ const FXL = (() => {
   // اللحظة الكبيرة: «غوووول»
   function big(title, sub = "", opt = {}) {
     document.querySelectorAll("#fxl .fx-big").forEach((x) => x.remove());
-    const d = el(`fx-big ${opt.cls || ""}`, `<div class="bg"></div><b>${esc2(title)}</b>${sub ? `<span>${esc2(sub)}</span>` : ""}`, opt.ms || 1700);
+    const d = el(`fx-big ${opt.cls || ""} ${String(title).length > 7 ? "long" : ""}`, `<div class="bg"></div><b>${esc2(title)}</b>${sub ? `<span>${esc2(sub)}</span>` : ""}`, opt.ms || 1700);
     if (opt.color) d.style.setProperty("--c", opt.color);
     d.style.pointerEvents = "auto";
     d.addEventListener("pointerdown", () => d.remove());
