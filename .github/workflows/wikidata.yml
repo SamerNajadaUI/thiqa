@@ -4,7 +4,7 @@ name: Wikidata quiz data
 on:
   push:
     branches: [main]
-    paths: ["engine/wd_specs.py", "engine/wd_fetch.py", ".github/workflows/wikidata.yml"]
+    paths: [".github/workflows/wikidata.yml"]
   workflow_dispatch:
     inputs:
       only:
@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Fetch
-        run: python -u engine/wd_fetch.py ${{ github.event.inputs.only }} 2>&1 | tee engine/wd/_log.txt
+        run: mkdir -p engine/wd && python -u engine/wd_fetch.py ${{ github.event.inputs.only }} 2>&1 | tee engine/wd/_log.txt
       - name: Save
         if: always()
         run: |

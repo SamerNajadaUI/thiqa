@@ -44,6 +44,21 @@ def occ(*qids):
     return "?item wdt:P31 wd:Q5 . VALUES ?occ { %s } ?item wdt:P106 ?occ ." % " ".join("wd:" + q for q in qids)
 
 
+def named(*en, prop="wdt:P171*"):
+    """كيانات تحت تصنيفات معروفة باسمها الإنجليزي (عشان ما نغلط بأرقام QID)."""
+    vals = " ".join('"%s"@en' % x for x in en)
+    return "VALUES ?nm { %s } ?anc rdfs:label ?nm . ?item %s ?anc . ?item wdt:P105 ?rank . VALUES ?rank { wd:Q7432 wd:Q34740 wd:Q35409 wd:Q37517 }" % (vals, prop)
+
+
+def under(*en, depth2=True):
+    """أشياء (مش كائنات حية) نوعها أو أصلها واحد من هالأصناف، لمستويين."""
+    vals = " ".join('"%s"@en' % x for x in en)
+    base = "VALUES ?nm { %s } ?root rdfs:label ?nm . " % vals
+    if depth2:
+        return base + "{ ?item wdt:P31|wdt:P279 ?root . } UNION { ?item wdt:P31|wdt:P279 ?mid . ?mid wdt:P279 ?root . }"
+    return base + "?item wdt:P31|wdt:P279 ?root ."
+
+
 def taxon(q):
     return "?item wdt:P171* wd:%s . ?item wdt:P105 ?rank . VALUES ?rank { wd:Q7432 wd:Q34740 wd:Q35409 wd:Q37517 }" % q
 
@@ -57,7 +72,6 @@ SPECS = [
     S("mosques", cls("Q32815", sub=True), min_sl=12, extra=("country", "city", "inception", "architect")),
     S("churches", cls("Q2977", "Q16970", "Q56242215", "Q2031836", sub=False), min_sl=40, extra=("country", "city", "inception")),
     S("bridges", cls("Q12280", sub=True), min_sl=20, extra=("country", "city", "inception", "length", "water")),
-    S("towers", cls("Q11303", "Q12518", "Q18142", "Q1021645", sub=True), min_sl=25, extra=("country", "city", "inception", "height")),
     S("museums", cls("Q33506", sub=True), min_sl=30, extra=("country", "city", "inception")),
     S("ancient", cls("Q839954", "Q15661340", "Q109607", "Q1060829", "Q44539", "Q12516", sub=False), min_sl=30, extra=("country", "city", "inception")),
     S("waterfalls", cls("Q34038", sub=True), min_sl=15, extra=("country", "height", "water")),
@@ -77,8 +91,6 @@ SPECS = [
       extra=("citizen", "gender", "born", "died")),
     S("scientists", occ("Q901", "Q169470", "Q593644", "Q170790", "Q205375", "Q11063", "Q864503", "Q2374149", "Q350979"), min_sl=60,
       extra=("citizen", "gender", "born", "died", "field", "notable")),
-    S("historic", "?item wdt:P31 wd:Q5 . ?item wdt:P570 ?dd . FILTER(YEAR(?dd) < 1960)", min_sl=110,
-      extra=("citizen", "gender", "born", "died", "occupation", "dynasty")),
     S("historic_arab", "?item wdt:P31 wd:Q5 . ?item wdt:P570 ?dd . FILTER(YEAR(?dd) < 1990) ?item wdt:P27 ?ac . VALUES ?ac { %s }" % ARAB,
       min_sl=30, arwiki=True, extra=("citizen", "gender", "born", "died", "occupation")),
     S("islamic_people", "?item wdt:P31 wd:Q5 . ?item wdt:P140 wd:Q432 . ?item wdt:P570 ?dd . FILTER(YEAR(?dd) < 1500)", min_sl=25, need_img=False,
@@ -87,53 +99,33 @@ SPECS = [
       min_sl=60, extra=("citizen", "gender", "born", "sport")),
     S("wrestlers", occ("Q13474373"), min_sl=18, extra=("citizen", "gender", "born")),
     S("coaches", occ("Q628099"), min_sl=40, extra=("citizen", "gender", "born")),
-    S("footballers", occ("Q937857"), min_sl=70, extra=("citizen", "gender", "born", "position", "nat_sport")),
     S("arabplayers", occ("Q937857") + " ?item wdt:P1532 ?ac . VALUES ?ac { %s }" % ARAB, min_sl=12, arwiki=True,
       extra=("nat_sport", "gender", "born", "position")),
-    S("celebs", occ("Q947873", "Q4610556", "Q17125263", "Q2259451", "Q36180", "Q82955", "Q131524", "Q3282637", "Q2526255"), min_sl=120,
-      extra=("citizen", "gender", "born", "occupation")),
     S("astronauts", occ("Q11631"), min_sl=40, extra=("citizen", "gender", "born")),
     # ---------- طبيعة ----------
     S("mammals", taxon("Q7377"), min_sl=60, extra=("parent_taxon",)),
     S("birds", taxon("Q5113"), min_sl=60, extra=("parent_taxon",)),
-    S("reptiles", taxon("Q10811"), min_sl=45, extra=("parent_taxon",)),
-    S("amphibians", taxon("Q10908"), min_sl=40, extra=("parent_taxon",)),
-    S("dinos", taxon("Q430"), min_sl=20, extra=("parent_taxon",)),
-    S("sharks", taxon("Q25371"), min_sl=40, extra=("parent_taxon",)),
     S("cetaceans", taxon("Q160"), min_sl=35, extra=("parent_taxon",)),
-    S("cephalopods", taxon("Q25265"), min_sl=30, extra=("parent_taxon",)),
-    S("crustaceans", taxon("Q25364"), min_sl=40, extra=("parent_taxon",)),
-    S("arachnids", taxon("Q1358"), min_sl=40, extra=("parent_taxon",)),
     S("dog_breeds", cls("Q39367"), min_sl=18, extra=("origin",)),
     S("cat_breeds", cls("Q43577"), min_sl=15, extra=("origin",)),
     S("horse_breeds", cls("Q1160573"), min_sl=20, extra=("origin",)),
     S("fruits", "?item (wdt:P31|wdt:P279)/wdt:P279* wd:Q3314483 .", min_sl=40),
     S("vegetables", "?item (wdt:P31|wdt:P279)/wdt:P279* wd:Q11004 .", min_sl=40),
-    S("spices", "?item (wdt:P31|wdt:P279)/wdt:P279* ?c . VALUES ?c { wd:Q42527 wd:Q207123 }", min_sl=30),
-    S("flowers", taxon("Q25314"), min_sl=90, extra=("parent_taxon",)),
-    S("gems", "?item (wdt:P31|wdt:P279)/wdt:P279* ?c . VALUES ?c { wd:Q83437 wd:Q7946 wd:Q11426 }", min_sl=40),
     S("planets_space", cls("Q634", "Q1055", "Q2537", "Q8928", "Q318", "Q42372", "Q3559", "Q523", "Q148578", "Q26529", "Q25956", "Q40218", sub=False),
       min_sl=45, extra=("discovered", "inventor")),
     # ---------- أكل وأشياء ----------
     S("dishes", "?item (wdt:P31|wdt:P279)/wdt:P279* wd:Q746549 .", min_sl=30, extra=("origin", "country")),
-    S("desserts", "?item (wdt:P31|wdt:P279)/wdt:P279* ?c . VALUES ?c { wd:Q182940 wd:Q13266 wd:Q195 }", min_sl=25, extra=("origin", "country")),
     S("drinks", "?item (wdt:P31|wdt:P279)/wdt:P279* wd:Q40050 .", min_sl=35, extra=("origin", "country")),
     S("instruments", "?item (wdt:P31|wdt:P279)/wdt:P279* wd:Q34379 .", min_sl=30, extra=("origin",)),
-    S("tools", "?item (wdt:P31|wdt:P279)/wdt:P279* ?c . VALUES ?c { wd:Q39546 wd:Q1501161 }", min_sl=35),
-    S("sportsgear", "?item (wdt:P31|wdt:P279)/wdt:P279* ?c . VALUES ?c { wd:Q16533119 wd:Q18545 }", min_sl=25),
-    S("aircraft", cls("Q15056995", "Q15056993", sub=True), min_sl=30, extra=("maker", "inception")),
     S("car_models", cls("Q3231690", sub=True), min_sl=35, extra=("maker", "inception", "origin")),
     S("inventions", "?item wdt:P61 ?inv . FILTER NOT EXISTS { ?item wdt:P31 ?bad . VALUES ?bad { wd:Q5 wd:Q16521 wd:Q11344 wd:Q523 wd:Q3863 wd:Q2537 wd:Q65943 wd:Q207961 wd:Q1153690 } }",
       min_sl=45, extra=("inventor", "discovered", "inception")),
     S("currencies", cls("Q8142", sub=False), min_sl=40, extra=("country",)),
     S("paintings", cls("Q3305213"), min_sl=25, extra=("creator", "collection", "inception")),
-    S("costumes", "?item (wdt:P31|wdt:P279)/wdt:P279* ?c . VALUES ?c { wd:Q3172759 wd:Q31929402 }", min_sl=12, extra=("origin", "country")),
-    S("dances", "?item (wdt:P31|wdt:P279)/wdt:P279* ?c . VALUES ?c { wd:Q11639 wd:Q1149066 }", min_sl=20, extra=("origin", "country")),
     # ---------- شعارات ----------
     S("airlines", cls("Q46970"), img="P154", min_sl=25, extra=("country",)),
     S("car_brands", cls("Q786820", "Q44294", sub=False), img="P154", min_sl=30, extra=("country", "inception", "parent")),
     S("orgs", cls("Q484652", "Q1335818", "Q15925165", "Q163740", "Q245065", sub=False), img="P154", min_sl=50, extra=("inception",)),
-    S("tournaments", cls("Q500834", "Q13406554", "Q15991290", "Q623109", sub=True), img="P154", min_sl=40),
     S("companies", cls("Q4830453", "Q891723", "Q6881511", "Q783794", sub=False), img="P154", min_sl=60,
       extra=("country", "founder", "inception", "industry", "hq")),
     S("websites_apps", cls("Q35127", "Q620615", "Q3220391", "Q1668024", "Q7397", sub=False), img="P154", min_sl=40,
@@ -152,10 +144,55 @@ SPECS = [
     S("events", cls("Q178561", "Q198", "Q131569", "Q3839081", "Q1190554", "Q124757", "Q7283", "Q8076", sub=False), min_sl=80, need_img=False,
       extra=("point_time", "start", "end", "location", "country")),
     S("elements", cls("Q11344"), min_sl=50, need_img=False, extra=("symbol", "atomic", "discovered", "inventor")),
-    S("olympics", cls("Q159821", "Q82414", sub=False), min_sl=30, need_img=False, extra=("country", "city", "point_time", "start")),
     S("league_seasons", "?item wdt:P3450 ?lg . VALUES ?lg { wd:Q9448 wd:Q324867 wd:Q82595 wd:Q15804 wd:Q13394 wd:Q18756 wd:Q35572 wd:Q18278 wd:Q19570 wd:Q201181 wd:Q1023283 wd:Q749096 wd:Q605734 wd:Q1123166 wd:Q1062491 wd:Q1069549 } ?item wdt:P1346 ?w .",
       min_sl=1, need_img=False, limit=3000, extra=("winner", "season_of", "start", "end")),
     S("jordan_places", "?item wdt:P17 wd:Q810 . VALUES ?cls { wd:Q515 wd:Q3957 wd:Q532 wd:Q133442 wd:Q570116 wd:Q839954 wd:Q23413 wd:Q15661340 wd:Q46169 wd:Q8502 wd:Q4022 } ?item wdt:P31 ?cls .",
       min_sl=8, need_img=False, arwiki=True, extra=("city", "pop", "inception", "elev")),
-    S("jordan_gov", "?item wdt:P31 wd:Q1229776 .", min_sl=1, need_img=False, extra=("capital", "pop", "area")),
+]
+
+# ---------- دفعة 2: بدل اللي وقف بالتايم آوت ----------
+SPECS += [
+    S("towers", cls("Q11303", "Q12518", "Q1021645", "Q18142"), min_sl=25, extra=("country", "city", "inception", "height")),
+    S("historic_pol", occ("Q82955", "Q189290", "Q116", "Q11900058", "Q47064") + " ?item wdt:P570 ?dd . FILTER(YEAR(?dd) < 1960)", min_sl=110,
+      extra=("citizen", "gender", "born", "died", "occupation")),
+    S("historic_art", occ("Q1028181", "Q36834", "Q36180", "Q49757", "Q4964182", "Q11063", "Q170790", "Q169470") + " ?item wdt:P570 ?dd . FILTER(YEAR(?dd) < 1960)",
+      min_sl=110, extra=("citizen", "gender", "born", "died", "occupation")),
+    S("celebs_tv", occ("Q947873", "Q4610556", "Q17125263", "Q15077007", "Q18814623"), min_sl=40, extra=("citizen", "gender", "born", "occupation")),
+    S("celebs_biz", occ("Q131524", "Q43845"), min_sl=70, extra=("citizen", "gender", "born", "occupation")),
+    S("reptiles", named("Squamata", "Testudines", "Crocodilia", "Rhynchocephalia"), min_sl=40, extra=("parent_taxon",)),
+    S("amphibians", named("Anura", "Caudata", "Gymnophiona"), min_sl=30, extra=("parent_taxon",)),
+    S("dinos", named("Ornithischia", "Sauropodomorpha", "Tyrannosauridae", "Dromaeosauridae", "Spinosauridae", "Allosauridae", "Ceratosauria",
+                     "Abelisauridae", "Carcharodontosauridae", "Ornithomimosauria", "Therizinosauria", "Oviraptorosauria", "Pterosauria",
+                     "Plesiosauria", "Ichthyosauria", "Mosasauridae"), min_sl=18, extra=("parent_taxon",)),
+    S("sea_more", named("Cephalopoda", "Decapoda", "Echinodermata", "Scyphozoa", "Anthozoa", "Pinnipedia", "Sirenia", "Cheloniidae",
+                        "Selachimorpha", "Batoidea", "Syngnathidae", "Tetraodontidae", "Scombridae", "Salmonidae", "Pomacentridae", "Muraenidae",
+                        "Lophiiformes", "Xiphiidae", "Istiophoridae", "Hippocampus"), min_sl=35, extra=("parent_taxon",)),
+    S("insects2", named("Apidae", "Formicidae", "Coccinellidae", "Odonata", "Mantodea", "Caelifera", "Ensifera", "Blattodea", "Culicidae",
+                        "Muscidae", "Vespidae", "Papilionidae", "Nymphalidae", "Pieridae", "Phasmatodea", "Scarabaeidae", "Lampyridae", "Cicadidae",
+                        "Siphonaptera", "Phthiraptera", "Lucanidae", "Cerambycidae", "Sphingidae", "Saturniidae", "Bombycidae", "Termitoidae",
+                        "Scorpiones", "Araneae", "Ixodida", "Chilopoda", "Diplopoda"), min_sl=35, extra=("parent_taxon",)),
+    S("flowers", named("Rosaceae", "Orchidaceae", "Liliaceae", "Iridaceae", "Ranunculaceae", "Amaryllidaceae", "Papaveraceae", "Oleaceae",
+                       "Malvaceae", "Cactaceae", "Nymphaeaceae", "Lamiaceae", "Violaceae", "Ericaceae", "Magnoliaceae", "Asparagaceae",
+                       "Caryophyllaceae", "Paeoniaceae", "Hydrangeaceae", "Geraniaceae", "Primulaceae", "Nelumbonaceae", "Araceae",
+                       "Bromeliaceae", "Asteraceae", "Solanaceae", "Brassicaceae", "Apiaceae", "Fabaceae", "Cucurbitaceae"),
+      min_sl=55, extra=("parent_taxon",)),
+    S("trees", named("Pinaceae", "Cupressaceae", "Fagaceae", "Arecaceae", "Moraceae", "Salicaceae", "Betulaceae", "Sapindaceae", "Juglandaceae",
+                     "Ulmaceae", "Platanaceae", "Myrtaceae", "Lauraceae", "Anacardiaceae", "Rutaceae", "Ebenaceae", "Bignoniaceae", "Ginkgoaceae",
+                     "Taxaceae", "Araucariaceae"), min_sl=45, extra=("parent_taxon",)),
+    S("spices", under("spice", "herb", "condiment"), min_sl=25),
+    S("gems", under("gemstone", "mineral", "precious metal"), min_sl=35),
+    S("desserts", under("dessert", "cake", "confectionery", "pastry", "cookie", "candy", "ice cream"), min_sl=20, extra=("origin", "country")),
+    S("tools", under("tool", "hand tool", "power tool", "kitchen utensil", "measuring instrument"), min_sl=30),
+    S("sportsgear", under("sports equipment", "ball", "protective equipment", "exercise equipment"), min_sl=20),
+    S("aircraft", cls("Q15056995", "Q15056993", "Q1420", "Q34486", "Q40218"), min_sl=30, extra=("maker", "inception")),
+    S("costumes", under("traditional costume", "folk costume", "garment", "headgear", "dress"), min_sl=15, extra=("origin", "country")),
+    S("dances", under("dance", "folk dance", "dance style"), min_sl=15, extra=("origin", "country")),
+    S("tournaments", under("association football competition", "sports competition", "football tournament", "multi-sport event", "tennis tournament"),
+      img="P154", min_sl=35),
+    S("olympics", "VALUES ?nm { \"Summer Olympic Games\"@en \"Winter Olympic Games\"@en } ?c rdfs:label ?nm . ?item wdt:P31 ?c .", min_sl=20,
+      need_img=False, extra=("country", "city", "point_time", "start")),
+    S("jordan_gov", "?c rdfs:label \"governorate of Jordan\"@en . ?item wdt:P31 ?c .", min_sl=1, need_img=False, extra=("capital", "pop", "area")),
+    S("vehicles", under("motor vehicle", "watercraft", "rail vehicle", "bicycle", "aircraft"), min_sl=40),
+    S("fruits2", under("fruit", "berry", "citrus", "nut", "edible fruit"), min_sl=25),
+    S("vegetables2", under("vegetable", "leaf vegetable", "root vegetable", "legume", "herb"), min_sl=25),
 ]
