@@ -186,7 +186,7 @@ function newGame(cats) {
   S.total = cats.length * 4 * nT(); S.done = 0; S.rushDone = !S.cfg.rush || nT() < 2; S.rush = null; S.fin = null; S.awards = null;
   S.phase = "board"; S.cur = null; S.res = null;
   fx("start");
-  for (const cid of cats) for (const row of SECRET.pre[cid]) for (const q of row) if (q[3] && !/^(audio|video):/.test(q[3])) { const im = new Image(); im.referrerPolicy = "no-referrer"; im.src = imgUrl(q[3].replace(/^(zoom|blur):/, "")); }
+  for (const cid of cats) for (const row of SECRET.pre[cid]) for (const q of row) if (q[3]) { const im = new Image(); im.referrerPolicy = "no-referrer"; im.src = imgUrl(q[3].replace(/^(zoom|blur):/, "")); }
 }
 const openLeft = (ti) => S.cats.reduce((n, cid) => n + S.board[cid].filter((row) => row[ti] === null).length, 0);
 function nextTurn(from) { for (let k = 1; k <= nT(); k++) { const t = (from + k) % nT(); if (openLeft(t)) return t; } return from; }
@@ -490,6 +490,8 @@ if (!me.id) { me.id = Math.random().toString(36).slice(2, 10); store.set("pid", 
 const topic = (k) => `${ROOT}/${room}/${k}`;
 const now = () => Date.now() + offset;
 const snap = () => ({ S, SECRET });
+// لعبة محفوظة فيها قسم انشال (زي الصوت والفيديو) ما بتكمل
+const validSave = (sv) => !!(sv && sv.S && (sv.S.cats || []).every((id) => CAT.has(id)));
 function unsnap(saved) { S = saved.S; SECRET = saved.SECRET || { pre: {}, taken: [], dbl: [] }; if (!SECRET.taken) SECRET.taken = []; if (!SECRET.dbl) SECRET.dbl = []; rearm(); }
 
 function commit() {
@@ -542,7 +544,7 @@ function hostRoom(code, saved) {
   loading("عم بفتح الغرفة...");
   connect(() => {
     client.subscribe([topic("s"), topic("a")], { qos: 1 });
-    if (saved && saved.S) unsnap(saved);
+    if (validSave(saved)) unsnap(saved);
     else S = { room, host: me.id, phase: "lobby", cfg: defCfg(), teams: [], cats: [], board: {}, turn: 0 };
     if (!S.teams.length) S.teams.push(newTeam(me.id, me.name || "الفريق الأول"));
     commit();
@@ -564,7 +566,7 @@ function joinRoom(code) {
 }
 function localGame(saved) {
   mode = "local"; room = null;
-  if (saved && saved.S) { unsnap(saved); return commit(); }
+  if (validSave(saved)) { unsnap(saved); return commit(); }
   localNames(store.get("nteams", 2));
 }
 const DEF_NAMES = ["الصقور", "النمور", "الأسود", "الذيابة", "النسور"];
@@ -709,14 +711,12 @@ const GROUPS = [
   ["🧠", "ثقافة عامة", ["general", "history", "science", "tech", "movies", "cartoons", "videogames", "paintings", "dances"]],
   ["🌍", "دول وأماكن", ["globe", "flags", "capitals", "cities", "landmarks", "castles", "mosques", "currency", "bridges", "towers", "waterfalls", "mountains", "islands", "museums", "ancient"]],
   ["👤", "مشاهير", ["celebs", "actors", "singerspics", "wrestlers", "historic", "scientists"]],
-  ["🔊", "أصوات وفيديو", ["sounds", "soundslife", "soundsbirds", "soundsinstr", "languages", "soundshome", "soundsmachines", "soundshuman", "vidanimals", "vidnature", "vidsports", "vidcrafts", "vidsea", "vidspace", "vidmachines", "vidinsects", "vidbirds"]],
   ["🏷️", "شعارات", ["applogos", "carlogos", "brands", "airlines", "techlogos", "orglogos"]],
   ["🐾", "حيوانات وطبيعة", ["animals", "pets", "sealife", "insects", "dinos", "plants", "space", "birds", "reptiles", "trees", "gems"]],
   ["🍽️", "أكل ولبس وأشياء", ["food", "fruits", "drinks", "desserts", "spices", "costumes", "cars", "instruments", "tools", "sportsgear", "planes", "inventions"]],
 ];
 let catFilter = "all", catSearch = "", showSet = false;
-const kindOf = (c) => (c.gen ? (GEN[c.id].img ? ["📷", "صور"] : ["♾️", "ما بتخلص"]) : c.qs.some((q) => q[3] && q[3].startsWith("video:")) ? ["🎥", "فيديو"] : c.qs.some((q) => q[3] && q[3].startsWith("audio:")) ? ["🔊", "صوت"]
-  : c.qs.some((q) => q[3] && /^(zoom|blur):/.test(q[3])) ? ["✨", "تأثير"] : c.qs.some((q) => q[3]) ? ["📷", "صور"] : ["✍️", "أسئلة"]);
+const kindOf = (c) => (c.gen ? (GEN[c.id].img ? ["📷", "صور"] : ["♾️", "ما بتخلص"]) : c.qs.some((q) => q[3] && /^(zoom|blur):/.test(q[3])) ? ["✨", "تأثير"] : c.qs.some((q) => q[3]) ? ["📷", "صور"] : ["✍️", "أسئلة"]);
 const countOf = (c) => (c.gen ? "+1000" : String(c.qs.length));
 function catGroups() {
   const seen = new Set(), out = [];
@@ -788,7 +788,6 @@ function drawCats() {
 // ---------- اللوحة ----------
 const LVC = ["", "d1", "d2", "d3", "d4"];
 function drawBoard() {
-  stopSound();
   const ti = S.turn, t = T(ti), mine = canAct(ti);
   const pct = Math.round((S.done / S.total) * 100);
   const rushAt = Math.ceil(S.total / 2);
@@ -804,7 +803,7 @@ function drawBoard() {
     <p class="note">🔥 في سؤال دبل مخفي لكل فريق${!S.rushDone ? " · ⚡ جولة السرعة بنص اللعبة" : ""}${S.cfg.final ? " · 🎰 الرهان الأخير بالآخر" : ""}</p>
     ${isBoss() ? `<button class="linkish" id="end" type="button">إنهاء اللعبة هسا</button>` : ""}
     <button class="linkish" id="out" type="button">${mode === "local" ? "طلوع (اللعبة بتنحفظ)" : "اطلعوا من اللعبة"}</button>`);
-  if (mine) document.querySelectorAll(".lv:not(.done)").forEach((b) => (b.onclick = () => { unlockAudio(); Sound.unlock && Sound.unlock(); send({ t: "open", cid: b.dataset.cid, li: +b.dataset.li, team: ti }); }));
+  if (mine) document.querySelectorAll(".lv:not(.done)").forEach((b) => (b.onclick = () => { Sound.unlock && Sound.unlock(); send({ t: "open", cid: b.dataset.cid, li: +b.dataset.li, team: ti }); }));
   bind({
     end: () => { if (confirm("أكيد بدكم تنهوا اللعبة هسا؟")) send({ t: "end", team: 0 }); },
     out: () => { if (mode === "local") { mode = null; S = null; intro(); } else if (confirm("أكيد؟")) leave(); },
@@ -816,60 +815,14 @@ function imgUrl(u) {
   const m = String(u || "").match(/\/wikipedia\/([a-z]+)\/thumb\/[^/]+\/[^/]+\/([^/?]+)\//);
   return m ? `https://${m[1] === "commons" ? "commons.wikimedia.org" : m[1] + ".wikipedia.org"}/wiki/Special:FilePath/${m[2]}?width=640` : u;
 }
-// الآيفون ما بيشغّل صوت إلا من عنصر "انفتح" بكبسة، فبنعمل عنصر واحد ونضل نستعمله
-let SND = null, sndKey = "", sndUrl = "", sndAlt = false;
-function sndEl() {
-  if (!SND) {
-    SND = new Audio(); SND.preload = "auto"; SND.setAttribute("playsinline", "");
-    SND.onerror = () => {
-      const alt = altAudio(sndUrl);
-      if (alt && !sndAlt && SND.src) { sndAlt = true; SND.src = alt; SND.play().catch(() => {}); return; }
-      const note = $("sndnote"); if (note && SND.src) note.textContent = "ما قدرت أشغّل الصوت. تأكدوا إنكم متصلين بالنت.";
-    };
-    SND.onended = () => { const b = $("sndbtn"); if (b) b.classList.remove("on"); };
-  }
-  return SND;
-}
-function stopSound() { if (SND) { try { SND.pause(); } catch {} } }
-function unlockAudio() { try { const a = sndEl(); if (!a.src) { a.muted = true; a.play().catch(() => {}); a.muted = false; } } catch {} }
-document.addEventListener("pointerdown", unlockAudio, { once: true });
-const altAudio = (u) => { const m = String(u).match(/\/transcoded\/([^/]+\/[^/]+)\/([^/]+)\/[^/]+$/); return m ? u.replace(m[0], `/${m[1]}/${m[2]}`) : null; };
-function playSound(url) {
-  const a = sndEl(), b = $("sndbtn"), note = $("sndnote");
-  try {
-    if (sndUrl !== url) { sndUrl = url; sndAlt = false; a.src = url; }
-    a.muted = false; a.currentTime = 0;
-    const p = a.play();
-    if (b) b.classList.add("on");
-    if (p && p.catch) p.catch(() => { if (b) b.classList.remove("on"); if (note) note.textContent = "اكبسوا على الزر عشان تسمعوا الصوت 👆"; });
-  } catch {}
-}
 function media(c, key, live, total, deadline) {
   if (!c.img) return "";
-  if (c.img.startsWith("video:")) {
-    const url = c.img.slice(6);
-    setTimeout(() => {
-      const v = $("qvid"); if (!v || v.dataset.ready) return;
-      v.dataset.ready = "1"; v.muted = true; v.defaultMuted = true; v.playsInline = true; v.controls = false;
-      v.setAttribute("playsinline", ""); v.setAttribute("webkit-playsinline", "");
-      v.onerror = () => { const n = $("vidnote"); if (n) n.textContent = "ما قدرت أشغّل الفيديو على هالجهاز."; v.style.display = "none"; };
-      const p = v.play(); if (p && p.catch) p.catch(() => {});
-    }, 0);
-    return `<div class="vidbox"><video class="qvid" id="qvid" src="${esc(url)}" playsinline webkit-playsinline muted autoplay loop preload="auto" disablepictureinpicture disableremoteplayback></video></div><p class="note" id="vidnote">🎥 الفيديو بيعيد لحاله، بدون صوت</p>`;
-  }
   if (c.img.startsWith("zoom:") || c.img.startsWith("blur:")) {
     const kind = c.img.slice(0, 4), url = imgUrl(c.img.slice(5));
     const T0 = total / 1000, left = Math.max(0, (deadline - now()) / 1000);
     const style = live ? `animation-duration:${T0}s;animation-delay:-${Math.max(0, T0 - left).toFixed(1)}s` : "animation:none";
     return `<div class="fxwrap"><img class="qimg fx-${kind}" style="${style}" src="${esc(url)}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'"></div>
       ${live ? `<p class="note">${kind === "zoom" ? "🔍 الصورة بتبعد شوي شوي" : "🌫️ الصورة بتوضح شوي شوي"}، جاوبوا بأسرع وقت</p>` : ""}`;
-  }
-  if (c.img.startsWith("audio:")) {
-    const url = c.img.slice(6), k = key + ":" + url;
-    if (k !== sndKey) { sndKey = k; setTimeout(() => playSound(url), 300); }
-    setTimeout(() => { const b = $("sndbtn"); if (b) b.onclick = () => playSound(url); }, 0);
-    return `<button class="sound" id="sndbtn" type="button" aria-label="شغّل الصوت"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span>اسمعوا الصوت</button>
-      <p class="note" id="sndnote">إذا ما سمعتوا إشي: اكبسوا الزر، وتأكدوا إن التلفون مش على الصامت 🔕</p>`;
   }
   const cls = c.img.includes("flagcdn") ? "flag" : c.img.includes("teamlogos") || /\.svg/i.test(c.img) ? "crest" : "";
   return `<img class="qimg ${cls}" src="${esc(imgUrl(c.img))}" data-alt="${esc(c.img)}" alt="" referrerpolicy="no-referrer" onerror="if(this.dataset.alt&&this.src!==this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt='';}else{this.style.display='none'}">`;
@@ -941,7 +894,6 @@ function drawQ() {
   runClock(c.deadline, c.total, mine || iCanBuzz);
 }
 function drawRes() {
-  if (S.cur && !(S.cur.img || "").startsWith("audio:")) stopSound();
   const r = S.res, c = S.cur;
   const w = r.winner !== null ? T(r.winner) : null;
   const mineWin = w && mineT(r.winner);
@@ -1079,8 +1031,8 @@ function intro() {
   render(`<section class="hero"><span class="badge">النسخة الجديدة</span><h1>جمع نقاط</h1>
       <p class="sub">فرق ضد بعض على لوحة أسئلة. كل فريق إله سؤال من كل مستوى بكل قسم، وفي النص جولة سرعة، وبالآخر رهان بيقلب كل إشي.</p>
       <div class="feats"><span>📚 ${nCats} قسم</span><span>♾️ أقسام ما بتخلص</span><span>⚡ جولة السرعة</span><span>🎰 الرهان الأخير</span></div></section>
-    ${local && local.S && !["over", "cats", "lobby"].includes(local.S.phase) ? `<button class="btn" id="resume" type="button">كمّلوا لعبتكم (${local.S.teams.map((t) => t.score).join(" - ")})</button>` : ""}
-    <button class="btn ${local && local.S && !["over", "cats", "lobby"].includes(local.S.phase) ? "alt" : ""}" id="one" type="button">📱 كل الفرق على تلفون واحد</button>
+    ${validSave(local) && !["over", "cats", "lobby"].includes(local.S.phase) ? `<button class="btn" id="resume" type="button">كمّلوا لعبتكم (${local.S.teams.map((t) => t.score).join(" - ")})</button>` : ""}
+    <button class="btn ${validSave(local) && !["over", "cats", "lobby"].includes(local.S.phase) ? "alt" : ""}" id="one" type="button">📱 كل الفرق على تلفون واحد</button>
     <section class="card stack roombox"><b class="rt">🌐 كل فريق من تلفونه</b>
       <input class="input" id="tname" type="text" maxlength="16" placeholder="اسم فريقكم" value="${esc(me.name)}" autocomplete="off">
       <button class="btn alt" id="create" type="button">اعملوا غرفة</button>

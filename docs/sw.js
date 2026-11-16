@@ -2,7 +2,7 @@
 // - الصفحات والكود (html/js/css): من النت أول، وإذا النت بطيء (أكثر من ثانية ونص) أو مقطوع بنفتح المحفوظ.
 // - البيانات (json): المحفوظ فوراً، وبنحدّثه بالخلفية للمرة الجاية.
 // - الصور والخطوط: المحفوظ دايماً (بتنمسح لما يتغير VERSION).
-const VERSION = "abu-odeh-v29";
+const VERSION = "abu-odeh-v30";
 const DATA = "abu-odeh-data-v1";   // البيانات ما بتنمسح مع كل نشر، بتتحدّث لحالها
 const SHELL = ["./", "index.html", "home.html", "login.html", "rewards.html", "settings.html", "theme.js", "shell.css", "shell.js", "ds/ds.css", "app/core.js", "app/ui.js", "app/firebase-config.js", "manifest.webmanifest", "icons/icon.svg", "icons/wordmark-dark.svg", "ds/ui.css", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "games/index.html"];
 

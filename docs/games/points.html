@@ -209,22 +209,13 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 21px; margin: 4px
 .autonext i { position: absolute; inset: 0 0 0 auto; background: rgb(255 197 51 / .16); width: 0; }
 .autonext span { position: relative; }
 
-/* زووم، مموّهة، فيديو، صوت */
+/* زووم ومموّهة */
 .fxwrap { border-radius: 16px; overflow: hidden; background: var(--c-waraq); }
 .fxwrap .qimg { border-radius: 0; animation-timing-function: linear; animation-fill-mode: both; }
 .qimg.fx-zoom { animation-name: zoomout; transform-origin: 50% 40%; }
 .qimg.fx-blur { animation-name: unblur; }
 @keyframes zoomout { from { transform: scale(5); } 85% { transform: scale(1.4); } to { transform: scale(1); } }
 @keyframes unblur { from { filter: blur(26px); } 85% { filter: blur(5px); } to { filter: blur(0); } }
-.vidbox { position: relative; border-radius: 16px; overflow: hidden; background: #000; }
-.vidbox::after { content: ""; position: absolute; inset: 0; }
-.qvid { display: block; width: 100%; max-height: 260px; background: #000; pointer-events: none; object-fit: contain; }
-.sound { width: 100%; border: 0; border-radius: 20px; padding: 20px 16px; background: var(--brand); color: var(--c-layl); font-family: var(--display); font-size: 25px; display: flex; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 5px 0 var(--brand-d); }
-.sound .wave { display: flex; gap: 4px; align-items: center; height: 30px; }
-.sound .wave i { width: 5px; height: 10px; border-radius: 3px; background: var(--c-layl); }
-.sound.on .wave i { animation: eq .7s ease-in-out infinite; }
-.sound.on .wave i:nth-child(2) { animation-delay: .1s; } .sound.on .wave i:nth-child(3) { animation-delay: .2s; } .sound.on .wave i:nth-child(4) { animation-delay: .3s; } .sound.on .wave i:nth-child(5) { animation-delay: .4s; }
-@keyframes eq { 50% { height: 30px; } }
 
 /* اختيار الأقسام */
 .pickhead h1 { margin-bottom: 2px; }

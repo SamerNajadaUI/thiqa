@@ -150,7 +150,7 @@ def read_bank(cats: dict):
             parts = [p.strip() for p in line[3:].split("|")]
             cid, name, icon = parts[0], parts[1], parts[2]
             cur = cats.setdefault(cid, Cat(cid, name, icon))
-            cur_img = len(parts) > 3 and parts[3] in ("img", "logo", "audio", "audiom", "audiol", "video", "file")
+            cur_img = len(parts) > 3 and parts[3] in ("img", "logo", "file")
             if cur_img:
                 img_secs.append((cur, parts[4], [], parts[3]))
             continue
@@ -163,96 +163,6 @@ def read_bank(cats: dict):
                 continue
             cur.add(f[0], f[1], f[2:6])
     return img_secs
-
-
-AUDIO_CACHE = GAMES / "points_audio.json"
-
-
-VIDEO_CACHE = GAMES / "points_video.json"
-# ملفات طلعت غلط (مش الشي المطلوب، أو مش مناسبة): بنتجاهلها وبناخذ اللي بعدها
-BAD_MEDIA = ["Sounds-of-Mars", "Life on the Ocean Wave", "Todd Rokita", "Hammer and sickle", "Kettle whistle.ogg|Whistle", "Rain and wind in London|Wind",
-             "Airplane Chime", "Creepy footsteps", "Rep. Bob Ney", "Sitar and tabla", "Thunder Dolphin", "Mating", "Interesting Facts", "Rainbow trout",
-             "Kamala Harris", "Kobe Bryant", "Hammer style", "Narwhal and the Pearls", "COVID", "crash", "Simpleshow", "Ocean Today", "Essentials", "Nexter", "Blue British Shorthair cat snoring"]
-
-
-def bad_media(title, term):
-    for b in BAD_MEDIA:
-        name, _, only = b.partition("|")
-        if name.lower() in title.lower() and (not only or only == term):
-            return True
-    return False
-
-
-
-def commons_media(terms, kind):
-    """أصوات وفيديوهات من Wikimedia Commons.
-    audio: أصوات (بدون موسيقى وأغاني)، audiom: آلات موسيقية (مسموح موسيقى)، video: فيديو قصير.
-    الصوت بناخذه mp3 (بيشتغل على الآيفون)، والفيديو بنفضّل mp4 وإلا webm صغير."""
-    path = VIDEO_CACHE if kind == "video" else AUDIO_CACHE
-    pre = {"audio": "", "audiom": "m:", "audiol": "l:", "video": ""}[kind]
-    cache = {}
-    try:
-        cache = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        pass
-    api = "https://commons.wikimedia.org/w/api.php"
-    out = {}
-    nomusic = r"(pronunc|spoken|speech|wikipedia|interview|navy|lecture|article|podcast|anthem|hymn|news|trailer|ad\b|commercial" + (r"|music|song)" if kind == "audio" else ")")
-    for term in terms:
-        key = pre + term
-        if cache.get(key) and not bad_media(urllib.parse.unquote(cache[key]).replace("_", " "), term):
-            out[term] = cache[key]
-            continue
-        try:
-            ft = "video" if kind == "video" else "audio"
-            srch = f"intitle:{term}- spoken article filetype:audio" if kind == "audiol" else f"{term} filetype:{ft}"
-            q = urllib.parse.urlencode({"action": "query", "format": "json", "list": "search", "srnamespace": 6, "srlimit": 30,
-                                        "srsearch": srch})
-            req = urllib.request.Request(f"{api}?{q}", headers={"User-Agent": UA})
-            with urllib.request.urlopen(req, timeout=20) as r:
-                hits = [h["title"] for h in json.loads(r.read().decode("utf-8")).get("query", {}).get("search", [])]
-            word = term.split()[0].lower()
-            if kind == "audiol":   # ويكيبيديا المنطوقة: ملف بيبلّش برمز اللغة (De-..., Fr-...) ومقالة كاملة
-                hits = [h for h in hits if h.startswith(f"File:{term}-") and re.search(r"(article|artikel|art[ií]culo|articolo|статья)", h, re.I)] or \
-                       [h for h in hits if h.startswith(f"File:{term}-") and len(h) > 25]
-            # بدون ملفات النطق (De-Zebra.ogg، LL-Q...) والمقابلات والأخبار
-            hits = hits if kind == "audiol" else [h for h in hits if word in h.lower() and not bad_media(h, term)
-                    and not re.match(r"^File:([A-Za-z]{2,3}(-[A-Za-z]{2,4})?-|IDWIKI|LL-Q|User\d)", h)
-                    and not re.search(nomusic, h, re.I)]
-            url = None
-            for h in hits[:4]:
-                q = urllib.parse.urlencode({"action": "query", "format": "json", "prop": "videoinfo", "viprop": "url|derivatives|size", "titles": h})
-                req = urllib.request.Request(f"{api}?{q}", headers={"User-Agent": UA})
-                with urllib.request.urlopen(req, timeout=20) as r:
-                    pages = json.loads(r.read().decode("utf-8")).get("query", {}).get("pages", {})
-                info = (next(iter(pages.values()), {}).get("videoinfo") or [{}])[0]
-                ders = info.get("derivatives", [])
-                if kind == "video":
-                    dur = float(info.get("duration") or 0)
-                    if dur and dur > 240:   # فيديو طويل كثير: بنتجاهله
-                        continue
-                    mp4 = [d["src"] for d in ders if "mp4" in (d.get("type", "") + d.get("src", "")).lower()]
-                    webm = sorted([d for d in ders if "webm" in d.get("src", "") and d.get("height")], key=lambda d: abs(int(d["height"]) - 480))
-                    url = mp4[0] if mp4 else (webm[0]["src"] if webm else (info.get("url") if re.search(r"\.(mp4|webm)$", info.get("url", ""), re.I) else None))
-                else:
-                    mp3 = [d["src"] for d in ders if "mp3" in (d.get("type", "") + d.get("src", "")).lower()]
-                    url = mp3[0] if mp3 else (info.get("url") if re.search(r"\.(mp3|wav)$", info.get("url", ""), re.I) else None)
-                if url:
-                    log(f"  {kind} {term}: {h}")
-                    break
-            if url:
-                cache[key] = url
-                out[term] = url
-            else:
-                log(f"  بدون {kind}: {term}")
-        except Exception as e:
-            log(f"  {kind} {term}: {e}")
-        time.sleep(0.3)
-    try:
-        path.write_text(json.dumps(cache, ensure_ascii=False, indent=0), encoding="utf-8")
-    except Exception:
-        pass
-    return out
 
 
 FILES_CACHE = GAMES / "points_files.json"
@@ -299,14 +209,12 @@ def commons(u):
 
 
 def image_sections(img_secs):
-    MEDIA = ("audio", "audiom", "audiol", "video")
-    titles = [it[1] for _, _, items, k in img_secs if k not in MEDIA and k != "file" for it in items]
+    titles = [it[1] for _, _, items, k in img_secs if k != "file" for it in items]
     logos = frozenset(it[1] for _, _, items, k in img_secs if k == "logo" for it in items)
     wiki = wiki_images(titles, logos)
-    media = {k: commons_media([it[1] for _, _, items, kk in img_secs if kk == k for it in items], k) for k in MEDIA}
     files = commons_files([it[1] for _, _, items, kk in img_secs if kk == "file" for it in items])
     for cat, tmpl, items, kind in img_secs:
-        imgs = media[kind] if kind in MEDIA else files if kind == "file" else wiki
+        imgs = files if kind == "file" else wiki
         lg = kind != "img"
         ok = [it for it in items if imgs.get(it[1])]
         for d, t, ans, g in items:
@@ -319,8 +227,7 @@ def image_sections(img_secs):
             if not wrong and not g:
                 wrong = pick3(ans, [x[2] for x in items if x[3] == g])
             if wrong:
-                media_src = ("audio:" + imgs[t]) if kind in ("audio", "audiom", "audiol") else ("video:" + imgs[t]) if kind == "video" else commons(imgs[t])
-                cat.add(d, tmpl, [ans] + wrong, media_src)
+                cat.add(d, tmpl, [ans] + wrong, commons(imgs[t]))
 
 
 # ---------- أعلام وعواصم ----------
@@ -512,7 +419,7 @@ def zoom_blur(cats):
         for cid in ids:
             c = cats.get(cid)
             if c:
-                out += [q for q in c.qs if len(q) > 3 and q[3] and not q[3].startswith(("audio:", "video:"))]
+                out += [q for q in c.qs if len(q) > 3 and q[3]]
         return out
     for cid, name, icon, pref, ids in (("zoom", "زووم", "🔍", "zoom:", ["celebs", "landmarks", "applogos", "brands", "carlogos", "football", "animals"]),
                                        ("blur", "صورة مموّهة", "🌫️", "blur:", ["animals", "food", "cars", "landmarks", "celebs", "plants", "pets"])):
@@ -652,8 +559,8 @@ def main():
     estimate(cats)
     arab_players(cats)
     quick_math(cats)
-    order = ["globe", "languages", "vidcrafts", "arabplayers", "actors", "scientists", "cities", "castles", "mosques", "dinos", "sealife",
-             "insects", "fruits", "drinks", "costumes", "space", "translate", "nicknames", "whoami", "math", "sounds", "soundslife", "soundsbirds", "soundsinstr", "vidanimals", "vidnature", "vidsports", "zoom", "blur", "emoji",
+    order = ["globe", "arabplayers", "actors", "scientists", "cities", "castles", "mosques", "dinos", "sealife",
+             "insects", "fruits", "drinks", "costumes", "space", "translate", "nicknames", "whoami", "math", "zoom", "blur", "emoji",
              "lies", "estimate", "childhood", "carlogos", "airlines", "brands", "pets", "plants", "instruments", "currency", "singerspics", "football", "worldcup", "coaches", "crests", "stadiums", "nashama", "celebs", "flags", "capitals", "landmarks",
              "historic", "animals", "food", "jofood", "cars", "movies", "cartoons", "singers", "videogames", "tech", "general",
              "science", "history", "first", "islamic", "proverbs", "dialects", "riddles", "jordan", "jocities", "sports"]
