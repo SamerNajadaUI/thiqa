@@ -61,6 +61,7 @@
 - `cd docs && python3 -m http.server 8765` وبعدين Playwright (موجود جاهز، لا تثبّته).
 - سكربتات الفحص بـ`tools/test/` (اقرأ `tools/test/README.md`): سيرفر MQTT محلي، ولعب سهرة كاملة آلياً على تلفون واحد وبغرفة من 4 تلفونات. ولـ«ليلة الحسم»: `node --test hasm_core.test.js` (القواعد)، `hasm_local.js`، `hasm_online.js`.
 - فحوصات التطبيق: `node tools/test/app_core.test.js` (منطق)، `node tools/test/app_flow.js` (سبلاش ← دخول ← رئيسية ← ألعاب ← قفل ← مكافآت ← إعدادات ← أدمن)، `node tools/test/app_games_smoke.js` (كل الألعاب بدون أخطاء)، `node tools/test/ds_check.js` (ألوان وتباين). سكربتات الألعاب القديمة بتدخل بحساب أدمن عبر `tools/test/session.js`.
+- الخط: `node tools/test/font_check.js` (بعد أي تعديل على روابط الخطوط).
 - سرعة: `node tools/test/speed_check.js` (كل صفحة على 4G بطيء، أول زيارة وثانية).
 - قبل ما تقول "خلص": شغّل اللعبة آلياً لآخرها، وتأكد إنه ما في أخطاء JS، وشوف صور الشاشات بعرض 390px.
 
