@@ -391,7 +391,9 @@ def generate(cats, Cat, targets):
     b.image_cat("fruits", "فواكه وخضار", "🍎", only(wd("fruits") + wd("vegetables") + wd("fruits2") + wd("vegetables2"), r"(fruit|vegetable|berry|\bnut\b|legume|citrus|squash)", r"(فاكهة|فواكه|ثمرة|ثمار|خضار|خضروات|خضراوات|بقول)"), T("fruits"), "شو هاد؟", (), max_words=3)
     b.image_cat("spices", "بهارات وتوابل", "🌶️", only(wd("spices"), r"(spice|herb|seasoning)", r"(توابل|بهار|تابل|عشب)"), T("spices"), "شو هالبهار؟", (), max_words=3)
     b.image_cat("gems", "أحجار كريمة ومعادن", "💎", wd("gems"), T("gems"), "شو هالحجر؟", (), max_words=3)
-    b.image_cat("space", "الفضاء", "🪐", wd("planets_space"), T("space"), "شو هاد؟", (), top=60)
+    # الكوكبات (صور سما بخطوط باهتة) مستحيلة تنعرف من الصورة، فبنشيلها
+    sp = [it for it in wd("planets_space") if not re.search(r"constellation|asterism", it.get("end") or "", re.I) and "كوكبة" not in (it.get("ard") or "")]
+    b.image_cat("space", "الفضاء", "🪐", sp, T("space"), "شو هاد؟", (), top=60, min_items=8)
 
     # ---- أكل وأشياء ----
     DEMONYM = {"Italy": "Italian", "France": "French", "Spain": "Spanish", "Mexico": "Mexican", "Japan": "Japanese", "China": "Chinese",
