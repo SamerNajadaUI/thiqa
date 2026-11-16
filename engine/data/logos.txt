@@ -1,0 +1,177 @@
+# شعارات (رموز بدون كتابة، من Simple Icons، CC0): slug|عربي|قسم|صعوبة
+whatsapp|واتساب|applogos|1
+instagram|إنستغرام|applogos|1
+facebook|فيسبوك|applogos|1
+youtube|يوتيوب|applogos|1
+tiktok|تيك توك|applogos|1
+snapchat|سناب شات|applogos|1
+x|إكس (تويتر)|applogos|1
+telegram|تيليغرام|applogos|1
+messenger|ماسنجر|applogos|2
+spotify|سبوتيفاي|applogos|2
+googlemaps|خرائط جوجل|applogos|2
+gmail|جيميل|applogos|1
+googlechrome|جوجل كروم|applogos|1
+googledrive|جوجل درايف|applogos|2
+googleplay|جوجل بلاي|applogos|2
+applemusic|آبل ميوزك|applogos|3
+appstore|آب ستور|applogos|2
+icloud|آي كلاود|applogos|3
+discord|ديسكورد|applogos|2
+twitch|تويتش|applogos|2
+reddit|ريديت|applogos|3
+pinterest|بنترست|applogos|2
+tinder|تيندر|applogos|3
+viber|فايبر|applogos|2
+wechat|وي تشات|applogos|3
+line|لاين|applogos|4
+signal|سيغنال|applogos|3
+shazam|شازام|applogos|2
+soundcloud|ساوند كلاود|applogos|3
+deezer|ديزر|applogos|4
+duolingo|دولينجو|applogos|2
+figma|فيغما|applogos|3
+notion|نوشن|applogos|3
+trello|تريلو|applogos|4
+airbnb|إير بي إن بي|applogos|2
+tripadvisor|تريب أدفايزر|applogos|3
+paypal|باي بال|applogos|2
+firefox|فايرفوكس|applogos|2
+opera|أوبرا|applogos|3
+brave|بريف|applogos|4
+safari|سفاري|applogos|2
+android|أندرويد|applogos|1
+wikipedia|ويكيبيديا|applogos|2
+dropbox|دروب بوكس|applogos|3
+wordpress|ووردبريس|applogos|3
+playstation|بلايستيشن|applogos|1
+steam|ستيم|applogos|3
+github|غيت هب|applogos|3
+stackoverflow|ستاك أوفرفلو|applogos|4
+apple|آبل|techlogos|1
+google|جوجل|techlogos|1
+huawei|هواوي|techlogos|2
+oneplus|ون بلس|techlogos|3
+nvidia|إنفيديا|techlogos|3
+tesla|تسلا|techlogos|2
+ubuntu|أوبونتو|techlogos|4
+linux|لينكس|techlogos|3
+python|بايثون|techlogos|3
+html5|HTML5|techlogos|4
+react|رياكت|techlogos|4
+gitlab|غيت لاب|techlogos|4
+bluetooth|بلوتوث|techlogos|1
+qualcomm|كوالكوم|techlogos|4
+cisco|سيسكو|techlogos|4
+nike|نايكي|brands|1
+puma|بوما|brands|2
+underarmour|أندر آرمر|brands|3
+mcdonalds|ماكدونالدز|brands|1
+starbucks|ستاربكس|brands|1
+shell|شل|brands|2
+audi|أودي|carlogos|1
+toyota|تويوتا|carlogos|1
+chevrolet|شفروليه|carlogos|2
+ferrari|فيراري|carlogos|1
+peugeot|بيجو|carlogos|2
+renault|رينو|carlogos|2
+citroen|ستروين|carlogos|3
+mazda|مازدا|carlogos|2
+subaru|سوبارو|carlogos|3
+mitsubishi|ميتسوبيشي|carlogos|2
+maserati|مازيراتي|carlogos|3
+skoda|سكودا|carlogos|3
+opel|أوبل|carlogos|3
+hyundai|هيونداي|carlogos|1
+honda|هوندا|carlogos|2
+turkishairlines|الخطوط الجوية التركية|airlines|3
+lufthansa|لوفتهانزا|airlines|3
+aircanada|طيران كندا|airlines|4
+threads|ثريدز|applogos|2
+bluesky|بلوسكاي|applogos|4
+googlephotos|صور جوجل|applogos|2
+googletranslate|ترجمة جوجل|applogos|1
+googlemeet|جوجل ميت|applogos|2
+googlelens|عدسة جوجل|applogos|3
+googlegemini|جيميناي|applogos|3
+youtubemusic|يوتيوب ميوزك|applogos|2
+youtubeshorts|يوتيوب شورتس|applogos|2
+imessage|رسائل آيفون (آي مسج)|applogos|2
+quora|كورا|applogos|3
+evernote|إيفرنوت|applogos|4
+shopify|شوبيفاي|applogos|4
+deliveroo|ديليفرو|applogos|4
+waze|ويز|applogos|2
+bookingdotcom|بوكينج|applogos|2
+vimeo|فيميو|applogos|3
+dailymotion|ديلي موشن|applogos|4
+crunchyroll|كرانشي رول|applogos|4
+roblox|روبلوكس|applogos|2
+fortnite|فورتنايت|applogos|2
+pubg|ببجي|applogos|1
+netflix|نتفليكس|applogos|1
+alibabadotcom|علي بابا|applogos|4
+xiaomi|شاومي|techlogos|2
+motorola|موتورولا|techlogos|2
+spacex|سبيس إكس|techlogos|3
+meta|ميتا|techlogos|1
+bitcoin|بيتكوين|techlogos|1
+ethereum|إيثيريوم|techlogos|2
+raspberrypi|راسبيري باي|techlogos|4
+arduino|أردوينو|techlogos|4
+blender|بلندر|techlogos|4
+unity|يونيتي|techlogos|4
+unrealengine|أنريل إنجن|techlogos|4
+docker|دوكر|techlogos|4
+angular|أنجولار|techlogos|4
+beatsbydre|بيتس|techlogos|2
+razer|ريزر|techlogos|3
+corsair|كورسير|techlogos|4
+steelseries|ستيل سيريز|techlogos|4
+sennheiser|سنهايزر|techlogos|4
+bosch|بوش|techlogos|3
+adidas|أديداس|brands|1
+reebok|ريبوك|brands|2
+newbalance|نيو بالانس|brands|2
+jordan|جوردان|brands|1
+redbull|ريد بُل|brands|2
+mastercard|ماستركارد|brands|1
+carrefour|كارفور|brands|2
+target|تارجت|brands|3
+tacobell|تاكو بيل|brands|3
+lamborghini|لامبورغيني|carlogos|1
+porsche|بورشه|carlogos|2
+volkswagen|فولكس فاجن|carlogos|1
+bentley|بنتلي|carlogos|2
+rollsroyce|رولز رويس|carlogos|2
+astonmartin|أستون مارتن|carlogos|3
+seat|سيات|carlogos|2
+cadillac|كاديلاك|carlogos|3
+infiniti|إنفينيتي|carlogos|2
+suzuki|سوزوكي|carlogos|1
+bugatti|بوغاتي|carlogos|3
+dacia|داتشيا|carlogos|3
+polestar|بولستار|carlogos|4
+koenigsegg|كوينيجسيغ|carlogos|4
+kia|كيا|carlogos|2
+qatarairways|الخطوط الجوية القطرية|airlines|2
+britishairways|الخطوط الجوية البريطانية|airlines|3
+airfrance|إير فرانس|airlines|4
+saudia|الخطوط السعودية|airlines|1
+ryanair|رايان إير|airlines|4
+americanairlines|الخطوط الأمريكية|airlines|3
+unitedairlines|يونايتد إيرلاينز|airlines|4
+southwestairlines|ساوث ويست|airlines|4
+singaporeairlines|الخطوط السنغافورية|airlines|3
+airasia|إير آسيا|airlines|3
+qantas|كانتاس|airlines|3
+aeroflot|إيروفلوت|airlines|4
+iberia|إيبيريا|airlines|4
+unitednations|الأمم المتحدة|orglogos|1
+worldhealthorganization|منظمة الصحة العالمية|orglogos|2
+europeanunion|الاتحاد الأوروبي|orglogos|1
+nba|دوري كرة السلة الأمريكي NBA|orglogos|2
+mlb|دوري البيسبول الأمريكي|orglogos|3
+f1|الفورمولا 1|orglogos|1
+premierleague|الدوري الإنجليزي الممتاز|orglogos|1
+wwe|المصارعة الحرة WWE|orglogos|1

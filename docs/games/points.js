@@ -33,6 +33,17 @@ const AIDS = {
 const AID_DEFAULT = ["cut", "two", "pit"];
 const minutes = (cats, teams) => Math.round(cats * 4 * teams * 0.75 + 4);
 let DATA, CAT;
+// البنك مقسوم: فهرس صغير + ملف لكل قسم بيتحمّل بس لما ينختار
+const PQ = "pq/", HOUR = () => Math.floor(Date.now() / 3.6e6);
+const loadingCats = new Map();
+function ensureCats(ids) {
+  return Promise.all(ids.filter((id) => CAT.has(id) && !CAT.get(id).gen && !CAT.get(id).qs).map((id) => {
+    if (!loadingCats.has(id)) loadingCats.set(id, fetch(`${PQ}${id}.json?t=${HOUR()}`).then((r) => { if (!r.ok) throw new Error(id); return r.json(); })
+      .then((j) => { CAT.get(id).qs = j.qs; }).finally(() => loadingCats.delete(id)));
+    return loadingCats.get(id);
+  }));
+}
+const catReady = (id) => CAT.has(id) && (CAT.get(id).gen || !!CAT.get(id).qs);
 
 // ---------- ذاكرة ضد التكرار: لكل قسم، الأسئلة اللي انسألت على هالجهاز ----------
 const qkey = (q) => q[1] + "|" + (q[3] || "") + "|" + q[2][0];
@@ -144,7 +155,7 @@ function takeQ(cid, d, avoid) {
     for (let i = 0; i < 50; i++) { const q = GEN[cid].make(d) || GEN[cid].make(Math.max(1, d - 1)); if (!q || q[2].length !== 4 || new Set(q[2]).size !== 4) continue; last = q; const k = qkey(q); if (!avoid.has(k) && !sn.has(k)) return q; }
     return last;
   }
-  const all = CAT.get(cid).qs;
+  const all = CAT.get(cid).qs || [];
   let lvl = all.filter((q) => q[0] === d && !avoid.has(qkey(q)));
   if (!lvl.length) lvl = all.filter((q) => Math.abs(q[0] - d) === 1 && !avoid.has(qkey(q)));
   if (!lvl.length) lvl = all.filter((q) => !avoid.has(qkey(q)));
@@ -437,6 +448,7 @@ function act(a) {
     case "cats":
       if (!boss || S.phase !== "cats" || !Array.isArray(a.cats) || !CATS_N.includes(a.cats.length) || a.cats.some((c) => !CAT.has(c)) || new Set(a.cats).size !== a.cats.length) return;
       if (needsPlayers(a.cats) && !PL) return;
+      if (!a.cats.every(catReady)) { ensureCats(a.cats).then(() => { if (S && S.phase === "cats") act(a); }).catch(() => {}); return; }
       newGame(a.cats); break;
     case "open": if (!openCell(team, a.cid, a.li)) return; break;
     case "ans": answer(team, a.k); break;
@@ -492,7 +504,7 @@ const now = () => Date.now() + offset;
 const snap = () => ({ S, SECRET });
 // لعبة محفوظة فيها قسم انشال (زي الصوت والفيديو) ما بتكمل
 const validSave = (sv) => !!(sv && sv.S && (sv.S.cats || []).every((id) => CAT.has(id)));
-function unsnap(saved) { S = saved.S; SECRET = saved.SECRET || { pre: {}, taken: [], dbl: [] }; if (!SECRET.taken) SECRET.taken = []; if (!SECRET.dbl) SECRET.dbl = []; rearm(); }
+function unsnap(saved) { S = saved.S; SECRET = saved.SECRET || { pre: {}, taken: [], dbl: [] }; if (!SECRET.taken) SECRET.taken = []; if (!SECRET.dbl) SECRET.dbl = []; ensureCats(S.cats || []).catch(() => {}); rearm(); }
 
 function commit() {
   S.v = (S.v || 0) + 1; S.now = Date.now();
@@ -716,8 +728,9 @@ const GROUPS = [
   ["🍽️", "أكل ولبس وأشياء", ["food", "fruits", "drinks", "desserts", "spices", "costumes", "cars", "instruments", "tools", "sportsgear", "planes", "inventions"]],
 ];
 let catFilter = "all", catSearch = "", showSet = false;
-const kindOf = (c) => (c.gen ? (GEN[c.id].img ? ["📷", "صور"] : ["♾️", "ما بتخلص"]) : c.qs.some((q) => q[3] && /^(zoom|blur):/.test(q[3])) ? ["✨", "تأثير"] : c.qs.some((q) => q[3]) ? ["📷", "صور"] : ["✍️", "أسئلة"]);
-const countOf = (c) => (c.gen ? "+1000" : String(c.qs.length));
+const KINDS = { img: ["📷", "صور"], fx: ["✨", "تأثير"], txt: ["✍️", "أسئلة"] };
+const kindOf = (c) => (c.gen ? (GEN[c.id].img ? ["📷", "صور"] : ["♾️", "ما بتخلص"]) : KINDS[c.k] || KINDS.txt);
+const countOf = (c) => (c.gen ? "+1000" : String(c.n));
 function catGroups() {
   const seen = new Set(), out = [];
   for (const [ic, g, ids] of GROUPS) { const list = ids.filter((id) => !seen.has(id)).map((id) => CAT.get(id)).filter(Boolean); list.forEach((c) => seen.add(c.id)); if (list.length) out.push([ic, g, list]); }
@@ -754,7 +767,7 @@ function drawCats() {
     <input class="input search" id="csearch" type="search" placeholder="🔎 دوّروا على قسم..." value="${esc(catSearch)}" autocomplete="off">
     ${shown.map(([ic, g, list]) => `<section class="cgroup"><h3><span>${ic}</span>${esc(g)}<small>${list.length}</small></h3>
       <div class="ccards">${list.map((c) => { const k = picked.indexOf(c.id), [ki, kn] = kindOf(c);
-        return `<button type="button" class="ccard ${c.gen ? "gen" : ""}" data-c="${c.id}" aria-pressed="${k >= 0}"><span class="cic">${c.icon}</span><span class="cbody"><b>${esc(c.name)}</b><small><i>${ki} ${kn}</i> ${countOf(c)}</small></span>${k >= 0 ? `<span class="ord">${k + 1}</span>` : ""}</button>`; }).join("")}</div></section>`).join("") || `<p class="note">ما في قسم بهالاسم.</p>`}
+        return `<button type="button" class="ccard ${c.gen ? "gen" : ""}" data-c="${c.id}" aria-pressed="${k >= 0}"><span class="cic"><img src="${PQ}art/${esc(c.id)}.webp" alt="" loading="lazy" decoding="async" onerror="this.parentNode.textContent=${esc(JSON.stringify(c.icon || "❓"))}"></span><span class="cbody"><b>${esc(c.name)}</b><small><i>${ki} ${kn}</i> ${countOf(c)}</small></span>${k >= 0 ? `<span class="ord">${k + 1}</span>` : ""}</button>`; }).join("")}</div></section>`).join("") || `<p class="note">ما في قسم بهالاسم.</p>`}
     <div class="dock"><div class="chosen">${Array.from({ length: N }, (_, i) => (picked[i] ? `<span class="on" data-un="${picked[i]}" title="${esc(CAT.get(picked[i]).name)}">${CAT.get(picked[i]).icon}</span>` : "<span></span>")).join("")}</div>
       <button class="btn" id="go" type="button" ${picked.length === N ? "" : "disabled"}>${picked.length === N ? "يلا ▶" : `باقي ${N - picked.length}`}</button></div>
     <button class="linkish" id="out" type="button">${mode === "local" ? "رجوع" : "سكّروا الغرفة"}</button>`);
@@ -777,6 +790,7 @@ function drawCats() {
     sett: () => { showSet = !showSet; const y = window.scrollY; drawCats(); window.scrollTo(0, y); },
     go: async () => {
       if (picked.length !== N) return;
+      if (!picked.every(catReady)) { $("go").disabled = true; $("go").textContent = "لحظة..."; try { await ensureCats(picked); } catch { $("go").disabled = false; $("go").textContent = "ما انحمّلت الأسئلة، جرّبوا كمان مرة"; return; } }
       if (needsPlayers(picked) && !PL) { $("go").disabled = true; $("go").textContent = "لحظة..."; try { await loadPlayers(); } catch { $("go").textContent = "ما انحمّلت بيانات اللاعبين"; return; } }
       Sound.unlock && Sound.unlock();
       send({ t: "cats", cats: picked.slice(), team: 0 });
@@ -787,6 +801,8 @@ function drawCats() {
 
 // ---------- اللوحة ----------
 const LVC = ["", "d1", "d2", "d3", "d4"];
+// رسمة القسم (ستايل ستيكر بألوان تعليلة)، وإذا ما انحمّلت بيرجع الإيموجي
+const artImg = (cid, icon) => `<img src="${PQ}art/${esc(cid)}.webp" alt="" loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'fallback',textContent:${esc(JSON.stringify(icon || "❓"))}}))">`;
 function drawBoard() {
   const ti = S.turn, t = T(ti), mine = canAct(ti);
   const pct = Math.round((S.done / S.total) * 100);
@@ -794,10 +810,12 @@ function drawBoard() {
   render(`${pods(ti)}
     <div class="turnbar t${ti}"><i></i>${mode === "local" ? `دور «${esc(t.name)}» يختار سؤال` : mine ? "دوركم، اختاروا سؤال" : `«${esc(t.name)}» عم يختاروا...`}</div>
     <div class="prog"><i style="width:${pct}%"></i>${!S.rushDone ? `<b style="inset-inline-start:${Math.round((rushAt / S.total) * 100)}%" title="جولة السرعة">⚡</b>` : ""}</div>
-    <div class="board ${mine ? "" : "wait"}">${S.cats.map((cid) => { const c = CAT.get(cid);
-      return `<div class="catrow"><div class="ci"><span>${c.icon}</span><b>${esc(c.name)}</b></div><div class="lvls">${LV.map((d, li) => { const row = S.board[cid][li], st = row[ti];
+    <div class="board ${mine ? "" : "wait"}">${S.cats.map((cid, ci) => { const c = CAT.get(cid);
+      const left = S.board[cid].reduce((n, row) => n + (row[ti] === null ? 1 : 0), 0);
+      return `<div class="tile ${left ? "" : "over"}" style="--i:${ci}"><div class="art">${artImg(cid, c.icon)}<b class="tname">${esc(c.name)}</b>${left ? `<span class="tleft">باقي ${left}</span>` : ""}</div>
+        <div class="lvls">${LV.map((d, li) => { const row = S.board[cid][li], st = row[ti];
         const dots = `<span class="dots">${row.map((w, k) => `<i class="${w === null ? "" : w === -1 ? "x" : "w t" + w} ${k === ti ? "me" : ""}"></i>`).join("")}</span>`;
-        return st === null ? `<button class="lv ${LVC[d]}" type="button" data-cid="${cid}" data-li="${li}">${LEVELS[d].pts}${dots}</button>`
+        return st === null ? `<button class="lv ${LVC[d]}" type="button" data-cid="${cid}" data-li="${li}" aria-label="${esc(c.name)} ${LEVELS[d].pts}">${LEVELS[d].pts}${dots}</button>`
           : `<button class="lv done ${st === -1 ? "miss" : "w t" + st}" type="button" disabled>${st === -1 ? "✕" : "✓"}${dots}</button>`; }).join("")}</div></div>`; }).join("")}</div>
     <div class="legend"><span class="d1">سهل</span><span class="d2">متوسط</span><span class="d3">صعب</span><span class="d4">صعب جداً</span></div>
     <p class="note">🔥 في سؤال دبل مخفي لكل فريق${!S.rushDone ? " · ⚡ جولة السرعة بنص اللعبة" : ""}${S.cfg.final ? " · 🎰 الرهان الأخير بالآخر" : ""}</p>
@@ -1079,11 +1097,11 @@ function boot() {
 }
 
 try { Sound.mute(store.get("muted", false)); } catch {}
-fetch("points_q.json?t=" + Math.floor(Date.now() / 3.6e6)).then((r) => r.json()).then((d) => {
+fetch(`${PQ}index.json?t=${HOUR()}`).then((r) => r.json()).then((d) => {
   DATA = d;
   CAT = new Map();
   for (const id of GEN_IDS) CAT.set(id, { id, name: GEN[id].name, icon: GEN[id].icon, qs: [], gen: true });
-  for (const c of d.cats) CAT.set(c.id, c);
+  for (const c of d.cats) CAT.set(c.id, Object.assign({ qs: null }, c));
   if (!d.cats.length) { loading("الأسئلة لسا بتتجهز. جرّبوا كمان شوي."); return; }
   if (boot()) return;
   intro();

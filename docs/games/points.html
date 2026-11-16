@@ -121,13 +121,19 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 21px; margin: 4px
 .prog { position: relative; height: 8px; background: var(--s1); border-radius: 99px; border: 1px solid var(--ln); }
 .prog i { display: block; height: 100%; border-radius: inherit; background: var(--brand); transition: width .5s; }
 .prog b { position: absolute; top: 50%; transform: translate(50%, -50%); font-size: 13px; line-height: 1; }
-.board { display: flex; flex-direction: column; gap: 8px; }
-.catrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 9px 9px 9px 10px; background: var(--s1); border: 1px solid var(--ln); border-radius: 20px; }
-.catrow .ci { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.catrow .ci span { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 22px; background: var(--s2); }
-.catrow .ci b { font-size: 13.5px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
-.lvls { display: grid; grid-template-columns: repeat(4, 52px); gap: 5px; }
-.lv { position: relative; border: 0; height: 54px; border-radius: 14px; padding: 0 0 12px; background: var(--s2); color: var(--on); font-family: var(--display); font-size: 20px; line-height: 1; direction: ltr;
+.board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tile { position: relative; display: flex; flex-direction: column; background: var(--s1); border: 1px solid var(--ln); border-radius: 22px; overflow: hidden;
+  box-shadow: 0 4px 0 rgb(0 0 0 / .25); animation: tileIn .45s cubic-bezier(.2,.9,.3,1.2) both; animation-delay: calc(var(--i, 0) * 60ms); }
+@keyframes tileIn { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+.tile .art { position: relative; aspect-ratio: 1; background: var(--c-waraq); overflow: hidden; }
+.tile .art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); }
+.tile .art .fallback { position: absolute; inset: 0; display: grid; place-items: center; font-size: 56px; }
+.tile .art::after { content: ""; position: absolute; inset: auto 0 0; height: 46%; background: linear-gradient(to top, rgb(22 17 58 / .92), transparent); }
+.tile .tname { position: absolute; inset: auto 10px 9px; z-index: 1; color: var(--c-waraq); font-family: var(--display); font-size: 19px; line-height: 1.15; text-shadow: 0 2px 0 rgb(0 0 0 / .35); overflow-wrap: anywhere; }
+.tile .tleft { position: absolute; top: 8px; inset-inline-start: 8px; z-index: 1; background: rgb(22 17 58 / .78); color: var(--c-waraq); font-size: 11px; font-weight: 800; border-radius: 999px; padding: 3px 8px; }
+.tile.over .art img { filter: grayscale(.85) brightness(.7); }
+.lvls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 8px; }
+.lv { position: relative; border: 0; height: 50px; border-radius: 14px; padding: 0 0 11px; background: var(--s2); color: var(--on); font-family: var(--display); font-size: 21px; line-height: 1; direction: ltr;
   box-shadow: inset 0 3px 0 var(--lc), 0 3px 0 var(--bg); transition: transform .1s; }
 .lv:active { transform: scale(.93); }
 .lv .dots { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; justify-content: center; gap: 3px; }
@@ -175,7 +181,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 21px; margin: 4px
 .opts.locked .opt:not(.right):not(.wrong):not(.gone) { opacity: .5; }
 @keyframes pop { 0% { transform: scale(.94); } 60% { transform: scale(1.06); } }
 @keyframes shake { 25% { transform: translateX(-6px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
-@media (max-width: 340px) { .opts { grid-template-columns: 1fr; } .lvls { grid-template-columns: repeat(4, 46px); } }
+@media (max-width: 340px) { .opts { grid-template-columns: 1fr; } .board { gap: 8px; } .tile .tname { font-size: 16px; } }
 .aids { display: flex; gap: 6px; }
 .aids button { flex: 1; min-width: 0; border: 1.5px dashed rgb(255 197 51 / .55); background: rgb(255 197 51 / .08); border-radius: 14px; padding: 6px 2px; font-size: 12px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1.25; }
 .aids button span { font-size: 19px; line-height: 1.2; }
@@ -246,7 +252,8 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 21px; margin: 4px
 .ccard { position: relative; display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: center; gap: 9px; min-height: 72px; padding: 10px; text-align: right; border: 1.5px solid var(--ln); border-radius: 18px; background: var(--s1); transition: transform .1s; }
 .ccard:active { transform: scale(.97); }
 .ccard.gen { border-color: rgb(31 207 154 / .45); }
-.ccard .cic { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 26px; background: var(--s2); }
+.ccard .cic { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 26px; background: var(--c-waraq); overflow: hidden; }
+.ccard .cic img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.12); }
 .ccard .cbody { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .ccard b { font-size: 14px; line-height: 1.3; font-weight: 700; overflow-wrap: anywhere; }
 .ccard small { color: var(--dim); font-size: 11.5px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }

@@ -12,6 +12,7 @@ const mem = { get: (k, d) => store.get("sahra-" + k, d), set: (k, v) => store.se
 let mode = null;          // "host" | "guest" | "local"
 let S = null;             // حالة اللعبة
 let client = null, room = null, offset = 0, timer = null, lastFx = null, lastKey = "";
+const NO_POOL = new Set(["math", "translate"]);
 let POOL = null, CAREER = null, STARS = null, CLUBS = null;   // بنك الأسئلة، مسيرات اللاعبين، والنجوم (لـ«مين أعلى» و«الدخيل»)
 const DECK = {}, usedQ = new Set();
 const L = { ok: null, t0: 0 };    // تلفون واحد: مين ماسك التلفون، ومتى مسكه
@@ -41,9 +42,16 @@ window.leaveGuard = () => (S && mode && !["lobby", "final"].includes(S.phase) ? 
 // ======================= المحتوى =======================
 async function loadPool() {
   if (!POOL) try {
-    const j = await (await fetch("points_q.json")).json();
+    // البنك مقسوم: بنحمّل الأقسام الكروية + 10 أقسام عشوائية (الصور العادية والكتابي بس)
+    const hour = Math.floor(Date.now() / 3.6e6);
+    const idx = await (await fetch(`pq/index.json?t=${hour}`)).json();
+    const ok = idx.cats.filter((c) => c.k !== "fx" && !NO_POOL.has(c.id));
+    const want = ok.filter((c) => FOOT_CATS.has(c.id)).concat(shuffle(ok.filter((c) => !FOOT_CATS.has(c.id))).slice(0, 10));
+    const files = await Promise.all(want.map((c) => fetch(`pq/${c.id}.json?t=${hour}`).then((r) => (r.ok ? r.json() : null)).catch(() => null)));
+    const meta = new Map(idx.cats.map((c) => [c.id, c]));
     const cats = [];
-    for (const c of j.cats) {
+    for (const f of files.filter(Boolean)) {
+      const c = Object.assign({}, meta.get(f.id), { qs: f.qs });
       const list = c.qs.filter((q) => !q[3] || /^https?:/.test(q[3])).map((q) => ({ d: q[0], q: q[1], opts: q[2], img: q[3] || null }));
       if (list.length) cats.push({ cid: c.id, cat: `${c.icon || ""} ${c.name}`.trim(), qs: list });
     }

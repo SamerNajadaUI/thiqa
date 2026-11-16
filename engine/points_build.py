@@ -7,7 +7,7 @@
 - أعلام وعواصم: engine/points_countries.txt (الأعلام من flagcdn)
 - كرة قدم وشعارات: من players.json وparty.json وcareer.json
 
-الاستخدام: python engine/points_build.py   (بيكتب docs/games/points_q.json)
+الاستخدام: python engine/points_build.py   (بيكتب docs/games/pq/index.json + pq/<قسم>.json)
 """
 from __future__ import annotations
 
@@ -25,7 +25,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 HERE = Path(__file__).resolve().parent
 GAMES = ROOT / "docs" / "games"
-OUT = GAMES / "points_q.json"
+OUT = GAMES / "points_q.json"   # القديم (ملف واحد)، بينمسح
+PQ = GAMES / "pq"
 IMG_CACHE = GAMES / "points_img.json"
 UA = "AbuOdehGame/1.0 (https://github.com/SamerNajadaUI/thiqa)"
 R = random.Random(2026)
@@ -140,9 +141,16 @@ def wiki_images(titles, logos=frozenset()):
 
 
 # ---------- البنك المكتوب ----------
+def bank_lines():
+    """البنك القديم + ملفات engine/bank/*.txt (نفس الصيغة)."""
+    yield from (HERE / "points_bank.txt").read_text(encoding="utf-8").splitlines()
+    for f in sorted((HERE / "bank").glob("*.txt")):
+        yield from f.read_text(encoding="utf-8").splitlines()
+
+
 def read_bank(cats: dict):
     cur, img_secs, cur_img = None, [], False
-    for raw in (HERE / "points_bank.txt").read_text(encoding="utf-8").splitlines():
+    for raw in bank_lines():
         line = raw.strip()
         if not line or (line.startswith("#") and not line.startswith("## ")):
             continue
@@ -414,25 +422,32 @@ def worldcup(cats):
 
 # ---------- زووم ومموّهة: نفس صور الأقسام الثانية بس بتأثير ----------
 def zoom_blur(cats):
+    """زووم ومموّهة: نفس صور أسئلة «شو اسمه؟» من أقسام الصور، بتأثير بيوضح مع الوقت."""
+    skip = re.compile(r"(بأي دولة|بأي مدينة|من وين|مين رسم|وين معروضة|الشركة المصنّعة|مين اخترعه|عملة أي|لأي نادي|شو رياضة|أصل)")
+
     def pool(ids):
         out = []
         for cid in ids:
             c = cats.get(cid)
             if c:
-                out += [q for q in c.qs if len(q) > 3 and q[3]]
+                out += [q for q in c.qs if len(q) > 3 and q[3] and q[3].startswith("http") and not skip.search(q[1]) and "flagcdn" not in q[3]]
         return out
-    for cid, name, icon, pref, ids in (("zoom", "زووم", "🔍", "zoom:", ["celebs", "landmarks", "applogos", "brands", "carlogos", "football", "animals"]),
-                                       ("blur", "صورة مموّهة", "🌫️", "blur:", ["animals", "food", "cars", "landmarks", "celebs", "plants", "pets"])):
+    for cid, name, icon, pref, ids in (("zoom", "زووم", "🔍", "zoom:", ["celebs", "landmarks", "applogos", "brands", "carlogos", "football", "animals", "actors",
+                                                                       "cities", "towers", "fruits", "athletes", "singerspics", "techlogos", "airlines", "cars"]),
+                                       ("blur", "صورة مموّهة", "🌫️", "blur:", ["animals", "food", "cars", "landmarks", "celebs", "plants", "pets", "birds", "actors",
+                                                                               "desserts", "castles", "historic", "arabplayers", "instruments", "dinos", "sealife"])):
         c = cats.setdefault(cid, Cat(cid, name, icon))
         qs = pool(ids)
         R.shuffle(qs)
-        per = Counter()
+        per = Counter(q[0] for q in c.qs)
+        seen = {q[2][0] for q in c.qs}
         for q in qs:
             d = q[0]
-            if per[d] >= 14:
+            if per[d] >= 270 or q[2][0] in seen:
                 continue
             if c.add(d, q[1].replace("؟", "") + " (" + ("مقرّبة" if pref == "zoom:" else "مموّهة") + ")؟", q[2], pref + q[3]):
                 per[d] += 1
+                seen.add(q[2][0])
 
 
 # ---------- قدّر الرقم: من أسئلة الرقم الأقرب، بخيارات ----------
@@ -506,44 +521,340 @@ def arab_players(cats):
 
 # ---------- حسبة سريعة ----------
 def quick_math(cats):
+    """حسبة سريعة: قوالب كثيرة بخيارات قريبة ومقنعة (أغلاط شائعة)، 260 سؤال لكل مستوى تقريباً."""
     c = cats.setdefault("math", Cat("math", "حسبة سريعة", "🧮"))
-    rnd = R
-    def opts(a, spread):
-        s = set()
-        while len(s) < 3:
-            v = a + rnd.choice([-1, 1]) * rnd.randint(1, spread)
-            if v != a and v >= 0:
-                s.add(v)
-        return [str(a)] + [str(x) for x in s]
-    for _ in range(12):
-        x, y = rnd.randint(2, 9), rnd.randint(2, 9)
-        c.add(1, f"كم {x} × {y}؟", opts(x * y, 6))
-        a, b = rnd.randint(11, 60), rnd.randint(11, 40)
-        c.add(1, f"كم {a} + {b}؟", opts(a + b, 9))
-    for _ in range(12):
-        x, y = rnd.randint(11, 19), rnd.randint(3, 9)
-        c.add(2, f"كم {x} × {y}؟", opts(x * y, 12))
-        p, n = rnd.choice([10, 20, 25, 50]), rnd.choice([40, 80, 120, 200, 360])
-        c.add(2, f"كم {p}% من {n}؟", opts(n * p // 100, 15))
-        h = rnd.randint(2, 6)
-        c.add(2, f"كم دقيقة بـ{h} ساعات ونص؟", opts(h * 60 + 30, 30))
-    for _ in range(12):
-        q, pr = rnd.randint(3, 6), rnd.choice([2, 3, 4, 5])
-        n = q * rnd.randint(3, 6)
-        c.add(3, f"إذا {q} أقلام سعرهم {pr} دنانير، قديش سعر {n} قلم؟", opts(pr * n // q, 6))
-        a = rnd.randint(25, 99); b = rnd.randint(12, 49)
-        c.add(3, f"كم {a} × {b // 10 * 10 + 1}؟", opts(a * (b // 10 * 10 + 1), 40))
-        sp, t = rnd.choice([60, 80, 90, 100, 120]), rnd.choice([2, 3, 4])
-        c.add(3, f"سيارة ماشية {sp} كم بالساعة، قديش بتقطع بـ{t} ساعات؟", opts(sp * t, 40))
-    for _ in range(12):
-        n = rnd.choice([12, 15, 16, 18, 24, 25])
-        c.add(4, f"كم مجموع الأعداد من 1 لـ{n}؟", opts(n * (n + 1) // 2, 20))
-        a = rnd.randint(13, 29)
-        c.add(4, f"كم {a} تربيع؟", opts(a * a, 30))
-        p, n = rnd.choice([15, 35, 45, 65]), rnd.choice([60, 140, 220, 380])
-        c.add(4, f"كم {p}% من {n}؟", opts(round(n * p / 100), 20))
-        yrs = rnd.randint(3, 9)
-        c.add(4, f"كم يوم بـ{yrs} أسابيع ويومين؟", opts(yrs * 7 + 2, 6))
+    rnd = random.Random(7)
+
+    def fmt(v):
+        if isinstance(v, float):
+            v = round(v, 2)
+            if v == int(v):
+                v = int(v)
+        return f"{v:,}" if isinstance(v, int) and abs(v) >= 10000 else str(v)
+
+    def opts(a, cands=(), spread=None):
+        """الجواب + 3 خيارات: أول إشي من الأغلاط الشائعة، بعدين قريبة."""
+        out = []
+        for v in cands:
+            if v != a and v not in out and (not isinstance(v, (int, float)) or v >= 0):
+                out.append(v)
+        sp = spread or max(2, abs(a) // 8 if isinstance(a, int) else 2)
+        tries = 0
+        while len(out) < 3 and tries < 200:
+            tries += 1
+            v = a + rnd.choice([-1, 1]) * rnd.randint(1, sp)
+            if v != a and v not in out and v >= 0:
+                out.append(v)
+        rnd.shuffle(out)
+        return [fmt(a)] + [fmt(v) for v in out[:3]]
+
+    texts = {q[1] for q in c.qs}
+
+    def add(lv, q, a, cands=(), spread=None):
+        if q not in texts and c.add(lv, q, opts(a, cands, spread)):
+            texts.add(q)
+
+    T = {1: [], 2: [], 3: [], 4: []}
+
+    def t(lv):
+        def deco(fn):
+            T[lv].append(fn)
+            return fn
+        return deco
+
+    @t(1)
+    def mul_small():
+        x, y = rnd.randint(2, 10), rnd.randint(2, 10)
+        add(1, f"كم {x} × {y}؟", x * y, [x * y + x, x * y - y, x * (y + 1), (x - 1) * y])
+
+    @t(1)
+    def add2():
+        a, b = rnd.randint(12, 89), rnd.randint(11, 59)
+        add(1, f"كم {a} + {b}؟", a + b, [a + b + 10, a + b - 10, a + b + 1, a + b - 1])
+
+    @t(1)
+    def sub2():
+        a = rnd.randint(40, 120); b = rnd.randint(11, a - 5)
+        add(1, f"كم {a} − {b}؟", a - b, [a - b + 10, a - b - 10, a - b + 2, a - b - 1])
+
+    @t(1)
+    def half():
+        n = rnd.randrange(20, 400, 2)
+        add(1, f"قديش نص الـ{n}؟", n // 2, [n // 2 + 10, n // 2 - 5, n // 4, n // 2 + 2])
+
+    @t(1)
+    def double():
+        n = rnd.randint(13, 260)
+        add(1, f"قديش ضعف الـ{n}؟", 2 * n, [2 * n + 10, 2 * n - 2, 2 * n + 2, n + 20])
+
+    @t(1)
+    def div_small():
+        y = rnd.randint(2, 9); x = y * rnd.randint(2, 12)
+        add(1, f"كم {x} ÷ {y}؟", x // y, [x // y + 1, x // y - 1, x // y + 2])
+
+    @t(1)
+    def minutes():
+        h = rnd.randint(2, 9)
+        add(1, f"كم دقيقة بـ{h} ساعات؟", h * 60, [h * 60 + 60, h * 60 - 60, h * 100, h * 60 + 30])
+
+    @t(1)
+    def money1():
+        p = rnd.choice([2, 3, 5, 10]); n = rnd.randint(3, 9)
+        add(1, f"إذا السندويشة بـ{p} دنانير، قديش حق {n} سندويشات؟", p * n, [p * n + p, p * n - p, p + n])
+
+    @t(1)
+    def change():
+        price = rnd.randint(3, 18); paid = rnd.choice([20, 50])
+        add(1, f"اشتريت إشي بـ{price} دينار ودفعت {paid}، قديش الباقي؟", paid - price, [paid - price + 1, paid - price - 1, paid - price + 10])
+
+    @t(1)
+    def days_weeks():
+        w = rnd.randint(2, 12)
+        add(1, f"كم يوم بـ{w} أسابيع؟", w * 7, [w * 7 + 7, w * 7 - 7, w * 5, w * 7 + 1])
+
+    @t(2)
+    def mul_mid():
+        x, y = rnd.randint(11, 25), rnd.randint(3, 9)
+        add(2, f"كم {x} × {y}؟", x * y, [x * y + y, x * y - x, x * y + 10, (x + 1) * y])
+
+    @t(2)
+    def pct_easy():
+        p = rnd.choice([10, 20, 25, 50, 75]); n = rnd.choice([40, 60, 80, 120, 160, 200, 240, 360, 400, 480])
+        if n * p % 100:
+            return
+        a = n * p // 100
+        add(2, f"كم {p}% من {n}؟", a, [a + 10, a - 10 if a > 10 else a + 20, n * (100 - p) // 100, a + 5])
+
+    @t(2)
+    def min_half():
+        h = rnd.randint(2, 7)
+        add(2, f"كم دقيقة بـ{h} ساعات ونص؟", h * 60 + 30, [h * 60 + 50, h * 60, h * 60 + 60, h * 60 + 15])
+
+    @t(2)
+    def secs():
+        m = rnd.randint(2, 15)
+        add(2, f"كم ثانية بـ{m} دقايق؟", m * 60, [m * 60 + 60, m * 100, m * 60 - 60, m * 60 + 30])
+
+    @t(2)
+    def add3():
+        a, b, c_ = rnd.randint(15, 99), rnd.randint(15, 99), rnd.randint(15, 99)
+        s_ = a + b + c_
+        add(2, f"كم {a} + {b} + {c_}؟", s_, [s_ + 10, s_ - 10, s_ + 1, s_ - 2])
+
+    @t(2)
+    def discount():
+        price = rnd.choice([20, 40, 50, 60, 80, 100, 120, 150, 200]); p = rnd.choice([10, 20, 25, 50])
+        if price * p % 100:
+            return
+        after = price - price * p // 100
+        add(2, f"بلوزة سعرها {price} دينار وعليها خصم {p}%، قديش صار سعرها؟", after, [price * p // 100, after + 5, after - 5, price - p])
+
+    @t(2)
+    def age():
+        y = rnd.randint(1975, 2012)
+        add(2, f"واحد مخلوق سنة {y}، قديش عمره بآخر سنة 2026؟", 2026 - y, [2025 - y, 2027 - y, 2026 - y + 10])
+
+    @t(2)
+    def avg3():
+        b = rnd.randint(10, 60); d = rnd.randint(2, 15)
+        a, c_ = b - d, b + d
+        add(2, f"قديش معدّل {a} و{b} و{c_}؟", b, [b + 1, b - 1, b + d, b - d // 2 if d > 2 else b + 2])
+
+    @t(2)
+    def square_small():
+        a = rnd.randint(11, 20)
+        add(2, f"كم {a} تربيع ({a}×{a})؟", a * a, [a * a + a, a * a - a, a * a + 10, a * 2])
+
+    @t(2)
+    def sqrt_small():
+        a = rnd.randint(4, 20)
+        add(2, f"قديش الجذر التربيعي لـ{a * a}؟", a, [a + 1, a - 1, a * 2, a + 2])
+
+    @t(2)
+    def goals():
+        g = rnd.randint(18, 40); m = rnd.choice([2, 3])
+        tot = g * m
+        add(2, f"لاعب سجّل {tot} هدف بـ{m} مواسم بالتساوي، قديش سجّل بكل موسم؟", g, [g + 2, g - 2, g + 5, tot - g])
+
+    @t(3)
+    def mul_big():
+        a = rnd.randint(21, 99); b = rnd.randint(11, 39)
+        p_ = a * b
+        add(3, f"كم {a} × {b}؟", p_, [p_ + 10, p_ - 10, p_ + a, p_ - b, p_ + 100])
+
+    @t(3)
+    def pct_mid():
+        p = rnd.choice([5, 15, 30, 35, 40, 60, 70]); n = rnd.choice([60, 80, 120, 140, 180, 220, 260, 300, 420, 500])
+        if n * p % 100:
+            return
+        a = n * p // 100
+        add(3, f"كم {p}% من {n}؟", a, [a + 5, a - 5, a + 10, n * (100 - p) // 100])
+
+    @t(3)
+    def ratio():
+        q, pr = rnd.randint(3, 6), rnd.choice([2, 3, 4, 5, 6])
+        n = q * rnd.randint(3, 7)
+        a = pr * n // q
+        add(3, f"إذا {q} أقلام حقهم {pr} دنانير، قديش حق {n} قلم؟", a, [a + pr, a - pr, pr * n, a + 1])
+
+    @t(3)
+    def speed():
+        sp, tm = rnd.choice([60, 70, 80, 90, 100, 110, 120]), rnd.choice([2, 3, 4, 5])
+        add(3, f"سيارة ماشية {sp} كم بالساعة، قديش بتقطع بـ{tm} ساعات؟", sp * tm, [sp * tm + sp, sp * tm - sp, sp * tm + 20])
+
+    @t(3)
+    def speed_half():
+        sp = rnd.choice([60, 80, 100, 120]); tm = rnd.randint(1, 3)
+        a = sp * tm + sp // 2
+        add(3, f"سيارة ماشية {sp} كم بالساعة، قديش بتقطع بـ{tm} ساعة ونص؟", a, [sp * tm, a + sp // 2, a + 10, a - 20])
+
+    @t(3)
+    def time_end():
+        h = rnd.randint(1, 10); m = rnd.choice([10, 15, 20, 25, 35, 40, 45, 50]); dur = rnd.choice([45, 50, 75, 90, 105, 120, 135])
+        tot = h * 60 + m + dur
+        H, M = tot // 60, tot % 60
+        H12 = (H - 1) % 12 + 1
+        ans = f"{H12}:{M:02d}"
+        alts = set()
+        for dh, dm in [(1, 0), (-1, 0), (0, 10), (0, -10), (0, 15), (0, -5)]:
+            tt = tot + dh * 60 + dm
+            hh = ((tt // 60) - 1) % 12 + 1
+            alts.add(f"{hh}:{tt % 60:02d}")
+        alts.discard(ans)
+        qq = f"مباراة بلشت الساعة {h}:{m:02d} وطوّلت {dur} دقيقة، إيمتى خلصت؟"
+        if qq not in texts and c.add(3, qq, [ans] + rnd.sample(sorted(alts), 3)):
+            texts.add(qq)
+
+    @t(3)
+    def sum_n():
+        n = rnd.choice([10, 12, 15, 16, 18, 20, 24, 25, 30])
+        a = n * (n + 1) // 2
+        add(3, f"كم مجموع الأعداد من 1 لـ{n}؟", a, [n * n // 2, a + n, a - n, a + 10])
+
+    @t(3)
+    def div_mid():
+        y = rnd.randint(6, 19); q = rnd.randint(12, 45)
+        x = y * q
+        add(3, f"كم {x} ÷ {y}؟", q, [q + 1, q - 1, q + 2, q + 10])
+
+    @t(3)
+    def frac():
+        d = rnd.choice([3, 4, 5, 8]); k = rnd.randint(1, d - 1); n = d * rnd.randint(5, 40)
+        a = n * k // d
+        names = {(1, 3): "ثلث", (2, 3): "ثلثين", (1, 4): "ربع", (3, 4): "ثلاث أرباع", (1, 5): "خُمس", (2, 5): "خُمسين",
+                 (3, 5): "ثلاث أخماس", (4, 5): "أربع أخماس", (1, 8): "ثُمن", (3, 8): "ثلاث أثمان", (5, 8): "خمس أثمان", (7, 8): "سبع أثمان"}
+        nm = names.get((k, d))
+        if not nm:
+            return
+        add(3, f"قديش {nm} الـ{n}؟", a, [n // d, a + n // d, a - n // d if a > n // d else a + 2 * (n // d), a + 1])
+
+    @t(3)
+    def neg():
+        a = rnd.randint(5, 40); b = rnd.randint(a + 3, a + 50)
+        qq = f"كم {a} − {b}؟"
+        if qq not in texts and c.add(3, qq, [str(a - b), str(b - a), str(a - b - 10), str(a - b + 2)]):
+            texts.add(qq)
+
+    @t(3)
+    def hours_days():
+        d = rnd.randint(2, 9)
+        add(3, f"كم ساعة بـ{d} أيام؟", d * 24, [d * 24 + 24, d * 20, d * 24 - 12, d * 12])
+
+    @t(4)
+    def sq_big():
+        a = rnd.randint(21, 49)
+        add(4, f"كم {a} تربيع؟", a * a, [a * a + a, a * a - a, a * a + 10, (a + 1) * (a - 1) if (a + 1) * (a - 1) != a * a else a * a + 2])
+
+    @t(4)
+    def pct_hard():
+        p = rnd.choice([12, 15, 35, 45, 65, 85]); n = rnd.choice([40, 60, 80, 120, 140, 220, 260, 380, 440, 600])
+        v = n * p / 100
+        if v != int(v):
+            return
+        a = int(v)
+        add(4, f"كم {p}% من {n}؟", a, [a + 3, a - 3, a + 9, n * (100 - p) // 100 if n * (100 - p) % 100 == 0 else a + 6])
+
+    @t(4)
+    def mul3():
+        a = rnd.randint(101, 499); b = rnd.randint(3, 9)
+        add(4, f"كم {a} × {b}؟", a * b, [a * b + b * 10, a * b - b, a * b + 100, a * b - 100])
+
+    @t(4)
+    def compound():
+        a, b, c_ = rnd.randint(3, 12), rnd.randint(2, 9), rnd.randint(2, 20)
+        v = a * b + c_
+        add(4, f"كم {c_} + {a} × {b}؟ (انتبه للترتيب)", v, [(a + c_) * b, v + 1, v - b, v + 10])
+
+    @t(4)
+    def compound2():
+        a, b, c_ = rnd.randint(20, 60), rnd.randint(2, 9), rnd.randint(2, 6)
+        v = a - b * c_
+        add(4, f"كم {a} − {b} × {c_}؟", v, [(a - b) * c_, v + c_, v - 1, v + 10])
+
+    @t(4)
+    def increase():
+        n = rnd.choice([40, 50, 80, 120, 150, 200, 250, 400]); p = rnd.choice([10, 20, 25, 30, 50])
+        if n * p % 100:
+            return
+        a = n + n * p // 100
+        add(4, f"راتب {n} دينار زاد {p}%، قديش صار؟", a, [n + p, n * p // 100, a + 10, a - 5])
+
+    @t(4)
+    def wins():
+        w, d, l = rnd.randint(8, 28), rnd.randint(2, 12), rnd.randint(1, 10)
+        pts = w * 3 + d
+        add(4, f"فريق فاز {w} مرة وتعادل {d} وخسر {l}، قديش نقاطه (الفوز 3 والتعادل 1)؟", pts, [w * 3, pts + d, pts - l, w * 2 + d])
+
+    @t(4)
+    def seq_sum():
+        a = rnd.randint(2, 12); dlt = rnd.randint(2, 7); n = 5
+        terms = [a + i * dlt for i in range(n)]
+        s_ = sum(terms)
+        add(4, f"كم {' + '.join(map(str, terms))}؟", s_, [s_ + dlt, s_ - dlt, s_ + 10, s_ - 5])
+
+    @t(4)
+    def minutes_to():
+        dur = rnd.randint(70, 250)
+        def hm(H, M):
+            hs = "ساعة" if H == 1 else "ساعتين" if H == 2 else f"{H} ساعات"
+            return f"{hs} و{M} دقيقة" if M else hs
+        H, M = dur // 60, dur % 60
+        if not M or M == 20:
+            return
+        ans = hm(H, M)
+        alts = {hm(H, (M + 10) % 60 or 5), hm(H + 1, M), hm(max(1, H - 1), M), hm(H, abs(M - 20) or 15)}
+        alts.discard(ans)
+        qq = f"كم ساعة ودقيقة بـ{dur} دقيقة؟"
+        if qq not in texts and c.add(4, qq, [ans] + rnd.sample(sorted(alts), 3)):
+            texts.add(qq)
+
+    @t(4)
+    def double_time():
+        start = rnd.choice([1, 2, 3, 5, 10])
+        steps = rnd.randint(4, 7)
+        a = start * (2 ** steps)
+        add(4, f"عدد بيتضاعف كل ساعة، بلش {start}، قديش بصير بعد {steps} ساعات؟", a, [start * 2 * steps, a // 2, a * 2, a + start])
+
+    @t(4)
+    def rect():
+        w, h = rnd.randint(6, 25), rnd.randint(6, 25)
+        if w == h:
+            return
+        add(4, f"غرفة طولها {w} متر وعرضها {h}، قديش مساحتها؟", w * h, [2 * (w + h), w * h + w, w * h - h, w + h])
+
+    @t(4)
+    def perim():
+        w, h = rnd.randint(8, 60), rnd.randint(8, 60)
+        if w == h:
+            return
+        add(4, f"ملعب طوله {w} وعرضه {h}، قديش محيطه؟", 2 * (w + h), [w * h, w + h, 2 * (w + h) + 10, 2 * w + h])
+
+    for lv, fns in T.items():
+        goal = 270
+        tries = 0
+        while sum(1 for q in c.qs if q[0] == lv) < goal and tries < 40000:
+            tries += 1
+            rnd.choice(fns)()
 
 
 def main():
@@ -555,10 +866,16 @@ def main():
     crests(cats)
     worldcup(cats)
     chronology(cats)
-    zoom_blur(cats)
     estimate(cats)
     arab_players(cats)
     quick_math(cats)
+    import points_text
+    import points_gen
+    import points_data
+    points_text.generate(cats, Cat)
+    points_gen.generate(cats, Cat, target)
+    points_data.generate(cats, Cat)
+    zoom_blur(cats)
     order = ["globe", "arabplayers", "actors", "scientists", "cities", "castles", "mosques", "dinos", "sealife",
              "insects", "fruits", "drinks", "costumes", "space", "translate", "nicknames", "whoami", "math", "zoom", "blur", "emoji",
              "lies", "estimate", "childhood", "carlogos", "airlines", "brands", "pets", "plants", "instruments", "currency", "singerspics", "football", "worldcup", "coaches", "crests", "stadiums", "nashama", "celebs", "flags", "capitals", "landmarks",
@@ -573,10 +890,79 @@ def main():
         if min(per.get(d, 0) for d in (1, 2, 3, 4)) < 2:
             log(f"  ⚠️ {c.name}: ناقص أسئلة {dict(per)}")
             continue
-        out.append({"id": c.id, "name": c.name, "icon": c.icon, "qs": c.qs})
+        out.append(c)
         log(f"  {c.icon} {c.name}: {len(c.qs)} سؤال {dict(sorted(per.items()))}")
-    OUT.write_text(json.dumps({"generated": time.strftime("%Y-%m-%d"), "cats": out}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    log(f"points_q.json: {sum(len(c['qs']) for c in out)} سؤال بـ{len(out)} قسم")
+    write_split(out)
+    log(f"pq/: {sum(len(c.qs) for c in out)} سؤال بـ{len(out)} قسم")
+
+
+# هدف كل قسم (طلب سامر 2026-11-16): اللي كان فيه 50 سؤال أو أكثر = 1000، والباقي = 500 على الأقل
+BIG = {"math", "zoom", "blur", "estimate", "football", "worldcup", "crests", "celebs", "flags", "capitals", "historic", "general", "science",
+       "history", "first", "islamic", "riddles", "jordan", "sports", "wrestlers"}
+
+
+def target(cid):
+    return 1000 if cid in BIG else 500
+
+
+def kind_of(c):
+    imgs = [q[3] for q in c.qs if len(q) > 3 and q[3]]
+    if not imgs:
+        return "txt"
+    return "fx" if sum(1 for u in imgs if u.startswith(("zoom:", "blur:"))) > len(imgs) / 2 else "img"
+
+
+def clean_dups(c):
+    """ضد التكرار: نفس السؤال بنفس الجواب مرة وحدة بس (حتى لو الخيارات غير).
+    السؤال العام («مين صار أول؟»، «وين الكذبة؟») مسموح مرتين لنفس الجواب بخيارات مختلفة.
+    والتلميح النصي اللي بينطبق على أكثر من جواب (مثلاً «أنا لاعب سلة أمريكي انولدت 1963») بينشال كله لأنه مش واضح."""
+    by_q = Counter(q[1] for q in c.qs)
+    answers = defaultdict(set)
+    for q in c.qs:
+        answers[(q[1], q[3] if len(q) > 3 else None)].add(q[2][0])
+    cnt = Counter()
+    out = []
+    for q in c.qs:
+        img = q[3] if len(q) > 3 else None
+        generic = by_q[q[1]] >= 15
+        ans = str(q[2][0])
+        # الجواب مكتوب بالسؤال = سؤال مكشوف (إلا «هاد ولا هاد؟» وحزازير الخدعة)
+        if img is None and len(ans) > 2 and ans in q[1] and " ولا " not in q[1] and c.id != "riddles":
+            continue
+        if not generic and img is None and len(answers[(q[1], None)]) > 1:
+            continue
+        k = (q[1], q[2][0], img)
+        cnt[k] += 1
+        if cnt[k] > (2 if generic else 1):
+            continue
+        out.append(q)
+    dropped = len(c.qs) - len(out)
+    c.qs = out
+    return dropped
+
+
+def write_split(cats):
+    """كل قسم بملف لحاله (docs/games/pq/<id>.json) + فهرس صغير، عشان اللعبة تنزّل بس الأقسام اللي انختارت."""
+    PQ.mkdir(exist_ok=True)
+    for c in cats:
+        n = clean_dups(c)
+        if n:
+            log(f"  {c.id}: شلنا {n} مكرر")
+    keep = set()
+    index = []
+    for c in cats:
+        f = PQ / f"{c.id}.json"
+        f.write_text(json.dumps({"id": c.id, "qs": c.qs}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        keep.add(f.name)
+        index.append({"id": c.id, "name": c.name, "icon": c.icon, "n": len(c.qs), "k": kind_of(c)})
+    (PQ / "index.json").write_text(json.dumps({"generated": time.strftime("%Y-%m-%d"), "cats": index}, ensure_ascii=False, separators=(",", ":")),
+                                    encoding="utf-8")
+    keep.add("index.json")
+    for f in PQ.glob("*.json"):
+        if f.name not in keep:
+            f.unlink()
+    if OUT.exists():
+        OUT.unlink()
 
 
 if __name__ == "__main__":

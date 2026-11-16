@@ -153,7 +153,7 @@ SPECS = [
 # ---------- دفعة 2: بدل اللي وقف بالتايم آوت ----------
 SPECS += [
     S("towers", cls("Q11303", "Q12518", "Q1021645", "Q18142"), min_sl=25, extra=("country", "city", "inception", "height")),
-    S("historic_pol", occ("Q82955", "Q189290", "Q116", "Q11900058", "Q47064") + " ?item wdt:P570 ?dd . FILTER(YEAR(?dd) < 1960)", min_sl=110,
+    S("historic_pol", occ("Q116", "Q11900058", "Q47064", "Q189290") + " ?item wdt:P570 ?dd . FILTER(YEAR(?dd) < 1960)", min_sl=90,
       extra=("citizen", "gender", "born", "died", "occupation")),
     S("historic_art", occ("Q1028181", "Q36834", "Q36180", "Q49757", "Q4964182", "Q11063", "Q170790", "Q169470") + " ?item wdt:P570 ?dd . FILTER(YEAR(?dd) < 1960)",
       min_sl=110, extra=("citizen", "gender", "born", "died", "occupation")),

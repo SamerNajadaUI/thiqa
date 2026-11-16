@@ -390,19 +390,20 @@ function KORA(cfg) {
 }
 
 // ---------- أدوات بيانات ----------
-// أسئلة من بنك «جمع نقاط» (points_q.json) حسب الأقسام، مع فلتر اختياري على نص السؤال
+// أسئلة من بنك «جمع نقاط» (pq/<قسم>.json) حسب الأقسام، مع فلتر اختياري على نص السؤال
 async function koraFromPoints(cats, filter) {
-  const r = await fetch("points_q.json?t=" + Math.floor(Date.now() / 3.6e6));
-  if (!r.ok) throw new Error("load");
-  const d = await r.json();
+  const hour = Math.floor(Date.now() / 3.6e6);
+  const files = await Promise.all(Object.keys(cats).map((id) => fetch(`pq/${id}.json?t=${hour}`).then((r) => (r.ok ? r.json() : null)).catch(() => null)));
+  if (!files.some(Boolean)) throw new Error("load");
   const out = [];
-  for (const c of d.cats) {
+  for (const c of files) {
+    if (!c) continue;
     const want = cats[c.id];
-    if (!want) continue;
     for (const [dd, q, opts, img] of c.qs) {
+      if (img && /^(zoom|blur):/.test(img)) continue;
       if (want !== true && !want.test(q + " " + opts[0])) continue;
       if (filter && !filter(q, opts)) continue;
-      out.push({ d: dd, q, opts, vis: img ? `<img src="${esc(img)}" alt="" loading="eager" onerror="this.closest('.kvis').classList.add('nopic')">` : "" });
+      out.push({ d: dd, q, opts, vis: img ? `<img src="${esc(img)}" alt="" loading="eager" referrerpolicy="no-referrer" onerror="this.closest('.kvis').classList.add('nopic')">` : "" });
     }
   }
   return out;
