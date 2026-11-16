@@ -12961,8 +12961,8 @@
      "sharp_prob": 0.7378,
      "prob": 0.7176,
      "books": 20,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "106-113",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -13045,9 +13045,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png",
      "live": {
-      "state": "in",
-      "detail": "6:58 - 4th",
-      "score": "92-97"
+      "state": "post",
+      "detail": "Final",
+      "score": "106-113"
      }
     },
     {
@@ -13721,8 +13721,8 @@
        "sharp_prob": 0.7378,
        "prob": 0.7176,
        "books": 20,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "106-113",
        "model_prob": null,
        "support": 1,
        "signals": 1,
@@ -13804,15 +13804,15 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png",
        "live": {
-        "state": "in",
-        "detail": "6:58 - 4th",
-        "score": "92-97"
+        "state": "post",
+        "detail": "Final",
+        "score": "106-113"
        }
       }
      ],
      "prob": 0.2353,
      "fair_odds": 4.25,
-     "result": "pending"
+     "result": "won"
     }
    ]
   },
