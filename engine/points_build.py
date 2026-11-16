@@ -935,6 +935,11 @@ def clean_dups(c):
         cnt[k] += 1
         if cnt[k] > (2 if generic else 1):
             continue
+        if img:  # نفس الصورة بنفس الجواب (حتى لو صيغة السؤال غير) = نفس السؤال
+            k2 = ("img", img, q[2][0])
+            cnt[k2] += 1
+            if cnt[k2] > 1:
+                continue
         out.append(q)
     dropped = len(c.qs) - len(out)
     c.qs = out

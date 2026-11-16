@@ -371,12 +371,16 @@ def generate(cats, Cat, targets):
 
     # ---- طبيعة ----
     taxa_group = lambda it: lab1(it, "parent_taxon")
-    b.image_cat("animals", "حيوانات", "🦁", wd("mammals"), T("animals"), "شو هالحيوان؟", (), group=taxa_group, top=220, need_arw=True, max_words=3)
-    b.image_cat("birds", "طيور بالصور", "🦅", wd("birds"), T("birds"), "شو هالطير؟", (), group=taxa_group, top=170, need_arw=True, max_words=3)
-    b.image_cat("reptiles", "زواحف وبرمائيات", "🦎", wd("reptiles") + wd("amphibians"), T("reptiles"), "شو هالحيوان؟", (), group=taxa_group, top=90, need_arw=True, max_words=3)
-    b.image_cat("sealife", "حيوانات بحرية", "🐙", wd("sharks") + wd("cetaceans") + wd("sea_more") + wd("crustaceans"), T("sealife"),
+    # أسماء عائلات (كلبيات، أرنبيات...) وأشباه البشر مش أسماء حيوانات بتنعرف من صورة
+    def species(items):
+        return [it for it in items if not re.search(r"(يات|يّات)$", it["ar"]) and not re.search(r"^(إنسان|أسترالوبيثكس|هومو)", it["ar"])
+                and not re.search(r"^(family|order|genus|superfamily|subfamily|infraorder|suborder|clade|tribe|group)\b|extinct species of human|hominin|archaic human", it.get("end") or "", re.I)]
+    b.image_cat("animals", "حيوانات", "🦁", species(wd("mammals")), T("animals"), "شو هالحيوان؟", (), group=taxa_group, top=220, need_arw=True, max_words=3)
+    b.image_cat("birds", "طيور بالصور", "🦅", species(wd("birds")), T("birds"), "شو هالطير؟", (), group=taxa_group, top=170, need_arw=True, max_words=3)
+    b.image_cat("reptiles", "زواحف وبرمائيات", "🦎", species(wd("reptiles") + wd("amphibians")), T("reptiles"), "شو هالحيوان؟", (), group=taxa_group, top=90, need_arw=True, max_words=3)
+    b.image_cat("sealife", "حيوانات بحرية", "🐙", species(wd("sharks") + wd("cetaceans") + wd("sea_more") + wd("crustaceans")), T("sealife"),
                 "شو هالحيوان البحري؟", (), group=taxa_group, top=110, need_arw=True, max_words=3)
-    b.image_cat("insects", "حشرات", "🐞", wd("insects2") + wd("arachnids"), T("insects"), "شو هاد؟", (), group=taxa_group, top=75, need_arw=True, max_words=3)
+    b.image_cat("insects", "حشرات", "🐞", species(wd("insects2") + wd("arachnids")), T("insects"), "شو هاد؟", (), group=taxa_group, top=75, need_arw=True, max_words=3)
     b.image_cat("dinos", "ديناصورات", "🦖", wd("dinos"), T("dinos"), "شو اسم هالديناصور؟", (), group=taxa_group, top=45, need_arw=True, max_words=2)
     breed_types = [("من وين أصل هالسلالة؟", lambda it: lab1(it, "origin") if lab1(it, "origin") in countries() else None, 1,
                     lambda items: cat_countries(items, "origin"), near_in)]
@@ -390,16 +394,41 @@ def generate(cats, Cat, targets):
     b.image_cat("space", "الفضاء", "🪐", wd("planets_space"), T("space"), "شو هاد؟", (), top=60)
 
     # ---- أكل وأشياء ----
+    DEMONYM = {"Italy": "Italian", "France": "French", "Spain": "Spanish", "Mexico": "Mexican", "Japan": "Japanese", "China": "Chinese",
+               "India": "Indian", "Turkey": "Turkish", "Greece": "Greek", "Germany": "German", "United Kingdom": "British|English|Scottish|Welsh",
+               "United States": "American", "Lebanon": "Lebanese", "Syria": "Syrian", "Egypt": "Egyptian", "Morocco": "Moroccan", "Tunisia": "Tunisian",
+               "Algeria": "Algerian", "Iran": "Persian|Iranian", "Iraq": "Iraqi", "Saudi Arabia": "Saudi", "Jordan": "Jordanian", "Palestine": "Palestinian",
+               "Thailand": "Thai", "Vietnam": "Vietnamese", "Korea": "Korean", "South Korea": "Korean", "Russia": "Russian", "Poland": "Polish",
+               "Portugal": "Portuguese", "Brazil": "Brazilian", "Argentina": "Argentin", "Peru": "Peruvian", "Netherlands": "Dutch", "Belgium": "Belgian",
+               "Austria": "Austrian", "Switzerland": "Swiss", "Sweden": "Swedish", "Hungary": "Hungarian", "Ireland": "Irish", "Indonesia": "Indonesian",
+               "Philippines": "Filipino", "Malaysia": "Malaysian", "Pakistan": "Pakistani", "Ukraine": "Ukrainian", "Georgia": "Georgian",
+               "Armenia": "Armenian", "Israel": "Israeli", "Cuba": "Cuban", "Colombia": "Colombian", "Chile": "Chilean", "Canada": "Canadian",
+               "Australia": "Australian", "Denmark": "Danish", "Norway": "Norwegian", "Finland": "Finnish", "Czech Republic": "Czech", "Ethiopia": "Ethiopian",
+               "Nigeria": "Nigerian", "Yemen": "Yemeni", "Afghanistan": "Afghan", "Bangladesh": "Bangladeshi", "Sri Lanka": "Sri Lankan"}
+
     def origin_of(it):
         v = lab1(it, "origin") or lab1(it, "country")
-        return v if v in countries() else None
+        if v not in countries():
+            return None
+        # لازم الوصف نفسه يأكد البلد (ويكيداتا أحياناً بتحط بلد غلط أو مختلف عليه)
+        en = re.sub(r"^(People's Republic of |Republic of |Kingdom of |State of |the )", "", (countries()[v].get("en") or "").strip())
+        dem = DEMONYM.get(en, "")
+        pat = "|".join(x for x in [re.escape(en)] + ([dem] if dem else []) if x)
+        e, a = it.get("end") if isinstance(it.get("end"), str) else "", it.get("ard") or ""
+        if (pat and re.search(pat, e)) or v in a or (v[:-1] and len(v) > 4 and v[:-1] in a):
+            return v
+        return None
     origin_types = lambda w: [(f"من وين أصل {w}؟", origin_of, 1, lambda items: cat_countries(items, "origin") or cat_countries(items), near_in)]
     b.image_cat("food", "أكلات من العالم", "🍜", wd("dishes"), T("food"), "شو هالأكلة؟", origin_types("هالأكلة"))
     b.image_cat("desserts", "حلويات من العالم", "🍰", only(wd("desserts"), r"(dessert|sweet|cake|pastry|confection|cookie|biscuit|candy|ice cream|pudding|chocolate)", r"(حلو|حلوى|حلويات|كعك|كعكة|معجنات)"), T("desserts"), "شو هالحلو؟", origin_types("هالحلو"))
     b.image_cat("drinks", "مشروبات", "🥤", wd("drinks"), T("drinks"), "شو هالمشروب؟", origin_types("هالمشروب"))
     b.image_cat("instruments", "آلات موسيقية بالصور", "🎻", only(wd("instruments"), r"(musical instrument|instrument)", r"(آلة موسيقية|آلة)"), T("instruments"), "شو هالآلة؟", (), top=120, max_words=3)
-    b.image_cat("tools", "أدوات وعدّة", "🔧", only(wd("tools"), r"\b(tool|implement|utensil|instrument)\b", r"(أداة|عدة|أدوات)"), T("tools"), "شو هالأداة؟", (), max_words=3)
-    b.image_cat("sportsgear", "أدوات رياضية", "🏸", only(wd("sportsgear"), r"(sport|athlet|ball|racket|equipment used)", r"(رياض|كرة|مضرب)"), T("sportsgear"), "شو هاد؟", (), max_words=3)
+    TL_NO = {"مطياف", "ساعة", "مدرس", "فارزة", "مقياس الزلازل"}
+    tl = [it for it in only(wd("tools"), r"\b(tool|implement|utensil|instrument)\b", r"(أداة|عدة|أدوات)") if it["ar"] not in TL_NO]
+    b.image_cat("tools", "أدوات وعدّة", "🔧", tl, T("tools"), "شو هالأداة؟", (), max_words=3, top=110)
+    SG_NO = {"الكرة", "كرة القدم", "بوابة", "قميص بلا أكمام", "بنطال رياضة", "ميجار", "ثقالة", "لوح الثلج", "كرة"}
+    sg = [it for it in only(wd("sportsgear"), r"(sport|athlet|ball|racket|equipment used)", r"(رياض|كرة|مضرب)") if it["ar"] not in SG_NO]
+    b.image_cat("sportsgear", "أدوات رياضية", "🏸", sg, T("sportsgear"), "شو هاد؟", (), max_words=3)
     maker = [("مين الشركة المصنّعة؟", lambda it: lab1(it, "maker"), 1, lambda items: sorted({lab1(x, "maker") for x in items if lab1(x, "maker")}), None)]
     b.image_cat("planes", "طيارات ومركبات طايرة", "✈️", wd("aircraft") + wd("vehicles"), T("planes"), "شو هالطيارة؟", maker, group=lambda it: lab1(it, "maker"))
     b.image_cat("cars", "سيارات", "🚗", wd("car_models"), T("cars"), "شو هالسيارة؟", maker, group=lambda it: lab1(it, "maker"))
@@ -407,7 +436,27 @@ def generate(cats, Cat, targets):
     INV = (r"(device|machine|instrument|apparatus|tool|vehicle|engine|weapon|invention|medication|drug|vaccine|toy|appliance|camera|telephone|"
            r"computer|aircraft|vessel|lamp|clock|printing|radio|television|telescope|microscope|motor|battery|robot|rocket|gun)",
            r"(جهاز|آلة|أداة|اختراع|محرك|مركبة|دواء|لقاح|سلاح|لعبة|مصباح|ساعة|مطبعة|راديو|تلفاز|تلسكوب|مجهر|بطارية|صاروخ)")
-    b.image_cat("inventions", "اختراعات غيّرت العالم", "💡", only(wd("inventions"), *INV), T("inventions"), "شو هالاختراع؟", inv, max_words=3)
+    # اختراعات منتقاة باليد (بيانات ويكيداتا فيها كواكب واكتشافات ومفاهيم)، بأسماء دارجة
+    INV_OK = {"حاسوب": "كمبيوتر", "هاتف": "تلفون", "سيارة بمحرك": "سيارة", "تلفزة": "تلفزيون", "دراجة هوائية ثنائية": "بسكليت (دراجة)",
+              "ورق": "ورق", "هاتف محمول": "موبايل", "بيانو": "بيانو", "قلم رصاص": "قلم رصاص", "مقراب": "تلسكوب", "فأرة حاسوب": "ماوس",
+              "مجهر": "مجهر (ميكروسكوب)", "محرك احتراق داخلي": "محرك احتراق داخلي", "مقياس الحرارة": "ميزان حرارة", "مكعب روبيك": "مكعب روبيك",
+              "ساكسفون": "ساكسفون", "قرص مضغوط": "سي دي", "رادار": "رادار", "آلة الخياطة": "ماكينة خياطة", "آلة كاتبة": "آلة كاتبة",
+              "مصباح متوهج": "لمبة", "مكنسة كهربائية": "مكنسة كهربا", "إشارة ضوئية": "إشارة مرور", "مقياس ضغط جوي": "بارومتر",
+              "صراف آلي": "صراف آلي", "مكبر صوت": "سماعة (مكبر صوت)", "باربي": "دمية باربي", "فرن الأمواج الصغرية": "مايكرويف",
+              "قيثارة كهربائية": "غيتار كهربائي", "ثنائي باعث للضوء": "لمبة ليد (LED)", "قلم حبر جاف": "قلم ناشف", "رمز استجابة سريعة": "رمز QR",
+              "عدسة مكبرة": "عدسة مكبّرة", "قرص بلوراي": "قرص بلوراي", "سلم متحرك": "درج كهربائي",
+              "آلة الطباعة": "مطبعة", "البيكار": "فرجار (بيكار)", "سماعة طبية": "سماعة طبيب", "محرك ديزل": "محرك ديزل", "مبراة": "برّاية",
+              "مانع الصواعق": "مانعة صواعق", "ليغو": "مكعبات ليغو", "غسالة صحون": "جلاية صحون", "حوامة": "هوفركرافت (حوامة)",
+              "سماعتا رأس": "سماعات راس", "دمية روسية": "دمية ماتريوشكا", "مشكال": "كاليدوسكوب", "أحجية الصور المقطوعة": "بازل",
+              "قرص فونوغراف": "أسطوانة فونوغراف", "عداد غايغر": "عداد غايغر", "شوكة رنانة": "شوكة رنانة", "سلك شائك": "سلك شائك",
+              "شريط سمعي": "شريط كاسيت", "بطاقة مثقبة": "بطاقة مثقّبة", "سودوكو": "سودوكو", "ترميز مورس": "شيفرة مورس", "دش": "دش (رشاش حمام)",
+              "مدخرة": "بطارية قابلة للشحن", "سونار": "سونار", "كاميرا الساكن": "كاميرا"}
+    invs = []
+    for it in dedupe(wd("inventions")):
+        if it["ar"] in INV_OK and it.get("img"):
+            invs.append(dict(it, ar=INV_OK[it["ar"]]))
+    invs = dedupe(invs)
+    b.image_cat("inventions", "اختراعات غيّرت العالم", "💡", invs, T("inventions"), "شو هالاختراع؟", inv, max_words=4)
     cur = [("عملة أي دولة هاي؟", lambda it: lab1(it, "country") if lab1(it, "country") in countries() else None, 0, lambda items: sorted(countries().keys()), near_in)]
     b.image_cat("currency", "عملات العالم", "💵", wd("currencies"), T("currency"), "شو اسم هالعملة؟", cur, top=110)
     paint = [("مين رسم هاللوحة؟", lambda it: lab1(it, "creator"), 0, lambda items: sorted({lab1(x, "creator") for x in items if lab1(x, "creator")}), None),
@@ -415,7 +464,7 @@ def generate(cats, Cat, targets):
               lambda items: sorted({lab1(x, "collection") for x in items if lab1(x, "collection")}), None)]
     b.image_cat("paintings", "لوحات فنية مشهورة", "🎨", wd("paintings"), T("paintings"), "شو اسم هاللوحة؟", paint, group=lambda it: lab1(it, "creator"))
     b.image_cat("costumes", "أزياء تقليدية", "👘", only(wd("costumes"), r"(traditional|national costume|folk)", r"(تقليدي|شعبي)"), T("costumes"), "شو اسم هاللبس؟", origin_types("هاللبس"))
-    b.image_cat("dances", "رقصات من العالم", "💃", wd("dances"), T("dances"), "شو اسم هالرقصة؟", origin_types("هالرقصة"))
+    b.image_cat("dances", "رقصات من العالم", "💃", [it for it in wd("dances") if it["ar"] not in ("رقصة ألمانية", "كوتليون", "فاراندول", "رقص حديث", "رقص شعبي")], T("dances"), "شو اسم هالرقصة؟", origin_types("هالرقصة"))
 
     # ---- شعارات ----
     ctry = [("من وين هالشركة؟", lambda it: lab1(it, "country") if lab1(it, "country") in countries() else None, 1, cat_countries, near_in)]
