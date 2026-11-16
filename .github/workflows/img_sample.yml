@@ -1,0 +1,38 @@
+name: Image sample check
+
+# عيّنة صور من أقسام الصور بجمع نقاط للمراجعة البصرية (بتنحفظ بفرع img-sample، مش main)
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: "كم صورة من كل قسم"
+        default: "24"
+      only:
+        description: "أقسام معينة (id1,id2) أو فاضي للكل"
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download sample
+        run: python -u tools/img_sample.py "${{ github.event.inputs.n }}" "${{ github.event.inputs.only }}"
+      - name: Save to img-sample branch
+        run: |
+          git config user.name "thiqa-bot"
+          git config user.email "actions@users.noreply.github.com"
+          mv sample /tmp/sample
+          git checkout --orphan img-sample
+          git rm -rq --cached . && git clean -fdq -e .git
+          cp -r /tmp/sample/. .
+          git add -A
+          git commit -qm "Image sample $(date +%F)"
+          git push -f origin img-sample

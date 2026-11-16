@@ -159,7 +159,7 @@ TEAM_AR = {"Algeria": "الجزائر", "Angola": "أنغولا", "Argentina": "
            "Togo": "توغو", "Trinidad and Tobago": "ترينيداد وتوباغو", "Tunisia": "تونس", "Turkey": "تركيا", "Ukraine": "أوكرانيا",
            "United Arab Emirates": "الإمارات", "United States": "أمريكا", "Uruguay": "الأوروغواي", "Wales": "ويلز", "West Germany": "ألمانيا الغربية",
            "Yugoslavia": "يوغوسلافيا", "Zaire": "زائير"}
-HOST_AR = dict(TEAM_AR, **{"South Korea, Japan": "كوريا الجنوبية واليابان"})
+HOST_AR = dict(TEAM_AR, **{"South Korea, Japan": "كوريا الجنوبية واليابان", "Korea, Japan": "كوريا الجنوبية واليابان"})
 LEGENDS = {"P-77939": "جوست فونتين", "P-07028": "شاندور كوتشيش", "P-08136": "هيلموت ران", "P-45310": "فافا", "P-49381": "أديمير",
            "P-09730": "ليونيداس", "P-56486": "غييرمو ستابيلي", "P-85778": "ريفيلينو", "P-49502": "لوثار ماتيوس", "P-46080": "غارينشا",
            "P-12676": "فيرينتس بوشكاش", "P-38164": "ماريو زاغالو", "P-25829": "كارلوس ألبيرتو", "P-38873": "خوان ألبيرتو سكيافينو",
@@ -273,7 +273,7 @@ def worldcup(cats, Cat):
 
     def result(h, a, hs, as_, pen=None):
         if hs == as_:
-            return f"تعادل {hs}-{as_}" + (f" وفاز {pen} بالترجيح" if pen else "")
+            return f"تعادل {hs}-{as_}" + (f" والترجيح لـ{pen}" if pen else "")
         return f"فوز {h if hs > as_ else a} {max(hs, as_)}-{min(hs, as_)}"
 
     for m in W["matches"]:
@@ -286,7 +286,8 @@ def worldcup(cats, Cat):
         arab = h in ARABT or a in ARABT
         bigm = h in big or a in big
         ko = st in STAGE_AR
-        if not (st == "final" or (ko and bigm and y >= 1970) or (arab and y >= 1970)):
+        both = h in big and a in big
+        if not (st == "final" or (ko and y >= 1958) or (both and y >= 1970) or (arab and y >= 1970)):
             continue
         pen = None
         if m["penalty_shootout"] == "1":
@@ -310,7 +311,7 @@ def worldcup(cats, Cat):
         if st in KO_AT:
             win = pen if hs == as_ else (h if hs > as_ else a)
             lose = a if win == h else h
-            if win and (lose in big or lose in ARABT):
+            if win and (lose in big or lose in ARABT or y >= 1982):
                 pool = sorted(PART[y] - {win, lose})
                 if len(pool) >= 3:
                     c.add(2 if y >= 2010 else 3, f"مين أقصى {lose} {KO_AT[st]} بكأس العالم {y}؟", [win] + R.sample(pool, 3))
@@ -373,7 +374,7 @@ def worldcup(cats, Cat):
         (3, "كم منتخب عربي شارك بكأس العالم 2022؟", "4", ["3", "5", "2"]),
         (4, "مين المنتخبات العربية اللي شاركت بكأس العالم 2022؟", "قطر والسعودية وتونس والمغرب", ["قطر والسعودية ومصر والمغرب",
                                                                                                 "السعودية وتونس والجزائر والمغرب", "قطر والعراق وتونس والمغرب"]),
-        (3, "مين فاز على تونس 1-0 بكأس العالم 2022؟", "تونس فازت على فرنسا 1-0", ["فرنسا فازت 1-0", "تعادلوا 1-1", "أستراليا فازت 2-0"]),
+        (3, "شو صار بمباراة تونس وفرنسا بكأس العالم 2022؟", "تونس فازت 1-0", ["فرنسا فازت 1-0", "تعادلوا 1-1", "فرنسا فازت 2-0"]),
         (2, "مين أقصى إسبانيا والبرتغال بكأس العالم 2022؟", "المغرب", ["فرنسا", "كرواتيا", "البرازيل"]),
         (3, "بأي سنة شاركت مصر لأول مرة بكأس العالم؟", "1934", ["1990", "1950", "2018"]),
         (4, "مين أول منتخب عربي شارك بكأس العالم؟", "مصر (1934)", ["المغرب (1970)", "تونس (1978)", "الكويت (1982)"]),
@@ -418,6 +419,27 @@ def quran(cats, Cat):
                 c.add(min(4, d + 1), "أي سورة من هدول مدنية؟", [nm] + R.sample([x["ar"] for x in S if x["place"] == "مكية" and x["n"] not in DISPUTED and x["n"] in famous], 3))
             elif n in famous:
                 c.add(min(4, d + 1), "أي سورة من هدول مكية؟", [nm] + R.sample([x["ar"] for x in S if x["place"] == "مدنية" and x["n"] not in DISPUTED], 3))
+    # قبل السورة + أي سورة أطول (بعدد الآيات، بفرق واضح)
+    for s_ in S:
+        n, nm = s_["n"], s_["ar"]
+        if n > 1:
+            d = 2 if n in famous else 3 if n >= 78 else 4
+            near = [x for x in range(max(1, n - 5), min(114, n + 5) + 1) if x not in (n, n - 1)]
+            c.add(d, f"شو السورة اللي قبل سورة {nm} بالمصحف؟", [by_n[n - 1]["ar"]] + [by_n[x]["ar"] for x in R.sample(near, 3)])
+    rq = random.Random(114)
+    longest = Counter()
+    for _ in range(1500):
+        four = rq.sample(S, 4)
+        vs = sorted((x["v"] for x in four), reverse=True)
+        if vs[0] < vs[1] * 1.4 or vs[0] - vs[1] < 8:
+            continue
+        top = max(four, key=lambda x: x["v"])
+        if longest[top["n"]] >= 2:
+            continue
+        fam = sum(1 for x in four if x["n"] in famous)
+        d = 2 if fam >= 3 else 3 if fam >= 1 else 4
+        if c.add(d, "أي سورة من هدول أطول (آياتها أكثر)؟", [top["ar"]] + [x["ar"] for x in four if x is not top]):
+            longest[top["n"]] += 1
     facts = [
         (1, "كم سورة بالقرآن الكريم؟", "114", ["110", "120", "100"]), (1, "شو أطول سورة بالقرآن؟", "البقرة", ["آل عمران", "النساء", "الأعراف"]),
         (1, "شو أقصر سورة بالقرآن؟", "الكوثر", ["الإخلاص", "العصر", "النصر"]), (1, "شو أول سورة بالمصحف؟", "الفاتحة", ["البقرة", "العلق", "الناس"]),
