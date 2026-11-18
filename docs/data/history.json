@@ -14039,8 +14039,8 @@
      "sharp_prob": 0.7966,
      "prob": 0.7866,
      "books": 18,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "117-114",
      "movement": -0.0117,
      "model_prob": null,
      "support": 1,
@@ -14133,8 +14133,8 @@
      "sharp_prob": 0.7483,
      "prob": 0.7459,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "93-105",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -14215,9 +14215,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
      "live": {
-      "state": "pre",
-      "detail": "11/17 - 8:00 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "93-105"
      }
     },
     {
@@ -14319,9 +14319,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lal.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png",
      "live": {
-      "state": "pre",
-      "detail": "11/17 - 11:00 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "22.4 - 1st",
+      "score": "30-34"
      }
     },
     {
@@ -14341,8 +14341,8 @@
      "sharp_prob": 0.6877,
      "prob": 0.7157,
      "books": 19,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "80-75",
      "movement": 0.0146,
      "model_prob": null,
      "support": 1,
@@ -14435,8 +14435,8 @@
      "sharp_prob": 0.7257,
      "prob": 0.713,
      "books": 19,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "95-97",
      "movement": 0.0052,
      "model_prob": null,
      "support": 1,
@@ -14609,9 +14609,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lac.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
      "live": {
-      "state": "pre",
-      "detail": "11/17 - 10:30 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "Halftime",
+      "score": "62-58"
      }
     }
    ],
@@ -14643,8 +14643,8 @@
        "sharp_prob": 0.7966,
        "prob": 0.7866,
        "books": 18,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "117-114",
        "movement": -0.0117,
        "model_prob": null,
        "support": 1,
@@ -14736,8 +14736,8 @@
        "sharp_prob": 0.7483,
        "prob": 0.7459,
        "books": 23,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "93-105",
        "model_prob": null,
        "support": 1,
        "signals": 1,
@@ -14817,9 +14817,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
        "live": {
-        "state": "pre",
-        "detail": "11/17 - 8:00 PM EST",
-        "score": null
+        "state": "post",
+        "detail": "Final",
+        "score": "93-105"
        }
       },
       {
@@ -14920,15 +14920,15 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lal.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png",
        "live": {
-        "state": "pre",
-        "detail": "11/17 - 11:00 PM EST",
-        "score": null
+        "state": "in",
+        "detail": "22.4 - 1st",
+        "score": "30-34"
        }
       }
      ],
      "prob": 0.4298,
      "fair_odds": 2.33,
-     "result": "pending"
+     "result": "lost"
     },
     {
      "kind": "risky",
@@ -14936,6 +14936,1261 @@
      "prob": null,
      "fair_odds": null,
      "result": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-18",
+   "top": [
+    {
+     "id": "b609888ea766ac28cd0e84f315d8f3d2|h2h|Miami Heat|None|None",
+     "event_id": "b609888ea766ac28cd0e84f315d8f3d2",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Miami Heat",
+     "away": "Milwaukee Bucks",
+     "commence_time": "2026-11-19T00:10:00Z",
+     "market": "h2h",
+     "name": "Miami Heat",
+     "point": null,
+     "description": null,
+     "market_prob": 0.8415,
+     "sharp_prob": 0.8516,
+     "prob": 0.8466,
+     "books": 22,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "22 شركة أودز بتعطيه بالمتوسط 84% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 85%"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.8466,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.967,
+        "t": "⁨Miami Heat⁩ ما في منه! 22 شركة أودز بتعطيه بالمتوسط 84% بعد ما شلنا هامشها. يا عمي فوز ⁨Miami Heat⁩ مضمونة، أنا بعطيها 97%."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.153,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 15%، يعني مرة من كل 7، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.153,
+        "t": "شو بدي بـ«فوز ⁨Miami Heat⁩» وأودزها 1.18؟ أنا رايح على «فوز ⁨Milwaukee Bucks⁩» بأودز 6.52. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 1,
+        "c": 0.847,
+        "t": "85% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.847,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 84%، والشركات الأدق 85%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 1,
+        "best": "careful",
+        "t": "المخاطرة قليلة: احتمال الخيبة 15% بس، وما في تحذيرات."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. فوز ⁨Miami Heat⁩ باحتمال 85%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 0.649
+      }
+     },
+     "rank": 1,
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401910009",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mia.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/18 - 7:00 PM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "a3e64105988f48f4c6447c9ca6de0030|h2h|Carlos Alcaraz|None|None",
+     "event_id": "a3e64105988f48f4c6447c9ca6de0030",
+     "sport_key": "tennis_atp_finals",
+     "group": "tennis",
+     "league": "ATP Finals",
+     "home": "Carlos Alcaraz",
+     "away": "Daniil Medvedev",
+     "commence_time": "2026-11-18T13:00:00Z",
+     "market": "h2h",
+     "name": "Carlos Alcaraz",
+     "point": null,
+     "description": null,
+     "market_prob": 0.7619,
+     "sharp_prob": 0.7801,
+     "prob": 0.771,
+     "books": 19,
+     "result": "pending",
+     "score": null,
+     "movement": 0.0189,
+     "model_prob": null,
+     "support": 2,
+     "signals": 2,
+     "reasons": [
+      "19 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 78%",
+      "احتماله ارتفع 1.9 نقطة خلال آخر 24 ساعة، يعني في فلوس كبيرة دخلت عليه"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.771,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.891,
+        "t": "⁨Carlos Alcaraz⁩ ما في منه! 19 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها. يا عمي فوز ⁨Carlos Alcaraz⁩ مضمونة، أنا بعطيها 89%."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.229,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 23%، يعني مرة من كل 4، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.229,
+        "t": "شو بدي بـ«فوز ⁨Carlos Alcaraz⁩» وأودزها 1.30؟ أنا رايح على «فوز ⁨Daniil Medvedev⁩» بأودز 4.37. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.771,
+        "t": "احتمالها 77%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 1,
+        "c": 0.771,
+        "t": "بالأرقام: 2 من 2 إشارات معه. السوق بيعطيه 76%، والشركات الأدق 78%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 1,
+        "best": "logic",
+        "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 23%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق وحركة الأودز مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. فوز ⁨Carlos Alcaraz⁩ باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 0.758
+      }
+     },
+     "rank": 2,
+     "espn": {
+      "s": "tennis",
+      "l": "atp",
+      "id": "187509",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/18 - 8:00 AM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "5896e4ed2ed41ce673e882b6529078b8|h2h|Toronto Raptors|None|None",
+     "event_id": "5896e4ed2ed41ce673e882b6529078b8",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Toronto Raptors",
+     "away": "Washington Wizards",
+     "commence_time": "2026-11-19T00:40:00Z",
+     "market": "h2h",
+     "name": "Toronto Raptors",
+     "point": null,
+     "description": null,
+     "market_prob": 0.6992,
+     "sharp_prob": 0.7187,
+     "prob": 0.7089,
+     "books": 20,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "20 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 72%"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.7089,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.829,
+        "t": "⁨Toronto Raptors⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها. يا عمي فوز ⁨Toronto Raptors⁩ مضمونة، أنا بعطيها 83%."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.291,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 29%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.291,
+        "t": "شو بدي بـ«فوز ⁨Toronto Raptors⁩» وأودزها 1.41؟ أنا رايح على «فوز ⁨Washington Wizards⁩» بأودز 3.44. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.709,
+        "t": "احتمالها 71%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.709,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 70%، والشركات الأدق 72%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 29%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Toronto Raptors⁩ باحتمال 71%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": 0.309
+      }
+     },
+     "rank": 3,
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401910012",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/18 - 7:30 PM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "15e35a72dec4007e37710032d620bea6|h2h|Real Madrid|None|None",
+     "event_id": "15e35a72dec4007e37710032d620bea6",
+     "sport_key": "basketball_euroleague",
+     "group": "basketball",
+     "league": "Basketball Euroleague",
+     "home": "Beşiktaş J.K.",
+     "away": "Real Madrid",
+     "commence_time": "2026-11-18T17:00:00Z",
+     "market": "h2h",
+     "name": "Real Madrid",
+     "point": null,
+     "description": null,
+     "market_prob": 0.7043,
+     "sharp_prob": 0.7122,
+     "prob": 0.7083,
+     "books": 21,
+     "result": "pending",
+     "score": null,
+     "movement": 0.0321,
+     "model_prob": null,
+     "support": 2,
+     "signals": 2,
+     "reasons": [
+      "21 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 71%",
+      "احتماله ارتفع 3.2 نقطة خلال آخر 24 ساعة، يعني في فلوس كبيرة دخلت عليه"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.7083,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.828,
+        "t": "⁨Real Madrid⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها. يا عمي فوز ⁨Real Madrid⁩ مضمونة، أنا بعطيها 83%."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.292,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 29%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.292,
+        "t": "شو بدي بـ«فوز ⁨Real Madrid⁩» وأودزها 1.41؟ أنا رايح على «فوز ⁨Beşiktaş J.K.⁩» بأودز 3.43. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.708,
+        "t": "احتمالها 71%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 1,
+        "c": 0.708,
+        "t": "بالأرقام: 2 من 2 إشارات معه. السوق بيعطيه 70%، والشركات الأدق 71%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 1,
+        "best": "logic",
+        "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 29%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق وحركة الأودز مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. فوز ⁨Real Madrid⁩ باحتمال 71%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 0.758
+      }
+     },
+     "rank": 4
+    },
+    {
+     "id": "f9ae24215832bbc1703c9836d0c96751|h2h|Houston Rockets|None|None",
+     "event_id": "f9ae24215832bbc1703c9836d0c96751",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Indiana Pacers",
+     "away": "Houston Rockets",
+     "commence_time": "2026-11-19T00:10:00Z",
+     "market": "h2h",
+     "name": "Houston Rockets",
+     "point": null,
+     "description": null,
+     "market_prob": 0.6924,
+     "sharp_prob": 0.7113,
+     "prob": 0.7019,
+     "books": 22,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "22 شركة أودز بتعطيه بالمتوسط 69% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 71%"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.7019,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.822,
+        "t": "⁨Houston Rockets⁩ ما في منه! 22 شركة أودز بتعطيه بالمتوسط 69% بعد ما شلنا هامشها. يا عمي فوز ⁨Houston Rockets⁩ مضمونة، أنا بعطيها 82%."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.298,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 30%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.298,
+        "t": "شو بدي بـ«فوز ⁨Houston Rockets⁩» وأودزها 1.42؟ أنا رايح على «فوز ⁨Indiana Pacers⁩» بأودز 3.35. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.702,
+        "t": "احتمالها 70%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.702,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 69%، والشركات الأدق 71%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 30%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Houston Rockets⁩ باحتمال 70%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": 0.309
+      }
+     },
+     "rank": 5,
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401910008",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ind.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/18 - 7:00 PM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "e0d8f7b450122679865f9a80b048908b|h2h|Oklahoma City Thunder|None|None",
+     "event_id": "e0d8f7b450122679865f9a80b048908b",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Oklahoma City Thunder",
+     "away": "Atlanta Hawks",
+     "commence_time": "2026-11-19T01:10:00Z",
+     "market": "h2h",
+     "name": "Oklahoma City Thunder",
+     "point": null,
+     "description": null,
+     "market_prob": 0.6982,
+     "sharp_prob": 0.7006,
+     "prob": 0.6994,
+     "books": 22,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "22 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 70%"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.6994,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.819,
+        "t": "⁨Oklahoma City Thunder⁩ ما في منه! 22 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها. يا عمي فوز ⁨Oklahoma City Thunder⁩ مضمونة، أنا بعطيها 82%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.301,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 30%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.301,
+        "t": "شو بدي بـ«فوز ⁨Oklahoma City Thunder⁩» وأودزها 1.43؟ أنا رايح على «فوز ⁨Atlanta Hawks⁩» بأودز 3.33. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.699,
+        "t": "احتمالها 70%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.699,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 70%، والشركات الأدق 70%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 30%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 0,
+        "best": "logic",
+        "t": "الفلوس مقسومة: 1 من 1 مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Oklahoma City Thunder⁩ باحتمال 70%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": -0.021
+      }
+     },
+     "rank": 6,
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401910014",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/okc.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/18 - 8:00 PM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "4bdafbab228335fd29f62006a4bc932d|h2h|Phoenix Suns|None|None",
+     "event_id": "4bdafbab228335fd29f62006a4bc932d",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Sacramento Kings",
+     "away": "Phoenix Suns",
+     "commence_time": "2026-11-19T03:10:00Z",
+     "market": "h2h",
+     "name": "Phoenix Suns",
+     "point": null,
+     "description": null,
+     "market_prob": 0.6932,
+     "sharp_prob": 0.6926,
+     "prob": 0.6929,
+     "books": 22,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "22 شركة أودز بتعطيه بالمتوسط 69% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 69%"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.6929,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.813,
+        "t": "⁨Phoenix Suns⁩ ما في منه! 22 شركة أودز بتعطيه بالمتوسط 69% بعد ما شلنا هامشها. يا عمي فوز ⁨Phoenix Suns⁩ مضمونة، أنا بعطيها 81%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.307,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 31%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.307,
+        "t": "شو بدي بـ«فوز ⁨Phoenix Suns⁩» وأودزها 1.44؟ أنا رايح على «فوز ⁨Sacramento Kings⁩» بأودز 3.26. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.693,
+        "t": "احتمالها 69%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.693,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 69%، والشركات الأدق 69%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 31%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 0,
+        "best": "logic",
+        "t": "الفلوس مقسومة: 1 من 1 مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Phoenix Suns⁩ باحتمال 69%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": -0.021
+      }
+     },
+     "rank": 7,
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401910018",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phx.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/18 - 10:00 PM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "6c0ae9cd6ba4762ef0bcf66156d3525e|h2h|Dallas Mavericks|None|None",
+     "event_id": "6c0ae9cd6ba4762ef0bcf66156d3525e",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Dallas Mavericks",
+     "away": "Golden State Warriors",
+     "commence_time": "2026-11-19T02:40:00Z",
+     "market": "h2h",
+     "name": "Dallas Mavericks",
+     "point": null,
+     "description": null,
+     "market_prob": 0.6666,
+     "sharp_prob": 0.6697,
+     "prob": 0.6682,
+     "books": 22,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "22 شركة أودز بتعطيه بالمتوسط 67% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 67%"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.6682,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.788,
+        "t": "⁨Dallas Mavericks⁩ ما في منه! 22 شركة أودز بتعطيه بالمتوسط 67% بعد ما شلنا هامشها. يا عمي فوز ⁨Dallas Mavericks⁩ مضمونة، أنا بعطيها 79%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.332,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 33%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.332,
+        "t": "شو بدي بـ«فوز ⁨Dallas Mavericks⁩» وأودزها 1.50؟ أنا رايح على «فوز ⁨Golden State Warriors⁩» بأودز 3.01. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.668,
+        "t": "احتمالها 67%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.668,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 67%، والشركات الأدق 67%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 33%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 0,
+        "best": "logic",
+        "t": "الفلوس مقسومة: 1 من 1 مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Dallas Mavericks⁩ باحتمال 67%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": -0.021
+      }
+     },
+     "rank": 8,
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401910016",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/18 - 8:00 PM EST",
+      "score": null
+     }
+    }
+   ],
+   "coupons": [
+    {
+     "kind": "safe",
+     "legs": [],
+     "prob": null,
+     "fair_odds": null,
+     "result": "none"
+    },
+    {
+     "kind": "medium",
+     "legs": [],
+     "prob": null,
+     "fair_odds": null,
+     "result": "none"
+    },
+    {
+     "kind": "risky",
+     "legs": [
+      {
+       "id": "a3e64105988f48f4c6447c9ca6de0030|h2h|Carlos Alcaraz|None|None",
+       "event_id": "a3e64105988f48f4c6447c9ca6de0030",
+       "sport_key": "tennis_atp_finals",
+       "group": "tennis",
+       "league": "ATP Finals",
+       "home": "Carlos Alcaraz",
+       "away": "Daniil Medvedev",
+       "commence_time": "2026-11-18T13:00:00Z",
+       "market": "h2h",
+       "name": "Carlos Alcaraz",
+       "point": null,
+       "description": null,
+       "market_prob": 0.7619,
+       "sharp_prob": 0.7801,
+       "prob": 0.771,
+       "books": 19,
+       "result": "pending",
+       "score": null,
+       "movement": 0.0189,
+       "model_prob": null,
+       "support": 2,
+       "signals": 2,
+       "reasons": [
+        "19 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها",
+        "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 78%",
+        "احتماله ارتفع 1.9 نقطة خلال آخر 24 ساعة، يعني في فلوس كبيرة دخلت عليه"
+       ],
+       "warnings": [],
+       "eligible": true,
+       "prob_raw": 0.771,
+       "panel": {
+        "p": [
+         {
+          "k": "fan",
+          "v": 1,
+          "c": 0.891,
+          "t": "⁨Carlos Alcaraz⁩ ما في منه! 19 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها. يا عمي فوز ⁨Carlos Alcaraz⁩ مضمونة، أنا بعطيها 89%."
+         },
+         {
+          "k": "pessimist",
+          "v": 0,
+          "c": 0.229,
+          "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 23%، يعني مرة من كل 4، وأنا دايماً بطلع بهديك المرة."
+         },
+         {
+          "k": "dreamer",
+          "v": -1,
+          "c": 0.229,
+          "t": "شو بدي بـ«فوز ⁨Carlos Alcaraz⁩» وأودزها 1.30؟ أنا رايح على «فوز ⁨Daniil Medvedev⁩» بأودز 4.37. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+         },
+         {
+          "k": "careful",
+          "v": 0,
+          "c": 0.771,
+          "t": "احتمالها 77%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+         },
+         {
+          "k": "logic",
+          "v": 1,
+          "c": 0.771,
+          "t": "بالأرقام: 2 من 2 إشارات معه. السوق بيعطيه 76%، والشركات الأدق 78%."
+         }
+        ],
+        "j": [
+         {
+          "k": "evidence",
+          "v": 1,
+          "best": "logic",
+          "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+         },
+         {
+          "k": "risk",
+          "v": 0,
+          "best": "careful",
+          "t": "المخاطرة متوسطة: احتمال الخيبة 23%. المتحفظ والمتشائم معهم حق يحذّروا."
+         },
+         {
+          "k": "market",
+          "v": 1,
+          "best": "logic",
+          "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق وحركة الأودز مع التوقع."
+         }
+        ],
+        "q": {
+         "v": 1,
+         "best": "logic",
+         "t": "الصافي: مع. فوز ⁨Carlos Alcaraz⁩ باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+         "score": 0.758
+        }
+       },
+       "espn": {
+        "s": "tennis",
+        "l": "atp",
+        "id": "187509",
+        "sw": false
+       },
+       "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
+       "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
+       "live": {
+        "state": "pre",
+        "detail": "11/18 - 8:00 AM EST",
+        "score": null
+       }
+      },
+      {
+       "id": "15e35a72dec4007e37710032d620bea6|h2h|Real Madrid|None|None",
+       "event_id": "15e35a72dec4007e37710032d620bea6",
+       "sport_key": "basketball_euroleague",
+       "group": "basketball",
+       "league": "Basketball Euroleague",
+       "home": "Beşiktaş J.K.",
+       "away": "Real Madrid",
+       "commence_time": "2026-11-18T17:00:00Z",
+       "market": "h2h",
+       "name": "Real Madrid",
+       "point": null,
+       "description": null,
+       "market_prob": 0.7043,
+       "sharp_prob": 0.7122,
+       "prob": 0.7083,
+       "books": 21,
+       "result": "pending",
+       "score": null,
+       "movement": 0.0321,
+       "model_prob": null,
+       "support": 2,
+       "signals": 2,
+       "reasons": [
+        "21 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها",
+        "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 71%",
+        "احتماله ارتفع 3.2 نقطة خلال آخر 24 ساعة، يعني في فلوس كبيرة دخلت عليه"
+       ],
+       "warnings": [],
+       "eligible": true,
+       "prob_raw": 0.7083,
+       "panel": {
+        "p": [
+         {
+          "k": "fan",
+          "v": 1,
+          "c": 0.828,
+          "t": "⁨Real Madrid⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها. يا عمي فوز ⁨Real Madrid⁩ مضمونة، أنا بعطيها 83%."
+         },
+         {
+          "k": "pessimist",
+          "v": 0,
+          "c": 0.292,
+          "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 29%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+         },
+         {
+          "k": "dreamer",
+          "v": -1,
+          "c": 0.292,
+          "t": "شو بدي بـ«فوز ⁨Real Madrid⁩» وأودزها 1.41؟ أنا رايح على «فوز ⁨Beşiktaş J.K.⁩» بأودز 3.43. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+         },
+         {
+          "k": "careful",
+          "v": 0,
+          "c": 0.708,
+          "t": "احتمالها 71%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+         },
+         {
+          "k": "logic",
+          "v": 1,
+          "c": 0.708,
+          "t": "بالأرقام: 2 من 2 إشارات معه. السوق بيعطيه 70%، والشركات الأدق 71%."
+         }
+        ],
+        "j": [
+         {
+          "k": "evidence",
+          "v": 1,
+          "best": "logic",
+          "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+         },
+         {
+          "k": "risk",
+          "v": 0,
+          "best": "careful",
+          "t": "المخاطرة متوسطة: احتمال الخيبة 29%. المتحفظ والمتشائم معهم حق يحذّروا."
+         },
+         {
+          "k": "market",
+          "v": 1,
+          "best": "logic",
+          "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق وحركة الأودز مع التوقع."
+         }
+        ],
+        "q": {
+         "v": 1,
+         "best": "logic",
+         "t": "الصافي: مع. فوز ⁨Real Madrid⁩ باحتمال 71%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+         "score": 0.758
+        }
+       }
+      },
+      {
+       "id": "f9ae24215832bbc1703c9836d0c96751|h2h|Houston Rockets|None|None",
+       "event_id": "f9ae24215832bbc1703c9836d0c96751",
+       "sport_key": "basketball_nba",
+       "group": "basketball",
+       "league": "NBA",
+       "home": "Indiana Pacers",
+       "away": "Houston Rockets",
+       "commence_time": "2026-11-19T00:10:00Z",
+       "market": "h2h",
+       "name": "Houston Rockets",
+       "point": null,
+       "description": null,
+       "market_prob": 0.6924,
+       "sharp_prob": 0.7113,
+       "prob": 0.7019,
+       "books": 22,
+       "result": "pending",
+       "score": null,
+       "model_prob": null,
+       "support": 1,
+       "signals": 1,
+       "reasons": [
+        "22 شركة أودز بتعطيه بالمتوسط 69% بعد ما شلنا هامشها",
+        "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 71%"
+       ],
+       "warnings": [],
+       "eligible": true,
+       "prob_raw": 0.7019,
+       "panel": {
+        "p": [
+         {
+          "k": "fan",
+          "v": 1,
+          "c": 0.822,
+          "t": "⁨Houston Rockets⁩ ما في منه! 22 شركة أودز بتعطيه بالمتوسط 69% بعد ما شلنا هامشها. يا عمي فوز ⁨Houston Rockets⁩ مضمونة، أنا بعطيها 82%."
+         },
+         {
+          "k": "pessimist",
+          "v": 0,
+          "c": 0.298,
+          "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 30%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+         },
+         {
+          "k": "dreamer",
+          "v": -1,
+          "c": 0.298,
+          "t": "شو بدي بـ«فوز ⁨Houston Rockets⁩» وأودزها 1.42؟ أنا رايح على «فوز ⁨Indiana Pacers⁩» بأودز 3.35. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+         },
+         {
+          "k": "careful",
+          "v": 0,
+          "c": 0.702,
+          "t": "احتمالها 70%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+         },
+         {
+          "k": "logic",
+          "v": 0,
+          "c": 0.702,
+          "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 69%، والشركات الأدق 71%."
+         }
+        ],
+        "j": [
+         {
+          "k": "evidence",
+          "v": 0,
+          "best": "logic",
+          "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+         },
+         {
+          "k": "risk",
+          "v": 0,
+          "best": "careful",
+          "t": "المخاطرة متوسطة: احتمال الخيبة 30%. المتحفظ والمتشائم معهم حق يحذّروا."
+         },
+         {
+          "k": "market",
+          "v": 1,
+          "best": "logic",
+          "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+         }
+        ],
+        "q": {
+         "v": 0,
+         "best": "logic",
+         "t": "الصافي: بحذر. فوز ⁨Houston Rockets⁩ باحتمال 70%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+         "score": 0.309
+        }
+       },
+       "espn": {
+        "s": "basketball",
+        "l": "nba",
+        "id": "401910008",
+        "sw": false
+       },
+       "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ind.png",
+       "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
+       "live": {
+        "state": "pre",
+        "detail": "11/18 - 7:00 PM EST",
+        "score": null
+       }
+      },
+      {
+       "id": "5896e4ed2ed41ce673e882b6529078b8|h2h|Toronto Raptors|None|None",
+       "event_id": "5896e4ed2ed41ce673e882b6529078b8",
+       "sport_key": "basketball_nba",
+       "group": "basketball",
+       "league": "NBA",
+       "home": "Toronto Raptors",
+       "away": "Washington Wizards",
+       "commence_time": "2026-11-19T00:40:00Z",
+       "market": "h2h",
+       "name": "Toronto Raptors",
+       "point": null,
+       "description": null,
+       "market_prob": 0.6992,
+       "sharp_prob": 0.7187,
+       "prob": 0.7089,
+       "books": 20,
+       "result": "pending",
+       "score": null,
+       "model_prob": null,
+       "support": 1,
+       "signals": 1,
+       "reasons": [
+        "20 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها",
+        "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 72%"
+       ],
+       "warnings": [],
+       "eligible": true,
+       "prob_raw": 0.7089,
+       "panel": {
+        "p": [
+         {
+          "k": "fan",
+          "v": 1,
+          "c": 0.829,
+          "t": "⁨Toronto Raptors⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 70% بعد ما شلنا هامشها. يا عمي فوز ⁨Toronto Raptors⁩ مضمونة، أنا بعطيها 83%."
+         },
+         {
+          "k": "pessimist",
+          "v": 0,
+          "c": 0.291,
+          "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 29%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+         },
+         {
+          "k": "dreamer",
+          "v": -1,
+          "c": 0.291,
+          "t": "شو بدي بـ«فوز ⁨Toronto Raptors⁩» وأودزها 1.41؟ أنا رايح على «فوز ⁨Washington Wizards⁩» بأودز 3.44. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+         },
+         {
+          "k": "careful",
+          "v": 0,
+          "c": 0.709,
+          "t": "احتمالها 71%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+         },
+         {
+          "k": "logic",
+          "v": 0,
+          "c": 0.709,
+          "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 70%، والشركات الأدق 72%."
+         }
+        ],
+        "j": [
+         {
+          "k": "evidence",
+          "v": 0,
+          "best": "logic",
+          "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+         },
+         {
+          "k": "risk",
+          "v": 0,
+          "best": "careful",
+          "t": "المخاطرة متوسطة: احتمال الخيبة 29%. المتحفظ والمتشائم معهم حق يحذّروا."
+         },
+         {
+          "k": "market",
+          "v": 1,
+          "best": "logic",
+          "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+         }
+        ],
+        "q": {
+         "v": 0,
+         "best": "logic",
+         "t": "الصافي: بحذر. فوز ⁨Toronto Raptors⁩ باحتمال 71%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+         "score": 0.309
+        }
+       },
+       "espn": {
+        "s": "basketball",
+        "l": "nba",
+        "id": "401910012",
+        "sw": false
+       },
+       "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png",
+       "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png",
+       "live": {
+        "state": "pre",
+        "detail": "11/18 - 7:30 PM EST",
+        "score": null
+       }
+      }
+     ],
+     "prob": 0.2717,
+     "fair_odds": 3.68,
+     "result": "pending"
     }
    ]
   }
