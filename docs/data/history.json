@@ -14237,8 +14237,8 @@
      "sharp_prob": 0.7319,
      "prob": 0.7326,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "118-114",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -14319,9 +14319,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lal.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png",
      "live": {
-      "state": "in",
-      "detail": "22.4 - 1st",
-      "score": "30-34"
+      "state": "post",
+      "detail": "Final/OT",
+      "score": "118-114"
      }
     },
     {
@@ -14527,8 +14527,8 @@
      "sharp_prob": 0.6624,
      "prob": 0.6618,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "107-132",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -14609,9 +14609,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lac.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
      "live": {
-      "state": "in",
-      "detail": "Halftime",
-      "score": "62-58"
+      "state": "post",
+      "detail": "Final",
+      "score": "107-132"
      }
     }
    ],
@@ -14839,8 +14839,8 @@
        "sharp_prob": 0.7319,
        "prob": 0.7326,
        "books": 23,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "118-114",
        "model_prob": null,
        "support": 1,
        "signals": 1,
@@ -14920,9 +14920,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lal.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png",
        "live": {
-        "state": "in",
-        "detail": "22.4 - 1st",
-        "score": "30-34"
+        "state": "post",
+        "detail": "Final/OT",
+        "score": "118-114"
        }
       }
      ],
