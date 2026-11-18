@@ -1,7 +1,7 @@
 {
  "date": "2026-11-18",
  "generated_at": "2026-11-18T04:40:50Z",
- "updated_at": "2026-11-18T14:29:44Z",
+ "updated_at": "2026-11-18T22:16:45Z",
  "demo": false,
  "coupons": [
   {
@@ -38,8 +38,8 @@
      "sharp_prob": 0.7801,
      "prob": 0.771,
      "books": 19,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "2-0",
      "movement": 0.0189,
      "model_prob": null,
      "support": 2,
@@ -121,9 +121,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
      "live": {
-      "state": "pre",
-      "detail": "11/18 - 8:00 AM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "2-0"
      }
     },
     {
@@ -552,8 +552,8 @@
    "sharp_prob": 0.7801,
    "prob": 0.771,
    "books": 19,
-   "result": "pending",
-   "score": null,
+   "result": "hit",
+   "score": "2-0",
    "movement": 0.0189,
    "model_prob": null,
    "support": 2,
@@ -636,9 +636,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
    "live": {
-    "state": "pre",
-    "detail": "11/18 - 8:00 AM EST",
-    "score": null
+    "state": "post",
+    "detail": "Final",
+    "score": "2-0"
    }
   },
   {

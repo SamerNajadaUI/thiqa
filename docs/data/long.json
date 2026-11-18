@@ -570,7 +570,7 @@
     "sharp_prob": 0.6722,
     "prob": 0.6551,
     "books": 17,
-    "result": "pending",
+    "result": "void",
     "score": null,
     "crowd_prob": 0.675,
     "crowd_volume": 3185,
@@ -652,7 +652,7 @@
   "prob": 0.121134,
   "fair_odds": 8.3,
   "reached": false,
-  "result": "pending"
+  "result": "won"
  },
  "monthly": {
   "kind": "monthly",
