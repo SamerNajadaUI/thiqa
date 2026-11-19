@@ -1,7 +1,7 @@
 {
  "date": "2026-11-19",
- "generated_at": "2026-11-19T03:48:02Z",
- "updated_at": "2026-11-19T03:48:02Z",
+ "generated_at": "2026-11-19T11:29:40Z",
+ "updated_at": "2026-11-19T11:29:40Z",
  "demo": false,
  "coupons": [
   {
@@ -431,8 +431,8 @@
   }
  ],
  "stats": {
-  "events": 18,
-  "legs": 145,
+  "events": 57,
+  "legs": 531,
   "deep_events": 0,
   "markets": [
    "double_chance",
@@ -440,7 +440,7 @@
    "spreads",
    "totals"
   ],
-  "analyzed": 0,
+  "analyzed": 39,
   "crowd": 0
  }
 }

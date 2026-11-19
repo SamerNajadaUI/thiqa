@@ -15034,8 +15034,8 @@
      "sharp_prob": 0.6926,
      "prob": 0.6929,
      "books": 22,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "107-128",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -15116,9 +15116,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phx.png",
      "live": {
-      "state": "in",
-      "detail": "6:48 - 2nd",
-      "score": "45-50"
+      "state": "post",
+      "detail": "Final",
+      "score": "107-128"
      }
     },
     {
