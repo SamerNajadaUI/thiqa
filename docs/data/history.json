@@ -16054,9 +16054,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
      "live": {
-      "state": "pre",
-      "detail": "11/19 - 8:00 AM EST",
-      "score": null
+      "state": "in",
+      "detail": "1st",
+      "score": "0-0"
      }
     }
    ],
