@@ -308,6 +308,19 @@
       "t": "الصافي: مع. فوز ⁨Carlos Alcaraz⁩ باحتمال 84%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
       "score": 0.751
      }
+    },
+    "espn": {
+     "s": "tennis",
+     "l": "atp",
+     "id": "187510",
+     "sw": false
+    },
+    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
+    "live": {
+     "state": "in",
+     "detail": "1st",
+     "score": "1-0"
     }
    },
    {
