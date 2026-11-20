@@ -233,8 +233,8 @@
     "sharp_prob": 0.8566,
     "prob": 0.8437,
     "books": 20,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-0",
     "movement": 0.0142,
     "model_prob": null,
     "support": 2,
@@ -318,9 +318,9 @@
     "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
     "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
     "live": {
-     "state": "in",
-     "detail": "1st",
-     "score": "1-0"
+     "state": "post",
+     "detail": "Final",
+     "score": "2-0"
     }
    },
    {
@@ -340,8 +340,8 @@
     "sharp_prob": 0.6815,
     "prob": 0.6722,
     "books": 20,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "2-0",
     "movement": -0.0001,
     "model_prob": null,
     "support": 1,
@@ -414,6 +414,19 @@
       "t": "الصافي: بحذر. فوز ⁨Daniil Medvedev⁩ باحتمال 67%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
       "score": -0.032
      }
+    },
+    "espn": {
+     "s": "tennis",
+     "l": "atp",
+     "id": "187513",
+     "sw": false
+    },
+    "home_logo": "https://a.espncdn.com/i/teamlogos/countries/500/rus.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
+    "live": {
+     "state": "post",
+     "detail": "Final",
+     "score": "2-0"
     }
    },
    {
