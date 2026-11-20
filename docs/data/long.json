@@ -22,8 +22,8 @@
     "sharp_prob": 0.7799,
     "prob": 0.7661,
     "books": 25,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "114-124",
     "model_prob": null,
     "support": 1,
     "signals": 1,
@@ -96,8 +96,19 @@
       "score": 0.268
      }
     },
-    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/mil.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/por.png"
+    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png",
+    "espn": {
+     "s": "basketball",
+     "l": "nba",
+     "id": "401910020",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "Final",
+     "score": "114-124"
+    }
    },
    {
     "id": "20fa5e2d73cec494c113790161a89aec|h2h|San Antonio Spurs|None|None",
@@ -116,8 +127,8 @@
     "sharp_prob": 0.8923,
     "prob": 0.8768,
     "books": 25,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "124-112",
     "movement": -0.0058,
     "model_prob": null,
     "support": 1,
@@ -191,8 +202,19 @@
       "score": 0.345
      }
     },
-    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/sa.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/lac.png"
+    "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
+    "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lac.png",
+    "espn": {
+     "s": "basketball",
+     "l": "nba",
+     "id": "401910022",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "Final",
+     "score": "124-112"
+    }
    },
    {
     "id": "1cd25143408ea45a393e8267ccd3afeb|h2h|Carlos Alcaraz|None|None",
