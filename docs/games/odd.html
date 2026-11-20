@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>من المختلف؟ · تعليلة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#F6F3EE">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="تعليلة">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800&family=Readex+Pro:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../ds/ds.css">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="team.css">
+</head>
+<body>
+<main class="tw" id="app" aria-live="polite"></main>
+<div class="t-dock" id="dock" hidden></div>
+<script src="../shell.js"></script>
+<script src="team.js"></script>
+<script>
+// من المختلف؟ 4 كلمات، وحدة منهن مش من نفس العيلة. كل فريق بدوره، والصح بياخذ 100.
+const { esc, shuffle, store } = TeamKit;
+TEAM({
+  id: "odd", title: "من المختلف؟", kind: "turn",
+  desc: "4 كلمات، ثلاث منهن من نفس العيلة ووحدة غريبة. كل فريق بدوره، اللي بيلقط الغريب بياخذ 100.",
+  rounds: [4, 6, 8],
+  load: async () => { const r = await fetch("pq/riddles.json"); if (!r.ok) throw 0; const qs = (await r.json()).qs;
+    return qs.filter((q) => q[1] === "مين الغريب بينهم؟"); },
+  round(list, rng) {
+    const seen = new Set(store.get("odd-seen", []));
+    let pool = list.filter((q) => !seen.has(q[2].join("|")));
+    if (pool.length < 5) { store.set("odd-seen", []); pool = list; }
+    const q = pool[Math.floor(rng() * pool.length)];
+    store.set("odd-seen", [...seen, q[2].join("|")].slice(-300));
+    const options = shuffle(q[2], rng), right = options.indexOf(q[2][0]);
+    return {
+      kind: "مين الغريب؟", prompt: "وحدة من هدول مش من نفس العيلة", input: "choice", options,
+      grade(i) {
+        const ok = i === right;
+        return { gain: ok ? 100 : 0, full: ok, note: ok ? "" : `الغريب: ${esc(q[2][0])}`,
+          html: `<div class="opts">${options.map((o, k) => `<div class="opt ${k === right ? "ok" : k === i ? "bad" : "dim"}">${esc(o)}</div>`).join("")}</div>` };
+      },
+    };
+  },
+});
+
+</script>
+</body>
+</html>

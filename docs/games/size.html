@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>الحجم الحقيقي · تعليلة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#F6F3EE">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="تعليلة">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800&family=Readex+Pro:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../ds/ds.css">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="team.css">
+</head>
+<body>
+<main class="tw" id="app" aria-live="polite"></main>
+<div class="t-dock" id="dock" hidden></div>
+<script src="../shell.js"></script>
+<script src="team.js"></script>
+<script>
+// الحجم الحقيقي: «قديش ضعف؟» بين دولتين بالمساحة أو بعدد السكان. الأقرب بالنسبة بياخذ النقاط.
+const { esc, fmtN, store } = TeamKit;
+TEAM({
+  id: "size", title: "الحجم الحقيقي",
+  desc: "دولتين، وسؤال: قديش وحدة أكبر من الثانية؟ بالمساحة أو بعدد السكان. الأقرب بياخذ 100، واللي بيجيبها بالزبط بياخذ 50 زيادة.",
+  howto: "اكتبوا الرقم: مثلاً 12 يعني أكبر منها بـ12 مرة. الكسور مسموحة (2.5).",
+  rounds: [4, 6, 8],
+  load: async () => { const r = await fetch("data/size.json"); if (!r.ok) throw 0; return (await r.json()).c; },
+  round(C, rng, r, N) {
+    const top = C.slice(0, 120), JO = C.find((c) => c[0] === "الأردن");
+    const seen = new Set(store.get("size-seen", []));
+    for (let tries = 0; tries < 400; tries++) {
+      const by = rng() < 0.55 ? "area" : "pop", k = by === "area" ? 1 : 2;
+      let a = top[Math.floor(rng() * top.length)], b = rng() < 0.4 && JO ? JO : top[Math.floor(rng() * top.length)];
+      if (a === b) continue;
+      if (a[k] < b[k]) [a, b] = [b, a];
+      const ratio = a[k] / b[k];
+      const lim = r / N <= 0.5 ? [1.5, 15] : [2, 60];
+      const key = a[0] + "|" + b[0] + "|" + by;
+      if (ratio < lim[0] || ratio > lim[1] || seen.has(key)) continue;
+      store.set("size-seen", [...seen, key].slice(-80));
+      const ans = Math.round(ratio * 10) / 10;
+      const what = by === "area" ? "بالمساحة" : "بعدد السكان";
+      const fmtV = (v) => (by === "area" ? `${fmtN(Math.round(v))} كم مربع` : v >= 1e6 ? `${fmtN(Math.round(v / 1e5) / 10)} مليون` : `${fmtN(Math.round(v / 1e3))} ألف`);
+      return {
+        kind: what, prompt: `<b>${esc(a[0])}</b> أكبر من <b>${esc(b[0])}</b> ${what}... قديش مرة؟`, input: "number", dec: true, unit: "مرة",
+        dist: (v) => (v > 0 ? (Math.abs(Math.log(v / ans)) < 0.03 ? 0 : Math.abs(Math.log(v / ans))) : Infinity),
+        show: (v) => `×${fmtN(v)}`, diffText: (d) => (d === 0 ? "بالزبط تقريباً!" : isFinite(d) ? `بفرق ${Math.round((Math.exp(d) - 1) * 100)}%` : ""),
+        truth: `×${fmtN(ans)}`, truthSub: `${esc(a[0])}: ${fmtV(a[k])} · ${esc(b[0])}: ${fmtV(b[k])}`,
+      };
+    }
+    store.set("size-seen", []);
+    return this.round(C, rng, r, N);
+  },
+});
+
+</script>
+</body>
+</html>

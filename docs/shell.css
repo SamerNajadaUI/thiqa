@@ -23,63 +23,42 @@ body { transition: background-color .25s, color .25s; }
 .shell-title { margin: 2px 0 0; font-family: var(--display); font-weight: 400; font-size: clamp(28px, 8vw, 36px); line-height: 1.15; }
 .shell-sub { margin: 2px 0 0; color: var(--muted); font-size: 13.5px; }
 
-/* شبكة الألعاب: عمودين، وبالشاشة بيبين صفين (4 ألعاب) والباقي بالسكرول */
-.games-grid { --card-h: clamp(212px, calc((100svh - 268px) / 2), 300px);
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
-/* كرت اللعبة: راس بلون واحد من الأربعة (لمبة، جمر، نعنع، توت) وأيقونة خطّية، وتحته الاسم بـLalezar */
-.gcard { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl);
-  position: relative; display: flex; flex-direction: column; min-width: 0; overflow: hidden;
-  border: 0; border-radius: 24px; background: var(--card); color: var(--ink); text-decoration: none; text-align: right;
-  box-shadow: var(--shadow); padding: 0; font: inherit; cursor: pointer; width: 100%;
-  transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s; -webkit-user-select: none; user-select: none; }
-.gcard:active { transform: scale(.97); box-shadow: var(--shadow-press); }
-@media (hover: hover) { .gcard:hover { transform: translateY(-3px); } }
-.gcard:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
-/* الرسمة: ستايل ستيكر بخطوط ليل عريضة وأشخاص بدون ملامح، وخلفيتها بلون اللعبة */
-.gcard .art { position: relative; flex: none; aspect-ratio: 4 / 5; overflow: hidden; background: var(--g); color: var(--g-on); }
-.gcard .art .pic { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; display: block; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
-@media (hover: hover) { .gcard:hover .art .pic { transform: scale(1.04); } }
-.gcard .flag { position: absolute; z-index: 2; top: 10px; right: 10px; box-shadow: 0 2px 0 rgb(22 17 58 / .25); background: var(--c-layl); color: var(--c-waraq); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
-.gcard .body { flex: none; padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 3px; }
-.gcard b { font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1.15; }
-.gcard small { color: var(--muted); font-size: 12px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.9em; }
-.gcard .tags { display: flex; gap: 4px; margin-top: 5px; flex-wrap: nowrap; overflow: hidden; }
-.gcard .tags span { flex: none; font-size: 10.5px; font-weight: 600; color: var(--muted); background: var(--soft); border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
-.g-hasm { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
-.g-sahra { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
-.g-points { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
-.g-tamaa { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
-.g-mafia { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
-.g-who { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
-.g-numbers { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
-.g-career { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
-.g-qisma { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
-.g-barra { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
-.g-speed { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
-.g-catch { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
-.g-anagram { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
-.g-simon { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
-.g-kworld { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
-.g-karab { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
-.g-kucl { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
-.g-kepl { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
-.g-kguess { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
-.g-kemoji { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
-.g-kkits { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
-.g-khair { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
-.g-duel { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
-.g-ball { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
-.g-hotcold { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
-.g-dots { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
-.g-connect { --g: var(--c-lamba); --g-deep: var(--c-lamba-deep); --g-on: var(--c-layl); }
-.g-auction { --g: var(--c-jamr); --g-deep: var(--c-jamr-deep); --g-on: var(--c-layl); }
-.g-wheel { --g: var(--c-nanaa); --g-deep: var(--c-nanaa-deep); --g-on: var(--c-layl); }
-.g-pictionary { --g: var(--c-toot); --g-deep: var(--c-toot-deep); --g-on: var(--c-white); }
+/* ===== v2: شبكة الألعاب: مربعات نظيفة بأيقونة 3D (4 بالصف بالموبايل) ===== */
+.games-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 12px; margin: 0; padding: 0; list-style: none; }
+@media (max-width: 340px) { .games-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 620px) { .games-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.gcard { --g: var(--c-lamba); position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0;
+  border: 0; background: none; color: var(--ink); text-decoration: none; text-align: center; padding: 0; font: inherit; cursor: pointer; width: 100%;
+  -webkit-user-select: none; user-select: none; }
+.gcard .art { position: relative; width: 100%; aspect-ratio: 1; border-radius: var(--r-tile, 22px); overflow: hidden; display: grid; place-items: center;
+  background: radial-gradient(120% 90% at 50% 15%, color-mix(in srgb, var(--g) 10%, var(--c-white)), color-mix(in srgb, var(--g) 26%, var(--c-waraq-2)));
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--g) 22%, transparent); transition: transform .18s cubic-bezier(.34,1.56,.64,1); }
+:root[data-theme="dark"] .gcard .art { background: radial-gradient(120% 90% at 50% 15%, color-mix(in srgb, var(--g) 22%, var(--c-layl-3)), color-mix(in srgb, var(--g) 12%, var(--c-layl-2))); }
+.gcard .art .pic { width: 82%; height: 82%; object-fit: contain; display: block; filter: drop-shadow(0 6px 8px rgb(17 17 17 / .12)); }
+.gcard:active .art { transform: scale(.94); }
+@media (hover: hover) { .gcard:hover .art { transform: translateY(-3px); } }
+.gcard:focus-visible { outline: none; } .gcard:focus-visible .art { outline: 3px solid var(--focus); outline-offset: 3px; }
+.gcard b { font: 700 15px/1.3 var(--font); color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.gcard small, .gcard .tags { display: none; }
+/* شارة «جديد» فوق النص، والقفل دائرة بيضا بالزاوية */
+.gcard .flag { position: absolute; z-index: 2; top: -9px; left: 50%; transform: translateX(-50%); background: var(--c-layl); color: var(--c-waraq); font-size: 11.5px; font-weight: 700; padding: 3px 11px; border-radius: 999px; white-space: nowrap; }
+.gcard .lock { position: absolute; z-index: 3; top: 8px; left: 8px; width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; background: var(--c-white); color: var(--c-layl); box-shadow: var(--shadow-sm); }
+.gcard .lock svg { width: 17px; height: 17px; }
+.gcard.locked .art .pic { filter: grayscale(1) opacity(.45); }
+.gcard.locked b { color: var(--muted); }
+/* لون كل لعبة (للخلفية الفاتحة ورا الأيقونة) */
+.g-hasm, .g-tamaa, .g-catch, .g-auction, .g-kworld, .g-daily { --g: var(--c-lamba); }
+.g-sahra, .g-points, .g-speed, .g-numbers, .g-kkits, .g-duel, .g-odd { --g: var(--c-jamr); }
+.g-mafia, .g-who, .g-kguess, .g-kucl, .g-simon, .g-connect { --g: var(--c-toot); }
+.g-karab, .g-ball, .g-dots, .g-map, .g-order { --g: var(--c-nanaa); }
+.g-kepl, .g-pictionary, .g-barra, .g-count { --g: var(--c-violet); }
+.g-qisma, .g-kemoji, .g-wheel { --g: var(--c-pink); }
+.g-career, .g-anagram, .g-khair { --g: var(--c-orange); }
+.g-hotcold, .g-size { --g: var(--c-sky); }
 /* أقسام الألعاب في الرئيسية */
 .gsec { display: flex; flex-direction: column; gap: 10px; }
 .gsec + .gsec { margin-top: 14px; }
 .gsec-title { margin: 0 2px; font-size: 16px; font-weight: 700; color: var(--ink); }
-@media (max-width: 350px) { .gcard b { font-size: 18px; } }
 @media (prefers-reduced-motion: no-preference) {
   .games-grid > * { animation: gin .45s cubic-bezier(.2,.9,.3,1.1) both; }
   .games-grid > :nth-child(2) { animation-delay: .04s; } .games-grid > :nth-child(3) { animation-delay: .08s; }
@@ -91,13 +70,14 @@ body { transition: background-color .25s, color .25s; }
 /* ===== شريط اللعبة الموحّد (كل صفحات الألعاب) ===== */
 .gbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 50px; }
 .gbar .gt { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--ink); text-decoration: none; }
-.gbar .gt .chip { flex: none; width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; color: var(--g-on, var(--c-layl));
-  background: var(--g, var(--c-lamba)); box-shadow: 0 3px 0 var(--g-deep, var(--c-lamba-deep)); }
+.gbar .gt .chip { flex: none; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; color: var(--g-on, var(--c-layl));
+  background: color-mix(in srgb, var(--g, var(--c-lamba)) 18%, var(--c-white)); overflow: hidden; }
+.gbar .gt .chip img { width: 86%; height: 86%; object-fit: contain; }
 .gbar .gt .chip svg { width: 22px; height: 22px; }
 .gbar .gt b { font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gbar .gs { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.theme-toggle { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--card); color: var(--ink); display: grid; place-items: center; padding: 0; cursor: pointer; box-shadow: var(--shadow-sm); }
-.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle { flex: none; width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); display: grid; place-items: center; padding: 0; cursor: pointer; }
+.theme-toggle svg { width: 21px; height: 21px; }
 .theme-toggle:active { transform: scale(.94); }
 .gbar .gback { display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; border: 0; background: var(--card); color: var(--ink);
   font: 600 13px/1 var(--font); text-decoration: none; box-shadow: var(--shadow-sm); cursor: pointer; }
@@ -132,3 +112,37 @@ input, textarea { -webkit-user-select: text; user-select: text; }
   background: var(--ink); color: var(--bg); font: 600 13.5px/1 var(--font); padding: 11px 16px; border-radius: 999px; box-shadow: 0 10px 30px -10px rgb(0 0 0 / .45); transition: opacity .2s, transform .2s; }
 .ui-toast.on { opacity: 1; transform: translate(-50%, 0); }
 .stage .ui-toast { background: #F3F5FF; color: #151A4A; }
+
+/* ===== v2: مكوّنات مشتركة (كل الصفحات) ===== */
+/* زر دائري صغير (رجوع، مظهر، لغة) */
+.icon-btn { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; flex: none; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; padding: 0; text-decoration: none; }
+.icon-btn svg { width: 24px; height: 24px; }
+.icon-btn.soft { border: 0; background: var(--soft); }
+.ink-card .icon-btn, .icon-btn.on-ink { background: transparent; border-color: var(--c-layl-line); color: var(--c-waraq); }
+/* عنوان قسم بخط ملون جنبه */
+.sec-head { display: flex; flex-direction: column; gap: 2px; margin: 8px 2px 0; }
+.sec-head h2 { margin: 0; display: flex; align-items: center; gap: 12px; font: 800 clamp(26px, 8vw, 34px)/1.15 var(--display); }
+.sec-head h2::before { content: ""; width: 6px; height: .9em; border-radius: 3px; background: var(--bar, var(--c-toot)); flex: none; }
+.sec-head h3 { margin: 0; display: flex; align-items: center; gap: 10px; font: 700 20px/1.2 var(--display); color: var(--muted); }
+.sec-head h3::before { content: ""; width: 4px; height: .95em; border-radius: 2px; background: var(--bar, var(--c-toot)); flex: none; }
+.sec-head small { color: var(--muted); font-size: 15px; }
+/* شارة تحت النص (لعبة مجانية، BETA) */
+.under { display: inline-block; padding-bottom: 4px; border-bottom: 3px solid var(--u, var(--c-nanaa)); font-weight: 700; }
+/* شارة سودا صغيرة (جديد، محدّث) */
+.chip-ink { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 999px; background: var(--c-layl); color: var(--c-waraq); font-size: 12.5px; font-weight: 700; line-height: 1.2; }
+
+
+/* شريط الأقسام اللاصق بصفحة الألعاب */
+.gtabs { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 6px; margin-inline: -16px; padding: 6px 16px 0; background: var(--bg); border-bottom: 1px solid var(--line); }
+.gt-search { flex: none; width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--ink); display: grid; place-items: center; padding: 0; cursor: pointer; }
+.gt-search svg { width: 24px; height: 24px; }
+.gt-row { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; flex: 1; min-width: 0; }
+.gt-row::-webkit-scrollbar { display: none; }
+.gt-row button { position: relative; flex: none; border: 0; background: none; padding: 12px 12px 16px; font: 700 17px/1 var(--font); color: var(--muted); cursor: pointer; white-space: nowrap; }
+.gt-row button[aria-selected="true"] { color: var(--ink); }
+.gt-row button[aria-selected="true"]::after { content: ""; position: absolute; inset-inline: 10px; bottom: 0; height: 5px; border-radius: 5px 5px 0 0; background: var(--ink); }
+.gt-find { padding-top: 10px; }
+.gt-find .input { width: 100%; min-height: 50px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); font: 500 16px var(--font); }
+#gres .gsec { margin-top: 26px; gap: 16px; }
+body:has(.t-dock:not([hidden])) .ui-toast { bottom: calc(100px + env(safe-area-inset-bottom)); }
+.shellbar .brand small.beta { display: inline-block; font: 700 11px/1 var(--font); letter-spacing: .22em; color: var(--muted); padding-bottom: 3px; border-bottom: 2.5px solid var(--c-lamba); margin-top: 3px; }

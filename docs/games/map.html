@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>وين على الخريطة؟ · تعليلة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#F6F3EE">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="تعليلة">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800&family=Readex+Pro:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../ds/ds.css">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="team.css">
+</head>
+<body>
+<main class="tw" id="app" aria-live="polite"></main>
+<div class="t-dock" id="dock" hidden></div>
+<script src="../shell.js"></script>
+<script src="team.js"></script>
+<script>
+// وين على الخريطة؟ اسم دولة، وكل فريق بيحط دبوس. المسافة لأقرب حد من حدود الدولة (صفر إذا جوّاها).
+const { esc, shuffle, fmtN, store } = TeamKit;
+let MAP = null, PATHS = "";
+const ARAB = new Set(["الأردن", "فلسطين", "سوريا", "لبنان", "العراق", "السعودية", "الكويت", "قطر", "البحرين", "الإمارات العربية المتحدة", "عمان", "اليمن", "مصر", "السودان", "ليبيا", "تونس", "الجزائر", "المغرب", "موريتانيا", "الصومال", "جيبوتي"]);
+const R2D = 180 / Math.PI;
+const toLL = (x, y) => [((x - MAP.t[0]) / MAP.s) * R2D, ((MAP.t[1] - y) / MAP.s) * R2D];
+function km(a, b) { const r = Math.PI / 180, dLat = (b[1] - a[1]) * r, dLon = (b[0] - a[0]) * r;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * r) * Math.cos(b[1] * r) * Math.sin(dLon / 2) ** 2; return 12742 * Math.asin(Math.sqrt(h)); }
+function svgMap(id, vb, extra = "") { return `<svg id="${id}" viewBox="${vb.join(" ")}" xmlns="http://www.w3.org/2000/svg">${PATHS}${extra}</svg>`; }
+const PIN = (x, y, c, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0c-6-7-10-11-10-16a10 10 0 0 1 20 0c0 5-4 9-10 16z" style="fill:${c}" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cy="-16" r="3.6" style="fill:#fff"/></g>`;
+const VB0 = [40, -135, 920, 690];
+
+TeamInputs.map = function (R, el, set) {
+  let vb = VB0.slice(), pin = null, drag = null;
+  el.innerHTML = `<div class="map-wrap" id="mw">${svgMap("msv", vb, '<g id="pinl"></g>')}<div class="map-zoom"><button type="button" id="zin" aria-label="كبّر">+</button><button type="button" id="zout" aria-label="صغّر">−</button></div></div>`;
+  const svg = document.getElementById("msv");
+  const apply = () => svg.setAttribute("viewBox", vb.join(" "));
+  const pt = (e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
+  const zoom = (f, cx = vb[0] + vb[2] / 2, cy = vb[1] + vb[3] / 2) => {
+    const w = Math.max(60, Math.min(1000, vb[2] * f)), h = w * 0.75;
+    vb = [cx - (cx - vb[0]) * (w / vb[2]), cy - (cy - vb[1]) * (h / vb[3]), w, h];
+    vb[0] = Math.max(-50, Math.min(1050 - w, vb[0])); vb[1] = Math.max(-140, Math.min(640 - h, vb[1])); apply(); drawPin();
+  };
+  const drawPin = () => { document.getElementById("pinl").innerHTML = pin ? PIN(pin.x, pin.y, "var(--tc)", vb[2] / 1000 * 2) : ""; };
+  document.getElementById("zin").onclick = () => zoom(0.55);
+  document.getElementById("zout").onclick = () => zoom(1.8);
+  svg.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, y: e.clientY, vb: vb.slice(), moved: false }; svg.setPointerCapture(e.pointerId); });
+  svg.addEventListener("pointermove", (e) => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.hypot(dx, dy) > 6) drag.moved = true; if (!drag.moved) return;
+    const k = vb[2] / svg.getBoundingClientRect().width; vb[0] = drag.vb[0] - dx * k; vb[1] = drag.vb[1] - dy * k;
+    vb[0] = Math.max(-50, Math.min(1050 - vb[2], vb[0])); vb[1] = Math.max(-140, Math.min(640 - vb[3], vb[1])); apply(); });
+  svg.addEventListener("pointerup", (e) => { const d = drag; drag = null; if (d && !d.moved) { const p = pt(e); pin = { x: +p.x.toFixed(1), y: +p.y.toFixed(1) }; drawPin(); set(pin); } });
+  return { value: (v) => {
+    if (!v) return null;
+    const target = svg.querySelector(`path[data-i="${R.idx}"]`);
+    let inside = false; try { const q = svg.createSVGPoint(); q.x = v.x; q.y = v.y; inside = target.isPointInFill(q); } catch {}
+    let best = Infinity;
+    if (!inside) { const L = target.getTotalLength(), n = 400; const me = toLL(v.x, v.y);
+      for (let i = 0; i <= n; i++) { const p = target.getPointAtLength((L * i) / n); best = Math.min(best, km(me, toLL(p.x, p.y))); } }
+    return { x: v.x, y: v.y, km: inside ? 0 : Math.round(best) };
+  } };
+};
+
+TEAM({
+  id: "map", title: "وين على الخريطة؟",
+  desc: "اسم دولة بيطلع، وكل فريق بيحط الدبوس مكانها. الأقرب بياخذ 100، واللي بيحطه جوّا الدولة بياخذ 50 زيادة.",
+  howto: "كبّروا بـ+ وحرّكوا الخريطة بإصبعكم، وبعدين اضغطوا مكان الدولة وثبّتوا.",
+  rounds: [4, 6, 8],
+  load: async () => { const r = await fetch("data/map.json"); if (!r.ok) throw 0; MAP = await r.json();
+    PATHS = MAP.countries.map((c, i) => `<path data-i="${i}" d="${c.d}"/>`).join(""); return MAP; },
+  round(d, rng, r, N) {
+    const seen = new Set(store.get("map-seen", []));
+    const p = r / N;
+    const ok = (c) => c.ar && !seen.has(c.ar) && (p <= 0.34 ? (c.area > 900000 || ARAB.has(c.ar)) : p <= 0.67 ? c.area > 180000 || ARAB.has(c.ar) : c.area > 25000);
+    let pool = d.countries.map((c, i) => [c, i]).filter(([c]) => ok(c));
+    if (!pool.length) { store.set("map-seen", []); pool = d.countries.map((c, i) => [c, i]).filter(([c]) => c.ar && c.area > 25000); }
+    const [c, idx] = pool[Math.floor(rng() * pool.length)];
+    store.set("map-seen", [...seen, c.ar].slice(-120));
+    return {
+      kind: "دولة", prompt: `وين <b>${esc(c.ar)}</b>؟`, input: "map", idx,
+      dist: (a) => a.km, show: (a) => (a.km === 0 ? "جوّا الدولة" : `${fmtN(a.km)} كم`),
+      diffText: (k) => (k === 0 ? "بالزبط!" : isFinite(k) ? "عن أقرب حد" : ""),
+      truth: esc(c.ar), truthSub: ARAB.has(c.ar) ? "دولة عربية" : "",
+      revealHTML: (ans, TC) => {
+        const pts = ans.map((a, t) => (a ? PIN(a.x, a.y, TC[t], 1) : "")).join("");
+        return `<div class="map-wrap">${svgMap("rsv", VB0, `<g id="rpins">${pts}</g>`)}</div>`;
+      },
+      afterReveal: (ans) => {
+        const svg = document.getElementById("rsv"); if (!svg) return;
+        const tp = svg.querySelector(`path[data-i="${idx}"]`); tp.classList.add("hit");
+        const b = tp.getBBox(); let x0 = b.x, y0 = b.y, x1 = b.x + b.width, y1 = b.y + b.height;
+        ans.forEach((a) => { if (a) { x0 = Math.min(x0, a.x); x1 = Math.max(x1, a.x); y0 = Math.min(y0, a.y - 20); y1 = Math.max(y1, a.y); } });
+        let w = Math.max(80, (x1 - x0) * 1.3), h = Math.max(w * 0.75, (y1 - y0) * 1.3); w = h / 0.75;
+        const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+        svg.setAttribute("viewBox", [cx - w / 2, cy - h / 2, w, h].join(" "));
+        svg.querySelectorAll("#rpins g").forEach((g) => g.setAttribute("transform", g.getAttribute("transform").replace(/scale\([^)]*\)/, `scale(${(w / 1000) * 2.4})`)));
+      },
+    };
+  },
+});
+
+</script>
+</body>
+</html>

@@ -5,7 +5,7 @@ const D = path.join(__dirname, '../../docs');
 const css = fs.readFileSync(D + '/ds/ds.css', 'utf8');
 const palBlock = css.slice(css.indexOf(':root {'), css.indexOf('}', css.indexOf(':root {')));
 const PAL = {}; for (const m of palBlock.matchAll(/--c-([\w-]+):\s*(#[0-9A-Fa-f]{6})/g)) PAL[m[1]] = m[2].toUpperCase();
-assert.equal(Object.keys(PAL).length, 27, 'الباليت 27 لون');
+assert.equal(Object.keys(PAL).length, 31, 'الباليت 31 لون');
 const allowed = new Set(Object.values(PAL));
 let bad = [];
 for (const f of ['ds/ds.css', 'ds/ui.css', 'ds/index.html', 'index.html', 'login.html', 'rewards.html', 'settings.html', 'app/ui.js']) {

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>تحدي اليوم · تعليلة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#F6F3EE">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="تعليلة">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800&family=Readex+Pro:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../ds/ds.css">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="team.css">
+<link rel="stylesheet" href="../ds/ui.css">
+</head>
+<body>
+<main class="tw" id="app" aria-live="polite"></main>
+<div class="t-dock" id="dock" hidden></div>
+<script src="../shell.js"></script>
+<script src="team.js"></script>
+<script>
+// تحدي اليوم: نفس 10 أسئلة لكل الناس اليوم (بتتغير كل يوم)، دقيقتين للكل، ومرة وحدة باليوم.
+const { esc, shuffle, rngOf, store } = TeamKit;
+const $ = (id) => document.getElementById(id);
+const day = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Amman" }).format(new Date());
+const seed = [...day].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7);
+const rng = rngOf(seed);
+const CATS = ["capitals", "first", "science", "worldcup", "islamic", "movies", "general", "football", "flags", "history", "tech", "riddles"];
+const LIMIT = 120;
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>';
+const dock = (h) => { $("dock").innerHTML = h ? `<div>${h}</div>` : ""; $("dock").hidden = !h; };
+const topBar = () => `<header class="t-top"><a class="brandi" href="./"><img src="icons/daily.webp" alt=""><b>تحدي اليوم</b></a><span class="end">${typeof themeToggle === "function" ? themeToggle() : ""}<a class="icon-btn" href="./" aria-label="رجوع"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a></span></header>`;
+const dayLabel = new Intl.DateTimeFormat("ar-JO-u-nu-latn", { timeZone: "Asia/Amman", weekday: "long", day: "numeric", month: "long" }).format(new Date());
+let Q = [], i = 0, right = 0, left = LIMIT, timer, marks = [];
+try { AppStore.set("app-last", "daily"); } catch {}
+
+async function load() {
+  const cats = shuffle(CATS, rng).slice(0, 5);
+  const lists = await Promise.all(cats.map((c) => fetch(`pq/${c}.json`).then((r) => r.json()).then((d) => d.qs).catch(() => [])));
+  const all = lists.flatMap((l, k) => l.map((q) => [...q.slice(0, 3), q[3] || null, cats[k]]));
+  const want = [1, 1, 2, 2, 2, 3, 3, 3, 4, 4];
+  const used = new Set();
+  return want.map((d) => { const pool = all.filter((q) => q[0] === d && !used.has(q[1] + q[2][0]) && (!q[3] || /^(https?:|pq\/)/.test(q[3])));
+    const q = pool[Math.floor(rng() * pool.length)]; used.add(q[1] + q[2][0]); return { q: q[1], img: q[3], right: q[2][0], opts: shuffle(q[2], rng) }; });
+}
+
+function intro() {
+  const done = store.get("daily-" + day, null), streak = store.get("daily-streak", { n: 0, last: "" });
+  $("app").innerHTML = `${topBar()}
+    <div class="ink-card" style="padding:20px;display:flex;gap:16px;align-items:center"><span class="cal" aria-hidden="true"><i></i><b>${new Date().getDate()}</b></span>
+      <span><b class="mode-title" style="font:800 28px/1.2 var(--display);color:var(--c-waraq)">تحدي اليوم</b><br><small style="color:var(--c-muted-night)">${dayLabel}</small></span></div>
+    <p class="t-sub">10 أسئلة، نفسها لكل الناس اليوم، ودقيقتين بس لكلهم. مرة وحدة باليوم!</p>
+    ${streak.n ? `<p class="howto-mini">سلسلتك: <b>${streak.n}</b> يوم ورا بعض</p>` : ""}
+    ${done ? resultCard(done) : ""}`;
+  dock(done ? `<button class="t-btn" id="share" type="button">شارك نتيجتك</button>` : `<button class="t-btn" id="go" type="button">ابدأ التحدي ${ARROW}</button>`);
+  if (done) $("share").onclick = () => share(done);
+  else $("go").onclick = async () => { $("go").disabled = true; $("go").textContent = "لحظة..."; try { Q = await load(); } catch { $("go").disabled = false; $("go").textContent = "ما زبط، جرّب كمان مرة"; return; } start(); };
+}
+function start() { i = 0; right = 0; left = LIMIT; marks = []; clearInterval(timer);
+  timer = setInterval(() => { left--; const t = $("qt"); if (t) { t.textContent = left; t.classList.toggle("low", left <= 10); } if (left <= 0) end(); }, 1000); ask(); }
+function ask() {
+  const q = Q[i];
+  $("app").innerHTML = `<div class="q-top" style="--tc:var(--c-orange)"><span class="q-timer" id="qt">${left}</span><span class="q-team"><i></i>سؤال ${i + 1} من 10</span><span class="q-pts">صح <b>${right}</b></span></div>
+    <div class="q-card">${q.img ? `<img src="${esc(q.img)}" alt="" style="width:100%;max-height:220px;object-fit:contain;border-radius:18px;background:var(--soft)">` : ""}<p class="q-text">${esc(q.q)}</p>
+    <div class="opts">${q.opts.map((o, k) => `<button class="opt" type="button" data-k="${k}">${esc(o)}</button>`).join("")}</div></div>`;
+  dock("");
+  $("app").querySelectorAll(".opt").forEach((b) => b.onclick = () => {
+    const ok = q.opts[+b.dataset.k] === q.right; if (ok) right++; marks.push(ok);
+    $("app").querySelectorAll(".opt").forEach((x) => { x.disabled = true; x.classList.add(q.opts[+x.dataset.k] === q.right ? "ok" : x === b ? "bad" : "dim"); });
+    try { navigator.vibrate && navigator.vibrate(ok ? 30 : [50, 40, 50]); } catch {}
+    setTimeout(() => (++i >= Q.length ? end() : ask()), ok ? 650 : 1200);
+  });
+}
+function end() {
+  if (!timer) return; clearInterval(timer); timer = null;
+  while (marks.length < 10) marks.push(null);
+  const res = { right, time: LIMIT - Math.max(0, left), marks };
+  store.set("daily-" + day, res);
+  const st = store.get("daily-streak", { n: 0, last: "" }), y = new Date(Date.now() - 864e5);
+  const yday = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Amman" }).format(y);
+  if (st.last !== day) store.set("daily-streak", { n: st.last === yday ? st.n + 1 : 1, last: day });
+  try { const r = Rewards.finish("daily", Math.max(5, right * 3)); Rewards.toast && Rewards.toast(r); } catch {}
+  intro();
+}
+function resultCard(r) {
+  return `<div class="winner" style="--tc:${r.right >= 7 ? "var(--c-nanaa)" : r.right >= 4 ? "var(--c-lamba)" : "var(--c-jamr)"};color:var(--c-layl)">
+    <small>نتيجتك اليوم</small><b>${r.right} من 10</b><small>${r.time} ثانية</small><span class="dms">${r.marks.map((m) => `<i class="${m ? "ok" : m === false ? "no" : ""}"></i>`).join("")}</span></div>
+    <p class="t-sub" style="text-align:center">ارجع بكرة لتحدي جديد.</p>`;
+}
+function share(r) {
+  const txt = `تعليلة · تحدي اليوم ${day}\n${r.right}/10 بـ${r.time} ثانية\n${r.marks.map((m) => (m ? "🟩" : m === false ? "🟥" : "⬜")).join("")}\n${location.origin}${location.pathname}`;
+  if (navigator.share) navigator.share({ text: txt }).catch(() => {}); else navigator.clipboard?.writeText(txt).then(() => { $("share").textContent = "انسخت!"; });
+}
+intro();
+
+</script>
+</body>
+</html>

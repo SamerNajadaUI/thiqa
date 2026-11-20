@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>كم واحد؟ · تعليلة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#F6F3EE">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="تعليلة">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800&family=Readex+Pro:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../ds/ds.css">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="team.css">
+</head>
+<body>
+<main class="tw" id="app" aria-live="polite"></main>
+<div class="t-dock" id="dock" hidden></div>
+<script src="../shell.js"></script>
+<script src="team.js"></script>
+<script>
+// كم واحد؟ برطمان فيه كرات ملونة بيبين ثواني وبيختفي. كل فريق بيقدّر العدد، والأقرب بياخذ النقاط.
+const { fmtN } = TeamKit;
+const COLS = ["var(--c-jamr)", "var(--c-toot)", "var(--c-lamba)", "var(--c-nanaa)", "var(--c-violet)", "var(--c-orange)", "var(--c-pink)", "var(--c-sky)"];
+TeamInputs.count = function (R, el, set) {
+  const balls = R.balls.map((b) => `<i style="left:${b[0]}%;top:${b[1]}%;--sz:${b[2]}%;--bc:${b[3]}"></i>`).join("");
+  el.innerHTML = `<div class="count-bar"><i style="animation-duration:${R.ms}ms"></i></div><div class="jar" id="jar">${balls}</div>`;
+  const ok = document.getElementById("ok"); ok.hidden = true;
+  setTimeout(() => {
+    const j = document.getElementById("jar"); if (!j) return; j.classList.add("hide"); j.insertAdjacentHTML("beforeend", '<span class="cover">؟</span>');
+    setTimeout(() => { if (!document.getElementById("inp")) return; ok.hidden = false; const box = document.createElement("div"); el.innerHTML = ""; el.appendChild(box); TeamInputs.number(R, box, set); }, 600);
+  }, R.ms);
+};
+TEAM({
+  id: "count", title: "كم واحد؟",
+  desc: "برطمان مليان كرات بيبين كم ثانية وبيختفي. قدّروا كم كرة كان فيه، والأقرب بياخذ 100.",
+  howto: "ركّزوا منيح، الصورة بتبين ثواني بس! والتلفون للفريق اللي دوره.",
+  rounds: [4, 6, 8],
+  round(_, rng, r, N) {
+    const p = r / N, n = Math.round(p <= 0.34 ? 10 + rng() * 25 : p <= 0.67 ? 30 + rng() * 45 : 60 + rng() * 90);
+    const ms = 3500 + Math.min(2000, n * 15), sz = n < 30 ? 11 : n < 70 ? 8 : 6;
+    const balls = [];
+    let guard = 0;
+    while (balls.length < n && guard++ < 40000) {
+      const x = 4 + rng() * (92 - sz), y = 8 + rng() * (88 - sz), cx = x + sz / 2 - 50, cy = y + sz / 2 - 52;
+      if (cx * cx + cy * cy > 44 * 44) continue;
+      if (balls.some((b) => Math.hypot(b[0] - x, b[1] - y) < sz * (guard > 20000 ? 0.7 : 0.95))) continue;
+      balls.push([+x.toFixed(1), +y.toFixed(1), sz, COLS[Math.floor(rng() * COLS.length)]]);
+    }
+    const ans = balls.length;
+    return {
+      kind: "قدّروا", prompt: "كم كرة بالبرطمان؟", input: "count", balls, ms, unit: "كرة",
+      dist: (v) => Math.abs(v - ans), show: (v) => fmtN(v), diffText: (d) => (d === 0 ? "بالزبط!" : isFinite(d) ? `بفرق ${d}` : ""),
+      truth: String(ans),
+    };
+  },
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>رتّبها · تعليلة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#F6F3EE">
+<script src="../theme.js"></script>
+<script src="../app/firebase-config.js"></script>
+<script src="../app/core.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="تعليلة">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800&family=Readex+Pro:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../ds/ds.css">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="team.css">
+</head>
+<body>
+<main class="tw" id="app" aria-live="polite"></main>
+<div class="t-dock" id="dock" hidden></div>
+<script src="../shell.js"></script>
+<script src="team.js"></script>
+<script>
+// رتّبها: 4 أشياء، رتّبوها حسب الرقم (سكان، مساحة، ارتفاع، سنة...). 25 لكل مكان صح، و25 زيادة إذا كلهم صح.
+const { esc, shuffle, fmtN, store } = TeamKit;
+TEAM({
+  id: "order", title: "رتّبها", kind: "turn",
+  desc: "كل فريق بدوره بياخذ 4 أشياء ولازم يرتبهم: الأكبر سكان، الأعلى، الأقدم... 25 نقطة لكل مكان صح، و25 زيادة للترتيب الكامل.",
+  howto: "اضغطوا الأشياء بالترتيب: أول ضغطة رقم 1. ضغطة ثانية على أي واحد بتلغي من عنده.",
+  rounds: [3, 5, 7],
+  load: async () => { const r = await fetch("data/order.json"); if (!r.ok) throw 0; return (await r.json()).cats; },
+  round(cats, rng, r, N, team) {
+    const cat = cats[Math.floor(rng() * cats.length)], pool = cat.items.slice(0, r / N <= 0.5 ? 50 : 200);
+    const minGap = cat.id === "film" ? 3 : 1.12;
+    let items;
+    for (let t = 0; t < 300; t++) {
+      items = shuffle(pool, rng).slice(0, 4);
+      const v = items.map((x) => x[1]).sort((a, b) => a - b);
+      if (v.every((x, i) => !i || (cat.id === "film" ? x - v[i - 1] >= minGap : x / v[i - 1] >= minGap))) break;
+    }
+    const sorted = items.slice().sort((a, b) => (cat.asc ? a[1] - b[1] : b[1] - a[1]));
+    const unit = cat.unit, show = (x) => (cat.id === "film" ? String(x[1]) : `<bdi>${fmtN(x[1])}</bdi> ${unit}`);
+    return {
+      kind: cat.name, prompt: esc(cat.q), input: "order", items,
+      grade(pick) {
+        const right = pick ? pick.filter((i, k) => items[i] === sorted[k]).length : 0;
+        const gain = right * 25 + (right === 4 ? 25 : 0);
+        const html = `<div class="olist">${sorted.map((x, k) => { const ok = pick && items[pick[k]] === x; return `<div class="oitem ${ok ? "ok" : "bad"}"><span class="rk">${k + 1}</span>${esc(x[0])}<small>${show(x)}</small></div>`; }).join("")}</div>`;
+        return { gain, full: right === 4, html, note: `${right} من 4 بمكانهم` };
+      },
+    };
+  },
+});
+
+</script>
+</body>
+</html>

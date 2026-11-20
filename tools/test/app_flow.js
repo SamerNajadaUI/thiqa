@@ -23,7 +23,7 @@ const B = 'http://localhost:8765/', SHOTS = __dirname + '/shots';
 
   // 2) دخول جوجل التجريبي (الوضع المحلي)
   await p.click('#b-google'); await p.waitForURL(/home\.html/); ok('دخول ← الرئيسية');
-  await p.waitForSelector('#pts-card .points-big'); await shot('4-home');
+  await p.waitForSelector('#pts-card b'); await shot('4-home');
   assert.equal(await pts(), 10, 'بونص يومي 10'); ok('بونص يومي +10');
   assert.equal(await p.locator('#games .gcard').count(), 4); ok('4 ألعاب مميزة');
   assert.equal(await p.locator('.apptabs a').count(), 4); ok('شريط تبويب 4');
@@ -31,12 +31,12 @@ const B = 'http://localhost:8765/', SHOTS = __dirname + '/shots';
   // 3) الألعاب: شرائح وترتيب
   await p.click('.apptabs a[href$="games/"]'); await p.waitForURL(/games\/$/);
   await p.waitForSelector('#gres .gcard'); const all = await p.locator('#gres .gcard').count();
-  await p.click('[data-f=sec][data-v=fast]'); const fast = await p.locator('#gres .gcard').count();
-  assert.ok(fast > 0 && fast < all); ok(`فلتر قسم (${all} ← ${fast})`);
-  await p.click('[data-f=sec][data-v=all]'); await p.click('[data-f=sort][data-v=group]');
-  assert.ok(await p.locator('#gres .gcard').count() > 0); ok('ترتيب جماعي');
-  await p.click('[data-f=sort][data-v=pop]'); await p.click('[data-f=sec][data-v=strat]');
-  assert.ok(await p.locator('#gres .gcard.locked').count() >= 2); await shot('5-games'); ok('كروت مقفولة ظاهرة');
+  assert.ok(all >= 34, 'كل الألعاب ' + all); ok(`كل الألعاب (${all}) بأقسام`);
+  assert.equal(await p.locator('#gtabs [data-f=sec]').count(), 7); ok('شريط أقسام 7');
+  await p.click('[data-f=sec][data-v=strat]'); await p.waitForTimeout(700);
+  assert.equal(await p.locator('#gtabs [data-v=strat][aria-selected=true]').count(), 1); ok('تبويب القسم بيتفعّل');
+  await p.click('#gsearch'); await p.fill('#gq', 'خريطة'); assert.equal(await p.locator('#gres .gcard').count(), 1); ok('البحث'); await p.click('#gsearch');
+  assert.ok(await p.locator('#sec-strat .gcard.locked').count() >= 2); await shot('5-games'); ok('كروت مقفولة ظاهرة');
 
   // 4) لعبة مقفولة ← مكافآت
   await p.goto(B + 'games/auction.html'); await p.waitForURL(/rewards\.html\?locked=auction/); ok('المزاد مقفول للمجاني');
@@ -52,7 +52,7 @@ const B = 'http://localhost:8765/', SHOTS = __dirname + '/shots';
   await p.goto(B + 'settings.html'); await p.fill('#nm', 'سامر'); await p.click('#save');
   assert.equal(await p.evaluate(() => Auth.user().name), 'سامر'); ok('تغيير الاسم');
   await p.click('[data-theme-set=dark]'); await p.waitForTimeout(300); await shot('7-settings-dark');
-  await p.goto(B + 'home.html'); await p.waitForSelector('#pts-card .points-big'); await shot('8-home-dark');
+  await p.goto(B + 'home.html'); await p.waitForSelector('#pts-card b'); await shot('8-home-dark');
   await p.goto(B + 'rewards.html'); await p.waitForSelector('.points-big'); await shot('9-rewards-dark');
   await p.click('[data-theme-set=light]').catch(() => {});
 

@@ -17,7 +17,7 @@
 <meta name="apple-mobile-web-app-title" content="تعليلة">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800&family=Lalezar&family=Readex+Pro:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
 <style>
 /* One screen at a time: games grid -> (احزر اللاعب) mode -> level -> era -> player card, or challenges -> challenge.
    Base colours (light/dark) come from ../shell.css; this file only adds the level colours. */
@@ -28,7 +28,7 @@
   --l4: #1D2939; --l4d: #000000; --l4s: #EAECF0;
   --gold: #FDB022; --gold-dark: #DC6803; --gold-soft: #FEF0C7; --coral-soft: #FFECEC; --sky-soft: #E0F2FE;
   --font: "Readex Pro", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
-  --display: "Lalezar", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
+  --display: "Alexandria", "Readex Pro", "Segoe UI", Tahoma, sans-serif;
 }
 :root[data-theme="dark"] {
   --l1s: #0F2A1E; --l2s: #2E2210; --l3s: #321818; --l4s: #262A33; --l4: #98A2B3; --l4d: #667085;
@@ -47,9 +47,9 @@ bdi { unicode-bidi: isolate; }
 
 .back { display: inline-flex; align-items: center; gap: 6px; border: 0; background: var(--soft); border-radius: 16px; padding: 10px 14px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); }
 .back svg { width: 18px; height: 18px; }
-h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(32px, 9vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
 .sub { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
-h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px 0 0; }
+h2 { font-family: var(--display); font-weight: 800; font-size: 24px; margin: 4px 0 0; }
 
 /* big chunky buttons/cards */
 .tile { --c: var(--brand); --cd: var(--brand-dark); --cs: var(--brand-soft);
@@ -58,7 +58,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .tile:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--cs); }
 .tile .ic { width: 64px; height: 64px; border-radius: 20px; background: var(--c); box-shadow: 0 4px 0 var(--cd); display: grid; place-items: center; color: var(--on-brand); }
 .tile .ic svg { width: 34px; height: 34px; }
-.tile b { display: block; font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.2; }
+.tile b { display: block; font-family: var(--display); font-weight: 800; font-size: 24px; line-height: 1.2; }
 .tile small { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .tile .go { width: 36px; height: 36px; border-radius: 50%; background: var(--cs); color: var(--brand-text); display: grid; place-items: center; }
 .tile .go svg { width: 18px; height: 18px; }
@@ -93,7 +93,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .badge { position: absolute; top: 14px; right: 14px; background: var(--c); color: #FFFFFF; font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 999px; }
 .badge.era { right: auto; left: 14px; background: rgb(17 19 22 / .72); }
 .pname { padding: 16px 18px 4px; }
-.pname b { display: block; font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.15; }
+.pname b { display: block; font-family: var(--display); font-weight: 800; font-size: 32px; line-height: 1.15; }
 .pname span { color: var(--muted); font-size: 14px; direction: ltr; display: block; text-align: right; }
 .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px 16px; }
 .fact { background: var(--soft); border-radius: 18px; padding: 10px 8px; text-align: center; min-width: 0; }
@@ -106,13 +106,13 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 .chip .yr { color: var(--muted); font-size: 11px; direction: ltr; unicode-bidi: isolate; padding-right: 6px; border-right: 1px solid var(--line); }
 .chip.nt { background: var(--brand-soft); color: var(--brand-text); }
 .cover { position: absolute; inset: 0; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; text-align: center; padding: 24px; z-index: 2; border: 0; width: 100%; }
-.cover b { font-family: var(--display); font-weight: 400; font-size: 34px; display: block; }
+.cover b { font-family: var(--display); font-weight: 800; font-size: 34px; display: block; }
 .cover small { opacity: .85; font-size: 14px; }
 .credit { color: var(--faint); font-size: 11px; text-align: center; }
 
 .hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .hud div { background: var(--soft); border-radius: 20px; padding: 10px; text-align: center; }
-.hud b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.1; direction: ltr; }
+.hud b { display: block; font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1.1; direction: ltr; }
 .hud small { color: var(--muted); font-size: 11px; }
 .qbtn { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
 .qbtn .big { font-size: 20px; }
@@ -120,12 +120,12 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 4px
 
 .result { text-align: center; background: var(--l1s); border-radius: 28px; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
 .result.lose { background: var(--l3s); }
-.result b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.2; }
+.result b { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1.2; }
 
 /* challenges */
 .prompt { background: var(--brand); color: var(--on-brand); border-radius: 28px; padding: 22px; box-shadow: 0 8px 0 var(--brand-dark); }
 .prompt small { opacity: .85; }
-.prompt b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.3; margin-top: 4px; }
+.prompt b { display: block; font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1.3; margin-top: 4px; }
 .timer { font-family: var(--display); font-size: 56px; text-align: center; line-height: 1; direction: ltr; margin-top: 10px; }
 .timer.low { color: var(--l3); }
 .answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -156,7 +156,7 @@ html, body, button, a, input, .cell, .opt { touch-action: manipulation; }
 <body>
 <div class="wrap">
   <header class="shellbar">
-    <a class="brand" href="../"><img src="../icons/icon.svg" alt=""><span><b>تعليلة</b><small>ألعاب السهرة مع الشباب</small></span></a>
+    <a class="brand" href="../"><img src="../icons/icon.svg" alt=""><span><b>تعليلة</b><small class="beta">BETA</small></span></a>
     <div class="end">
       <button class="back" id="back" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>رجوع</button>
       <span id="theme-slot"></span>
@@ -195,8 +195,8 @@ function show(render, push = true) {
   $("app").innerHTML = `<div class="screen">${render()}</div>`;
   window.scrollTo(0, 0);
   bind();
-  const who = document.querySelector('[data-game="who"]');
-  if (who) who.onclick = (e) => { e.preventDefault(); openWho(); };
+  window.onscroll = null;
+  if (document.getElementById("gtabs")) wireGames();
 }
 $("back").addEventListener("click", () => { if (stack.length > 1) { stack.pop(); clearInterval(S.timer); show(stack[stack.length - 1], false); } });
 
@@ -206,25 +206,41 @@ function bind() { for (const [id, fn] of Object.entries(handlers)) { const el = 
 const ACTS = {};
 
 // ---------- screens ----------
-const GF = { sec: new URLSearchParams(location.search).get("sec") || "all", sort: "pop" };
-function gamesFilterHTML() {
-  const secs = [["all", "الكل"], ...SECTIONS.map((x) => [x.id, x.name])];
-  const chip = (kind, id, label, cur) => `<button class="pill" type="button" data-f="${kind}" data-v="${id}" aria-pressed="${cur === id}">${label}</button>`;
-  return `<div class="pills" role="group" aria-label="الأقسام">${secs.map(([id, n]) => chip("sec", id, n, GF.sec)).join("")}</div>
-    <div class="pills" role="group" aria-label="الترتيب">${GAME_SORTS.map(([id, n]) => chip("sort", id, n, GF.sort)).join("")}</div>`;
+// v2: شريط أقسام لاصق فوق (مع بحث)، وتحته كل الأقسام ورا بعض، وكل قسم شبكة مربعات
+const GF = { sec: new URLSearchParams(location.search).get("sec") || "", q: "" };
+const SEARCH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>';
+function sectionsHTML() {
+  const q = normAr(GF.q);
+  return SECTIONS.map((sec) => {
+    const list = GAMES.filter((g) => g.sec === sec.id && (!q || normAr(g.name + " " + g.desc).includes(q)));
+    if (!list.length) return "";
+    return `<section class="gsec" id="sec-${sec.id}" style="--bar:var(${sec.bar})"><div class="sec-head"><h2>${sec.name}</h2><small>${list.length} ${list.length > 10 ? "لعبة" : list.length > 2 ? "ألعاب" : "لعبة"}</small></div>
+      <div class="games-grid">${list.map((g) => gameCard(g, "")).join("")}</div></section>`;
+  }).join("") || `<p class="sub" style="text-align:center;padding:30px 0">ما لقينا لعبة بهالاسم.</p>`;
 }
+function normAr(t) { return String(t || "").toLowerCase().replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").replace(/[\u064B-\u0652]/g, "").trim(); }
 function screenGames() {
-  return `<h1 class="shell-title">الألعاب</h1><p class="shell-sub">اختاروا لعبة، وكل وحدة إلها طريقتها.</p>
-    <div style="margin-top:10px" id="gfilters">${gamesFilterHTML()}</div>
-    <div style="margin-top:6px" id="gres">${gamesFiltered("", GF.sec, GF.sort)}</div>`;
+  return `<div class="gtabs" id="gtabs">
+      <button class="gt-search" id="gsearch" type="button" aria-label="دوّر على لعبة">${SEARCH_SVG}</button>
+      <div class="gt-row" role="tablist">${SECTIONS.map((x) => `<button type="button" role="tab" data-f="sec" data-v="${x.id}" style="--bar:var(${x.bar})">${x.name}</button>`).join("")}</div>
+    </div>
+    <div class="gt-find" id="gfind" hidden><input class="input" id="gq" type="search" placeholder="اسم اللعبة..." autocomplete="off"></div>
+    <div id="gres">${sectionsHTML()}</div>`;
 }
-document.addEventListener("click", (e) => {
-  const b = e.target.closest("[data-f]"); if (!b) return;
-  GF[b.dataset.f] = b.dataset.v;
-  document.getElementById("gfilters").innerHTML = gamesFilterHTML();
-  document.getElementById("gres").innerHTML = gamesFiltered("", GF.sec, GF.sort);
-  const who = document.querySelector('[data-game="who"]'); if (who) who.onclick = (ev) => { ev.preventDefault(); openWho(); };
-});
+function wireGames() {
+  const who = () => { const w = document.querySelector('[data-game="who"]'); if (w) w.onclick = (ev) => { ev.preventDefault(); openWho(); }; };
+  who();
+  const tabs = [...document.querySelectorAll("#gtabs [data-f=sec]")];
+  const setOn = (id) => tabs.forEach((t) => { const on = t.dataset.v === id; t.setAttribute("aria-selected", on); if (on) t.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); });
+  tabs.forEach((t) => t.onclick = () => { const el = document.getElementById("sec-" + t.dataset.v); if (!el) return; GF.lock = Date.now(); setOn(t.dataset.v);
+    window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 76, behavior: "smooth" }); });
+  const spy = () => { if (Date.now() - (GF.lock || 0) < 800) return; let cur = tabs[0]?.dataset.v;
+    for (const sec of document.querySelectorAll("#gres .gsec")) if (sec.getBoundingClientRect().top < 120) cur = sec.id.slice(4); setOn(cur); };
+  window.onscroll = spy; spy();
+  $("gsearch").onclick = () => { const f = $("gfind"); f.hidden = !f.hidden; if (!f.hidden) $("gq").focus(); else { GF.q = ""; $("gq").value = ""; $("gres").innerHTML = sectionsHTML(); who(); } };
+  $("gq").oninput = (e) => { GF.q = e.target.value; $("gres").innerHTML = sectionsHTML(); who(); };
+  if (GF.sec) { const t = tabs.find((x) => x.dataset.v === GF.sec); GF.sec = ""; if (t) setTimeout(() => t.click(), 60); }
+}
 
 // قاعدة اللاعبين كبيرة (حوالي 2.6MB)، فبنحمّلها بس لما حدا يفتح «احزر اللاعب»
 let dataReq = null;

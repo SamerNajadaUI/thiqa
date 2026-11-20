@@ -33,49 +33,56 @@ const GAME_ICON = {
 };
 // الأقسام: كل لعبة إلها قسم، والصفحة الرئيسية بتعرضهم كل قسم لحاله
 const SECTIONS = [
-  { id: "top", name: "الأشهر" },
-  { id: "kora", name: "كرة قدم" },
-  { id: "fast", name: "سرعة وأكشن" },
-  { id: "think", name: "ذاكرة وتفكير" },
-  { id: "strat", name: "استراتيجية وحظ" },
-  { id: "group", name: "جماعية" },
+  { id: "top", name: "الأكثر لعباً", bar: "--c-toot" },
+  { id: "play", name: "ألعاب تفاعلية", bar: "--c-violet" },
+  { id: "kora", name: "كرة قدم", bar: "--c-nanaa" },
+  { id: "party", name: "ألعاب السهرة", bar: "--c-jamr" },
+  { id: "fast", name: "سرعة وأكشن", bar: "--c-lamba" },
+  { id: "think", name: "ذاكرة وتفكير", bar: "--c-sky" },
+  { id: "strat", name: "استراتيجية وحظ", bar: "--c-orange" },
 ];
 const NEW = "🆕 جديدة";
 const GAMES = [
   { id: "hasm", href: "hasm.html", sec: "top", name: "ليلة الحسم", desc: "كل واحد رئيس نادي: مزاد نجوم، ألغاز، وحرب أعصاب بالملعب", tags: ["👥 1–6", "🌐 غرفة أو 🤖"], flag: "🏆 الأقوى" },
   { id: "sahra", href: "sahra.html", sec: "top", name: "ملك السهرة", desc: "10 مراحل: ركلات ترجيح، كذب، تمثيل، قنبلة... وسهرة كروية", tags: ["👥 3–8", "🌐 غرفة أو تلفون"], flag: "👑 ملك السهرات" },
   { id: "points", href: "points.html", sec: "top", name: "جمع نقاط", desc: "101 قسم وأقسام ما بتخلص، جولة سرعة ورهان أخير", tags: ["👥 2–5 فرق", "🌐 أونلاين"], flag: "الأشهر" },
-  { id: "tamaa", href: "tamaa.html", sec: "top", name: "لا تطمع", desc: "اكشف مربعات واجمع ذهب، ووقّف قبل القنبلة 💣", tags: ["👥 1–6", "🤖 ضد الكمبيوتر"], flag: "✨ جديد" },
-  { id: "mafia", href: "mafia.html", sec: "top", name: "مافيا", desc: "مين المافيا بيناتنا؟ ليل ونهار وتصويت", tags: ["👥 4–16", "🌐 أونلاين"] },
-  { id: "who", href: "#who", sec: "top", name: "احزر اللاعب", desc: "صاحبك بيسأل آه أو لا لحد ما يعرف اللاعب", tags: ["👥 2–5", "📱 تلفون واحد"] },
-  { id: "kworld", href: "kworld.html", sec: "kora", name: "كرة عالمية", desc: "كأس العالم، الدوريات الكبيرة، الملاعب، المدربين والشعارات", tags: ["👥 1–10", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "karab", href: "karab.html", sec: "kora", name: "كرة عربية", desc: "النشامى، الدوري السعودي، نجوم العرب ومعلقينهم", tags: ["👥 1–10", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "kucl", href: "kucl.html", sec: "kora", name: "دوري الأبطال", desc: "نهائيات، هدافين، ريمونتادات، وموسم 26/27", tags: ["👥 1–10", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "kepl", href: "kepl.html", sec: "kora", name: "الدوري الإنجليزي", desc: "أبطال البريميرليغ وهدافينه وملاعبه", tags: ["👥 1–10", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "kguess", href: "kguess.html", sec: "kora", name: "خمّن اللاعب", desc: "تلميحات بتطلع وحدة وحدة، اعرفه بأقل عدد", tags: ["👥 1–10", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "kemoji", href: "kemoji.html", sec: "kora", name: "خمّن بالإيموجي", desc: "إيموجي بيوصف لاعب أو نادي أو بطولة", tags: ["👥 1–10", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "kkits", href: "kkits.html", sec: "kora", name: "أطقم الأندية", desc: "طقم مرسوم بدون شعار، من ألوانه اعرف النادي", tags: ["👥 1–10", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "khair", href: "khair.html", sec: "kora", name: "تسريحة لاعب", desc: "بتشوف بس شعره، اعرف مين هو", tags: ["👥 1–10", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "duel", href: "duel.html", sec: "kora", name: "تحدي اللاعبين", desc: "فريق بيخبّي لاعب والثاني بيسأل آه أو لا، 60 ثانية لكل سؤال", tags: ["👥 فريقين", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "ball", href: "ball.html", sec: "kora", name: "أين الكرة", desc: "التمريرة طارت والكرة اختفت، اتبع الخط وحدد مكانها", tags: ["👥 1–10", "🌐 غرفة أو تلفون"], flag: NEW },
-  { id: "numbers", href: "numbers.html", sec: "top", name: "الرقم الأقرب", desc: "مين أقرب للرقم الصح؟ آلاف الأسئلة", tags: ["👥 2+", "🌐 أونلاين"] },
+  { id: "tamaa", href: "tamaa.html", sec: "top", name: "لا تطمع", desc: "اكشف مربعات واجمع ذهب، ووقّف قبل القنبلة 💣", tags: ["👥 1–6", "🤖 ضد الكمبيوتر"] },
+  { id: "mafia", href: "mafia.html", sec: "party", name: "مافيا", desc: "مين المافيا بيناتنا؟ ليل ونهار وتصويت", tags: ["👥 4–16", "🌐 أونلاين"] },
+  { id: "who", href: "#who", sec: "party", name: "احزر اللاعب", desc: "صاحبك بيسأل آه أو لا لحد ما يعرف اللاعب", tags: ["👥 2–5", "📱 تلفون واحد"] },
+  { id: "kworld", href: "kworld.html", sec: "kora", name: "كرة عالمية", desc: "كأس العالم، الدوريات الكبيرة، الملاعب، المدربين والشعارات", tags: ["👥 1–10", "🌐 غرفة أو تلفون"] },
+  { id: "karab", href: "karab.html", sec: "kora", name: "كرة عربية", desc: "النشامى، الدوري السعودي، نجوم العرب ومعلقينهم", tags: ["👥 1–10", "🌐 غرفة أو تلفون"] },
+  { id: "kucl", href: "kucl.html", sec: "kora", name: "دوري الأبطال", desc: "نهائيات، هدافين، ريمونتادات، وموسم 26/27", tags: ["👥 1–10", "🌐 غرفة أو تلفون"] },
+  { id: "kepl", href: "kepl.html", sec: "kora", name: "الدوري الإنجليزي", desc: "أبطال البريميرليغ وهدافينه وملاعبه", tags: ["👥 1–10", "🌐 غرفة أو تلفون"] },
+  { id: "kguess", href: "kguess.html", sec: "kora", name: "خمّن اللاعب", desc: "تلميحات بتطلع وحدة وحدة، اعرفه بأقل عدد", tags: ["👥 1–10", "🌐 غرفة أو تلفون"] },
+  { id: "kemoji", href: "kemoji.html", sec: "kora", name: "خمّن بالإيموجي", desc: "إيموجي بيوصف لاعب أو نادي أو بطولة", tags: ["👥 1–10", "🌐 غرفة أو تلفون"] },
+  { id: "kkits", href: "kkits.html", sec: "kora", name: "أطقم الأندية", desc: "طقم مرسوم بدون شعار، من ألوانه اعرف النادي", tags: ["👥 1–10", "🌐 غرفة أو تلفون"] },
+  { id: "khair", href: "khair.html", sec: "kora", name: "تسريحة لاعب", desc: "بتشوف بس شعره، اعرف مين هو", tags: ["👥 1–10", "🌐 غرفة أو تلفون"] },
+  { id: "duel", href: "duel.html", sec: "kora", name: "تحدي اللاعبين", desc: "فريق بيخبّي لاعب والثاني بيسأل آه أو لا، 60 ثانية لكل سؤال", tags: ["👥 فريقين", "🌐 غرفة أو تلفون"] },
+  { id: "ball", href: "ball.html", sec: "kora", name: "أين الكرة", desc: "التمريرة طارت والكرة اختفت، اتبع الخط وحدد مكانها", tags: ["👥 1–10", "🌐 غرفة أو تلفون"] },
+  { id: "map", href: "map.html", sec: "play", name: "وين على الخريطة؟", desc: "اسم دولة، وكل فريق بيحط الدبوس مكانها. الأقرب بيفوز", tags: ["👥 فريقين", "📱 تلفون واحد"], flag: NEW },
+  { id: "size", href: "size.html", sec: "play", name: "الحجم الحقيقي", desc: "قديش دولة أكبر من الثانية؟ بالمساحة أو بالسكان", tags: ["👥 فريقين", "📱 تلفون واحد"], flag: NEW },
+  { id: "order", href: "order.html", sec: "play", name: "رتّبها", desc: "4 أشياء ورتّبوهم: الأعلى، الأكبر، الأقدم", tags: ["👥 فريقين", "📱 تلفون واحد"], flag: NEW },
+  { id: "count", href: "count.html", sec: "play", name: "كم واحد؟", desc: "برطمان كرات بيبين ثواني، قدّروا العدد", tags: ["👥 فريقين", "📱 تلفون واحد"], flag: NEW },
+  { id: "odd", href: "odd.html", sec: "play", name: "من المختلف؟", desc: "أربع كلمات ووحدة غريبة، مين بيلقطها؟", tags: ["👥 فريقين", "📱 تلفون واحد"], flag: NEW },
+  { id: "daily", href: "daily.html", sec: "play", name: "تحدي اليوم", desc: "10 أسئلة جديدة كل يوم، دقيقتين بس", tags: ["👤 لحالك", "📅 كل يوم"], flag: NEW },
+  { id: "numbers", href: "numbers.html", sec: "play", name: "الرقم الأقرب", desc: "مين أقرب للرقم الصح؟ آلاف الأسئلة", tags: ["👥 2+", "🌐 أونلاين"] },
   { id: "career", href: "career.html", sec: "top", name: "مسيرة لاعب", desc: "شعارات أنديته بتطلع وحدة وحدة، مين بيعرفه أول؟", tags: ["👥 2", "🌐 أونلاين"] },
   { id: "qisma", href: "qisma.html", sec: "top", name: "قسمة ونصيب", desc: "إنت بتقسم وهم بيختاروا... بس إنت شايف الورق", tags: ["👥 1–5", "🤖 ضد الكمبيوتر"] },
-  { id: "barra", href: "barra.html", sec: "top", name: "برا السالفة", desc: "كلمة الكل بيعرفها... إلا واحد!", tags: ["👥 3–20", "📱 تلفون واحد"] },
+  { id: "barra", href: "barra.html", sec: "party", name: "برا السالفة", desc: "كلمة الكل بيعرفها... إلا واحد!", tags: ["👥 3–20", "📱 تلفون واحد"] },
 
-  { id: "speed", href: "speed.html", sec: "fast", name: "تحدي السرعة", desc: "بلاطة وحدة مختلفة عن الباقي، اضغطها قبل الكمبيوتر", tags: ["👤 ضد الكمبيوتر", "⏱️ ردّة الفعل"], flag: NEW },
-  { id: "catch", href: "catch.html", sec: "fast", name: "صيد الكنز", desc: "الذهب بيقع من فوق، اصطده وتجنّب القنابل 💣", tags: ["👤 لحالك", "🏆 نتيجة قياسية"], flag: NEW },
-  { id: "anagram", href: "anagram.html", sec: "fast", name: "ركّب الكلمة", desc: "حروف مخلوطة، اكتب الكلمة قبل الكمبيوتر", tags: ["👤 ضد الكمبيوتر", "🔤 كلمات"], flag: NEW },
+  { id: "speed", href: "speed.html", sec: "fast", name: "تحدي السرعة", desc: "بلاطة وحدة مختلفة عن الباقي، اضغطها قبل الكمبيوتر", tags: ["👤 ضد الكمبيوتر", "⏱️ ردّة الفعل"] },
+  { id: "catch", href: "catch.html", sec: "fast", name: "صيد الكنز", desc: "الذهب بيقع من فوق، اصطده وتجنّب القنابل 💣", tags: ["👤 لحالك", "🏆 نتيجة قياسية"] },
+  { id: "anagram", href: "anagram.html", sec: "fast", name: "ركّب الكلمة", desc: "حروف مخلوطة، اكتب الكلمة قبل الكمبيوتر", tags: ["👤 ضد الكمبيوتر", "🔤 كلمات"] },
 
-  { id: "simon", href: "simon.html", sec: "think", name: "تذكّر الألوان", desc: "كل واحد يزيد لون، والباقي لازم يعيد السلسلة من الذاكرة", tags: ["👥 2–4", "📱 تلفون واحد"], flag: NEW },
-  { id: "hotcold", href: "hotcold.html", sec: "think", name: "دافئ بارد", desc: "خمّن الرقم المخفي، والتلميح بيقول قد إيش قريب", tags: ["👥 2–4", "📱 تلفون واحد"], flag: NEW },
-  { id: "dots", href: "dots.html", sec: "think", name: "نقاط وصناديق", desc: "ارسم خطوط وقفّل الصناديق، والكمبيوتر بيلعب معك", tags: ["👤 ضد الكمبيوتر", "🧩 استراتيجية"], flag: NEW },
+  { id: "simon", href: "simon.html", sec: "think", name: "تذكّر الألوان", desc: "كل واحد يزيد لون، والباقي لازم يعيد السلسلة من الذاكرة", tags: ["👥 2–4", "📱 تلفون واحد"] },
+  { id: "hotcold", href: "hotcold.html", sec: "think", name: "دافئ بارد", desc: "خمّن الرقم المخفي، والتلميح بيقول قد إيش قريب", tags: ["👥 2–4", "📱 تلفون واحد"] },
+  { id: "dots", href: "dots.html", sec: "think", name: "نقاط وصناديق", desc: "ارسم خطوط وقفّل الصناديق، والكمبيوتر بيلعب معك", tags: ["👤 ضد الكمبيوتر", "🧩 استراتيجية"] },
 
-  { id: "connect", href: "connect.html", sec: "strat", name: "إكس أو بالجاذبية", desc: "4 قطع بخط واحد... والكمبيوتر بيحاول يمنعك", tags: ["👤 ضد الكمبيوتر", "🎯 3 جولات"], flag: NEW },
-  { id: "auction", href: "auction.html", sec: "strat", name: "المزاد", desc: "قيّم السلعة وزايد صح، لا تدفع أكتر من قيمتها", tags: ["👤 ضد 3 تجّار", "💰 أرباح"], flag: NEW },
-  { id: "wheel", href: "wheel.html", sec: "strat", name: "عجلة الحظ", desc: "لف العجلة، اختار حروف، وحزّر الجملة قبل الكل", tags: ["👥 2–4", "📱 تلفون واحد"], flag: NEW },
+  { id: "connect", href: "connect.html", sec: "strat", name: "إكس أو بالجاذبية", desc: "4 قطع بخط واحد... والكمبيوتر بيحاول يمنعك", tags: ["👤 ضد الكمبيوتر", "🎯 3 جولات"] },
+  { id: "auction", href: "auction.html", sec: "strat", name: "المزاد", desc: "قيّم السلعة وزايد صح، لا تدفع أكتر من قيمتها", tags: ["👤 ضد 3 تجّار", "💰 أرباح"] },
+  { id: "wheel", href: "wheel.html", sec: "strat", name: "عجلة الحظ", desc: "لف العجلة، اختار حروف، وحزّر الجملة قبل الكل", tags: ["👥 2–4", "📱 تلفون واحد"] },
 
-  { id: "pictionary", href: "pictionary.html", sec: "group", name: "ارسم وخمّن", desc: "ارسم الكلمة بدون حروف، وخلّي أصحابك يعرفوها", tags: ["👥 2–5", "📱 تلفون واحد"], flag: NEW },
+  { id: "pictionary", href: "pictionary.html", sec: "party", name: "ارسم وخمّن", desc: "ارسم الكلمة بدون حروف، وخلّي أصحابك يعرفوها", tags: ["👥 2–5", "📱 تلفون واحد"] },
 ];
 
 // base: المسار لمجلد الألعاب ("games/" من الرئيسية، "" من صفحة الألعاب)
@@ -84,11 +91,15 @@ function gameLocked(id) {
 }
 // البراند: بدون إيموجي بالواجهة. البيانات بتضل زي ما هي (الفلاتر بتعتمد عليها) وبنشيله وقت العرض
 function noEmoji(t) { return String(t).replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}\uFE0F\u200D]+/gu, "").replace(/\s+/g, " ").trim(); }
+// v2: مربع نظيف بأيقونة 3D (games/icons/<id>.webp) واسم تحته. القفل دائرة بيضا، و«جديد» شارة سودا فوق
+const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+function gameIcon(id, base = "") { return `${base}icons/${id}.webp`; }
 function gameCard(g, base) {
   const locked = gameLocked(g.id);
-  return `<a class="gcard g-${g.id}${locked ? " locked" : ""}" href="${base}${g.href}" data-game="${g.id}">
-    <span class="art">${locked ? `<span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>بلس</span>` : ""}${g.flag ? `<span class="flag">${noEmoji(g.flag)}</span>` : ""}<img class="pic" src="${base}art/${g.id}.webp" alt="" loading="lazy" decoding="async"></span>
-    <span class="body"><b>${g.name}</b><small>${noEmoji(g.desc)}</small><span class="tags">${g.tags.map((t) => `<span>${noEmoji(t)}</span>`).join("")}</span></span>
+  const fresh = g.flag && /جديد/.test(g.flag);
+  return `<a class="gcard g-${g.id}${locked ? " locked" : ""}" href="${base}${g.href}" data-game="${g.id}" aria-label="${g.name}${locked ? " (بلس)" : ""}">
+    <span class="art">${locked ? `<span class="lock" title="بلس">${LOCK_SVG}</span>` : ""}<img class="pic" src="${gameIcon(g.icon || g.id, base)}" alt="" loading="lazy" decoding="async" width="288" height="288"></span>
+    ${fresh && !locked ? `<span class="flag">جديد</span>` : ""}<b>${g.name}</b><small>${noEmoji(g.desc)}</small>
   </a>`;
 }
 // ترتيب وتصفية لصفحة الألعاب: sec = "all" أو id قسم، sort = pop | new | solo | group
@@ -121,7 +132,7 @@ function mountGameBar() {
     const themed = !bar.hasAttribute("data-theme-fixed") && typeof themeToggle === "function";
     // RTL: زر الرجوع بالبداية (يمين)، بعده اسم اللعبة، وزر المظهر بالآخر
     bar.innerHTML = `<span class="gs"><a class="gback" href="./" id="gback" aria-label="رجوع للألعاب" title="الألعاب">${BACK_ICON}</a>
-      <a class="gt" href="./"><span class="chip g-${g.icon || id}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${icon}</svg></span><b>${g.name}</b></a></span>
+      <a class="gt" href="./"><span class="chip g-${g.icon || id}" aria-hidden="true"><img src="${gameIcon(g.icon || id)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('i')))"></span><b>${g.name}</b></a></span>
       ${themed ? themeToggle() : ""}`;
     // إذا في لعبة شغّالة وما بتنحفظ، الصفحة بتعرّف leaveGuard() وبنسأل قبل ما نطلع
     bar.querySelectorAll('a[href="./"]').forEach((a) => a.addEventListener("click", (e) => {
