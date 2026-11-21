@@ -15030,9 +15030,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/okc.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/no.png",
      "live": {
-      "state": "pre",
-      "detail": "11/20 - 8:00 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "21.9 - 3rd",
+      "score": "92-96"
      }
     },
     {
@@ -15227,9 +15227,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png",
      "live": {
-      "state": "pre",
-      "detail": "11/20 - 7:30 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "3:58 - 4th",
+      "score": "88-91"
      }
     },
     {
@@ -15331,9 +15331,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cle.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ind.png",
      "live": {
-      "state": "pre",
-      "detail": "11/20 - 7:30 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "2:28 - 4th",
+      "score": "117-106"
      }
     },
     {
@@ -15445,8 +15445,8 @@
      "sharp_prob": 0.6719,
      "prob": 0.6641,
      "books": 19,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "111-97",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -15527,9 +15527,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png",
      "live": {
-      "state": "pre",
-      "detail": "11/20 - 7:00 PM EST",
-      "score": null
+      "state": "post",
+      "detail": "Final",
+      "score": "111-97"
      }
     },
     {
@@ -15631,9 +15631,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/orl.png",
      "live": {
-      "state": "pre",
-      "detail": "11/20 - 7:30 PM EST",
-      "score": null
+      "state": "in",
+      "detail": "6:45 - 4th",
+      "score": "100-98"
      }
     }
    ],
@@ -15838,9 +15838,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/okc.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/no.png",
        "live": {
-        "state": "pre",
-        "detail": "11/20 - 8:00 PM EST",
-        "score": null
+        "state": "in",
+        "detail": "21.9 - 3rd",
+        "score": "92-96"
        }
       },
       {
