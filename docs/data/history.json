@@ -18999,8 +18999,8 @@
        "sharp_prob": 0.7692,
        "prob": 0.7655,
        "books": 22,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "88-87",
        "model_prob": null,
        "support": 1,
        "signals": 1,
@@ -19080,8 +19080,8 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png",
        "live": {
-        "state": "in",
-        "detail": "8.2 - 4th",
+        "state": "post",
+        "detail": "Final",
         "score": "88-87"
        }
       }
