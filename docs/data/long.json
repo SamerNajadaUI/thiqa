@@ -2137,8 +2137,8 @@
     "sharp_prob": 0.7526,
     "prob": 0.7585,
     "books": 22,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "3-0",
     "model_prob": 0.7894,
     "support": 3,
     "signals": 3,
@@ -2212,7 +2212,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4007.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/109.png",
+    "espn": {
+     "s": "soccer",
+     "l": "ita.1",
+     "id": "401875009",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "3-0"
+    }
    }
   ],
   "prob": 0.004856,
