@@ -10,11 +10,9 @@
   محاولة 2: https://site.api.espn.com/apis/site/v2/sports/soccer/uae.1/teams HTTP Error 404: Not Found
   محاولة 1: https://site.api.espn.com/apis/site/v2/sports/soccer/egy.1/teams HTTP Error 404: Not Found
   محاولة 2: https://site.api.espn.com/apis/site/v2/sports/soccer/egy.1/teams HTTP Error 404: Not Found
-  ESPN: 933 اسم فريق
-  محاولة 1: https://query.wikidata.org/sparql HTTP Error 502: Bad Gateway
+  ESPN: 931 اسم فريق
   40/376
   80/376
-  محاولة 1: https://query.wikidata.org/sparql HTTP Error 429: Too Many Requests
   120/376
   160/376
   200/376
@@ -38,4 +36,4 @@
   أقل من ناديين: Jack Charlton (1)
   أقل من ناديين: Nat Lofthouse (1)
   أقل من ناديين: Phil Foden (1)
-career.json: 360 لاعب، 2215 نادي، بدون شعار: 355
+career.json: 360 لاعب، 2214 نادي، بدون شعار: 356
