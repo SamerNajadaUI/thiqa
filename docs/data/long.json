@@ -22,8 +22,8 @@
     "sharp_prob": 0.8018,
     "prob": 0.7991,
     "books": 20,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "0-2",
     "model_prob": null,
     "support": 1,
     "signals": 1,
@@ -95,7 +95,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/597.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/131.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/131.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915517",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "0-2"
+    }
    },
    {
     "id": "38332e4cbb2b3991904b00a75dc3769d|double_chance|No Draw|None|None",
@@ -114,8 +125,8 @@
     "sharp_prob": 0.8163,
     "prob": 0.8135,
     "books": 20,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "4-0",
     "model_prob": null,
     "support": 1,
     "signals": 1,
@@ -187,7 +198,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/11706.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1929.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1929.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915518",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "4-0"
+    }
    },
    {
     "id": "707c513bfa43b45b7813126e09ad08d8|double_chance|No Draw|None|None",
@@ -206,8 +228,8 @@
     "sharp_prob": 0.8291,
     "prob": 0.8259,
     "books": 20,
-    "result": "pending",
-    "score": null,
+    "result": "hit",
+    "score": "1-0",
     "model_prob": null,
     "support": 1,
     "signals": 1,
@@ -279,7 +301,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/176.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/490.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/490.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915507",
+     "sw": false
+    },
+    "live": {
+     "state": "post",
+     "detail": "FT",
+     "score": "1-0"
+    }
    },
    {
     "id": "a18687d4f17a96a7732fb0c8673ea037|h2h|Besiktas JK|None|None",
@@ -373,7 +406,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1895.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/13083.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/13083.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915506",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "69'",
+     "score": "0-0"
+    }
    },
    {
     "id": "a24c89b65c5a30fb9473735049589e64|h2h|Lyon|None|None",
@@ -467,7 +511,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/167.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/987.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/987.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915501",
+     "sw": false
+    },
+    "live": {
+     "state": "pre",
+     "detail": "Scheduled",
+     "score": null
+    }
    },
    {
     "id": "e2036567ee9394a55f022358781dce15|double_chance|Celtic|None|None",
@@ -559,7 +614,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/21615.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/256.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/256.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915512",
+     "sw": false
+    },
+    "live": {
+     "state": "pre",
+     "detail": "Scheduled",
+     "score": null
+    }
    },
    {
     "id": "de10dd2e5917108a9478c07275ba8cdb|double_chance|Anderlecht|None|None",
@@ -651,7 +717,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1010.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/441.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/441.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915503",
+     "sw": false
+    },
+    "live": {
+     "state": "pre",
+     "detail": "Scheduled",
+     "score": null
+    }
    },
    {
     "id": "d6377d30379e5d3053c1076646d83f78|h2h|Juventus|None|None",
@@ -745,7 +822,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/617.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/617.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915502",
+     "sw": false
+    },
+    "live": {
+     "state": "pre",
+     "detail": "Scheduled",
+     "score": null
+    }
    },
    {
     "id": "0e5553b52ece07115fbdf8145df0c377|double_chance|No Draw|None|None",
@@ -837,7 +925,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/622.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3362.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3362.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915516",
+     "sw": false
+    },
+    "live": {
+     "state": "pre",
+     "detail": "Scheduled",
+     "score": null
+    }
    },
    {
     "id": "413409b43875d1bdb627a9e7fb6bc3fd|h2h|Sunderland|None|None",
@@ -931,7 +1030,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/366.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/11505.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/11505.png",
+    "espn": {
+     "s": "soccer",
+     "l": "uefa.europa",
+     "id": "401915513",
+     "sw": false
+    },
+    "live": {
+     "state": "pre",
+     "detail": "Scheduled",
+     "score": null
+    }
    },
    {
     "id": "698f4a7967ead89e10205a68ceb4bda4|double_chance|No Draw|None|None",
