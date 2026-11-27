@@ -1,7 +1,7 @@
 {
- "date": "2026-11-26",
- "generated_at": "2026-11-26T12:16:50Z",
- "updated_at": "2026-11-26T19:47:38Z",
+ "date": "2026-11-27",
+ "generated_at": "2026-11-27T03:12:19Z",
+ "updated_at": "2026-11-27T03:12:19Z",
  "demo": false,
  "coupons": [
   {
@@ -13,495 +13,1037 @@
   },
   {
    "kind": "medium",
-   "legs": [],
-   "prob": null,
-   "fair_odds": null,
-   "result": "none"
+   "legs": [
+    {
+     "id": "f776e28e9659a71f10168cc9e792965b|double_chance|No Draw|None|None",
+     "event_id": "f776e28e9659a71f10168cc9e792965b",
+     "sport_key": "soccer_saudi_arabia_pro_league",
+     "group": "soccer",
+     "league": "Saudi Pro League",
+     "home": "Al-Qadsiah",
+     "away": "Al-Fayha",
+     "commence_time": "2026-11-27T14:20:00Z",
+     "market": "double_chance",
+     "name": "No Draw",
+     "point": null,
+     "description": null,
+     "market_prob": 0.8704,
+     "sharp_prob": 0.8803,
+     "prob": 0.8753,
+     "books": 14,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "14 شركة أودز بتعطيه بالمتوسط 87% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 88%"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.8753,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.99,
+        "t": "هاي المباراة رح تولّع! ما في تعادل أكيد. 14 شركة أودز بتعطيه بالمتوسط 87% بعد ما شلنا هامشها."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.125,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 12%، يعني مرة من كل 8، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.125,
+        "t": "شو بدي بـ«ما في تعادل» وأودزها 1.14؟ أنا رايح على «تعادل» بأودز 8.02. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 1,
+        "c": 0.875,
+        "t": "88% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.875,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 87%، والشركات الأدق 88%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 1,
+        "best": "careful",
+        "t": "المخاطرة قليلة: احتمال الخيبة 12% بس، وما في تحذيرات."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. ما في تعادل باحتمال 88%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 0.649
+      }
+     },
+     "espn": {
+      "s": "soccer",
+      "l": "ksa.1",
+      "id": "401900870",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/22022.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/21827.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
+    },
+    {
+     "id": "698f4a7967ead89e10205a68ceb4bda4|double_chance|Werder Bremen|None|None",
+     "event_id": "698f4a7967ead89e10205a68ceb4bda4",
+     "sport_key": "soccer_germany_bundesliga",
+     "group": "soccer",
+     "league": "Bundesliga - Germany",
+     "home": "Werder Bremen",
+     "away": "Borussia Monchengladbach",
+     "commence_time": "2026-11-27T19:30:00Z",
+     "market": "double_chance",
+     "name": "Werder Bremen",
+     "point": null,
+     "description": null,
+     "market_prob": 0.7799,
+     "sharp_prob": 0.7919,
+     "prob": 0.8139,
+     "books": 23,
+     "result": "pending",
+     "score": null,
+     "movement": 0.0034,
+     "model_prob": 0.9219,
+     "support": 6,
+     "signals": 6,
+     "reasons": [
+      "23 شركة أودز بتعطيه بالمتوسط 78% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 79%",
+      "نموذجنا الإحصائي بيعطيه 92% (متوقع 3.1 أهداف لـ⁨Werder Bremen⁩ و1.0 لـ⁨Borussia Monchengladbach⁩)",
+      "فورمة ⁨Werder Bremen⁩ بآخر 5: 3 فوز و1 تعادل و0.8 خسارة، مقابل 1 فوز لـ⁨Borussia Monchengladbach⁩",
+      "⁨Werder Bremen⁩ على أرضه هالموسم: فاز 4 من 5 وخسر 0 بس",
+      "⁨Borussia Monchengladbach⁩ برّا أرضه: فاز 1 من 5 بس",
+      "⁨Werder Bremen⁩ بالمركز 6 (18 نقطة)، و⁨Borussia Monchengladbach⁩ بالمركز 18 (4 نقطة)"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.8139,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.934,
+        "t": "⁨Werder Bremen⁩ ما في منه! فورمة ⁨Werder Bremen⁩ بآخر 5: 3 فوز و1 تعادل و0.8 خسارة، مقابل 1 فوز لـ⁨Borussia Monchengladbach⁩. يا عمي ⁨Werder Bremen⁩ ما بيخسر مضمونة، أنا بعطيها 93%."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.186,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 19%، يعني مرة من كل 5، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.186,
+        "t": "شو بدي بـ«⁨Werder Bremen⁩ ما بيخسر» وأودزها 1.23؟ أنا رايح على «فوز ⁨Borussia Monchengladbach⁩» بأودز 5.37. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 1,
+        "c": 0.814,
+        "t": "81% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
+       },
+       {
+        "k": "logic",
+        "v": 1,
+        "c": 0.814,
+        "t": "بالأرقام: 6 من 6 إشارات معه. نموذج الأهداف بيعطيه 92% والسوق 78%. فورمة ⁨Werder Bremen⁩ بآخر 5: 3 فوز و1 تعادل و0.8 خسارة، مقابل 1 فوز لـ⁨Borussia Monchengladbach⁩."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 1,
+        "best": "logic",
+        "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+       },
+       {
+        "k": "risk",
+        "v": 1,
+        "best": "careful",
+        "t": "المخاطرة قليلة: احتمال الخيبة 19% بس، وما في تحذيرات."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. ⁨Werder Bremen⁩ ما بيخسر باحتمال 81%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 1.099
+      }
+     },
+     "espn": {
+      "s": "soccer",
+      "l": "ger.1",
+      "id": "401884720",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/137.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/268.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
+    },
+    {
+     "id": "c5dc35b4116988de2c1425df17456478|h2h|Boston Celtics|None|None",
+     "event_id": "c5dc35b4116988de2c1425df17456478",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Boston Celtics",
+     "away": "Atlanta Hawks",
+     "commence_time": "2026-11-28T01:10:00Z",
+     "market": "h2h",
+     "name": "Boston Celtics",
+     "point": null,
+     "description": null,
+     "market_prob": 0.7619,
+     "sharp_prob": 0.7741,
+     "prob": 0.753,
+     "books": 21,
+     "result": "pending",
+     "score": null,
+     "movement": 0.0124,
+     "model_prob": null,
+     "support": 2,
+     "signals": 2,
+     "reasons": [
+      "21 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 77%",
+      "احتماله ارتفع 1.2 نقطة خلال آخر 24 ساعة، يعني في فلوس كبيرة دخلت عليه"
+     ],
+     "warnings": [
+      "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%"
+     ],
+     "eligible": true,
+     "prob_raw": 0.768,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.873,
+        "t": "⁨Boston Celtics⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها. يا عمي فوز ⁨Boston Celtics⁩ مضمونة، أنا بعطيها 87%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.247,
+        "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%. وفوق هيك، احتمال إنها تخيب 25%، يعني تقريباً مرة من كل 4."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.247,
+        "t": "شو بدي بـ«فوز ⁨Boston Celtics⁩» وأودزها 1.33؟ أنا رايح على «فوز ⁨Atlanta Hawks⁩» بأودز 4.05. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.753,
+        "t": "احتمالها 75%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 1,
+        "c": 0.753,
+        "t": "بالأرقام: 2 من 2 إشارات معه. السوق بيعطيه 76%، والشركات الأدق 77%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 1,
+        "best": "logic",
+        "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 25%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق وحركة الأودز مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. فوز ⁨Boston Celtics⁩ باحتمال 75%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 0.714
+      }
+     },
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401909330",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/27 - 8:00 PM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "428050645d1dc8b16d84287e21de55fa|h2h|Denver Nuggets|None|None",
+     "event_id": "428050645d1dc8b16d84287e21de55fa",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Utah Jazz",
+     "away": "Denver Nuggets",
+     "commence_time": "2026-11-28T02:40:00Z",
+     "market": "h2h",
+     "name": "Denver Nuggets",
+     "point": null,
+     "description": null,
+     "market_prob": 0.7757,
+     "sharp_prob": 0.7915,
+     "prob": 0.7683,
+     "books": 21,
+     "result": "pending",
+     "score": null,
+     "movement": 0.0232,
+     "model_prob": null,
+     "support": 2,
+     "signals": 2,
+     "reasons": [
+      "21 شركة أودز بتعطيه بالمتوسط 78% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 79%",
+      "احتماله ارتفع 2.3 نقطة خلال آخر 24 ساعة، يعني في فلوس كبيرة دخلت عليه"
+     ],
+     "warnings": [
+      "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%"
+     ],
+     "eligible": true,
+     "prob_raw": 0.7836,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.888,
+        "t": "⁨Denver Nuggets⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 78% بعد ما شلنا هامشها. يا عمي فوز ⁨Denver Nuggets⁩ مضمونة، أنا بعطيها 89%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.232,
+        "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%. وفوق هيك، احتمال إنها تخيب 23%، يعني تقريباً مرة من كل 4."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.232,
+        "t": "شو بدي بـ«فوز ⁨Denver Nuggets⁩» وأودزها 1.30؟ أنا رايح على «فوز ⁨Utah Jazz⁩» بأودز 4.32. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.768,
+        "t": "احتمالها 77%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 1,
+        "c": 0.768,
+        "t": "بالأرقام: 2 من 2 إشارات معه. السوق بيعطيه 78%، والشركات الأدق 79%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 1,
+        "best": "logic",
+        "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 23%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق وحركة الأودز مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. فوز ⁨Denver Nuggets⁩ باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 0.714
+      }
+     },
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401909334",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/27 - 9:30 PM EST",
+      "score": null
+     }
+    }
+   ],
+   "prob": 0.4121,
+   "fair_odds": 2.43,
+   "result": "pending"
   },
   {
    "kind": "risky",
-   "legs": [],
-   "prob": null,
-   "fair_odds": null,
-   "result": "none"
+   "legs": [
+    {
+     "id": "02ff879cf54f6d1fec2664efee0431db|double_chance|No Draw|None|None",
+     "event_id": "02ff879cf54f6d1fec2664efee0431db",
+     "sport_key": "soccer_france_ligue_one",
+     "group": "soccer",
+     "league": "Ligue 1 - France",
+     "home": "Brest",
+     "away": "Paris FC",
+     "commence_time": "2026-11-27T19:45:00Z",
+     "market": "double_chance",
+     "name": "No Draw",
+     "point": null,
+     "description": null,
+     "market_prob": 0.7219,
+     "sharp_prob": 0.7177,
+     "prob": 0.7194,
+     "books": 22,
+     "result": "pending",
+     "score": null,
+     "movement": -0.0013,
+     "model_prob": 0.7172,
+     "support": 3,
+     "signals": 3,
+     "reasons": [
+      "22 شركة أودز بتعطيه بالمتوسط 72% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 72%",
+      "نموذجنا الإحصائي بيعطيه 72% (متوقع 1.4 أهداف لـ⁨Brest⁩ و1.1 لـ⁨Paris FC⁩)",
+      "التعادل قليل عند الفريقين: 5 تعادلات من 22 مباراة"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.7194,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.839,
+        "t": "هاي المباراة رح تولّع! ما في تعادل أكيد. التعادل قليل عند الفريقين: 5 تعادلات من 22 مباراة."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.281,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 28%، يعني مرة من كل 4، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.281,
+        "t": "شو بدي بـ«ما في تعادل» وأودزها 1.39؟ أنا رايح على «تعادل» بأودز 3.56. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.719,
+        "t": "احتمالها 72%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 1,
+        "c": 0.719,
+        "t": "بالأرقام: 3 من 3 إشارات معه. نموذج الأهداف بيعطيه 72% والسوق 72%. التعادل قليل عند الفريقين: 5 تعادلات من 22 مباراة."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 1,
+        "best": "logic",
+        "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 28%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. ما في تعادل باحتمال 72%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 0.758
+      }
+     },
+     "espn": {
+      "s": "soccer",
+      "l": "fra.1",
+      "id": "401876392",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/6997.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/6851.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
+    },
+    {
+     "id": "e9a663f13e7503c0ac20a54804338b60|double_chance|No Draw|None|None",
+     "event_id": "e9a663f13e7503c0ac20a54804338b60",
+     "sport_key": "soccer_italy_serie_a",
+     "group": "soccer",
+     "league": "Serie A - Italy",
+     "home": "Venezia",
+     "away": "Bologna",
+     "commence_time": "2026-11-27T19:45:00Z",
+     "market": "double_chance",
+     "name": "No Draw",
+     "point": null,
+     "description": null,
+     "market_prob": 0.7113,
+     "sharp_prob": 0.7037,
+     "prob": 0.7164,
+     "books": 25,
+     "result": "pending",
+     "score": null,
+     "movement": 0.0013,
+     "model_prob": 0.7633,
+     "support": 3,
+     "signals": 3,
+     "reasons": [
+      "25 شركة أودز بتعطيه بالمتوسط 71% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 70%",
+      "نموذجنا الإحصائي بيعطيه 76% (متوقع 0.9 أهداف لـ⁨Venezia⁩ و1.9 لـ⁨Bologna⁩)",
+      "التعادل قليل عند الفريقين: 3 تعادلات من 24 مباراة"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.7164,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.836,
+        "t": "هاي المباراة رح تولّع! ما في تعادل أكيد. التعادل قليل عند الفريقين: 3 تعادلات من 24 مباراة."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.284,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 28%، يعني مرة من كل 4، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.284,
+        "t": "شو بدي بـ«ما في تعادل» وأودزها 1.40؟ أنا رايح على «تعادل» بأودز 3.53. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.716,
+        "t": "احتمالها 72%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 1,
+        "c": 0.716,
+        "t": "بالأرقام: 3 من 3 إشارات معه. نموذج الأهداف بيعطيه 76% والسوق 71%. التعادل قليل عند الفريقين: 3 تعادلات من 24 مباراة."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 1,
+        "best": "logic",
+        "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 28%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. ما في تعادل باحتمال 72%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 0.758
+      }
+     },
+     "espn": {
+      "s": "soccer",
+      "l": "ita.1",
+      "id": "401875004",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/17530.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
+    },
+    {
+     "id": "80c92a163a81b69fef76530221e2edd0|totals|Over|2.5|None",
+     "event_id": "80c92a163a81b69fef76530221e2edd0",
+     "sport_key": "soccer_spain_la_liga",
+     "group": "soccer",
+     "league": "La Liga - Spain",
+     "home": "Levante",
+     "away": "Real Racing Club de Santander",
+     "commence_time": "2026-11-27T20:00:00Z",
+     "market": "totals",
+     "name": "Over",
+     "point": 2.5,
+     "description": null,
+     "market_prob": 0.6759,
+     "sharp_prob": null,
+     "prob": 0.7049,
+     "books": 3,
+     "result": "pending",
+     "score": null,
+     "movement": 0.0286,
+     "model_prob": 0.8375,
+     "support": 3,
+     "signals": 3,
+     "reasons": [
+      "3 شركات أودز بتعطيه بالمتوسط 68% بعد ما شلنا هامشها",
+      "احتماله ارتفع 2.9 نقطة خلال آخر 24 ساعة، يعني في فلوس كبيرة دخلت عليه",
+      "نموذجنا الإحصائي بيعطيه 84% (متوقع 3.1 أهداف لـ⁨Levante⁩ و1.5 لـ⁨Real Racing Club de Santander⁩)",
+      "⁨Levante⁩ على أرضه: بيسجل 2.3 وبيستقبل 2.2 بالمباراة",
+      "⁨Real Racing Club de Santander⁩ برّا أرضه: بيسجل 1.0 وبيستقبل 3.2 بالمباراة",
+      "بـ8 من 12 مباريات إلهم (صاحب الأرض على أرضه والضيف برّا) صار أكثر من 2.5 أهداف"
+     ],
+     "warnings": [],
+     "eligible": true,
+     "prob_raw": 0.7049,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.825,
+        "t": "هاي المباراة رح تولّع! أكثر من 2.5 أهداف أكيد. ⁨Levante⁩ على أرضه: بيسجل 2.3 وبيستقبل 2.2 بالمباراة."
+       },
+       {
+        "k": "pessimist",
+        "v": 0,
+        "c": 0.295,
+        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 30%، يعني مرة من كل 3، وأنا دايماً بطلع بهديك المرة."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.295,
+        "t": "شو بدي بـ«أكثر من 2.5 أهداف» وأودزها 1.42؟ أنا رايح على «أقل من 2.5 أهداف» بأودز 3.39. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.705,
+        "t": "احتمالها 70%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 1,
+        "c": 0.705,
+        "t": "بالأرقام: 3 من 3 إشارات معه. نموذج الأهداف بيعطيه 84% والسوق 68%. ⁨Levante⁩ على أرضه: بيسجل 2.3 وبيستقبل 2.2 بالمباراة."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 1,
+        "best": "logic",
+        "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 30%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: حركة الأودز مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 1,
+       "best": "logic",
+       "t": "الصافي: مع. أكثر من 2.5 أهداف باحتمال 70%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+       "score": 0.758
+      }
+     },
+     "espn": {
+      "s": "soccer",
+      "l": "esp.1",
+      "id": "401882791",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
+     "live": {
+      "state": "pre",
+      "detail": "Scheduled",
+      "score": null
+     }
+    },
+    {
+     "id": "709de4f76f95aebf383d180ac3c6f679|h2h|Toronto Raptors|None|None",
+     "event_id": "709de4f76f95aebf383d180ac3c6f679",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Toronto Raptors",
+     "away": "Brooklyn Nets",
+     "commence_time": "2026-11-28T00:40:00Z",
+     "market": "h2h",
+     "name": "Toronto Raptors",
+     "point": null,
+     "description": null,
+     "market_prob": 0.7292,
+     "sharp_prob": 0.7394,
+     "prob": 0.72,
+     "books": 21,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "21 شركة أودز بتعطيه بالمتوسط 73% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 74%"
+     ],
+     "warnings": [
+      "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%"
+     ],
+     "eligible": true,
+     "prob_raw": 0.7343,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.84,
+        "t": "⁨Toronto Raptors⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 73% بعد ما شلنا هامشها. يا عمي فوز ⁨Toronto Raptors⁩ مضمونة، أنا بعطيها 84%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.28,
+        "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%. وفوق هيك، احتمال إنها تخيب 28%، يعني تقريباً مرة من كل 4."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.28,
+        "t": "شو بدي بـ«فوز ⁨Toronto Raptors⁩» وأودزها 1.39؟ أنا رايح على «فوز ⁨Brooklyn Nets⁩» بأودز 3.57. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.72,
+        "t": "احتمالها 72%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.72,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 73%، والشركات الأدق 74%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 28%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Toronto Raptors⁩ باحتمال 72%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": 0.268
+      }
+     },
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401909329",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/27 - 7:30 PM EST",
+      "score": null
+     }
+    },
+    {
+     "id": "592a440c590415d43f5ffbfd922cd41e|h2h|Portland Trail Blazers|None|None",
+     "event_id": "592a440c590415d43f5ffbfd922cd41e",
+     "sport_key": "basketball_nba",
+     "group": "basketball",
+     "league": "NBA",
+     "home": "Portland Trail Blazers",
+     "away": "Golden State Warriors",
+     "commence_time": "2026-11-28T02:40:00Z",
+     "market": "h2h",
+     "name": "Portland Trail Blazers",
+     "point": null,
+     "description": null,
+     "market_prob": 0.748,
+     "sharp_prob": 0.7648,
+     "prob": 0.7417,
+     "books": 21,
+     "result": "pending",
+     "score": null,
+     "model_prob": null,
+     "support": 1,
+     "signals": 1,
+     "reasons": [
+      "21 شركة أودز بتعطيه بالمتوسط 75% بعد ما شلنا هامشها",
+      "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 76%"
+     ],
+     "warnings": [
+      "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%"
+     ],
+     "eligible": true,
+     "prob_raw": 0.7565,
+     "panel": {
+      "p": [
+       {
+        "k": "fan",
+        "v": 1,
+        "c": 0.862,
+        "t": "⁨Portland Trail Blazers⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 75% بعد ما شلنا هامشها. يا عمي فوز ⁨Portland Trail Blazers⁩ مضمونة، أنا بعطيها 86%."
+       },
+       {
+        "k": "pessimist",
+        "v": -1,
+        "c": 0.258,
+        "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%. وفوق هيك، احتمال إنها تخيب 26%، يعني تقريباً مرة من كل 4."
+       },
+       {
+        "k": "dreamer",
+        "v": -1,
+        "c": 0.258,
+        "t": "شو بدي بـ«فوز ⁨Portland Trail Blazers⁩» وأودزها 1.35؟ أنا رايح على «فوز ⁨Golden State Warriors⁩» بأودز 3.87. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+       },
+       {
+        "k": "careful",
+        "v": 0,
+        "c": 0.742,
+        "t": "احتمالها 74%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+       },
+       {
+        "k": "logic",
+        "v": 0,
+        "c": 0.742,
+        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 75%، والشركات الأدق 76%."
+       }
+      ],
+      "j": [
+       {
+        "k": "evidence",
+        "v": 0,
+        "best": "logic",
+        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+       },
+       {
+        "k": "risk",
+        "v": 0,
+        "best": "careful",
+        "t": "المخاطرة متوسطة: احتمال الخيبة 26%. المتحفظ والمتشائم معهم حق يحذّروا."
+       },
+       {
+        "k": "market",
+        "v": 1,
+        "best": "logic",
+        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+       }
+      ],
+      "q": {
+       "v": 0,
+       "best": "logic",
+       "t": "الصافي: بحذر. فوز ⁨Portland Trail Blazers⁩ باحتمال 74%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+       "score": 0.268
+      }
+     },
+     "espn": {
+      "s": "basketball",
+      "l": "nba",
+      "id": "401909336",
+      "sw": false
+     },
+     "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png",
+     "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
+     "live": {
+      "state": "pre",
+      "detail": "11/27 - 9:30 PM EST",
+      "score": null
+     }
+    }
+   ],
+   "prob": 0.194,
+   "fair_odds": 5.15,
+   "result": "pending"
   }
  ],
  "top": [
   {
-   "id": "5902b4703e9ddc1f573091e14107834c|double_chance|Salzburg|None|None",
-   "event_id": "5902b4703e9ddc1f573091e14107834c",
-   "sport_key": "soccer_uefa_europa_league",
+   "id": "f776e28e9659a71f10168cc9e792965b|double_chance|Al-Qadsiah|None|None",
+   "event_id": "f776e28e9659a71f10168cc9e792965b",
+   "sport_key": "soccer_saudi_arabia_pro_league",
    "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "Salzburg",
-   "away": "FC Ararat-Armenia",
-   "commence_time": "2026-11-26T17:45:00Z",
+   "league": "Saudi Pro League",
+   "home": "Al-Qadsiah",
+   "away": "Al-Fayha",
+   "commence_time": "2026-11-27T14:20:00Z",
    "market": "double_chance",
-   "name": "Salzburg",
+   "name": "Al-Qadsiah",
    "point": null,
    "description": null,
-   "market_prob": 0.9422,
-   "sharp_prob": 0.9526,
-   "prob": 0.9474,
-   "books": 20,
-   "result": "hit",
-   "score": "2-0",
-   "model_prob": null,
-   "support": 1,
-   "signals": 1,
-   "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 94% بعد ما شلنا هامشها",
-    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 95%"
-   ],
-   "warnings": [],
-   "eligible": true,
-   "prob_raw": 0.9474,
-   "panel": {
-    "p": [
-     {
-      "k": "fan",
-      "v": 1,
-      "c": 0.99,
-      "t": "⁨Salzburg⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 94% بعد ما شلنا هامشها. يا عمي ⁨Salzburg⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-     },
-     {
-      "k": "pessimist",
-      "v": 0,
-      "c": 0.053,
-      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 5%، يعني مرة من كل 19، وأنا دايماً بطلع بهديك المرة."
-     },
-     {
-      "k": "dreamer",
-      "v": -1,
-      "c": 0.053,
-      "t": "شو بدي بـ«⁨Salzburg⁩ ما بيخسر» وأودزها 1.06؟ أنا رايح على «فوز ⁨FC Ararat-Armenia⁩» بأودز 19.01. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-     },
-     {
-      "k": "careful",
-      "v": 1,
-      "c": 0.947,
-      "t": "95% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-     },
-     {
-      "k": "logic",
-      "v": 0,
-      "c": 0.947,
-      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 94%، والشركات الأدق 95%."
-     }
-    ],
-    "j": [
-     {
-      "k": "evidence",
-      "v": 0,
-      "best": "logic",
-      "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-     },
-     {
-      "k": "risk",
-      "v": 1,
-      "best": "careful",
-      "t": "المخاطرة قليلة: احتمال الخيبة 5% بس، وما في تحذيرات."
-     },
-     {
-      "k": "market",
-      "v": 1,
-      "best": "logic",
-      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-     }
-    ],
-    "q": {
-     "v": 1,
-     "best": "logic",
-     "t": "الصافي: مع. ⁨Salzburg⁩ ما بيخسر باحتمال 95%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-     "score": 0.649
-    }
-   },
-   "rank": 1,
-   "espn": {
-    "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915520",
-    "sw": false
-   },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2790.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/20024.png",
-   "live": {
-    "state": "post",
-    "detail": "FT",
-    "score": "2-0"
-   }
-  },
-  {
-   "id": "d6377d30379e5d3053c1076646d83f78|double_chance|Juventus|None|None",
-   "event_id": "d6377d30379e5d3053c1076646d83f78",
-   "sport_key": "soccer_uefa_europa_league",
-   "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "Juventus",
-   "away": "Omonoia FC",
-   "commence_time": "2026-11-26T20:00:00Z",
-   "market": "double_chance",
-   "name": "Juventus",
-   "point": null,
-   "description": null,
-   "market_prob": 0.9386,
-   "sharp_prob": 0.9463,
-   "prob": 0.9425,
-   "books": 20,
+   "market_prob": 0.9144,
+   "sharp_prob": 0.918,
+   "prob": 0.9162,
+   "books": 14,
    "result": "pending",
    "score": null,
    "model_prob": null,
    "support": 1,
    "signals": 1,
    "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 94% بعد ما شلنا هامشها",
-    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 95%"
-   ],
-   "warnings": [],
-   "eligible": true,
-   "prob_raw": 0.9425,
-   "panel": {
-    "p": [
-     {
-      "k": "fan",
-      "v": 1,
-      "c": 0.99,
-      "t": "⁨Juventus⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 94% بعد ما شلنا هامشها. يا عمي ⁨Juventus⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-     },
-     {
-      "k": "pessimist",
-      "v": 0,
-      "c": 0.057,
-      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 6%، يعني مرة من كل 17، وأنا دايماً بطلع بهديك المرة."
-     },
-     {
-      "k": "dreamer",
-      "v": -1,
-      "c": 0.057,
-      "t": "شو بدي بـ«⁨Juventus⁩ ما بيخسر» وأودزها 1.06؟ أنا رايح على «فوز ⁨Omonoia FC⁩» بأودز 17.39. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-     },
-     {
-      "k": "careful",
-      "v": 1,
-      "c": 0.943,
-      "t": "94% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-     },
-     {
-      "k": "logic",
-      "v": 0,
-      "c": 0.943,
-      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 94%، والشركات الأدق 95%."
-     }
-    ],
-    "j": [
-     {
-      "k": "evidence",
-      "v": 0,
-      "best": "logic",
-      "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-     },
-     {
-      "k": "risk",
-      "v": 1,
-      "best": "careful",
-      "t": "المخاطرة قليلة: احتمال الخيبة 6% بس، وما في تحذيرات."
-     },
-     {
-      "k": "market",
-      "v": 1,
-      "best": "logic",
-      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-     }
-    ],
-    "q": {
-     "v": 1,
-     "best": "logic",
-     "t": "الصافي: مع. ⁨Juventus⁩ ما بيخسر باحتمال 94%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-     "score": 0.649
-    }
-   },
-   "rank": 2,
-   "espn": {
-    "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915502",
-    "sw": false
-   },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/111.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/617.png",
-   "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
-   }
-  },
-  {
-   "id": "a24c89b65c5a30fb9473735049589e64|double_chance|Lyon|None|None",
-   "event_id": "a24c89b65c5a30fb9473735049589e64",
-   "sport_key": "soccer_uefa_europa_league",
-   "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "Lyon",
-   "away": "Lillestrom",
-   "commence_time": "2026-11-26T20:00:00Z",
-   "market": "double_chance",
-   "name": "Lyon",
-   "point": null,
-   "description": null,
-   "market_prob": 0.9291,
-   "sharp_prob": 0.9359,
-   "prob": 0.9325,
-   "books": 20,
-   "result": "pending",
-   "score": null,
-   "model_prob": null,
-   "support": 1,
-   "signals": 1,
-   "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 93% بعد ما شلنا هامشها",
-    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 94%"
-   ],
-   "warnings": [],
-   "eligible": true,
-   "prob_raw": 0.9325,
-   "panel": {
-    "p": [
-     {
-      "k": "fan",
-      "v": 1,
-      "c": 0.99,
-      "t": "⁨Lyon⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 93% بعد ما شلنا هامشها. يا عمي ⁨Lyon⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-     },
-     {
-      "k": "pessimist",
-      "v": 0,
-      "c": 0.068,
-      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 7%، يعني مرة من كل 15، وأنا دايماً بطلع بهديك المرة."
-     },
-     {
-      "k": "dreamer",
-      "v": -1,
-      "c": 0.068,
-      "t": "شو بدي بـ«⁨Lyon⁩ ما بيخسر» وأودزها 1.07؟ أنا رايح على «فوز ⁨Lillestrom⁩» بأودز 14.81. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-     },
-     {
-      "k": "careful",
-      "v": 1,
-      "c": 0.932,
-      "t": "93% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-     },
-     {
-      "k": "logic",
-      "v": 0,
-      "c": 0.932,
-      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 93%، والشركات الأدق 94%."
-     }
-    ],
-    "j": [
-     {
-      "k": "evidence",
-      "v": 0,
-      "best": "logic",
-      "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-     },
-     {
-      "k": "risk",
-      "v": 1,
-      "best": "careful",
-      "t": "المخاطرة قليلة: احتمال الخيبة 7% بس، وما في تحذيرات."
-     },
-     {
-      "k": "market",
-      "v": 1,
-      "best": "logic",
-      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-     }
-    ],
-    "q": {
-     "v": 1,
-     "best": "logic",
-     "t": "الصافي: مع. ⁨Lyon⁩ ما بيخسر باحتمال 93%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-     "score": 0.649
-    }
-   },
-   "rank": 3,
-   "espn": {
-    "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915501",
-    "sw": false
-   },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/167.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/987.png",
-   "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
-   }
-  },
-  {
-   "id": "413409b43875d1bdb627a9e7fb6bc3fd|double_chance|Sunderland|None|None",
-   "event_id": "413409b43875d1bdb627a9e7fb6bc3fd",
-   "sport_key": "soccer_uefa_europa_league",
-   "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "Sunderland",
-   "away": "Jagiellonia Białystok",
-   "commence_time": "2026-11-26T20:00:00Z",
-   "market": "double_chance",
-   "name": "Sunderland",
-   "point": null,
-   "description": null,
-   "market_prob": 0.9215,
-   "sharp_prob": 0.9294,
-   "prob": 0.9254,
-   "books": 20,
-   "result": "pending",
-   "score": null,
-   "model_prob": null,
-   "support": 1,
-   "signals": 1,
-   "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 92% بعد ما شلنا هامشها",
-    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 93%"
-   ],
-   "warnings": [],
-   "eligible": true,
-   "prob_raw": 0.9254,
-   "panel": {
-    "p": [
-     {
-      "k": "fan",
-      "v": 1,
-      "c": 0.99,
-      "t": "⁨Sunderland⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 92% بعد ما شلنا هامشها. يا عمي ⁨Sunderland⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-     },
-     {
-      "k": "pessimist",
-      "v": 0,
-      "c": 0.075,
-      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 7%، يعني مرة من كل 13، وأنا دايماً بطلع بهديك المرة."
-     },
-     {
-      "k": "dreamer",
-      "v": -1,
-      "c": 0.075,
-      "t": "شو بدي بـ«⁨Sunderland⁩ ما بيخسر» وأودزها 1.08؟ أنا رايح على «فوز ⁨Jagiellonia Białystok⁩» بأودز 13.40. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-     },
-     {
-      "k": "careful",
-      "v": 1,
-      "c": 0.925,
-      "t": "93% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-     },
-     {
-      "k": "logic",
-      "v": 0,
-      "c": 0.925,
-      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 92%، والشركات الأدق 93%."
-     }
-    ],
-    "j": [
-     {
-      "k": "evidence",
-      "v": 0,
-      "best": "logic",
-      "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-     },
-     {
-      "k": "risk",
-      "v": 1,
-      "best": "careful",
-      "t": "المخاطرة قليلة: احتمال الخيبة 7% بس، وما في تحذيرات."
-     },
-     {
-      "k": "market",
-      "v": 1,
-      "best": "logic",
-      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-     }
-    ],
-    "q": {
-     "v": 1,
-     "best": "logic",
-     "t": "الصافي: مع. ⁨Sunderland⁩ ما بيخسر باحتمال 93%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-     "score": 0.649
-    }
-   },
-   "rank": 4,
-   "espn": {
-    "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915513",
-    "sw": false
-   },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/366.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/11505.png",
-   "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
-   }
-  },
-  {
-   "id": "a18687d4f17a96a7732fb0c8673ea037|double_chance|Besiktas JK|None|None",
-   "event_id": "a18687d4f17a96a7732fb0c8673ea037",
-   "sport_key": "soccer_uefa_europa_league",
-   "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "Besiktas JK",
-   "away": "Hapoel Be'er Sheva",
-   "commence_time": "2026-11-26T17:45:00Z",
-   "market": "double_chance",
-   "name": "Besiktas JK",
-   "point": null,
-   "description": null,
-   "market_prob": 0.9105,
-   "sharp_prob": 0.9238,
-   "prob": 0.9171,
-   "books": 20,
-   "result": "pending",
-   "score": null,
-   "model_prob": null,
-   "support": 1,
-   "signals": 1,
-   "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 91% بعد ما شلنا هامشها",
+    "14 شركة أودز بتعطيه بالمتوسط 91% بعد ما شلنا هامشها",
     "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 92%"
    ],
    "warnings": [],
    "eligible": true,
-   "prob_raw": 0.9171,
+   "prob_raw": 0.9162,
    "panel": {
     "p": [
      {
       "k": "fan",
       "v": 1,
       "c": 0.99,
-      "t": "⁨Besiktas JK⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 91% بعد ما شلنا هامشها. يا عمي ⁨Besiktas JK⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
+      "t": "⁨Al-Qadsiah⁩ ما في منه! 14 شركة أودز بتعطيه بالمتوسط 91% بعد ما شلنا هامشها. يا عمي ⁨Al-Qadsiah⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
      },
      {
       "k": "pessimist",
       "v": 0,
-      "c": 0.083,
+      "c": 0.084,
       "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 8%، يعني مرة من كل 12، وأنا دايماً بطلع بهديك المرة."
      },
      {
       "k": "dreamer",
       "v": -1,
-      "c": 0.083,
-      "t": "شو بدي بـ«⁨Besiktas JK⁩ ما بيخسر» وأودزها 1.09؟ أنا رايح على «فوز ⁨Hapoel Be'er Sheva⁩» بأودز 12.06. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+      "c": 0.084,
+      "t": "شو بدي بـ«⁨Al-Qadsiah⁩ ما بيخسر» وأودزها 1.09؟ أنا رايح على «فوز ⁨Al-Fayha⁩» بأودز 11.93. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
      },
      {
       "k": "careful",
       "v": 1,
-      "c": 0.917,
+      "c": 0.916,
       "t": "92% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
      },
      {
       "k": "logic",
       "v": 0,
-      "c": 0.917,
+      "c": 0.916,
       "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 91%، والشركات الأدق 92%."
      }
     ],
@@ -528,99 +1070,105 @@
     "q": {
      "v": 1,
      "best": "logic",
-     "t": "الصافي: مع. ⁨Besiktas JK⁩ ما بيخسر باحتمال 92%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+     "t": "الصافي: مع. ⁨Al-Qadsiah⁩ ما بيخسر باحتمال 92%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
      "score": 0.649
     }
    },
-   "rank": 5,
+   "rank": 1,
    "espn": {
     "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915506",
+    "l": "ksa.1",
+    "id": "401900870",
     "sw": false
    },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1895.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/13083.png",
+   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/22022.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/21827.png",
    "live": {
-    "state": "in",
-    "detail": "69'",
-    "score": "0-0"
+    "state": "pre",
+    "detail": "Scheduled",
+    "score": null
    }
   },
   {
-   "id": "707c513bfa43b45b7813126e09ad08d8|double_chance|Marseille|None|None",
-   "event_id": "707c513bfa43b45b7813126e09ad08d8",
-   "sport_key": "soccer_uefa_europa_league",
+   "id": "698f4a7967ead89e10205a68ceb4bda4|double_chance|Werder Bremen|None|None",
+   "event_id": "698f4a7967ead89e10205a68ceb4bda4",
+   "sport_key": "soccer_germany_bundesliga",
    "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "Marseille",
-   "away": "PFC Levski Sofia",
-   "commence_time": "2026-11-26T17:45:00Z",
+   "league": "Bundesliga - Germany",
+   "home": "Werder Bremen",
+   "away": "Borussia Monchengladbach",
+   "commence_time": "2026-11-27T19:30:00Z",
    "market": "double_chance",
-   "name": "Marseille",
+   "name": "Werder Bremen",
    "point": null,
    "description": null,
-   "market_prob": 0.8891,
-   "sharp_prob": 0.8945,
-   "prob": 0.8918,
-   "books": 20,
-   "result": "hit",
-   "score": "1-0",
-   "model_prob": null,
-   "support": 1,
-   "signals": 1,
+   "market_prob": 0.7799,
+   "sharp_prob": 0.7919,
+   "prob": 0.8139,
+   "books": 23,
+   "result": "pending",
+   "score": null,
+   "movement": 0.0034,
+   "model_prob": 0.9219,
+   "support": 6,
+   "signals": 6,
    "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 89% بعد ما شلنا هامشها",
-    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 89%"
+    "23 شركة أودز بتعطيه بالمتوسط 78% بعد ما شلنا هامشها",
+    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 79%",
+    "نموذجنا الإحصائي بيعطيه 92% (متوقع 3.1 أهداف لـ⁨Werder Bremen⁩ و1.0 لـ⁨Borussia Monchengladbach⁩)",
+    "فورمة ⁨Werder Bremen⁩ بآخر 5: 3 فوز و1 تعادل و0.8 خسارة، مقابل 1 فوز لـ⁨Borussia Monchengladbach⁩",
+    "⁨Werder Bremen⁩ على أرضه هالموسم: فاز 4 من 5 وخسر 0 بس",
+    "⁨Borussia Monchengladbach⁩ برّا أرضه: فاز 1 من 5 بس",
+    "⁨Werder Bremen⁩ بالمركز 6 (18 نقطة)، و⁨Borussia Monchengladbach⁩ بالمركز 18 (4 نقطة)"
    ],
    "warnings": [],
    "eligible": true,
-   "prob_raw": 0.8918,
+   "prob_raw": 0.8139,
    "panel": {
     "p": [
      {
       "k": "fan",
       "v": 1,
-      "c": 0.99,
-      "t": "⁨Marseille⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 89% بعد ما شلنا هامشها. يا عمي ⁨Marseille⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
+      "c": 0.934,
+      "t": "⁨Werder Bremen⁩ ما في منه! فورمة ⁨Werder Bremen⁩ بآخر 5: 3 فوز و1 تعادل و0.8 خسارة، مقابل 1 فوز لـ⁨Borussia Monchengladbach⁩. يا عمي ⁨Werder Bremen⁩ ما بيخسر مضمونة، أنا بعطيها 93%."
      },
      {
       "k": "pessimist",
       "v": 0,
-      "c": 0.108,
-      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 11%، يعني مرة من كل 9، وأنا دايماً بطلع بهديك المرة."
+      "c": 0.186,
+      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 19%، يعني مرة من كل 5، وأنا دايماً بطلع بهديك المرة."
      },
      {
       "k": "dreamer",
       "v": -1,
-      "c": 0.108,
-      "t": "شو بدي بـ«⁨Marseille⁩ ما بيخسر» وأودزها 1.12؟ أنا رايح على «فوز ⁨PFC Levski Sofia⁩» بأودز 9.24. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+      "c": 0.186,
+      "t": "شو بدي بـ«⁨Werder Bremen⁩ ما بيخسر» وأودزها 1.23؟ أنا رايح على «فوز ⁨Borussia Monchengladbach⁩» بأودز 5.37. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
      },
      {
       "k": "careful",
       "v": 1,
-      "c": 0.892,
-      "t": "89% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
+      "c": 0.814,
+      "t": "81% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
      },
      {
       "k": "logic",
-      "v": 0,
-      "c": 0.892,
-      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 89%، والشركات الأدق 89%."
+      "v": 1,
+      "c": 0.814,
+      "t": "بالأرقام: 6 من 6 إشارات معه. نموذج الأهداف بيعطيه 92% والسوق 78%. فورمة ⁨Werder Bremen⁩ بآخر 5: 3 فوز و1 تعادل و0.8 خسارة، مقابل 1 فوز لـ⁨Borussia Monchengladbach⁩."
      }
     ],
     "j": [
      {
       "k": "evidence",
-      "v": 0,
+      "v": 1,
       "best": "logic",
-      "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+      "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
      },
      {
       "k": "risk",
       "v": 1,
       "best": "careful",
-      "t": "المخاطرة قليلة: احتمال الخيبة 11% بس، وما في تحذيرات."
+      "t": "المخاطرة قليلة: احتمال الخيبة 19% بس، وما في تحذيرات."
      },
      {
       "k": "market",
@@ -632,85 +1180,411 @@
     "q": {
      "v": 1,
      "best": "logic",
-     "t": "الصافي: مع. ⁨Marseille⁩ ما بيخسر باحتمال 89%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-     "score": 0.649
+     "t": "الصافي: مع. ⁨Werder Bremen⁩ ما بيخسر باحتمال 81%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+     "score": 1.099
     }
    },
-   "rank": 6,
+   "rank": 2,
    "espn": {
     "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915507",
+    "l": "ger.1",
+    "id": "401884720",
     "sw": false
    },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/176.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/490.png",
+   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/137.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/268.png",
    "live": {
-    "state": "post",
-    "detail": "FT",
-    "score": "1-0"
+    "state": "pre",
+    "detail": "Scheduled",
+    "score": null
    }
   },
   {
-   "id": "df4947bbe49057782feacca38c03e790|double_chance|TSG Hoffenheim|None|None",
-   "event_id": "df4947bbe49057782feacca38c03e790",
-   "sport_key": "soccer_uefa_europa_league",
+   "id": "80c92a163a81b69fef76530221e2edd0|double_chance|No Draw|None|None",
+   "event_id": "80c92a163a81b69fef76530221e2edd0",
+   "sport_key": "soccer_spain_la_liga",
    "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "TSG Hoffenheim",
-   "away": "SK Sturm Graz",
-   "commence_time": "2026-11-26T20:00:00Z",
+   "league": "La Liga - Spain",
+   "home": "Levante",
+   "away": "Real Racing Club de Santander",
+   "commence_time": "2026-11-27T20:00:00Z",
    "market": "double_chance",
-   "name": "TSG Hoffenheim",
+   "name": "No Draw",
    "point": null,
    "description": null,
-   "market_prob": 0.8846,
-   "sharp_prob": 0.896,
-   "prob": 0.8903,
-   "books": 20,
+   "market_prob": 0.7581,
+   "sharp_prob": 0.7575,
+   "prob": 0.7718,
+   "books": 21,
+   "result": "pending",
+   "score": null,
+   "movement": 0.003,
+   "model_prob": 0.84,
+   "support": 2,
+   "signals": 3,
+   "reasons": [
+    "21 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها",
+    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 76%",
+    "نموذجنا الإحصائي بيعطيه 84% (متوقع 3.1 أهداف لـ⁨Levante⁩ و1.5 لـ⁨Real Racing Club de Santander⁩)"
+   ],
+   "warnings": [
+    "الفريقين بيتعادلوا كثير: 8 من 26"
+   ],
+   "eligible": true,
+   "prob_raw": 0.7718,
+   "panel": {
+    "p": [
+     {
+      "k": "fan",
+      "v": 1,
+      "c": 0.892,
+      "t": "هاي المباراة رح تولّع! ما في تعادل أكيد. 21 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها."
+     },
+     {
+      "k": "pessimist",
+      "v": -1,
+      "c": 0.228,
+      "t": "دايماً في مشكلة: الفريقين بيتعادلوا كثير: 8 من 26. وفوق هيك، احتمال إنها تخيب 23%، يعني تقريباً مرة من كل 4."
+     },
+     {
+      "k": "dreamer",
+      "v": -1,
+      "c": 0.228,
+      "t": "شو بدي بـ«ما في تعادل» وأودزها 1.30؟ أنا رايح على «تعادل» بأودز 4.38. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+     },
+     {
+      "k": "careful",
+      "v": 0,
+      "c": 0.772,
+      "t": "احتمالها 77%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+     },
+     {
+      "k": "logic",
+      "v": 1,
+      "c": 0.772,
+      "t": "بالأرقام: 2 من 3 إشارات معه. نموذج الأهداف بيعطيه 84% والسوق 76%."
+     }
+    ],
+    "j": [
+     {
+      "k": "evidence",
+      "v": 1,
+      "best": "logic",
+      "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+     },
+     {
+      "k": "risk",
+      "v": 0,
+      "best": "careful",
+      "t": "المخاطرة متوسطة: احتمال الخيبة 23%. المتحفظ والمتشائم معهم حق يحذّروا."
+     },
+     {
+      "k": "market",
+      "v": 1,
+      "best": "logic",
+      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+     }
+    ],
+    "q": {
+     "v": 1,
+     "best": "logic",
+     "t": "الصافي: مع. ما في تعادل باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+     "score": 0.712
+    }
+   },
+   "rank": 3,
+   "espn": {
+    "s": "soccer",
+    "l": "esp.1",
+    "id": "401882791",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
+   "live": {
+    "state": "pre",
+    "detail": "Scheduled",
+    "score": null
+   }
+  },
+  {
+   "id": "428050645d1dc8b16d84287e21de55fa|h2h|Denver Nuggets|None|None",
+   "event_id": "428050645d1dc8b16d84287e21de55fa",
+   "sport_key": "basketball_nba",
+   "group": "basketball",
+   "league": "NBA",
+   "home": "Utah Jazz",
+   "away": "Denver Nuggets",
+   "commence_time": "2026-11-28T02:40:00Z",
+   "market": "h2h",
+   "name": "Denver Nuggets",
+   "point": null,
+   "description": null,
+   "market_prob": 0.7757,
+   "sharp_prob": 0.7915,
+   "prob": 0.7683,
+   "books": 21,
+   "result": "pending",
+   "score": null,
+   "movement": 0.0232,
+   "model_prob": null,
+   "support": 2,
+   "signals": 2,
+   "reasons": [
+    "21 شركة أودز بتعطيه بالمتوسط 78% بعد ما شلنا هامشها",
+    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 79%",
+    "احتماله ارتفع 2.3 نقطة خلال آخر 24 ساعة، يعني في فلوس كبيرة دخلت عليه"
+   ],
+   "warnings": [
+    "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%"
+   ],
+   "eligible": true,
+   "prob_raw": 0.7836,
+   "panel": {
+    "p": [
+     {
+      "k": "fan",
+      "v": 1,
+      "c": 0.888,
+      "t": "⁨Denver Nuggets⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 78% بعد ما شلنا هامشها. يا عمي فوز ⁨Denver Nuggets⁩ مضمونة، أنا بعطيها 89%."
+     },
+     {
+      "k": "pessimist",
+      "v": -1,
+      "c": 0.232,
+      "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%. وفوق هيك، احتمال إنها تخيب 23%، يعني تقريباً مرة من كل 4."
+     },
+     {
+      "k": "dreamer",
+      "v": -1,
+      "c": 0.232,
+      "t": "شو بدي بـ«فوز ⁨Denver Nuggets⁩» وأودزها 1.30؟ أنا رايح على «فوز ⁨Utah Jazz⁩» بأودز 4.32. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+     },
+     {
+      "k": "careful",
+      "v": 0,
+      "c": 0.768,
+      "t": "احتمالها 77%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+     },
+     {
+      "k": "logic",
+      "v": 1,
+      "c": 0.768,
+      "t": "بالأرقام: 2 من 2 إشارات معه. السوق بيعطيه 78%، والشركات الأدق 79%."
+     }
+    ],
+    "j": [
+     {
+      "k": "evidence",
+      "v": 1,
+      "best": "logic",
+      "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+     },
+     {
+      "k": "risk",
+      "v": 0,
+      "best": "careful",
+      "t": "المخاطرة متوسطة: احتمال الخيبة 23%. المتحفظ والمتشائم معهم حق يحذّروا."
+     },
+     {
+      "k": "market",
+      "v": 1,
+      "best": "logic",
+      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق وحركة الأودز مع التوقع."
+     }
+    ],
+    "q": {
+     "v": 1,
+     "best": "logic",
+     "t": "الصافي: مع. فوز ⁨Denver Nuggets⁩ باحتمال 77%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+     "score": 0.714
+    }
+   },
+   "rank": 4,
+   "espn": {
+    "s": "basketball",
+    "l": "nba",
+    "id": "401909334",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png",
+   "live": {
+    "state": "pre",
+    "detail": "11/27 - 9:30 PM EST",
+    "score": null
+   }
+  },
+  {
+   "id": "c5dc35b4116988de2c1425df17456478|h2h|Boston Celtics|None|None",
+   "event_id": "c5dc35b4116988de2c1425df17456478",
+   "sport_key": "basketball_nba",
+   "group": "basketball",
+   "league": "NBA",
+   "home": "Boston Celtics",
+   "away": "Atlanta Hawks",
+   "commence_time": "2026-11-28T01:10:00Z",
+   "market": "h2h",
+   "name": "Boston Celtics",
+   "point": null,
+   "description": null,
+   "market_prob": 0.7619,
+   "sharp_prob": 0.7741,
+   "prob": 0.753,
+   "books": 21,
+   "result": "pending",
+   "score": null,
+   "movement": 0.0124,
+   "model_prob": null,
+   "support": 2,
+   "signals": 2,
+   "reasons": [
+    "21 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها",
+    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 77%",
+    "احتماله ارتفع 1.2 نقطة خلال آخر 24 ساعة، يعني في فلوس كبيرة دخلت عليه"
+   ],
+   "warnings": [
+    "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%"
+   ],
+   "eligible": true,
+   "prob_raw": 0.768,
+   "panel": {
+    "p": [
+     {
+      "k": "fan",
+      "v": 1,
+      "c": 0.873,
+      "t": "⁨Boston Celtics⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 76% بعد ما شلنا هامشها. يا عمي فوز ⁨Boston Celtics⁩ مضمونة، أنا بعطيها 87%."
+     },
+     {
+      "k": "pessimist",
+      "v": -1,
+      "c": 0.247,
+      "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%. وفوق هيك، احتمال إنها تخيب 25%، يعني تقريباً مرة من كل 4."
+     },
+     {
+      "k": "dreamer",
+      "v": -1,
+      "c": 0.247,
+      "t": "شو بدي بـ«فوز ⁨Boston Celtics⁩» وأودزها 1.33؟ أنا رايح على «فوز ⁨Atlanta Hawks⁩» بأودز 4.05. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+     },
+     {
+      "k": "careful",
+      "v": 0,
+      "c": 0.753,
+      "t": "احتمالها 75%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+     },
+     {
+      "k": "logic",
+      "v": 1,
+      "c": 0.753,
+      "t": "بالأرقام: 2 من 2 إشارات معه. السوق بيعطيه 76%، والشركات الأدق 77%."
+     }
+    ],
+    "j": [
+     {
+      "k": "evidence",
+      "v": 1,
+      "best": "logic",
+      "t": "الأرقام بتدعم التوقع، وأقوى كلام كان كلام المنطقي لأنه مبني على إحصائيات مش على عواطف."
+     },
+     {
+      "k": "risk",
+      "v": 0,
+      "best": "careful",
+      "t": "المخاطرة متوسطة: احتمال الخيبة 25%. المتحفظ والمتشائم معهم حق يحذّروا."
+     },
+     {
+      "k": "market",
+      "v": 1,
+      "best": "logic",
+      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق وحركة الأودز مع التوقع."
+     }
+    ],
+    "q": {
+     "v": 1,
+     "best": "logic",
+     "t": "الصافي: مع. فوز ⁨Boston Celtics⁩ باحتمال 75%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
+     "score": 0.714
+    }
+   },
+   "rank": 5,
+   "espn": {
+    "s": "basketball",
+    "l": "nba",
+    "id": "401909330",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png",
+   "live": {
+    "state": "pre",
+    "detail": "11/27 - 8:00 PM EST",
+    "score": null
+   }
+  },
+  {
+   "id": "326e8215b0369df0d4d65e5c0afe9ff5|h2h|Detroit Pistons|None|None",
+   "event_id": "326e8215b0369df0d4d65e5c0afe9ff5",
+   "sport_key": "basketball_nba",
+   "group": "basketball",
+   "league": "NBA",
+   "home": "Detroit Pistons",
+   "away": "Milwaukee Bucks",
+   "commence_time": "2026-11-28T00:40:00Z",
+   "market": "h2h",
+   "name": "Detroit Pistons",
+   "point": null,
+   "description": null,
+   "market_prob": 0.7664,
+   "sharp_prob": 0.7684,
+   "prob": 0.7524,
+   "books": 21,
    "result": "pending",
    "score": null,
    "model_prob": null,
    "support": 1,
    "signals": 1,
    "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 88% بعد ما شلنا هامشها",
-    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 90%"
+    "21 شركة أودز بتعطيه بالمتوسط 77% بعد ما شلنا هامشها",
+    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 77%"
    ],
-   "warnings": [],
+   "warnings": [
+    "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%"
+   ],
    "eligible": true,
-   "prob_raw": 0.8903,
+   "prob_raw": 0.7674,
    "panel": {
     "p": [
      {
       "k": "fan",
       "v": 1,
-      "c": 0.99,
-      "t": "⁨TSG Hoffenheim⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 88% بعد ما شلنا هامشها. يا عمي ⁨TSG Hoffenheim⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
+      "c": 0.872,
+      "t": "⁨Detroit Pistons⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 77% بعد ما شلنا هامشها. يا عمي فوز ⁨Detroit Pistons⁩ مضمونة، أنا بعطيها 87%."
      },
      {
       "k": "pessimist",
-      "v": 0,
-      "c": 0.11,
-      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 11%، يعني مرة من كل 9، وأنا دايماً بطلع بهديك المرة."
+      "v": -1,
+      "c": 0.248,
+      "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%. وفوق هيك، احتمال إنها تخيب 25%، يعني تقريباً مرة من كل 4."
      },
      {
       "k": "dreamer",
       "v": -1,
-      "c": 0.11,
-      "t": "شو بدي بـ«⁨TSG Hoffenheim⁩ ما بيخسر» وأودزها 1.12؟ أنا رايح على «فوز ⁨SK Sturm Graz⁩» بأودز 9.12. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+      "c": 0.248,
+      "t": "شو بدي بـ«فوز ⁨Detroit Pistons⁩» وأودزها 1.33؟ أنا رايح على «فوز ⁨Milwaukee Bucks⁩» بأودز 4.04. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
      },
      {
       "k": "careful",
-      "v": 1,
-      "c": 0.89,
-      "t": "89% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
+      "v": 0,
+      "c": 0.752,
+      "t": "احتمالها 75%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
      },
      {
       "k": "logic",
       "v": 0,
-      "c": 0.89,
-      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 88%، والشركات الأدق 90%."
+      "c": 0.752,
+      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 77%، والشركات الأدق 77%."
      }
     ],
     "j": [
@@ -722,9 +1596,9 @@
      },
      {
       "k": "risk",
-      "v": 1,
+      "v": 0,
       "best": "careful",
-      "t": "المخاطرة قليلة: احتمال الخيبة 11% بس، وما في تحذيرات."
+      "t": "المخاطرة متوسطة: احتمال الخيبة 25%. المتحفظ والمتشائم معهم حق يحذّروا."
      },
      {
       "k": "market",
@@ -734,21 +1608,125 @@
      }
     ],
     "q": {
-     "v": 1,
+     "v": 0,
      "best": "logic",
-     "t": "الصافي: مع. ⁨TSG Hoffenheim⁩ ما بيخسر باحتمال 89%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-     "score": 0.649
+     "t": "الصافي: بحذر. فوز ⁨Detroit Pistons⁩ باحتمال 75%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+     "score": 0.268
+    }
+   },
+   "rank": 6,
+   "espn": {
+    "s": "basketball",
+    "l": "nba",
+    "id": "401909327",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
+   "live": {
+    "state": "pre",
+    "detail": "11/27 - 7:30 PM EST",
+    "score": null
+   }
+  },
+  {
+   "id": "e4ab54e9a3cd7a1c8ba0a74571e366be|double_chance|No Draw|None|None",
+   "event_id": "e4ab54e9a3cd7a1c8ba0a74571e366be",
+   "sport_key": "soccer_saudi_arabia_pro_league",
+   "group": "soccer",
+   "league": "Saudi Pro League",
+   "home": "Al-Ittihad",
+   "away": "Neom",
+   "commence_time": "2026-11-27T17:30:00Z",
+   "market": "double_chance",
+   "name": "No Draw",
+   "point": null,
+   "description": null,
+   "market_prob": 0.7511,
+   "sharp_prob": 0.7535,
+   "prob": 0.7523,
+   "books": 14,
+   "result": "pending",
+   "score": null,
+   "model_prob": null,
+   "support": 1,
+   "signals": 1,
+   "reasons": [
+    "14 شركة أودز بتعطيه بالمتوسط 75% بعد ما شلنا هامشها",
+    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 75%"
+   ],
+   "warnings": [],
+   "eligible": true,
+   "prob_raw": 0.7523,
+   "panel": {
+    "p": [
+     {
+      "k": "fan",
+      "v": 1,
+      "c": 0.872,
+      "t": "هاي المباراة رح تولّع! ما في تعادل أكيد. 14 شركة أودز بتعطيه بالمتوسط 75% بعد ما شلنا هامشها."
+     },
+     {
+      "k": "pessimist",
+      "v": 0,
+      "c": 0.248,
+      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 25%، يعني مرة من كل 4، وأنا دايماً بطلع بهديك المرة."
+     },
+     {
+      "k": "dreamer",
+      "v": -1,
+      "c": 0.248,
+      "t": "شو بدي بـ«ما في تعادل» وأودزها 1.33؟ أنا رايح على «تعادل» بأودز 4.04. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+     },
+     {
+      "k": "careful",
+      "v": 0,
+      "c": 0.752,
+      "t": "احتمالها 75%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+     },
+     {
+      "k": "logic",
+      "v": 0,
+      "c": 0.752,
+      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 75%، والشركات الأدق 75%."
+     }
+    ],
+    "j": [
+     {
+      "k": "evidence",
+      "v": 0,
+      "best": "logic",
+      "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+     },
+     {
+      "k": "risk",
+      "v": 0,
+      "best": "careful",
+      "t": "المخاطرة متوسطة: احتمال الخيبة 25%. المتحفظ والمتشائم معهم حق يحذّروا."
+     },
+     {
+      "k": "market",
+      "v": 1,
+      "best": "logic",
+      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+     }
+    ],
+    "q": {
+     "v": 0,
+     "best": "logic",
+     "t": "الصافي: بحذر. ما في تعادل باحتمال 75%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+     "score": 0.309
     }
    },
    "rank": 7,
    "espn": {
     "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915515",
+    "l": "ksa.1",
+    "id": "401900873",
     "sw": false
    },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/7911.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3746.png",
+   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2276.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/130899.png",
    "live": {
     "state": "pre",
     "detail": "Scheduled",
@@ -756,169 +1734,67 @@
    }
   },
   {
-   "id": "3ee2bf8a6fa6add543f64ac3e9813976|double_chance|Union Saint-Gilloise|None|None",
-   "event_id": "3ee2bf8a6fa6add543f64ac3e9813976",
-   "sport_key": "soccer_uefa_europa_league",
-   "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "Union Saint-Gilloise",
-   "away": "Lech Poznań",
-   "commence_time": "2026-11-26T17:45:00Z",
-   "market": "double_chance",
-   "name": "Union Saint-Gilloise",
+   "id": "592a440c590415d43f5ffbfd922cd41e|h2h|Portland Trail Blazers|None|None",
+   "event_id": "592a440c590415d43f5ffbfd922cd41e",
+   "sport_key": "basketball_nba",
+   "group": "basketball",
+   "league": "NBA",
+   "home": "Portland Trail Blazers",
+   "away": "Golden State Warriors",
+   "commence_time": "2026-11-28T02:40:00Z",
+   "market": "h2h",
+   "name": "Portland Trail Blazers",
    "point": null,
    "description": null,
-   "market_prob": 0.8791,
-   "sharp_prob": 0.8867,
-   "prob": 0.8829,
-   "books": 20,
-   "result": "hit",
-   "score": "2-2",
-   "model_prob": null,
-   "support": 1,
-   "signals": 1,
-   "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 88% بعد ما شلنا هامشها",
-    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 89%"
-   ],
-   "warnings": [],
-   "eligible": true,
-   "prob_raw": 0.8829,
-   "panel": {
-    "p": [
-     {
-      "k": "fan",
-      "v": 1,
-      "c": 0.99,
-      "t": "⁨Union Saint-Gilloise⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 88% بعد ما شلنا هامشها. يا عمي ⁨Union Saint-Gilloise⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-     },
-     {
-      "k": "pessimist",
-      "v": 0,
-      "c": 0.117,
-      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 12%، يعني مرة من كل 9، وأنا دايماً بطلع بهديك المرة."
-     },
-     {
-      "k": "dreamer",
-      "v": -1,
-      "c": 0.117,
-      "t": "شو بدي بـ«⁨Union Saint-Gilloise⁩ ما بيخسر» وأودزها 1.13؟ أنا رايح على «فوز ⁨Lech Poznań⁩» بأودز 8.54. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-     },
-     {
-      "k": "careful",
-      "v": 1,
-      "c": 0.883,
-      "t": "88% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-     },
-     {
-      "k": "logic",
-      "v": 0,
-      "c": 0.883,
-      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 88%، والشركات الأدق 89%."
-     }
-    ],
-    "j": [
-     {
-      "k": "evidence",
-      "v": 0,
-      "best": "logic",
-      "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-     },
-     {
-      "k": "risk",
-      "v": 1,
-      "best": "careful",
-      "t": "المخاطرة قليلة: احتمال الخيبة 12% بس، وما في تحذيرات."
-     },
-     {
-      "k": "market",
-      "v": 1,
-      "best": "logic",
-      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-     }
-    ],
-    "q": {
-     "v": 1,
-     "best": "logic",
-     "t": "الصافي: مع. ⁨Union Saint-Gilloise⁩ ما بيخسر باحتمال 88%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-     "score": 0.649
-    }
-   },
-   "rank": 8,
-   "espn": {
-    "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915508",
-    "sw": false
-   },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/5807.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2990.png",
-   "live": {
-    "state": "post",
-    "detail": "FT",
-    "score": "2-2"
-   }
-  },
-  {
-   "id": "0e5553b52ece07115fbdf8145df0c377|double_chance|Ferencváros TC|None|None",
-   "event_id": "0e5553b52ece07115fbdf8145df0c377",
-   "sport_key": "soccer_uefa_europa_league",
-   "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "Ferencváros TC",
-   "away": "NK Celje",
-   "commence_time": "2026-11-26T20:00:00Z",
-   "market": "double_chance",
-   "name": "Ferencváros TC",
-   "point": null,
-   "description": null,
-   "market_prob": 0.8762,
-   "sharp_prob": 0.8871,
-   "prob": 0.8817,
-   "books": 20,
+   "market_prob": 0.748,
+   "sharp_prob": 0.7648,
+   "prob": 0.7417,
+   "books": 21,
    "result": "pending",
    "score": null,
    "model_prob": null,
    "support": 1,
    "signals": 1,
    "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 88% بعد ما شلنا هامشها",
-    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 89%"
+    "21 شركة أودز بتعطيه بالمتوسط 75% بعد ما شلنا هامشها",
+    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 76%"
    ],
-   "warnings": [],
+   "warnings": [
+    "سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%"
+   ],
    "eligible": true,
-   "prob_raw": 0.8817,
+   "prob_raw": 0.7565,
    "panel": {
     "p": [
      {
       "k": "fan",
       "v": 1,
-      "c": 0.99,
-      "t": "⁨Ferencváros TC⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 88% بعد ما شلنا هامشها. يا عمي ⁨Ferencváros TC⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
+      "c": 0.862,
+      "t": "⁨Portland Trail Blazers⁩ ما في منه! 21 شركة أودز بتعطيه بالمتوسط 75% بعد ما شلنا هامشها. يا عمي فوز ⁨Portland Trail Blazers⁩ مضمونة، أنا بعطيها 86%."
      },
      {
       "k": "pessimist",
-      "v": 0,
-      "c": 0.118,
-      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 12%، يعني مرة من كل 8، وأنا دايماً بطلع بهديك المرة."
+      "v": -1,
+      "c": 0.258,
+      "t": "دايماً في مشكلة: سجلنا الفعلي بيقول إنه نسبنا لهالنوع كانت متفائلة، فنزّلناها 1.9%. وفوق هيك، احتمال إنها تخيب 26%، يعني تقريباً مرة من كل 4."
      },
      {
       "k": "dreamer",
       "v": -1,
-      "c": 0.118,
-      "t": "شو بدي بـ«⁨Ferencváros TC⁩ ما بيخسر» وأودزها 1.13؟ أنا رايح على «فوز ⁨NK Celje⁩» بأودز 8.45. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+      "c": 0.258,
+      "t": "شو بدي بـ«فوز ⁨Portland Trail Blazers⁩» وأودزها 1.35؟ أنا رايح على «فوز ⁨Golden State Warriors⁩» بأودز 3.87. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
      },
      {
       "k": "careful",
-      "v": 1,
-      "c": 0.882,
-      "t": "88% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
+      "v": 0,
+      "c": 0.742,
+      "t": "احتمالها 74%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
      },
      {
       "k": "logic",
       "v": 0,
-      "c": 0.882,
-      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 88%، والشركات الأدق 89%."
+      "c": 0.742,
+      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 75%، والشركات الأدق 76%."
      }
     ],
     "j": [
@@ -930,9 +1806,9 @@
      },
      {
       "k": "risk",
-      "v": 1,
+      "v": 0,
       "best": "careful",
-      "t": "المخاطرة قليلة: احتمال الخيبة 12% بس، وما في تحذيرات."
+      "t": "المخاطرة متوسطة: احتمال الخيبة 26%. المتحفظ والمتشائم معهم حق يحذّروا."
      },
      {
       "k": "market",
@@ -942,21 +1818,125 @@
      }
     ],
     "q": {
-     "v": 1,
+     "v": 0,
      "best": "logic",
-     "t": "الصافي: مع. ⁨Ferencváros TC⁩ ما بيخسر باحتمال 88%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-     "score": 0.649
+     "t": "الصافي: بحذر. فوز ⁨Portland Trail Blazers⁩ باحتمال 74%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+     "score": 0.268
+    }
+   },
+   "rank": 8,
+   "espn": {
+    "s": "basketball",
+    "l": "nba",
+    "id": "401909336",
+    "sw": false
+   },
+   "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
+   "live": {
+    "state": "pre",
+    "detail": "11/27 - 9:30 PM EST",
+    "score": null
+   }
+  },
+  {
+   "id": "0e9d20640e5fb6d772ef9c7d8bd7b233|double_chance|No Draw|None|None",
+   "event_id": "0e9d20640e5fb6d772ef9c7d8bd7b233",
+   "sport_key": "soccer_saudi_arabia_pro_league",
+   "group": "soccer",
+   "league": "Saudi Pro League",
+   "home": "Al-Kholood",
+   "away": "Al-Khaleej",
+   "commence_time": "2026-11-27T12:15:00Z",
+   "market": "double_chance",
+   "name": "No Draw",
+   "point": null,
+   "description": null,
+   "market_prob": 0.7403,
+   "sharp_prob": 0.7416,
+   "prob": 0.7409,
+   "books": 14,
+   "result": "pending",
+   "score": null,
+   "model_prob": null,
+   "support": 1,
+   "signals": 1,
+   "reasons": [
+    "14 شركة أودز بتعطيه بالمتوسط 74% بعد ما شلنا هامشها",
+    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 74%"
+   ],
+   "warnings": [],
+   "eligible": true,
+   "prob_raw": 0.7409,
+   "panel": {
+    "p": [
+     {
+      "k": "fan",
+      "v": 1,
+      "c": 0.861,
+      "t": "هاي المباراة رح تولّع! ما في تعادل أكيد. 14 شركة أودز بتعطيه بالمتوسط 74% بعد ما شلنا هامشها."
+     },
+     {
+      "k": "pessimist",
+      "v": 0,
+      "c": 0.259,
+      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 26%، يعني مرة من كل 4، وأنا دايماً بطلع بهديك المرة."
+     },
+     {
+      "k": "dreamer",
+      "v": -1,
+      "c": 0.259,
+      "t": "شو بدي بـ«ما في تعادل» وأودزها 1.35؟ أنا رايح على «تعادل» بأودز 3.86. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+     },
+     {
+      "k": "careful",
+      "v": 0,
+      "c": 0.741,
+      "t": "احتمالها 74%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
+     },
+     {
+      "k": "logic",
+      "v": 0,
+      "c": 0.741,
+      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 74%، والشركات الأدق 74%."
+     }
+    ],
+    "j": [
+     {
+      "k": "evidence",
+      "v": 0,
+      "best": "logic",
+      "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
+     },
+     {
+      "k": "risk",
+      "v": 0,
+      "best": "careful",
+      "t": "المخاطرة متوسطة: احتمال الخيبة 26%. المتحفظ والمتشائم معهم حق يحذّروا."
+     },
+     {
+      "k": "market",
+      "v": 1,
+      "best": "logic",
+      "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
+     }
+    ],
+    "q": {
+     "v": 0,
+     "best": "logic",
+     "t": "الصافي: بحذر. ما في تعادل باحتمال 74%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+     "score": 0.309
     }
    },
    "rank": 9,
    "espn": {
     "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915516",
+    "l": "ksa.1",
+    "id": "401900872",
     "sw": false
    },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/622.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3362.png",
+   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/22028.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/21829.png",
    "live": {
     "state": "pre",
     "detail": "Scheduled",
@@ -964,65 +1944,73 @@
    }
   },
   {
-   "id": "38332e4cbb2b3991904b00a75dc3769d|double_chance|Benfica|None|None",
-   "event_id": "38332e4cbb2b3991904b00a75dc3769d",
-   "sport_key": "soccer_uefa_europa_league",
+   "id": "e9a663f13e7503c0ac20a54804338b60|double_chance|Bologna|None|None",
+   "event_id": "e9a663f13e7503c0ac20a54804338b60",
+   "sport_key": "soccer_italy_serie_a",
    "group": "soccer",
-   "league": "UEFA Europa League",
-   "home": "Viktoria Plzeň",
-   "away": "Benfica",
-   "commence_time": "2026-11-26T17:45:00Z",
+   "league": "Serie A - Italy",
+   "home": "Venezia",
+   "away": "Bologna",
+   "commence_time": "2026-11-27T19:45:00Z",
    "market": "double_chance",
-   "name": "Benfica",
+   "name": "Bologna",
    "point": null,
    "description": null,
-   "market_prob": 0.8416,
-   "sharp_prob": 0.845,
-   "prob": 0.8433,
-   "books": 20,
-   "result": "miss",
-   "score": "4-0",
-   "model_prob": null,
-   "support": 1,
-   "signals": 1,
+   "market_prob": 0.7166,
+   "sharp_prob": 0.7204,
+   "prob": 0.7404,
+   "books": 25,
+   "result": "pending",
+   "score": null,
+   "movement": -0.0031,
+   "model_prob": 0.8423,
+   "support": 6,
+   "signals": 7,
    "reasons": [
-    "20 شركة أودز بتعطيه بالمتوسط 84% بعد ما شلنا هامشها",
-    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 84%"
+    "25 شركة أودز بتعطيه بالمتوسط 72% بعد ما شلنا هامشها",
+    "الشركات الأدق بالعالم (⁨Pinnacle⁩ و⁨Betfair⁩) بتعطيه 72%",
+    "نموذجنا الإحصائي بيعطيه 84% (متوقع 0.9 أهداف لـ⁨Venezia⁩ و1.9 لـ⁨Bologna⁩)",
+    "فورمة ⁨Bologna⁩ بآخر 5: 4 فوز و1 تعادل و0.6 خسارة، مقابل 1 فوز لـ⁨Venezia⁩",
+    "⁨Bologna⁩ برّا أرضه هالموسم: فاز 4 من 6 وخسر 2",
+    "⁨Venezia⁩ على أرضه: فاز 2 من 6 بس",
+    "⁨Bologna⁩ بالمركز 9 (18 نقطة)، و⁨Venezia⁩ بالمركز 20 (6 نقطة)"
    ],
-   "warnings": [],
+   "warnings": [
+    "⁨Bologna⁩ جايب 2.6 نقطة بالمباراة بآخر 5، أعلى من معدله بالموسم (1.5). الفورمة العالية عادة ما بتدوم، والفرق بترجع لمستواها"
+   ],
    "eligible": true,
-   "prob_raw": 0.8433,
+   "prob_raw": 0.7404,
    "panel": {
     "p": [
      {
       "k": "fan",
       "v": 1,
-      "c": 0.963,
-      "t": "⁨Benfica⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 84% بعد ما شلنا هامشها. يا عمي ⁨Benfica⁩ ما بيخسر مضمونة، أنا بعطيها 96%."
+      "c": 0.86,
+      "t": "⁨Bologna⁩ ما في منه! فورمة ⁨Bologna⁩ بآخر 5: 4 فوز و1 تعادل و0.6 خسارة، مقابل 1 فوز لـ⁨Venezia⁩. يا عمي ⁨Bologna⁩ ما بيخسر مضمونة، أنا بعطيها 86%."
      },
      {
       "k": "pessimist",
-      "v": 0,
-      "c": 0.157,
-      "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 16%، يعني مرة من كل 6، وأنا دايماً بطلع بهديك المرة."
+      "v": -1,
+      "c": 0.26,
+      "t": "دايماً في مشكلة: ⁨Bologna⁩ جايب 2.6 نقطة بالمباراة بآخر 5، أعلى من معدله بالموسم (1.5). الفورمة العالية عادة ما بتدوم، والفرق بترجع لمستواها. وفوق هيك، احتمال إنها تخيب 26%، يعني تقريباً مرة من كل 4."
      },
      {
       "k": "dreamer",
       "v": -1,
-      "c": 0.157,
-      "t": "شو بدي بـ«⁨Benfica⁩ ما بيخسر» وأودزها 1.19؟ أنا رايح على «فوز ⁨Viktoria Plzeň⁩» بأودز 6.38. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
+      "c": 0.26,
+      "t": "شو بدي بـ«⁨Bologna⁩ ما بيخسر» وأودزها 1.35؟ أنا رايح على «فوز ⁨Venezia⁩» بأودز 3.85. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
      },
      {
       "k": "careful",
-      "v": 1,
-      "c": 0.843,
-      "t": "84% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
+      "v": 0,
+      "c": 0.74,
+      "t": "احتمالها 74%، مش سيئة بس مش مريحة. بحطها بس بقسيمة صغيرة."
      },
      {
       "k": "logic",
       "v": 0,
-      "c": 0.843,
-      "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 84%، والشركات الأدق 84%."
+      "c": 0.74,
+      "t": "بالأرقام: 6 من 7 إشارات معه. نموذج الأهداف بيعطيه 84% والسوق 72%. فورمة ⁨Bologna⁩ بآخر 5: 4 فوز و1 تعادل و0.6 خسارة، مقابل 1 فوز لـ⁨Venezia⁩. بس انتبهوا: الفورمة الأخيرة أعلى من مستوى الفريق الحقيقي، وهاي عادة ما بتدوم."
      }
     ],
     "j": [
@@ -1034,9 +2022,9 @@
      },
      {
       "k": "risk",
-      "v": 1,
+      "v": 0,
       "best": "careful",
-      "t": "المخاطرة قليلة: احتمال الخيبة 16% بس، وما في تحذيرات."
+      "t": "المخاطرة متوسطة: احتمال الخيبة 26%. المتحفظ والمتشائم معهم حق يحذّروا."
      },
      {
       "k": "market",
@@ -1046,31 +2034,31 @@
      }
     ],
     "q": {
-     "v": 1,
+     "v": 0,
      "best": "logic",
-     "t": "الصافي: مع. ⁨Benfica⁩ ما بيخسر باحتمال 84%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-     "score": 0.649
+     "t": "الصافي: بحذر. ⁨Bologna⁩ ما بيخسر باحتمال 74%، بس مش للقسيمة الآمنة. الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة.",
+     "score": 0.268
     }
    },
    "rank": 10,
    "espn": {
     "s": "soccer",
-    "l": "uefa.europa",
-    "id": "401915518",
+    "l": "ita.1",
+    "id": "401875004",
     "sw": false
    },
-   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/11706.png",
-   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1929.png",
+   "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/17530.png",
+   "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/107.png",
    "live": {
-    "state": "post",
-    "detail": "FT",
-    "score": "4-0"
+    "state": "pre",
+    "detail": "Scheduled",
+    "score": null
    }
   }
  ],
  "stats": {
-  "events": 82,
-  "legs": 802,
+  "events": 42,
+  "legs": 438,
   "deep_events": 0,
   "markets": [
    "double_chance",
@@ -1078,7 +2066,7 @@
    "spreads",
    "totals"
   ],
-  "analyzed": 59,
+  "analyzed": 5,
   "crowd": 0
  }
 }
