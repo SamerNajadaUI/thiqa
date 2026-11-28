@@ -20760,8 +20760,8 @@
      "sharp_prob": 0.7915,
      "prob": 0.7683,
      "books": 21,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "107-120",
      "movement": 0.0232,
      "model_prob": null,
      "support": 2,
@@ -20846,9 +20846,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png",
      "live": {
-      "state": "in",
-      "detail": "1:57 - 3rd",
-      "score": "81-80"
+      "state": "post",
+      "detail": "Final",
+      "score": "107-120"
      }
     },
     {
@@ -21186,8 +21186,8 @@
      "sharp_prob": 0.7648,
      "prob": 0.7417,
      "books": 21,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "116-94",
      "model_prob": null,
      "support": 1,
      "signals": 1,
@@ -21270,9 +21270,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
      "live": {
-      "state": "in",
-      "detail": "5:56 - 3rd",
-      "score": "78-63"
+      "state": "post",
+      "detail": "Final",
+      "score": "116-94"
      }
     },
     {
@@ -21839,8 +21839,8 @@
        "sharp_prob": 0.7915,
        "prob": 0.7683,
        "books": 21,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "107-120",
        "movement": 0.0232,
        "model_prob": null,
        "support": 2,
@@ -21924,9 +21924,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png",
        "live": {
-        "state": "in",
-        "detail": "1:57 - 3rd",
-        "score": "81-80"
+        "state": "post",
+        "detail": "Final",
+        "score": "107-120"
        }
       }
      ],
@@ -22379,8 +22379,8 @@
        "sharp_prob": 0.7648,
        "prob": 0.7417,
        "books": 21,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "116-94",
        "model_prob": null,
        "support": 1,
        "signals": 1,
@@ -22462,9 +22462,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
        "live": {
-        "state": "in",
-        "detail": "5:56 - 3rd",
-        "score": "78-63"
+        "state": "post",
+        "detail": "Final",
+        "score": "116-94"
        }
       }
      ],
