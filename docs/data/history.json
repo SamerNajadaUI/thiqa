@@ -19382,66 +19382,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.9474,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.99,
-        "t": "⁨Salzburg⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 94% بعد ما شلنا هامشها. يا عمي ⁨Salzburg⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.053,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 5%، يعني مرة من كل 19، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.053,
-        "t": "شو بدي بـ«⁨Salzburg⁩ ما بيخسر» وأودزها 1.06؟ أنا رايح على «فوز ⁨FC Ararat-Armenia⁩» بأودز 19.01. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.947,
-        "t": "95% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.947,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 94%، والشركات الأدق 95%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 5% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨Salzburg⁩ ما بيخسر باحتمال 95%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 1,
      "espn": {
       "s": "soccer",
@@ -19486,66 +19426,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.9425,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.99,
-        "t": "⁨Juventus⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 94% بعد ما شلنا هامشها. يا عمي ⁨Juventus⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.057,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 6%، يعني مرة من كل 17، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.057,
-        "t": "شو بدي بـ«⁨Juventus⁩ ما بيخسر» وأودزها 1.06؟ أنا رايح على «فوز ⁨Omonoia FC⁩» بأودز 17.39. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.943,
-        "t": "94% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.943,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 94%، والشركات الأدق 95%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 6% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨Juventus⁩ ما بيخسر باحتمال 94%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 2,
      "espn": {
       "s": "soccer",
@@ -19590,66 +19470,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.9325,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.99,
-        "t": "⁨Lyon⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 93% بعد ما شلنا هامشها. يا عمي ⁨Lyon⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.068,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 7%، يعني مرة من كل 15، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.068,
-        "t": "شو بدي بـ«⁨Lyon⁩ ما بيخسر» وأودزها 1.07؟ أنا رايح على «فوز ⁨Lillestrom⁩» بأودز 14.81. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.932,
-        "t": "93% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.932,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 93%، والشركات الأدق 94%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 7% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨Lyon⁩ ما بيخسر باحتمال 93%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 3,
      "espn": {
       "s": "soccer",
@@ -19694,66 +19514,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.9254,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.99,
-        "t": "⁨Sunderland⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 92% بعد ما شلنا هامشها. يا عمي ⁨Sunderland⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.075,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 7%، يعني مرة من كل 13، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.075,
-        "t": "شو بدي بـ«⁨Sunderland⁩ ما بيخسر» وأودزها 1.08؟ أنا رايح على «فوز ⁨Jagiellonia Białystok⁩» بأودز 13.40. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.925,
-        "t": "93% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.925,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 92%، والشركات الأدق 93%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 7% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨Sunderland⁩ ما بيخسر باحتمال 93%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 4,
      "espn": {
       "s": "soccer",
@@ -19798,66 +19558,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.9171,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.99,
-        "t": "⁨Besiktas JK⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 91% بعد ما شلنا هامشها. يا عمي ⁨Besiktas JK⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.083,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 8%، يعني مرة من كل 12، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.083,
-        "t": "شو بدي بـ«⁨Besiktas JK⁩ ما بيخسر» وأودزها 1.09؟ أنا رايح على «فوز ⁨Hapoel Be'er Sheva⁩» بأودز 12.06. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.917,
-        "t": "92% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.917,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 91%، والشركات الأدق 92%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 8% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨Besiktas JK⁩ ما بيخسر باحتمال 92%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 5,
      "espn": {
       "s": "soccer",
@@ -19902,66 +19602,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.8918,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.99,
-        "t": "⁨Marseille⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 89% بعد ما شلنا هامشها. يا عمي ⁨Marseille⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.108,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 11%، يعني مرة من كل 9، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.108,
-        "t": "شو بدي بـ«⁨Marseille⁩ ما بيخسر» وأودزها 1.12؟ أنا رايح على «فوز ⁨PFC Levski Sofia⁩» بأودز 9.24. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.892,
-        "t": "89% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.892,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 89%، والشركات الأدق 89%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 11% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨Marseille⁩ ما بيخسر باحتمال 89%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 6,
      "espn": {
       "s": "soccer",
@@ -20006,66 +19646,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.8903,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.99,
-        "t": "⁨TSG Hoffenheim⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 88% بعد ما شلنا هامشها. يا عمي ⁨TSG Hoffenheim⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.11,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 11%، يعني مرة من كل 9، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.11,
-        "t": "شو بدي بـ«⁨TSG Hoffenheim⁩ ما بيخسر» وأودزها 1.12؟ أنا رايح على «فوز ⁨SK Sturm Graz⁩» بأودز 9.12. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.89,
-        "t": "89% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.89,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 88%، والشركات الأدق 90%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 11% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨TSG Hoffenheim⁩ ما بيخسر باحتمال 89%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 7,
      "espn": {
       "s": "soccer",
@@ -20110,66 +19690,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.8829,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.99,
-        "t": "⁨Union Saint-Gilloise⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 88% بعد ما شلنا هامشها. يا عمي ⁨Union Saint-Gilloise⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.117,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 12%، يعني مرة من كل 9، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.117,
-        "t": "شو بدي بـ«⁨Union Saint-Gilloise⁩ ما بيخسر» وأودزها 1.13؟ أنا رايح على «فوز ⁨Lech Poznań⁩» بأودز 8.54. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.883,
-        "t": "88% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.883,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 88%، والشركات الأدق 89%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 12% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨Union Saint-Gilloise⁩ ما بيخسر باحتمال 88%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 8,
      "espn": {
       "s": "soccer",
@@ -20214,66 +19734,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.8817,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.99,
-        "t": "⁨Ferencváros TC⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 88% بعد ما شلنا هامشها. يا عمي ⁨Ferencváros TC⁩ ما بيخسر مضمونة، أنا بعطيها 99%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.118,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 12%، يعني مرة من كل 8، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.118,
-        "t": "شو بدي بـ«⁨Ferencváros TC⁩ ما بيخسر» وأودزها 1.13؟ أنا رايح على «فوز ⁨NK Celje⁩» بأودز 8.45. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.882,
-        "t": "88% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.882,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 88%، والشركات الأدق 89%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 12% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨Ferencváros TC⁩ ما بيخسر باحتمال 88%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 9,
      "espn": {
       "s": "soccer",
@@ -20318,66 +19778,6 @@
      "warnings": [],
      "eligible": true,
      "prob_raw": 0.8433,
-     "panel": {
-      "p": [
-       {
-        "k": "fan",
-        "v": 1,
-        "c": 0.963,
-        "t": "⁨Benfica⁩ ما في منه! 20 شركة أودز بتعطيه بالمتوسط 84% بعد ما شلنا هامشها. يا عمي ⁨Benfica⁩ ما بيخسر مضمونة، أنا بعطيها 96%."
-       },
-       {
-        "k": "pessimist",
-        "v": 0,
-        "c": 0.157,
-        "t": "ماشي، كل شي شكله تمام. بس احتمال إنها تخيب 16%، يعني مرة من كل 6، وأنا دايماً بطلع بهديك المرة."
-       },
-       {
-        "k": "dreamer",
-        "v": -1,
-        "c": 0.157,
-        "t": "شو بدي بـ«⁨Benfica⁩ ما بيخسر» وأودزها 1.19؟ أنا رايح على «فوز ⁨Viktoria Plzeň⁩» بأودز 6.38. الكورة ما إلها كبير، وكم مرة شفنا المستحيل يصير."
-       },
-       {
-        "k": "careful",
-        "v": 1,
-        "c": 0.843,
-        "t": "84% وكل الإشارات متفقة. هاي من النوع اللي بنام عليه وأنا مرتاح."
-       },
-       {
-        "k": "logic",
-        "v": 0,
-        "c": 0.843,
-        "t": "بالأرقام: 1 من 1 إشارات معه. السوق بيعطيه 84%، والشركات الأدق 84%."
-       }
-      ],
-      "j": [
-       {
-        "k": "evidence",
-        "v": 0,
-        "best": "logic",
-        "t": "الأدلة مختلطة: في أرقام معه وفي أرقام ضده. كلام المنطقي هو الأقرب للحقيقة."
-       },
-       {
-        "k": "risk",
-        "v": 1,
-        "best": "careful",
-        "t": "المخاطرة قليلة: احتمال الخيبة 16% بس، وما في تحذيرات."
-       },
-       {
-        "k": "market",
-        "v": 1,
-        "best": "logic",
-        "t": "الفلوس كلها بنفس الاتجاه: الشركات الأدق مع التوقع."
-       }
-      ],
-      "q": {
-       "v": 1,
-       "best": "logic",
-       "t": "الصافي: مع. ⁨Benfica⁩ ما بيخسر باحتمال 84%. أقنعني كلام المنطقي، والحكام متفقين إنه التوقع مسنود.",
-       "score": 0.649
-      }
-     },
      "rank": 10,
      "espn": {
       "s": "soccer",
@@ -22582,9 +21982,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "in",
+      "detail": "57'",
+      "score": "0-1"
      }
     },
     {
@@ -22604,8 +22004,8 @@
      "sharp_prob": 0.8618,
      "prob": 0.8694,
      "books": 20,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "2-3",
      "movement": 0.0034,
      "model_prob": 0.9219,
      "support": 6,
@@ -22692,9 +22092,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3751.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "post",
+      "detail": "FT",
+      "score": "2-3"
      }
     },
     {
@@ -22714,8 +22114,8 @@
      "sharp_prob": 0.8585,
      "prob": 0.8565,
      "books": 25,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "3-0",
      "movement": -0.0034,
      "model_prob": 0.8707,
      "support": 5,
@@ -22801,9 +22201,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/357.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/388.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "post",
+      "detail": "FT",
+      "score": "3-0"
      }
     },
     {
@@ -22823,8 +22223,8 @@
      "sharp_prob": 0.8579,
      "prob": 0.8483,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "2-1",
      "movement": 0.0088,
      "model_prob": 0.8202,
      "support": 3,
@@ -22911,9 +22311,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2950.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/598.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "post",
+      "detail": "FT",
+      "score": "2-1"
      }
     },
     {
@@ -22933,8 +22333,8 @@
      "sharp_prob": 0.8406,
      "prob": 0.8412,
      "books": 25,
-     "result": "pending",
-     "score": null,
+     "result": "hit",
+     "score": "3-0",
      "movement": 0.0028,
      "model_prob": 0.864,
      "support": 6,
@@ -23021,9 +22421,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4057.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "post",
+      "detail": "FT",
+      "score": "3-0"
      }
     },
     {
@@ -23129,9 +22529,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/110.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3263.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "in",
+      "detail": "69'",
+      "score": "4-0"
      }
     },
     {
@@ -23151,8 +22551,8 @@
      "sharp_prob": 0.8286,
      "prob": 0.8242,
      "books": 21,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "0-1",
      "movement": 0.0008,
      "model_prob": 0.8311,
      "support": 6,
@@ -23239,9 +22639,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/244.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/101.png",
      "live": {
-      "state": "in",
-      "detail": "26'",
-      "score": "0-0"
+      "state": "post",
+      "detail": "FT",
+      "score": "0-1"
      }
     },
     {
@@ -23472,8 +22872,8 @@
      "sharp_prob": 0.7845,
      "prob": 0.783,
      "books": 23,
-     "result": "pending",
-     "score": null,
+     "result": "miss",
+     "score": "2-2",
      "movement": -0.0047,
      "model_prob": 0.7726,
      "support": 3,
@@ -23557,9 +22957,9 @@
      "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/134.png",
      "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/125.png",
      "live": {
-      "state": "pre",
-      "detail": "Scheduled",
-      "score": null
+      "state": "post",
+      "detail": "FT",
+      "score": "2-2"
      }
     }
    ],
@@ -23584,8 +22984,8 @@
        "sharp_prob": 0.8585,
        "prob": 0.8565,
        "books": 25,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "3-0",
        "movement": -0.0034,
        "model_prob": 0.8707,
        "support": 5,
@@ -23670,9 +23070,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/357.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/388.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "3-0"
        }
       },
       {
@@ -23692,8 +23092,8 @@
        "sharp_prob": 0.8618,
        "prob": 0.8694,
        "books": 20,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "2-3",
        "movement": 0.0034,
        "model_prob": 0.9219,
        "support": 6,
@@ -23779,9 +23179,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3751.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "2-3"
        }
       },
       {
@@ -23888,9 +23288,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "in",
+        "detail": "57'",
+        "score": "0-1"
        }
       }
      ],
@@ -23918,8 +23318,8 @@
        "sharp_prob": 0.8406,
        "prob": 0.8412,
        "books": 25,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "3-0",
        "movement": 0.0028,
        "model_prob": 0.864,
        "support": 6,
@@ -24005,9 +23405,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4057.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "3-0"
        }
       },
       {
@@ -24027,8 +23427,8 @@
        "sharp_prob": 0.8579,
        "prob": 0.8483,
        "books": 23,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "2-1",
        "movement": 0.0088,
        "model_prob": 0.8202,
        "support": 3,
@@ -24114,9 +23514,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/2950.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/598.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "2-1"
        }
       },
       {
@@ -24353,8 +23753,8 @@
        "sharp_prob": 0.7166,
        "prob": 0.7168,
        "books": 23,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "8-1",
        "movement": -0.0048,
        "model_prob": 0.7046,
        "support": 2,
@@ -24438,9 +23838,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/3307.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/133.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "8-1"
        }
       },
       {
@@ -24558,8 +23958,8 @@
        "sharp_prob": 0.716,
        "prob": 0.7374,
        "books": 25,
-       "result": "pending",
-       "score": null,
+       "result": "hit",
+       "score": "1-2",
        "movement": -0.0004,
        "model_prob": 0.8214,
        "support": 3,
@@ -24642,9 +24042,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/239.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/112.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "1-2"
        }
       },
       {
@@ -24664,8 +24064,8 @@
        "sharp_prob": 0.7443,
        "prob": 0.7463,
        "books": 25,
-       "result": "pending",
-       "score": null,
+       "result": "miss",
+       "score": "2-2",
        "movement": -0.0059,
        "model_prob": 0.7456,
        "support": 2,
@@ -24749,9 +24149,9 @@
        "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/373.png",
        "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/362.png",
        "live": {
-        "state": "pre",
-        "detail": "Scheduled",
-        "score": null
+        "state": "post",
+        "detail": "FT",
+        "score": "2-2"
        }
       },
       {
@@ -24862,7 +24262,7 @@
      ],
      "prob": 0.1914,
      "fair_odds": 5.23,
-     "result": "pending"
+     "result": "lost"
     }
    ]
   }
