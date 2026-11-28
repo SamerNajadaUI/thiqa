@@ -1347,7 +1347,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/244.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/101.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/101.png",
+    "espn": {
+     "s": "soccer",
+     "l": "esp.1",
+     "id": "401882796",
+     "sw": false
+    },
+    "live": {
+     "state": "in",
+     "detail": "26'",
+     "score": "0-0"
+    }
    },
    {
     "id": "af3432ca724da03d38f0ff4e62045e4c|double_chance|No Draw|None|None",
@@ -1441,7 +1452,18 @@
      }
     },
     "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4057.png",
-    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png"
+    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/115.png",
+    "espn": {
+     "s": "soccer",
+     "l": "ita.1",
+     "id": "401875081",
+     "sw": false
+    },
+    "live": {
+     "state": "pre",
+     "detail": "Scheduled",
+     "score": null
+    }
    },
    {
     "id": "365e1a00908ab1cd5a51a53ede2b86b2|double_chance|No Draw|None|None",

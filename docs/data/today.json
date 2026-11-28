@@ -1,7 +1,7 @@
 {
  "date": "2026-11-28",
  "generated_at": "2026-11-28T04:11:37Z",
- "updated_at": "2026-11-28T04:11:37Z",
+ "updated_at": "2026-11-28T13:31:07Z",
  "demo": false,
  "coupons": [
   {
@@ -2068,9 +2068,9 @@
    "home_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/244.png",
    "away_logo": "https://a.espncdn.com/i/teamlogos/soccer/500/101.png",
    "live": {
-    "state": "pre",
-    "detail": "Scheduled",
-    "score": null
+    "state": "in",
+    "detail": "26'",
+    "score": "0-0"
    }
   },
   {
